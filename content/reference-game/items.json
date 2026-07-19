@@ -1,0 +1,7 @@
+{
+  "item.sanctuary-key": { "name": "Clé du Sanctuaire", "type": "quest" },
+  "item.crystal-heart": { "name": "Cœur de cristal", "type": "quest" },
+  "item.potion": { "name": "Potion de soin", "type": "consumable", "healing": 30 },
+  "item.hero-sword": { "name": "Épée du voyageur", "type": "equipment", "equipmentSlot": "weapon", "stats": { "attack": 4 } },
+  "item.leather-cloak": { "name": "Cape de cuir", "type": "equipment", "equipmentSlot": "armor", "stats": { "defense": 2 } }
+}

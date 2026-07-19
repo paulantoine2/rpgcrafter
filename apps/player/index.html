@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <title>La Cloche des Brumes — Runtime V0</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <main class="shell">
+      <header class="topbar">
+        <div>
+          <p class="eyebrow">Runtime Action-JRPG V0</p>
+          <h1>La Cloche des Brumes</h1>
+        </div>
+      </header>
+
+      <section class="game-frame" aria-label="Jeu de référence jouable">
+        <div class="game-viewport">
+          <canvas id="game" width="960" height="540" aria-label="La Cloche des Brumes"></canvas>
+          <button id="dev-grid-toggle" class="dev-grid-toggle" type="button" aria-pressed="false">Grille dev : off</button>
+          <section id="dialogue" class="dialogue hidden" aria-live="polite">
+            <p id="dialogue-speaker"></p>
+            <p id="dialogue-text"></p>
+            <div id="dialogue-choices" class="dialogue-choices"></div>
+            <p class="continue-hint">Entrée ou E pour continuer</p>
+          </section>
+          <section id="toast" class="toast hidden" aria-live="polite"></section>
+          <section id="pause-menu" class="pause-menu hidden" role="dialog" aria-modal="true" aria-label="Menu pause">
+            <p id="pause-title" class="eyebrow"></p>
+            <div id="pause-tabs" class="pause-tabs" role="tablist"></div>
+            <section id="pause-content" class="pause-content" aria-live="polite"></section>
+            <p class="pause-hint">Échap pour reprendre · ← → changer d’onglet · ↑ ↓ sélectionner · Entrée équiper</p>
+          </section>
+        </div>
+      </section>
+
+      <section class="below-game">
+        <div class="objective-card">
+          <p class="eyebrow">Objectif</p>
+          <p id="objective">Parlez au maire d'Aubeval.</p>
+        </div>
+        <div class="status-card">
+          <span id="map-name">Aubeval</span>
+          <span id="skill-status">Compétences : chargement…</span>
+        </div>
+      </section>
+
+      <section class="controls" aria-label="Commandes">
+        <div>
+          <strong>Clavier</strong>
+          <span>WASD / flèches déplacer · E interagir · Espace attaquer · K dash · L compétence 1 · I compétence 2 · Échap menu · Ctrl/⌘ S sauvegarder · R recommencer</span>
+        </div>
+      </section>
+    </main>
+    <script type="module" src="/src/game.ts"></script>
+  </body>
+</html>

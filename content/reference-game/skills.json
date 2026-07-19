@@ -1,0 +1,5 @@
+{
+  "skill.sword": { "name": "Épée", "type": "melee", "damage": 26, "cooldown": 0.38, "range": 86 },
+  "skill.bolt": { "name": "Éclat", "type": "projectile", "damage": 23, "cooldown": 0.7, "projectileSpeed": 390, "color": "#88d9ff" },
+  "skill.wave": { "name": "Onde des sources", "type": "area", "damage": 19, "cooldown": 2.2, "range": 96, "color": "#8ef3ff" }
+}

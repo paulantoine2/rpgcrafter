@@ -1,0 +1,25 @@
+{
+  "player": {
+    "id": "actor.hero",
+    "name": "Héros",
+    "start": {
+      "x": 6,
+      "y": 8,
+      "planeId": "aubeval"
+    },
+    "stats": {
+      "maxHp": 100,
+      "level": 1,
+      "xp": 0
+    },
+    "primaryAttack": "skill.sword",
+    "skillSlots": {
+      "skill1": "skill.bolt",
+      "skill2": "skill.wave"
+    },
+    "unlockedSkills": [
+      "skill.sword",
+      "skill.bolt"
+    ]
+  }
+}

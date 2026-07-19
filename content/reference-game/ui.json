@@ -1,0 +1,27 @@
+{
+  "theme": {
+    "fontFamily": "Inter, ui-sans-serif, system-ui, sans-serif",
+    "pageBackground": "#0d1220",
+    "panel": "#121b2d",
+    "panelBorder": "#3a4c72",
+    "text": "#eff4ff",
+    "accent": "#9fc6ff",
+    "health": "#f05b75"
+  },
+  "hud": { "slots": ["health", "level", "skills", "quest-tracker"] },
+  "pauseMenu": {
+    "title": "Menu",
+    "tabs": [
+      { "id": "character", "label": "Personnage" },
+      { "id": "inventory", "label": "Inventaire" },
+      { "id": "equipment", "label": "Équipement" },
+      { "id": "quests", "label": "Quêtes" },
+      { "id": "settings", "label": "Options" }
+    ]
+  },
+  "equipmentSlots": [
+    { "id": "weapon", "label": "Arme" },
+    { "id": "armor", "label": "Armure" },
+    { "id": "accessory", "label": "Accessoire" }
+  ]
+}

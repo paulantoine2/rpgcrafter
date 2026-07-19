@@ -1,0 +1,1627 @@
+{
+  "village": {
+    "id": "village",
+    "name": "Aubeval",
+    "ground": "#365d49",
+    "accent": "#49765a",
+    "tileSize": 48,
+    "bounds": {
+      "x": 0,
+      "y": 0,
+      "w": 45,
+      "h": 27
+    },
+    "planes": [
+      {
+        "id": "aubeval",
+        "name": "Ruelles d’Aubeval",
+        "order": 0,
+        "surfaceLayerId": "surface",
+        "surfaceCoverage": "bounds"
+      }
+    ],
+    "tileLayers": [
+      {
+        "id": "surface",
+        "name": "Surface",
+        "tileset": "outside-a2",
+        "planeId": "aubeval",
+        "renderPhase": "belowActors",
+        "tiles": [
+          {
+            "x": 8,
+            "y": 9,
+            "terrainId": "dirt-on-grass"
+          },
+          {
+            "x": 9,
+            "y": 9,
+            "terrainId": "dirt-on-grass"
+          },
+          {
+            "x": 10,
+            "y": 9,
+            "terrainId": "dirt-on-grass"
+          },
+          {
+            "x": 11,
+            "y": 8,
+            "terrainId": "dirt-on-grass"
+          },
+          {
+            "x": 12,
+            "y": 8,
+            "terrainId": "dirt-on-grass"
+          },
+          {
+            "x": 13,
+            "y": 8,
+            "terrainId": "dirt-on-grass"
+          },
+          {
+            "x": 14,
+            "y": 6,
+            "terrainId": "dirt-on-grass"
+          },
+          {
+            "x": 14,
+            "y": 7,
+            "terrainId": "dirt-on-grass"
+          },
+          {
+            "x": 14,
+            "y": 8,
+            "terrainId": "dirt-on-grass"
+          },
+          {
+            "x": 15,
+            "y": 8,
+            "terrainId": "dirt-on-grass"
+          },
+          {
+            "x": 16,
+            "y": 8,
+            "terrainId": "dirt-on-grass"
+          },
+          {
+            "x": 17,
+            "y": 8,
+            "terrainId": "dirt-on-grass"
+          },
+          {
+            "x": 11,
+            "y": 9,
+            "terrainId": "dirt-on-grass"
+          },
+          {
+            "x": 12,
+            "y": 9,
+            "terrainId": "dirt-on-grass"
+          },
+          {
+            "x": 13,
+            "y": 9,
+            "terrainId": "dirt-on-grass"
+          },
+          {
+            "x": 14,
+            "y": 9,
+            "terrainId": "dirt-on-grass"
+          },
+          {
+            "x": 15,
+            "y": 9,
+            "terrainId": "dirt-on-grass"
+          },
+          {
+            "x": 16,
+            "y": 9,
+            "terrainId": "dirt-on-grass"
+          },
+          {
+            "x": 17,
+            "y": 9,
+            "terrainId": "dirt-on-grass"
+          },
+          {
+            "x": 11,
+            "y": 10,
+            "terrainId": "dirt-on-grass"
+          },
+          {
+            "x": 12,
+            "y": 10,
+            "terrainId": "dirt-on-grass"
+          },
+          {
+            "x": 13,
+            "y": 10,
+            "terrainId": "dirt-on-grass"
+          },
+          {
+            "x": 14,
+            "y": 10,
+            "terrainId": "dirt-on-grass"
+          },
+          {
+            "x": 15,
+            "y": 10,
+            "terrainId": "dirt-on-grass"
+          },
+          {
+            "x": 16,
+            "y": 10,
+            "terrainId": "dirt-on-grass"
+          },
+          {
+            "x": 17,
+            "y": 10,
+            "terrainId": "dirt-on-grass"
+          },
+          {
+            "x": 17,
+            "y": 11,
+            "terrainId": "dirt-on-grass"
+          },
+          {
+            "x": 18,
+            "y": 11,
+            "terrainId": "dirt-on-grass"
+          },
+          {
+            "x": 18,
+            "y": 12,
+            "terrainId": "dirt-on-grass"
+          }
+        ]
+      }
+    ],
+    "planeConnections": [],
+    "navigationOverrides": [],
+    "events": [
+      {
+        "id": "exit-east",
+        "position": {
+          "x": 44.5,
+          "y": 14,
+          "planeId": "aubeval"
+        },
+        "scriptId": "event.exit-village-east",
+        "trigger": {
+          "type": "playerEnter",
+          "size": {
+            "w": 1,
+            "h": 4
+          }
+        },
+        "execution": {
+          "mode": "repeat"
+        },
+        "visual": {
+          "type": "exit"
+        }
+      },
+      {
+        "id": "mayor",
+        "position": {
+          "x": 11,
+          "y": 7,
+          "planeId": "aubeval"
+        },
+        "scriptId": "event.mayor",
+        "trigger": {
+          "type": "interact",
+          "radius": 1.25
+        },
+        "execution": {
+          "mode": "repeat"
+        },
+        "visual": {
+          "type": "npc",
+          "name": "Maire Elian",
+          "color": "#e4b677",
+          "radius": 18
+        }
+      },
+      {
+        "id": "merchant",
+        "position": {
+          "x": 21,
+          "y": 5,
+          "planeId": "aubeval"
+        },
+        "scriptId": "event.merchant",
+        "trigger": {
+          "type": "interact",
+          "radius": 1.25
+        },
+        "execution": {
+          "mode": "repeat"
+        },
+        "visual": {
+          "type": "npc",
+          "name": "Marchande",
+          "color": "#d6a8b9",
+          "radius": 18
+        }
+      }
+    ],
+    "blockedRegions": [
+      {
+        "planeId": "aubeval",
+        "x": 3,
+        "y": 3,
+        "w": 5,
+        "h": 3
+      },
+      {
+        "planeId": "aubeval",
+        "x": 13,
+        "y": 2,
+        "w": 5,
+        "h": 3
+      },
+      {
+        "planeId": "aubeval",
+        "x": 9,
+        "y": 11,
+        "w": 5,
+        "h": 3
+      },
+      {
+        "planeId": "aubeval",
+        "x": 29,
+        "y": 5,
+        "w": 6,
+        "h": 3
+      },
+      {
+        "planeId": "aubeval",
+        "x": 34,
+        "y": 17,
+        "w": 7,
+        "h": 4
+      },
+      {
+        "planeId": "aubeval",
+        "x": 19,
+        "y": 21,
+        "w": 5,
+        "h": 3
+      }
+    ],
+    "enemySpawns": []
+  },
+  "path": {
+    "id": "path",
+    "name": "Sentier brumeux",
+    "ground": "#284f50",
+    "accent": "#376b69",
+    "tileSize": 48,
+    "bounds": {
+      "x": 0,
+      "y": 0,
+      "w": 27,
+      "h": 15
+    },
+    "planes": [
+      {
+        "id": "lower-trail",
+        "name": "Sentier des brumes",
+        "order": 0,
+        "surfaceLayerId": "lower-surface",
+        "surfaceCoverage": "painted"
+      },
+      {
+        "id": "raised-bridge",
+        "name": "Passerelle ancienne",
+        "order": 1,
+        "surfaceLayerId": "bridge-surface",
+        "surfaceCoverage": "painted"
+      }
+    ],
+    "tileLayers": [
+      {
+        "id": "lower-surface",
+        "name": "Chemin praticable",
+        "tileset": "outside-a2",
+        "planeId": "lower-trail",
+        "renderPhase": "belowActors",
+        "tiles": [
+          {
+            "x": 0,
+            "y": 7,
+            "terrainId": "dirt-on-grass"
+          },
+          {
+            "x": 1,
+            "y": 7,
+            "terrainId": "dirt-on-grass"
+          },
+          {
+            "x": 2,
+            "y": 7,
+            "terrainId": "dirt-on-grass"
+          },
+          {
+            "x": 3,
+            "y": 7,
+            "terrainId": "dirt-on-grass"
+          },
+          {
+            "x": 4,
+            "y": 7,
+            "terrainId": "dirt-on-grass"
+          },
+          {
+            "x": 5,
+            "y": 7,
+            "terrainId": "dirt-on-grass"
+          },
+          {
+            "x": 6,
+            "y": 7,
+            "terrainId": "dirt-on-grass"
+          },
+          {
+            "x": 7,
+            "y": 7,
+            "terrainId": "dirt-on-grass"
+          },
+          {
+            "x": 8,
+            "y": 7,
+            "terrainId": "dirt-on-grass"
+          },
+          {
+            "x": 9,
+            "y": 7,
+            "terrainId": "dirt-on-grass"
+          },
+          {
+            "x": 10,
+            "y": 7,
+            "terrainId": "dirt-on-grass"
+          },
+          {
+            "x": 11,
+            "y": 7,
+            "terrainId": "dirt-on-grass"
+          },
+          {
+            "x": 12,
+            "y": 7,
+            "terrainId": "dirt-on-grass"
+          },
+          {
+            "x": 13,
+            "y": 7,
+            "terrainId": "dirt-on-grass"
+          },
+          {
+            "x": 0,
+            "y": 8,
+            "terrainId": "dirt-on-grass"
+          },
+          {
+            "x": 1,
+            "y": 8,
+            "terrainId": "dirt-on-grass"
+          },
+          {
+            "x": 2,
+            "y": 8,
+            "terrainId": "dirt-on-grass"
+          },
+          {
+            "x": 3,
+            "y": 8,
+            "terrainId": "dirt-on-grass"
+          },
+          {
+            "x": 4,
+            "y": 8,
+            "terrainId": "dirt-on-grass"
+          },
+          {
+            "x": 5,
+            "y": 8,
+            "terrainId": "dirt-on-grass"
+          },
+          {
+            "x": 6,
+            "y": 8,
+            "terrainId": "dirt-on-grass"
+          },
+          {
+            "x": 7,
+            "y": 8,
+            "terrainId": "dirt-on-grass"
+          },
+          {
+            "x": 8,
+            "y": 8,
+            "terrainId": "wooden-pit"
+          },
+          {
+            "x": 9,
+            "y": 8,
+            "terrainId": "dirt-on-grass"
+          },
+          {
+            "x": 10,
+            "y": 8,
+            "terrainId": "dirt-on-grass"
+          },
+          {
+            "x": 11,
+            "y": 8,
+            "terrainId": "dirt-on-grass"
+          },
+          {
+            "x": 12,
+            "y": 8,
+            "terrainId": "dirt-on-grass"
+          },
+          {
+            "x": 13,
+            "y": 8,
+            "terrainId": "dirt-on-grass"
+          },
+          {
+            "x": 0,
+            "y": 9,
+            "terrainId": "dirt-on-grass"
+          },
+          {
+            "x": 1,
+            "y": 9,
+            "terrainId": "dirt-on-grass"
+          },
+          {
+            "x": 2,
+            "y": 9,
+            "terrainId": "dirt-on-grass"
+          },
+          {
+            "x": 3,
+            "y": 9,
+            "terrainId": "dirt-on-grass"
+          },
+          {
+            "x": 4,
+            "y": 9,
+            "terrainId": "dirt-on-grass"
+          },
+          {
+            "x": 5,
+            "y": 9,
+            "terrainId": "dirt-on-grass"
+          },
+          {
+            "x": 6,
+            "y": 9,
+            "terrainId": "dirt-on-grass"
+          },
+          {
+            "x": 7,
+            "y": 9,
+            "terrainId": "dirt-on-grass"
+          },
+          {
+            "x": 8,
+            "y": 9,
+            "terrainId": "dirt-on-grass"
+          },
+          {
+            "x": 9,
+            "y": 9,
+            "terrainId": "dirt-on-grass"
+          },
+          {
+            "x": 10,
+            "y": 9,
+            "terrainId": "dirt-on-grass"
+          },
+          {
+            "x": 11,
+            "y": 9,
+            "terrainId": "dirt-on-grass"
+          },
+          {
+            "x": 12,
+            "y": 9,
+            "terrainId": "dirt-on-grass"
+          },
+          {
+            "x": 13,
+            "y": 9,
+            "terrainId": "dirt-on-grass"
+          }
+        ]
+      },
+      {
+        "id": "lower-fences",
+        "name": "Clôtures du sentier",
+        "tileset": "outside-a2",
+        "planeId": "lower-trail",
+        "renderPhase": "belowActors",
+        "tiles": [
+          {
+            "x": 10,
+            "y": 7,
+            "terrainId": "stone-fence"
+          },
+          {
+            "x": 10,
+            "y": 8,
+            "terrainId": "stone-fence"
+          }
+        ]
+      },
+      {
+        "id": "bridge-surface",
+        "name": "Tablier de la passerelle",
+        "tileset": "outside-a2",
+        "planeId": "raised-bridge",
+        "renderPhase": "belowActors",
+        "tiles": [
+          {
+            "x": 14,
+            "y": 7,
+            "terrainId": "wooden-bridge"
+          },
+          {
+            "x": 15,
+            "y": 7,
+            "terrainId": "wooden-bridge"
+          },
+          {
+            "x": 16,
+            "y": 7,
+            "terrainId": "wooden-bridge"
+          },
+          {
+            "x": 17,
+            "y": 7,
+            "terrainId": "wooden-bridge"
+          },
+          {
+            "x": 18,
+            "y": 7,
+            "terrainId": "wooden-bridge"
+          },
+          {
+            "x": 19,
+            "y": 7,
+            "terrainId": "wooden-bridge"
+          },
+          {
+            "x": 20,
+            "y": 7,
+            "terrainId": "wooden-bridge"
+          },
+          {
+            "x": 21,
+            "y": 7,
+            "terrainId": "wooden-bridge"
+          },
+          {
+            "x": 22,
+            "y": 7,
+            "terrainId": "wooden-bridge"
+          },
+          {
+            "x": 23,
+            "y": 7,
+            "terrainId": "wooden-bridge"
+          },
+          {
+            "x": 24,
+            "y": 7,
+            "terrainId": "wooden-bridge"
+          },
+          {
+            "x": 25,
+            "y": 7,
+            "terrainId": "wooden-bridge"
+          },
+          {
+            "x": 26,
+            "y": 7,
+            "terrainId": "wooden-bridge"
+          },
+          {
+            "x": 14,
+            "y": 8,
+            "terrainId": "wooden-bridge"
+          },
+          {
+            "x": 15,
+            "y": 8,
+            "terrainId": "wooden-bridge"
+          },
+          {
+            "x": 16,
+            "y": 8,
+            "terrainId": "wooden-bridge"
+          },
+          {
+            "x": 17,
+            "y": 8,
+            "terrainId": "wooden-bridge"
+          },
+          {
+            "x": 18,
+            "y": 8,
+            "terrainId": "wooden-bridge"
+          },
+          {
+            "x": 19,
+            "y": 8,
+            "terrainId": "wooden-bridge"
+          },
+          {
+            "x": 20,
+            "y": 8,
+            "terrainId": "wooden-bridge"
+          },
+          {
+            "x": 21,
+            "y": 8,
+            "terrainId": "wooden-bridge"
+          },
+          {
+            "x": 22,
+            "y": 8,
+            "terrainId": "wooden-bridge"
+          },
+          {
+            "x": 23,
+            "y": 8,
+            "terrainId": "wooden-bridge"
+          },
+          {
+            "x": 24,
+            "y": 8,
+            "terrainId": "wooden-bridge"
+          },
+          {
+            "x": 25,
+            "y": 8,
+            "terrainId": "wooden-bridge"
+          },
+          {
+            "x": 26,
+            "y": 8,
+            "terrainId": "wooden-bridge"
+          },
+          {
+            "x": 14,
+            "y": 9,
+            "terrainId": "wooden-bridge"
+          },
+          {
+            "x": 15,
+            "y": 9,
+            "terrainId": "wooden-bridge"
+          },
+          {
+            "x": 16,
+            "y": 9,
+            "terrainId": "wooden-bridge"
+          },
+          {
+            "x": 17,
+            "y": 9,
+            "terrainId": "wooden-bridge"
+          },
+          {
+            "x": 18,
+            "y": 9,
+            "terrainId": "wooden-bridge"
+          },
+          {
+            "x": 19,
+            "y": 9,
+            "terrainId": "wooden-bridge"
+          },
+          {
+            "x": 20,
+            "y": 9,
+            "terrainId": "wooden-bridge"
+          },
+          {
+            "x": 21,
+            "y": 9,
+            "terrainId": "wooden-bridge"
+          },
+          {
+            "x": 22,
+            "y": 9,
+            "terrainId": "wooden-bridge"
+          },
+          {
+            "x": 23,
+            "y": 9,
+            "terrainId": "wooden-bridge"
+          },
+          {
+            "x": 24,
+            "y": 9,
+            "terrainId": "wooden-bridge"
+          },
+          {
+            "x": 25,
+            "y": 9,
+            "terrainId": "wooden-bridge"
+          },
+          {
+            "x": 26,
+            "y": 9,
+            "terrainId": "wooden-bridge"
+          }
+        ]
+      },
+      {
+        "id": "bridge-fences",
+        "name": "Garde-corps",
+        "tileset": "outside-a2",
+        "planeId": "raised-bridge",
+        "renderPhase": "aboveActors",
+        "tiles": [
+          {
+            "x": 20,
+            "y": 7,
+            "terrainId": "stone-fence"
+          },
+          {
+            "x": 20,
+            "y": 8,
+            "terrainId": "stone-fence"
+          }
+        ]
+      }
+    ],
+    "planeConnections": [
+      {
+        "id": "trail-to-bridge",
+        "from": {
+          "planeId": "lower-trail",
+          "x": 13,
+          "y": 8,
+          "edge": "east"
+        },
+        "to": {
+          "planeId": "raised-bridge",
+          "x": 14,
+          "y": 8,
+          "edge": "west"
+        },
+        "bidirectional": true
+      }
+    ],
+    "navigationOverrides": [
+      {
+        "planeId": "lower-trail",
+        "x": 10,
+        "y": 8,
+        "edges": {
+          "east": "open"
+        }
+      },
+      {
+        "planeId": "lower-trail",
+        "x": 5,
+        "y": 8,
+        "edges": {
+          "south": "blocked"
+        }
+      }
+    ],
+    "events": [
+      {
+        "id": "exit-west",
+        "position": {
+          "x": 0.5,
+          "y": 8,
+          "planeId": "lower-trail"
+        },
+        "scriptId": "event.exit-path-west",
+        "trigger": {
+          "type": "playerEnter",
+          "size": {
+            "w": 1,
+            "h": 4
+          }
+        },
+        "execution": {
+          "mode": "repeat"
+        },
+        "visual": {
+          "type": "exit"
+        }
+      },
+      {
+        "id": "exit-east",
+        "position": {
+          "x": 26.5,
+          "y": 8,
+          "planeId": "raised-bridge"
+        },
+        "scriptId": "event.exit-path-east",
+        "trigger": {
+          "type": "playerEnter",
+          "size": {
+            "w": 1,
+            "h": 4
+          }
+        },
+        "execution": {
+          "mode": "repeat"
+        },
+        "visual": {
+          "type": "exit"
+        }
+      },
+      {
+        "id": "wayfinder",
+        "position": {
+          "x": 12,
+          "y": 7,
+          "planeId": "lower-trail"
+        },
+        "scriptId": "event.demo-path",
+        "trigger": {
+          "type": "interact",
+          "radius": 1.25
+        },
+        "execution": {
+          "mode": "repeat"
+        },
+        "visual": {
+          "type": "npc",
+          "name": "Cartographe",
+          "color": "#70c1b3",
+          "radius": 18
+        }
+      }
+    ],
+    "blockedRegions": [
+      {
+        "planeId": "lower-trail",
+        "x": 6,
+        "y": 9,
+        "w": 2,
+        "h": 1
+      }
+    ],
+    "enemySpawns": [
+      {
+        "enemyId": "slime",
+        "x": 7,
+        "y": 8,
+        "planeId": "lower-trail"
+      },
+      {
+        "enemyId": "slime",
+        "x": 12,
+        "y": 9,
+        "planeId": "lower-trail"
+      },
+      {
+        "enemyId": "beetle",
+        "x": 20,
+        "y": 8,
+        "planeId": "raised-bridge"
+      },
+      {
+        "enemyId": "wisp",
+        "x": 23,
+        "y": 9,
+        "planeId": "raised-bridge"
+      }
+    ]
+  },
+  "sanctuary": {
+    "id": "sanctuary",
+    "name": "Sanctuaire des Sources",
+    "ground": "#223b58",
+    "accent": "#2e4c6d",
+    "tileSize": 48,
+    "bounds": {
+      "x": 0,
+      "y": 0,
+      "w": 27,
+      "h": 15
+    },
+    "planes": [
+      {
+        "id": "gallery",
+        "name": "Galerie noyée",
+        "order": 0,
+        "surfaceLayerId": "surface",
+        "surfaceCoverage": "bounds"
+      },
+      {
+        "id": "bell-terrace",
+        "name": "Terrasse des cloches",
+        "order": 1,
+        "surfaceLayerId": "terrace-surface",
+        "surfaceCoverage": "painted"
+      }
+    ],
+    "tileLayers": [
+      {
+        "id": "surface",
+        "name": "Surface",
+        "tileset": "outside-a2",
+        "planeId": "gallery",
+        "renderPhase": "belowActors",
+        "tiles": []
+      },
+      {
+        "id": "terrace-surface",
+        "name": "Toiture praticable",
+        "tileset": "outside-a2",
+        "planeId": "bell-terrace",
+        "renderPhase": "belowActors",
+        "tiles": [
+          {
+            "x": 9,
+            "y": 3,
+            "terrainId": "stone-frame-on-grass"
+          },
+          {
+            "x": 10,
+            "y": 3,
+            "terrainId": "stone-frame-on-grass"
+          },
+          {
+            "x": 11,
+            "y": 3,
+            "terrainId": "stone-frame-on-grass"
+          },
+          {
+            "x": 12,
+            "y": 3,
+            "terrainId": "stone-frame-on-grass"
+          },
+          {
+            "x": 13,
+            "y": 3,
+            "terrainId": "stone-frame-on-grass"
+          },
+          {
+            "x": 14,
+            "y": 3,
+            "terrainId": "stone-frame-on-grass"
+          },
+          {
+            "x": 15,
+            "y": 3,
+            "terrainId": "stone-frame-on-grass"
+          },
+          {
+            "x": 16,
+            "y": 3,
+            "terrainId": "stone-frame-on-grass"
+          },
+          {
+            "x": 17,
+            "y": 3,
+            "terrainId": "stone-frame-on-grass"
+          },
+          {
+            "x": 9,
+            "y": 4,
+            "terrainId": "stone-frame-on-grass"
+          },
+          {
+            "x": 10,
+            "y": 4,
+            "terrainId": "stone-frame-on-grass"
+          },
+          {
+            "x": 11,
+            "y": 4,
+            "terrainId": "stone-frame-on-grass"
+          },
+          {
+            "x": 12,
+            "y": 4,
+            "terrainId": "stone-frame-on-grass"
+          },
+          {
+            "x": 13,
+            "y": 4,
+            "terrainId": "stone-frame-on-grass"
+          },
+          {
+            "x": 14,
+            "y": 4,
+            "terrainId": "stone-frame-on-grass"
+          },
+          {
+            "x": 15,
+            "y": 4,
+            "terrainId": "stone-frame-on-grass"
+          },
+          {
+            "x": 16,
+            "y": 4,
+            "terrainId": "stone-frame-on-grass"
+          },
+          {
+            "x": 17,
+            "y": 4,
+            "terrainId": "stone-frame-on-grass"
+          },
+          {
+            "x": 9,
+            "y": 5,
+            "terrainId": "stone-frame-on-grass"
+          },
+          {
+            "x": 10,
+            "y": 5,
+            "terrainId": "stone-frame-on-grass"
+          },
+          {
+            "x": 11,
+            "y": 5,
+            "terrainId": "stone-frame-on-grass"
+          },
+          {
+            "x": 12,
+            "y": 5,
+            "terrainId": "stone-frame-on-grass"
+          },
+          {
+            "x": 13,
+            "y": 5,
+            "terrainId": "stone-frame-on-grass"
+          },
+          {
+            "x": 14,
+            "y": 5,
+            "terrainId": "stone-frame-on-grass"
+          },
+          {
+            "x": 15,
+            "y": 5,
+            "terrainId": "stone-frame-on-grass"
+          },
+          {
+            "x": 16,
+            "y": 5,
+            "terrainId": "stone-frame-on-grass"
+          },
+          {
+            "x": 17,
+            "y": 5,
+            "terrainId": "stone-frame-on-grass"
+          },
+          {
+            "x": 9,
+            "y": 6,
+            "terrainId": "stone-frame-on-grass"
+          },
+          {
+            "x": 10,
+            "y": 6,
+            "terrainId": "stone-frame-on-grass"
+          },
+          {
+            "x": 11,
+            "y": 6,
+            "terrainId": "stone-frame-on-grass"
+          },
+          {
+            "x": 12,
+            "y": 6,
+            "terrainId": "stone-frame-on-grass"
+          },
+          {
+            "x": 13,
+            "y": 6,
+            "terrainId": "dark-pit"
+          },
+          {
+            "x": 14,
+            "y": 6,
+            "terrainId": "stone-frame-on-grass"
+          },
+          {
+            "x": 15,
+            "y": 6,
+            "terrainId": "stone-frame-on-grass"
+          },
+          {
+            "x": 16,
+            "y": 6,
+            "terrainId": "stone-frame-on-grass"
+          },
+          {
+            "x": 17,
+            "y": 6,
+            "terrainId": "stone-frame-on-grass"
+          },
+          {
+            "x": 9,
+            "y": 7,
+            "terrainId": "stone-frame-on-grass"
+          },
+          {
+            "x": 10,
+            "y": 7,
+            "terrainId": "stone-frame-on-grass"
+          },
+          {
+            "x": 11,
+            "y": 7,
+            "terrainId": "stone-frame-on-grass"
+          },
+          {
+            "x": 12,
+            "y": 7,
+            "terrainId": "stone-frame-on-grass"
+          },
+          {
+            "x": 13,
+            "y": 7,
+            "terrainId": "stone-frame-on-grass"
+          },
+          {
+            "x": 14,
+            "y": 7,
+            "terrainId": "stone-frame-on-grass"
+          },
+          {
+            "x": 15,
+            "y": 7,
+            "terrainId": "stone-frame-on-grass"
+          },
+          {
+            "x": 16,
+            "y": 7,
+            "terrainId": "stone-frame-on-grass"
+          },
+          {
+            "x": 17,
+            "y": 7,
+            "terrainId": "stone-frame-on-grass"
+          },
+          {
+            "x": 9,
+            "y": 8,
+            "terrainId": "stone-frame-on-grass"
+          },
+          {
+            "x": 10,
+            "y": 8,
+            "terrainId": "stone-frame-on-grass"
+          },
+          {
+            "x": 11,
+            "y": 8,
+            "terrainId": "stone-frame-on-grass"
+          },
+          {
+            "x": 12,
+            "y": 8,
+            "terrainId": "stone-frame-on-grass"
+          },
+          {
+            "x": 13,
+            "y": 8,
+            "terrainId": "stone-frame-on-grass"
+          },
+          {
+            "x": 14,
+            "y": 8,
+            "terrainId": "stone-frame-on-grass"
+          },
+          {
+            "x": 15,
+            "y": 8,
+            "terrainId": "stone-frame-on-grass"
+          },
+          {
+            "x": 16,
+            "y": 8,
+            "terrainId": "stone-frame-on-grass"
+          },
+          {
+            "x": 17,
+            "y": 8,
+            "terrainId": "stone-frame-on-grass"
+          }
+        ]
+      },
+      {
+        "id": "terrace-parapet",
+        "name": "Parapet au premier plan",
+        "tileset": "outside-a2",
+        "planeId": "bell-terrace",
+        "renderPhase": "aboveActors",
+        "tiles": [
+          {
+            "x": 9,
+            "y": 3,
+            "terrainId": "stone-fence"
+          },
+          {
+            "x": 10,
+            "y": 3,
+            "terrainId": "stone-fence"
+          },
+          {
+            "x": 11,
+            "y": 3,
+            "terrainId": "stone-fence"
+          },
+          {
+            "x": 12,
+            "y": 3,
+            "terrainId": "stone-fence"
+          },
+          {
+            "x": 13,
+            "y": 3,
+            "terrainId": "stone-fence"
+          },
+          {
+            "x": 14,
+            "y": 3,
+            "terrainId": "stone-fence"
+          },
+          {
+            "x": 15,
+            "y": 3,
+            "terrainId": "stone-fence"
+          },
+          {
+            "x": 16,
+            "y": 3,
+            "terrainId": "stone-fence"
+          },
+          {
+            "x": 17,
+            "y": 3,
+            "terrainId": "stone-fence"
+          }
+        ]
+      }
+    ],
+    "planeConnections": [
+      {
+        "id": "gallery-to-terrace",
+        "from": {
+          "planeId": "gallery",
+          "x": 8,
+          "y": 8,
+          "edge": "east"
+        },
+        "to": {
+          "planeId": "bell-terrace",
+          "x": 9,
+          "y": 8,
+          "edge": "west"
+        },
+        "bidirectional": true
+      }
+    ],
+    "navigationOverrides": [
+      {
+        "planeId": "gallery",
+        "x": 9,
+        "y": 8,
+        "cell": "blocked"
+      }
+    ],
+    "events": [
+      {
+        "id": "exit-west",
+        "position": {
+          "x": 0.5,
+          "y": 8,
+          "planeId": "gallery"
+        },
+        "scriptId": "event.exit-sanctuary-west",
+        "trigger": {
+          "type": "playerEnter",
+          "size": {
+            "w": 1,
+            "h": 4
+          }
+        },
+        "execution": {
+          "mode": "repeat"
+        },
+        "visual": {
+          "type": "exit"
+        }
+      },
+      {
+        "id": "keyChest",
+        "position": {
+          "x": 14,
+          "y": 5,
+          "planeId": "bell-terrace"
+        },
+        "scriptId": "event.key-chest",
+        "trigger": {
+          "type": "interact",
+          "radius": 1.25
+        },
+        "execution": {
+          "mode": "repeat"
+        },
+        "activeWhen": [
+          {
+            "kind": "flag",
+            "id": "keyChestOpened",
+            "equals": false
+          }
+        ],
+        "visual": {
+          "type": "chest",
+          "name": "Coffre ancien",
+          "color": "#d8a74a",
+          "radius": 18
+        }
+      },
+      {
+        "id": "door",
+        "position": {
+          "x": 24,
+          "y": 8,
+          "planeId": "gallery"
+        },
+        "scriptId": "event.guardian-door",
+        "trigger": {
+          "type": "interact",
+          "radius": 1.4
+        },
+        "execution": {
+          "mode": "repeat"
+        },
+        "activeWhen": [
+          {
+            "kind": "flag",
+            "id": "guardianDoorOpen",
+            "equals": false
+          }
+        ],
+        "visual": {
+          "type": "door",
+          "name": "Porte du gardien",
+          "color": "#b7d5ec",
+          "radius": 25
+        }
+      },
+      {
+        "id": "gallery-guide",
+        "position": {
+          "x": 6,
+          "y": 8,
+          "planeId": "gallery"
+        },
+        "scriptId": "event.demo-gallery",
+        "trigger": {
+          "type": "interact",
+          "radius": 1.25
+        },
+        "execution": {
+          "mode": "repeat"
+        },
+        "visual": {
+          "type": "npc",
+          "name": "Veilleur de la galerie",
+          "color": "#7aa2d6",
+          "radius": 18
+        }
+      },
+      {
+        "id": "terrace-guide",
+        "position": {
+          "x": 11,
+          "y": 5,
+          "planeId": "bell-terrace"
+        },
+        "scriptId": "event.demo-terrace",
+        "trigger": {
+          "type": "interact",
+          "radius": 1.25
+        },
+        "execution": {
+          "mode": "repeat"
+        },
+        "visual": {
+          "type": "npc",
+          "name": "Sonneur des cloches",
+          "color": "#d6b56f",
+          "radius": 18
+        }
+      }
+    ],
+    "blockedRegions": [
+      {
+        "planeId": "gallery",
+        "x": 7,
+        "y": 2,
+        "w": 4,
+        "h": 5
+      },
+      {
+        "planeId": "gallery",
+        "x": 18,
+        "y": 2,
+        "w": 4,
+        "h": 4
+      },
+      {
+        "planeId": "gallery",
+        "x": 17,
+        "y": 10,
+        "w": 5,
+        "h": 3
+      }
+    ],
+    "enemySpawns": [
+      {
+        "enemyId": "slime",
+        "x": 6,
+        "y": 9,
+        "planeId": "gallery"
+      },
+      {
+        "enemyId": "beetle",
+        "x": 12,
+        "y": 10,
+        "planeId": "gallery"
+      },
+      {
+        "enemyId": "wisp",
+        "x": 15,
+        "y": 6,
+        "planeId": "bell-terrace"
+      }
+    ]
+  },
+  "arena": {
+    "id": "arena",
+    "name": "Arène du Gardien",
+    "ground": "#3d334f",
+    "accent": "#54446a",
+    "tileSize": 48,
+    "bounds": {
+      "x": 0,
+      "y": 0,
+      "w": 27,
+      "h": 15
+    },
+    "planes": [
+      {
+        "id": "guardian-ring",
+        "name": "Cercle du Gardien",
+        "order": 0,
+        "surfaceLayerId": "surface",
+        "surfaceCoverage": "bounds"
+      }
+    ],
+    "tileLayers": [
+      {
+        "id": "surface",
+        "name": "Surface",
+        "tileset": "outside-a2",
+        "planeId": "guardian-ring",
+        "renderPhase": "belowActors",
+        "tiles": []
+      }
+    ],
+    "planeConnections": [],
+    "navigationOverrides": [],
+    "events": [
+      {
+        "id": "exit-west",
+        "position": {
+          "x": 0.5,
+          "y": 8,
+          "planeId": "guardian-ring"
+        },
+        "scriptId": "event.exit-arena-west",
+        "trigger": {
+          "type": "playerEnter",
+          "size": {
+            "w": 1,
+            "h": 4
+          }
+        },
+        "execution": {
+          "mode": "repeat"
+        },
+        "visual": {
+          "type": "exit"
+        }
+      },
+      {
+        "id": "exit-east",
+        "position": {
+          "x": 26.5,
+          "y": 8,
+          "planeId": "guardian-ring"
+        },
+        "scriptId": "event.exit-arena-east",
+        "trigger": {
+          "type": "playerEnter",
+          "size": {
+            "w": 1,
+            "h": 4
+          }
+        },
+        "execution": {
+          "mode": "repeat"
+        },
+        "visual": {
+          "type": "exit"
+        }
+      }
+    ],
+    "blockedRegions": [],
+    "enemySpawns": [
+      {
+        "enemyId": "guardian",
+        "x": 19,
+        "y": 8,
+        "planeId": "guardian-ring"
+      }
+    ],
+    "deathDestination": {
+      "mapId": "sanctuary",
+      "spawn": {
+        "x": 3,
+        "y": 8,
+        "planeId": "gallery"
+      }
+    }
+  },
+  "empty-map": {
+    "id": "empty-map",
+    "name": "Carte vide",
+    "ground": "#172033",
+    "accent": "#6ee7b7",
+    "tileSize": 48,
+    "bounds": {
+      "x": 0,
+      "y": 0,
+      "w": 20,
+      "h": 15
+    },
+    "planes": [
+      {
+        "id": "empty-plane",
+        "name": "Plan 1",
+        "order": 0,
+        "surfaceLayerId": "surface",
+        "surfaceCoverage": "bounds"
+      }
+    ],
+    "tileLayers": [
+      {
+        "id": "surface",
+        "name": "Surface",
+        "tileset": "outside-a2",
+        "planeId": "empty-plane",
+        "renderPhase": "belowActors",
+        "tiles": []
+      }
+    ],
+    "planeConnections": [],
+    "navigationOverrides": [],
+    "events": [],
+    "blockedRegions": [],
+    "enemySpawns": []
+  }
+}

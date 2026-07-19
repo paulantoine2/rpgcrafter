@@ -1,0 +1,7 @@
+{
+  "quest.bell-of-mist": {
+    "name": "La Cloche des Brumes",
+    "states": ["inactive", "reach_sanctuary", "open_door", "defeat_guardian", "return_to_mayor", "completed"],
+    "reward": { "story": "La brume se dissipe." }
+  }
+}

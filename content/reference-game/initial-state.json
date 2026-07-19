@@ -1,0 +1,6 @@
+{
+  "flags": { "keyChestOpened": false, "guardianDoorOpen": false, "bossDefeated": false },
+  "quests": { "quest.bell-of-mist": "inactive" },
+  "inventory": { "item.hero-sword": 1, "item.leather-cloak": 1, "item.potion": 1 },
+  "equipment": { "weapon": "item.hero-sword", "armor": "item.leather-cloak", "accessory": null }
+}

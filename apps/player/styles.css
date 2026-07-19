@@ -1,0 +1,60 @@
+:root {
+  color-scheme: dark;
+  --ui-font: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --ui-page: #0d1220;
+  --ui-panel: #121b2d;
+  --ui-border: #3a4c72;
+  --ui-text: #eff4ff;
+  --ui-accent: #9fc6ff;
+  --ui-health: #f05b75;
+  font-family: var(--ui-font);
+  background: #000;
+  color: var(--ui-text);
+}
+
+* { box-sizing: border-box; }
+
+html, body { width: 100%; height: 100%; overflow: hidden; }
+body { margin: 0; min-width: 320px; background: #000; }
+button { font: inherit; }
+
+.shell { width: 100vw; height: 100vh; }
+.topbar, .below-game, .controls { display: none; }
+.topbar { justify-content: space-between; gap: 24px; margin-bottom: 18px; }
+h1 { margin: 2px 0 0; font-size: clamp(1.35rem, 3vw, 2rem); letter-spacing: -0.04em; }
+.eyebrow { margin: 0; color: #8ea5cc; font-size: .72rem; font-weight: 800; letter-spacing: .11em; text-transform: uppercase; }
+
+.game-frame { width: 100vw; height: 100vh; display: grid; place-items: center; overflow: hidden; background: #000; }
+.game-viewport { position: relative; width: min(100vw, calc(100vh * 16 / 9)); height: min(100vh, calc(100vw * 9 / 16)); overflow: hidden; background: #101928; }
+canvas { display: block; width: 100%; height: 100%; image-rendering: pixelated; }
+.dev-grid-toggle { position: absolute; top: 14px; right: 14px; z-index: 2; padding: 7px 10px; color: #dbeafe; border: 1px solid #7ca5c8; border-radius: 6px; background: #07101cd9; font-size: .75rem; font-weight: 750; cursor: pointer; }
+.dev-grid-toggle[aria-pressed="true"] { color: #06121d; background: #a9e6ff; border-color: #a9e6ff; }
+.dialogue { position: absolute; left: 3.5%; right: 3.5%; bottom: 4%; padding: 17px 20px 12px; background: #0b1020ed; border: 1px solid #728ac0; border-radius: 12px; box-shadow: 0 9px 26px #0008; }
+.dialogue p { margin: 0; }
+#dialogue-speaker { color: var(--ui-accent); font-weight: 800; margin-bottom: 7px; }
+#dialogue-text { line-height: 1.48; }
+.continue-hint { color: #a5b4d1; font-size: .78rem; margin-top: 12px !important; text-align: right; }
+.dialogue-choices { display: flex; gap: 8px; margin-top: 12px; }
+.dialogue-choices button { padding: 7px 10px; color: #08101e; border: 0; border-radius: 7px; background: #b8d9ff; font-weight: 750; cursor: pointer; }
+.hidden { display: none; }
+.toast { position: absolute; left: 50%; top: 6%; transform: translateX(-50%); padding: 9px 13px; background: #14233de8; border: 1px solid #769ee1; border-radius: 99px; font-size: .85rem; font-weight: 750; white-space: nowrap; }
+
+.below-game { justify-content: space-between; gap: 14px; margin-top: 13px; }
+.objective-card, .status-card { border: 1px solid var(--ui-border); border-radius: 10px; background: var(--ui-panel); padding: 11px 13px; }
+.objective-card { flex: 1; }.objective-card p:last-child { margin: 4px 0 0; }
+.status-card { display: grid; gap: 6px; color: #b8c6df; font-size: .82rem; }
+
+.controls { margin-top: 18px; color: #b8c6df; font-size: .78rem; line-height: 1.5; }
+.controls strong { color: #fff; margin-right: 8px; }
+
+.pause-menu { position: absolute; inset: 7%; display: flex; flex-direction: column; gap: 14px; padding: 22px; overflow: auto; background: color-mix(in srgb, var(--ui-panel) 94%, #000); border: 1px solid var(--ui-accent); border-radius: 14px; box-shadow: 0 20px 48px #000b; }
+.pause-menu.hidden { display: none; }
+.pause-tabs { display: flex; flex-wrap: wrap; gap: 7px; }
+.pause-tabs button { padding: 8px 11px; color: var(--ui-text); background: transparent; border: 1px solid var(--ui-border); border-radius: 7px; cursor: pointer; }
+.pause-tabs button.active, .pause-tabs button:hover { background: var(--ui-accent); color: #08101e; border-color: var(--ui-accent); }
+.pause-content { min-height: 170px; padding: 15px; border: 1px solid var(--ui-border); border-radius: 10px; background: #07101c80; }
+.pause-content h2 { margin: 0 0 12px; font-size: 1.1rem; }.pause-content p { margin: 6px 0; }.pause-list { display: grid; gap: 7px; margin: 0; padding: 0; list-style: none; }.pause-list li { padding: 8px 10px; border-radius: 7px; }.pause-list li.selected { background: color-mix(in srgb, var(--ui-accent) 25%, transparent); outline: 1px solid var(--ui-accent); }.pause-list small { color: #aebdda; }.pause-hint { margin: 0; color: #aebdda; font-size: .78rem; }
+
+@media (max-width: 720px) {
+  .dialogue { left: 2%; right: 2%; bottom: 2%; padding: 12px; font-size: .9rem; }.pause-menu { inset: 2%; padding: 15px; }
+}
