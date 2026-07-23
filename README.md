@@ -16,7 +16,7 @@ The project takes inspiration from RPG Maker's approachable, data-driven authori
 - **Visual authoring:** create maps, paint terrain, place events, and configure navigation without editing engine code.
 - **Data-driven games:** maps, actors, enemies, skills, items, quests, events, and UI configuration live in validated JSON files.
 - **Portable projects:** export a standalone ZIP containing the complete game package and its assets.
-- **Modern stack:** React, TypeScript, PixiJS, Vite, Zod, and npm workspaces.
+- **Modern stack:** React, TypeScript, PixiJS, Vite, Zod, and pnpm workspaces.
 - **Renderer-independent runtime:** gameplay rules and save data are kept separate from the PixiJS renderer.
 
 ## Current features
@@ -59,16 +59,16 @@ The Studio and Player are separate applications. Both consume the same game-pack
 ### Requirements
 
 - A current LTS version of Node.js
-- npm
+- pnpm 10
 
 ### Install and run
 
 ```bash
-npm install
-npm start
+pnpm install
+pnpm start
 ```
 
-This starts:
+This uses Turborepo to start both applications in parallel:
 
 - the Studio at <http://localhost:4174>;
 - the Player at <http://localhost:4173>.
@@ -78,16 +78,16 @@ In the Studio, choose **File > Open…** to load the bundled reference game. The
 You can also run each application separately:
 
 ```bash
-npm run dev:studio
-npm run dev:player
+pnpm dev:studio
+pnpm dev:player
 ```
 
 ## Development commands
 
 ```bash
-npm run check   # Type-check all workspaces
-npm test        # Run the test suites
-npm run build   # Build every application and package
+pnpm check   # Type-check all workspaces
+pnpm test    # Run the test suites
+pnpm build   # Build every application and package
 ```
 
 ## How game projects work

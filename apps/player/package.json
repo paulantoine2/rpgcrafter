@@ -11,7 +11,7 @@
     "preview": "vite preview --host 127.0.0.1 --port 4173"
   },
   "dependencies": {
-    "@rpgcrafter/game-schema": "*",
+    "@rpgcrafter/game-schema": "workspace:*",
     "pixi.js": "^8.19.0"
   },
   "devDependencies": {

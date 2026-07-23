@@ -3,17 +3,18 @@
   "private": true,
   "version": "0.6.0",
   "type": "module",
-  "workspaces": ["apps/*", "packages/*"],
+  "packageManager": "pnpm@10.33.0",
   "scripts": {
-    "start": "npm run dev",
-    "dev": "node scripts/dev.mjs",
-    "dev:studio": "npm run dev --workspace @rpgcrafter/studio",
-    "dev:player": "npm run dev --workspace @rpgcrafter/player",
-    "build": "npm run build --workspaces --if-present",
-    "check": "npm run check --workspaces --if-present",
-    "test": "npm run test --workspaces --if-present"
+    "start": "pnpm run dev",
+    "dev": "turbo run dev --filter=@rpgcrafter/studio",
+    "dev:studio": "pnpm --filter @rpgcrafter/studio run dev",
+    "dev:player": "pnpm --filter @rpgcrafter/player run dev",
+    "build": "pnpm --recursive --if-present run build",
+    "check": "pnpm --recursive --if-present run check",
+    "test": "pnpm --recursive --if-present run test"
   },
   "devDependencies": {
+    "turbo": "^2.10.6",
     "typescript": "5.9.3",
     "vitest": "^4.0.18"
   }

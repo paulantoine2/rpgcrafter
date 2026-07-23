@@ -1,0 +1,14 @@
+{
+  "$schema": "https://turbo.build/schema.json",
+  "tasks": {
+    "@rpgcrafter/studio#dev": {
+      "cache": false,
+      "persistent": true,
+      "with": ["@rpgcrafter/player#dev"]
+    },
+    "@rpgcrafter/player#dev": {
+      "cache": false,
+      "persistent": true
+    }
+  }
+}
