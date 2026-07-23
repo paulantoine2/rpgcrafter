@@ -1,0 +1,2828 @@
+{
+  "id": "rpg-maker-mz-dungeon-c",
+  "name": "Dungeon C",
+  "category": "RPG Maker MZ / Dungeon",
+  "kind": "grid",
+  "image": "tilesets/rpg-maker-mz/Dungeon_C.png",
+  "tileSize": 48,
+  "columns": 16,
+  "rows": 16,
+  "terrains": [
+    {
+      "id": "decorative-pillar-a-stone",
+      "name": "Decorative Pillar A (Stone)",
+      "origin": {
+        "column": 0,
+        "row": 0
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "decorative-pillar-b-stone",
+      "name": "Decorative Pillar B (Stone)",
+      "origin": {
+        "column": 1,
+        "row": 0
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "decorative-pillar-c-temple",
+      "name": "Decorative Pillar C (Temple)",
+      "origin": {
+        "column": 2,
+        "row": 0
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "decorative-pillar-d-rock-cave",
+      "name": "Decorative Pillar D (Rock Cave)",
+      "origin": {
+        "column": 3,
+        "row": 0
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "decorative-pillar-e-demon-castle",
+      "name": "Decorative Pillar E (Demon Castle)",
+      "origin": {
+        "column": 4,
+        "row": 0
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "decorative-pillar-f-fort",
+      "name": "Decorative Pillar F (Fort)",
+      "origin": {
+        "column": 5,
+        "row": 0
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "decorative-pillar-g-dirt-cave",
+      "name": "Decorative Pillar G (Dirt Cave)",
+      "origin": {
+        "column": 6,
+        "row": 0
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "decorative-pillar-h-factory",
+      "name": "Decorative Pillar H (Factory)",
+      "origin": {
+        "column": 7,
+        "row": 0
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "decorative-pillar-a-stone-2",
+      "name": "Decorative Pillar A (Stone)",
+      "origin": {
+        "column": 8,
+        "row": 0
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "decorative-pillar-b-stone-2",
+      "name": "Decorative Pillar B (Stone)",
+      "origin": {
+        "column": 9,
+        "row": 0
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "decorative-pillar-c-temple-2",
+      "name": "Decorative Pillar C (Temple)",
+      "origin": {
+        "column": 10,
+        "row": 0
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "decorative-pillar-d-rock-cave-2",
+      "name": "Decorative Pillar D (Rock Cave)",
+      "origin": {
+        "column": 11,
+        "row": 0
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "decorative-pillar-e-demon-castle-2",
+      "name": "Decorative Pillar E (Demon Castle)",
+      "origin": {
+        "column": 12,
+        "row": 0
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "decorative-pillar-f-fort-2",
+      "name": "Decorative Pillar F (Fort)",
+      "origin": {
+        "column": 13,
+        "row": 0
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "decorative-pillar-g-dirt-cave-2",
+      "name": "Decorative Pillar G (Dirt Cave)",
+      "origin": {
+        "column": 14,
+        "row": 0
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "decorative-pillar-h-factory-2",
+      "name": "Decorative Pillar H (Factory)",
+      "origin": {
+        "column": 15,
+        "row": 0
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "decorative-pillar-a-stone-3",
+      "name": "Decorative Pillar A (Stone)",
+      "origin": {
+        "column": 0,
+        "row": 1
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "decorative-pillar-b-stone-3",
+      "name": "Decorative Pillar B (Stone)",
+      "origin": {
+        "column": 1,
+        "row": 1
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "decorative-pillar-c-temple-3",
+      "name": "Decorative Pillar C (Temple)",
+      "origin": {
+        "column": 2,
+        "row": 1
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "decorative-pillar-d-rock-cave-3",
+      "name": "Decorative Pillar D (Rock Cave)",
+      "origin": {
+        "column": 3,
+        "row": 1
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "decorative-pillar-e-demon-castle-3",
+      "name": "Decorative Pillar E (Demon Castle)",
+      "origin": {
+        "column": 4,
+        "row": 1
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "decorative-pillar-f-fort-3",
+      "name": "Decorative Pillar F (Fort)",
+      "origin": {
+        "column": 5,
+        "row": 1
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "decorative-pillar-g-dirt-cave-3",
+      "name": "Decorative Pillar G (Dirt Cave)",
+      "origin": {
+        "column": 6,
+        "row": 1
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "decorative-pillar-h-factory-3",
+      "name": "Decorative Pillar H (Factory)",
+      "origin": {
+        "column": 7,
+        "row": 1
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "decorative-pillar-a-stone-ruins",
+      "name": "Decorative Pillar A (Stone, Ruins)",
+      "origin": {
+        "column": 8,
+        "row": 1
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "decorative-pillar-b-stone-ruins",
+      "name": "Decorative Pillar B (Stone, Ruins)",
+      "origin": {
+        "column": 9,
+        "row": 1
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "decorative-pillar-c-temple-ruins",
+      "name": "Decorative Pillar C (Temple, Ruins)",
+      "origin": {
+        "column": 10,
+        "row": 1
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "decorative-pillar-d-rock-cave-ruins",
+      "name": "Decorative Pillar D (Rock Cave, Ruins)",
+      "origin": {
+        "column": 11,
+        "row": 1
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "decorative-pillar-e-demon-castle-ruins",
+      "name": "Decorative Pillar E (Demon Castle, Ruins)",
+      "origin": {
+        "column": 12,
+        "row": 1
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "decorative-pillar-f-fort-ruins",
+      "name": "Decorative Pillar F (Fort, Ruins)",
+      "origin": {
+        "column": 13,
+        "row": 1
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "decorative-pillar-g-dirt-cave-ruins",
+      "name": "Decorative Pillar G (Dirt Cave, Ruins)",
+      "origin": {
+        "column": 14,
+        "row": 1
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "decorative-pillar-a-stone-front-ruins",
+      "name": "Decorative Pillar A (Stone, Front, Ruins)",
+      "origin": {
+        "column": 15,
+        "row": 1
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "decorative-pillar-a-stone-ruins-2",
+      "name": "Decorative Pillar A (Stone, Ruins)",
+      "origin": {
+        "column": 0,
+        "row": 2
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "decorative-pillar-b-stone-ruins-2",
+      "name": "Decorative Pillar B (Stone, Ruins)",
+      "origin": {
+        "column": 1,
+        "row": 2
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "decorative-pillar-c-temple-ruins-2",
+      "name": "Decorative Pillar C (Temple, Ruins)",
+      "origin": {
+        "column": 2,
+        "row": 2
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "decorative-pillar-d-rock-cave-ruins-2",
+      "name": "Decorative Pillar D (Rock Cave, Ruins)",
+      "origin": {
+        "column": 3,
+        "row": 2
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "decorative-pillar-e-demon-castle-ruins-2",
+      "name": "Decorative Pillar E (Demon Castle, Ruins)",
+      "origin": {
+        "column": 4,
+        "row": 2
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "decorative-pillar-f-fort-ruins-2",
+      "name": "Decorative Pillar F (Fort, Ruins)",
+      "origin": {
+        "column": 5,
+        "row": 2
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "decorative-pillar-g-dirt-cave-ruins-2",
+      "name": "Decorative Pillar G (Dirt Cave, Ruins)",
+      "origin": {
+        "column": 6,
+        "row": 2
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "decorative-pillar-d-rock-cave-front-ruins",
+      "name": "Decorative Pillar D (Rock Cave, Front, Ruins)",
+      "origin": {
+        "column": 7,
+        "row": 2
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "decorative-pillar-a-stone-ruins-3",
+      "name": "Decorative Pillar A (Stone, Ruins)",
+      "origin": {
+        "column": 8,
+        "row": 2
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "decorative-pillar-b-stone-ruins-3",
+      "name": "Decorative Pillar B (Stone, Ruins)",
+      "origin": {
+        "column": 9,
+        "row": 2
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "decorative-pillar-c-temple-ruins-3",
+      "name": "Decorative Pillar C (Temple, Ruins)",
+      "origin": {
+        "column": 10,
+        "row": 2
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "decorative-pillar-d-rock-cave-ruins-3",
+      "name": "Decorative Pillar D (Rock Cave, Ruins)",
+      "origin": {
+        "column": 11,
+        "row": 2
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "decorative-pillar-e-demon-castle-ruins-3",
+      "name": "Decorative Pillar E (Demon Castle, Ruins)",
+      "origin": {
+        "column": 12,
+        "row": 2
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "decorative-pillar-f-fort-ruins-3",
+      "name": "Decorative Pillar F (Fort, Ruins)",
+      "origin": {
+        "column": 13,
+        "row": 2
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "decorative-pillar-g-dirt-cave-ruins-3",
+      "name": "Decorative Pillar G (Dirt Cave, Ruins)",
+      "origin": {
+        "column": 14,
+        "row": 2
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "decorative-pillar-f-fort-front-ruins",
+      "name": "Decorative Pillar F (Fort, Front, Ruins)",
+      "origin": {
+        "column": 15,
+        "row": 2
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "decorative-pillar-a-stone-front",
+      "name": "Decorative Pillar A (Stone, Front)",
+      "origin": {
+        "column": 0,
+        "row": 3
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "decorative-pillar-b-stone-front",
+      "name": "Decorative Pillar B (Stone, Front)",
+      "origin": {
+        "column": 1,
+        "row": 3
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "decorative-pillar-c-temple-front",
+      "name": "Decorative Pillar C (Temple, Front)",
+      "origin": {
+        "column": 2,
+        "row": 3
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "decorative-pillar-d-rock-cave-front",
+      "name": "Decorative Pillar D (Rock Cave, Front)",
+      "origin": {
+        "column": 3,
+        "row": 3
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "decorative-pillar-e-demon-castle-front",
+      "name": "Decorative Pillar E (Demon Castle, Front)",
+      "origin": {
+        "column": 4,
+        "row": 3
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "decorative-pillar-f-fort-front",
+      "name": "Decorative Pillar F (Fort, Front)",
+      "origin": {
+        "column": 5,
+        "row": 3
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "decorative-pillar-g-dirt-cave-front",
+      "name": "Decorative Pillar G (Dirt Cave, Front)",
+      "origin": {
+        "column": 6,
+        "row": 3
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "decorative-pillar-h-factory-front",
+      "name": "Decorative Pillar H (Factory, Front)",
+      "origin": {
+        "column": 7,
+        "row": 3
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "gate-a",
+      "name": "Gate A",
+      "origin": {
+        "column": 8,
+        "row": 3
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "gate-a-2",
+      "name": "Gate A",
+      "origin": {
+        "column": 9,
+        "row": 3
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "gate-a-3",
+      "name": "Gate A",
+      "origin": {
+        "column": 10,
+        "row": 3
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "gate-b",
+      "name": "Gate B",
+      "origin": {
+        "column": 11,
+        "row": 3
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "gate-b-2",
+      "name": "Gate B",
+      "origin": {
+        "column": 12,
+        "row": 3
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "gate-b-3",
+      "name": "Gate B",
+      "origin": {
+        "column": 13,
+        "row": 3
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "decorative-pillar-i-demonic",
+      "name": "Decorative Pillar I (Demonic)",
+      "origin": {
+        "column": 14,
+        "row": 3
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "decorative-pillar-i-demonic-ruins",
+      "name": "Decorative Pillar I (Demonic, Ruins)",
+      "origin": {
+        "column": 15,
+        "row": 3
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "gate-a-4",
+      "name": "Gate A",
+      "origin": {
+        "column": 0,
+        "row": 4
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "gate-a-5",
+      "name": "Gate A",
+      "origin": {
+        "column": 1,
+        "row": 4
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "gate-a-6",
+      "name": "Gate A",
+      "origin": {
+        "column": 2,
+        "row": 4
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "gate-b-4",
+      "name": "Gate B",
+      "origin": {
+        "column": 3,
+        "row": 4
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "gate-b-5",
+      "name": "Gate B",
+      "origin": {
+        "column": 4,
+        "row": 4
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "gate-b-6",
+      "name": "Gate B",
+      "origin": {
+        "column": 5,
+        "row": 4
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "decorative-pillar-i-demonic-2",
+      "name": "Decorative Pillar I (Demonic)",
+      "origin": {
+        "column": 6,
+        "row": 4
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "decorative-pillar-i-demonic-ruins-2",
+      "name": "Decorative Pillar I (Demonic, Ruins)",
+      "origin": {
+        "column": 7,
+        "row": 4
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "gate-a-7",
+      "name": "Gate A",
+      "origin": {
+        "column": 8,
+        "row": 4
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "gate-a-8",
+      "name": "Gate A",
+      "origin": {
+        "column": 9,
+        "row": 4
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "gate-a-9",
+      "name": "Gate A",
+      "origin": {
+        "column": 10,
+        "row": 4
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "gate-b-7",
+      "name": "Gate B",
+      "origin": {
+        "column": 11,
+        "row": 4
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "gate-b-8",
+      "name": "Gate B",
+      "origin": {
+        "column": 12,
+        "row": 4
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "gate-b-9",
+      "name": "Gate B",
+      "origin": {
+        "column": 13,
+        "row": 4
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "coffin-a-right",
+      "name": "Coffin A (Right)",
+      "origin": {
+        "column": 14,
+        "row": 4
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "coffin-a-right-2",
+      "name": "Coffin A (Right)",
+      "origin": {
+        "column": 15,
+        "row": 4
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "hexagram",
+      "name": "Hexagram",
+      "origin": {
+        "column": 0,
+        "row": 5
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "hexagram-2",
+      "name": "Hexagram",
+      "origin": {
+        "column": 1,
+        "row": 5
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "hexagram-3",
+      "name": "Hexagram",
+      "origin": {
+        "column": 2,
+        "row": 5
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "hexagram-lit",
+      "name": "Hexagram (Lit)",
+      "origin": {
+        "column": 3,
+        "row": 5
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "hexagram-lit-2",
+      "name": "Hexagram (Lit)",
+      "origin": {
+        "column": 4,
+        "row": 5
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "hexagram-lit-3",
+      "name": "Hexagram (Lit)",
+      "origin": {
+        "column": 5,
+        "row": 5
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "coffin-b-top",
+      "name": "Coffin B (Top)",
+      "origin": {
+        "column": 6,
+        "row": 5
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "coffin-c-bottom",
+      "name": "Coffin C (Bottom)",
+      "origin": {
+        "column": 7,
+        "row": 5
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "hexagram-4",
+      "name": "Hexagram",
+      "origin": {
+        "column": 8,
+        "row": 5
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "hexagram-5",
+      "name": "Hexagram",
+      "origin": {
+        "column": 9,
+        "row": 5
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "hexagram-6",
+      "name": "Hexagram",
+      "origin": {
+        "column": 10,
+        "row": 5
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "hexagram-lit-4",
+      "name": "Hexagram (Lit)",
+      "origin": {
+        "column": 11,
+        "row": 5
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "hexagram-lit-5",
+      "name": "Hexagram (Lit)",
+      "origin": {
+        "column": 12,
+        "row": 5
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "hexagram-lit-6",
+      "name": "Hexagram (Lit)",
+      "origin": {
+        "column": 13,
+        "row": 5
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "coffin-b-top-2",
+      "name": "Coffin B (Top)",
+      "origin": {
+        "column": 14,
+        "row": 5
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "coffin-c-bottom-2",
+      "name": "Coffin C (Bottom)",
+      "origin": {
+        "column": 15,
+        "row": 5
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "hexagram-7",
+      "name": "Hexagram",
+      "origin": {
+        "column": 0,
+        "row": 6
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "hexagram-8",
+      "name": "Hexagram",
+      "origin": {
+        "column": 1,
+        "row": 6
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "hexagram-9",
+      "name": "Hexagram",
+      "origin": {
+        "column": 2,
+        "row": 6
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "hexagram-lit-7",
+      "name": "Hexagram (Lit)",
+      "origin": {
+        "column": 3,
+        "row": 6
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "hexagram-lit-8",
+      "name": "Hexagram (Lit)",
+      "origin": {
+        "column": 4,
+        "row": 6
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "hexagram-lit-9",
+      "name": "Hexagram (Lit)",
+      "origin": {
+        "column": 5,
+        "row": 6
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "coffin-d-left",
+      "name": "Coffin D  (Left)",
+      "origin": {
+        "column": 6,
+        "row": 6
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "coffin-d-left-2",
+      "name": "Coffin D  (Left)",
+      "origin": {
+        "column": 7,
+        "row": 6
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "rails",
+      "name": "Rails",
+      "origin": {
+        "column": 8,
+        "row": 6
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "rails-2",
+      "name": "Rails",
+      "origin": {
+        "column": 9,
+        "row": 6
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "rails-3",
+      "name": "Rails",
+      "origin": {
+        "column": 10,
+        "row": 6
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "rails-4",
+      "name": "Rails",
+      "origin": {
+        "column": 11,
+        "row": 6
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "rails-ruins",
+      "name": "Rails (Ruins)",
+      "origin": {
+        "column": 12,
+        "row": 6
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "rails-ruins-2",
+      "name": "Rails (Ruins)",
+      "origin": {
+        "column": 13,
+        "row": 6
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "rails-ruins-3",
+      "name": "Rails (Ruins)",
+      "origin": {
+        "column": 14,
+        "row": 6
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "rails-ruins-4",
+      "name": "Rails (Ruins)",
+      "origin": {
+        "column": 15,
+        "row": 6
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "rails-5",
+      "name": "Rails",
+      "origin": {
+        "column": 0,
+        "row": 7
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "railroad-ties-a",
+      "name": "Railroad Ties A",
+      "origin": {
+        "column": 1,
+        "row": 7
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "rails-6",
+      "name": "Rails",
+      "origin": {
+        "column": 2,
+        "row": 7
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "rails-7",
+      "name": "Rails",
+      "origin": {
+        "column": 3,
+        "row": 7
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "rails-8",
+      "name": "Rails",
+      "origin": {
+        "column": 4,
+        "row": 7
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "rails-9",
+      "name": "Rails",
+      "origin": {
+        "column": 5,
+        "row": 7
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "rails-10",
+      "name": "Rails",
+      "origin": {
+        "column": 6,
+        "row": 7
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "rails-11",
+      "name": "Rails",
+      "origin": {
+        "column": 7,
+        "row": 7
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "rails-12",
+      "name": "Rails",
+      "origin": {
+        "column": 8,
+        "row": 7
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "railroad-ties-b",
+      "name": "Railroad Ties B",
+      "origin": {
+        "column": 9,
+        "row": 7
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "rails-13",
+      "name": "Rails",
+      "origin": {
+        "column": 10,
+        "row": 7
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "rails-14",
+      "name": "Rails",
+      "origin": {
+        "column": 11,
+        "row": 7
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "rails-15",
+      "name": "Rails",
+      "origin": {
+        "column": 12,
+        "row": 7
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "rails-16",
+      "name": "Rails",
+      "origin": {
+        "column": 13,
+        "row": 7
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "rails-17",
+      "name": "Rails",
+      "origin": {
+        "column": 14,
+        "row": 7
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "rails-18",
+      "name": "Rails",
+      "origin": {
+        "column": 15,
+        "row": 7
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "mural-a",
+      "name": "Mural A",
+      "origin": {
+        "column": 0,
+        "row": 8
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "hieroglyph",
+      "name": "Hieroglyph",
+      "origin": {
+        "column": 1,
+        "row": 8
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "hieroglyph-2",
+      "name": "Hieroglyph",
+      "origin": {
+        "column": 2,
+        "row": 8
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "large-mural-a",
+      "name": "Large Mural A",
+      "origin": {
+        "column": 3,
+        "row": 8
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "large-mural-a-2",
+      "name": "Large Mural A",
+      "origin": {
+        "column": 4,
+        "row": 8
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "large-mural-a-3",
+      "name": "Large Mural A",
+      "origin": {
+        "column": 5,
+        "row": 8
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "bed",
+      "name": "Bed",
+      "origin": {
+        "column": 6,
+        "row": 8
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "bed-ruins",
+      "name": "Bed (Ruins)",
+      "origin": {
+        "column": 7,
+        "row": 8
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "mural-b",
+      "name": "Mural B",
+      "origin": {
+        "column": 8,
+        "row": 8
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "hieroglyph-3",
+      "name": "Hieroglyph",
+      "origin": {
+        "column": 9,
+        "row": 8
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "hieroglyph-4",
+      "name": "Hieroglyph",
+      "origin": {
+        "column": 10,
+        "row": 8
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "large-mural-b",
+      "name": "Large Mural B",
+      "origin": {
+        "column": 11,
+        "row": 8
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "large-mural-b-2",
+      "name": "Large Mural B",
+      "origin": {
+        "column": 12,
+        "row": 8
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "large-mural-b-3",
+      "name": "Large Mural B",
+      "origin": {
+        "column": 13,
+        "row": 8
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "bed-2",
+      "name": "Bed",
+      "origin": {
+        "column": 14,
+        "row": 8
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "bed-ruins-2",
+      "name": "Bed (Ruins)",
+      "origin": {
+        "column": 15,
+        "row": 8
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "middle-window-a",
+      "name": "Middle Window A",
+      "origin": {
+        "column": 0,
+        "row": 9
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "middle-window-b",
+      "name": "Middle Window B",
+      "origin": {
+        "column": 1,
+        "row": 9
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "middle-window-c",
+      "name": "Middle Window C",
+      "origin": {
+        "column": 2,
+        "row": 9
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "middle-window-d-ruins",
+      "name": "Middle Window D (Ruins)",
+      "origin": {
+        "column": 3,
+        "row": 9
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "window-demon-castle",
+      "name": "Window (Demon Castle)",
+      "origin": {
+        "column": 4,
+        "row": 9
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "table",
+      "name": "Table",
+      "origin": {
+        "column": 5,
+        "row": 9
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "cheap-bed",
+      "name": "Cheap Bed",
+      "origin": {
+        "column": 6,
+        "row": 9
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "straw-bed",
+      "name": "Straw Bed",
+      "origin": {
+        "column": 7,
+        "row": 9
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "middle-window-a-2",
+      "name": "Middle Window A",
+      "origin": {
+        "column": 8,
+        "row": 9
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "middle-window-b-2",
+      "name": "Middle Window B",
+      "origin": {
+        "column": 9,
+        "row": 9
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "middle-window-c-2",
+      "name": "Middle Window C",
+      "origin": {
+        "column": 10,
+        "row": 9
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "middle-window-d-ruins-2",
+      "name": "Middle Window D (Ruins)",
+      "origin": {
+        "column": 11,
+        "row": 9
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "window-demon-castle-2",
+      "name": "Window (Demon Castle)",
+      "origin": {
+        "column": 12,
+        "row": 9
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "stool",
+      "name": "Stool",
+      "origin": {
+        "column": 13,
+        "row": 9
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "cheap-bed-2",
+      "name": "Cheap Bed",
+      "origin": {
+        "column": 14,
+        "row": 9
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "straw-bed-2",
+      "name": "Straw Bed",
+      "origin": {
+        "column": 15,
+        "row": 9
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "large-window-a",
+      "name": "Large Window A",
+      "origin": {
+        "column": 0,
+        "row": 10
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "large-window-b",
+      "name": "Large Window B",
+      "origin": {
+        "column": 1,
+        "row": 10
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "large-window-c",
+      "name": "Large Window C",
+      "origin": {
+        "column": 2,
+        "row": 10
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "stained-glass-window",
+      "name": "Stained Glass Window",
+      "origin": {
+        "column": 3,
+        "row": 10
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "large-window-d",
+      "name": "Large Window D",
+      "origin": {
+        "column": 4,
+        "row": 10
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "window-a",
+      "name": "Window A",
+      "origin": {
+        "column": 5,
+        "row": 10
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "window-b",
+      "name": "Window B",
+      "origin": {
+        "column": 6,
+        "row": 10
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "window-c",
+      "name": "Window C",
+      "origin": {
+        "column": 7,
+        "row": 10
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "large-window-a-2",
+      "name": "Large Window A",
+      "origin": {
+        "column": 8,
+        "row": 10
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "large-window-b-2",
+      "name": "Large Window B",
+      "origin": {
+        "column": 9,
+        "row": 10
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "large-window-c-2",
+      "name": "Large Window C",
+      "origin": {
+        "column": 10,
+        "row": 10
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "stained-glass-window-2",
+      "name": "Stained Glass Window",
+      "origin": {
+        "column": 11,
+        "row": 10
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "large-window-d-2",
+      "name": "Large Window D",
+      "origin": {
+        "column": 12,
+        "row": 10
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "window-a-2",
+      "name": "Window A",
+      "origin": {
+        "column": 13,
+        "row": 10
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "window-b-2",
+      "name": "Window B",
+      "origin": {
+        "column": 14,
+        "row": 10
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "window-c-2",
+      "name": "Window C",
+      "origin": {
+        "column": 15,
+        "row": 10
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "chest-a",
+      "name": "Chest A",
+      "origin": {
+        "column": 0,
+        "row": 11
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "cabinet",
+      "name": "Cabinet",
+      "origin": {
+        "column": 1,
+        "row": 11
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "closet",
+      "name": "Closet",
+      "origin": {
+        "column": 2,
+        "row": 11
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "chest-of-drawers",
+      "name": "Chest of Drawers",
+      "origin": {
+        "column": 3,
+        "row": 11
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "dish-cabinet",
+      "name": "Dish Cabinet",
+      "origin": {
+        "column": 4,
+        "row": 11
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "wine-rack",
+      "name": "Wine Rack",
+      "origin": {
+        "column": 5,
+        "row": 11
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "bottle-shelf-a",
+      "name": "Bottle Shelf A",
+      "origin": {
+        "column": 6,
+        "row": 11
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "bottle-shelf-b",
+      "name": "Bottle Shelf B",
+      "origin": {
+        "column": 7,
+        "row": 11
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "chest-b",
+      "name": "Chest B",
+      "origin": {
+        "column": 8,
+        "row": 11
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "chest-c",
+      "name": "Chest C",
+      "origin": {
+        "column": 9,
+        "row": 11
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "closet-2",
+      "name": "Closet",
+      "origin": {
+        "column": 10,
+        "row": 11
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "chest-of-drawers-2",
+      "name": "Chest of Drawers",
+      "origin": {
+        "column": 11,
+        "row": 11
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "dish-cabinet-2",
+      "name": "Dish Cabinet",
+      "origin": {
+        "column": 12,
+        "row": 11
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "wine-rack-2",
+      "name": "Wine Rack",
+      "origin": {
+        "column": 13,
+        "row": 11
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "bottle-shelf-a-2",
+      "name": "Bottle Shelf A",
+      "origin": {
+        "column": 14,
+        "row": 11
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "bottle-shelf-b-2",
+      "name": "Bottle Shelf B",
+      "origin": {
+        "column": 15,
+        "row": 11
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "tipped-shelf",
+      "name": "Tipped Shelf",
+      "origin": {
+        "column": 0,
+        "row": 12
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "sundries-shelf-a",
+      "name": "Sundries Shelf A",
+      "origin": {
+        "column": 1,
+        "row": 12
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "sundries-shelf-a-2",
+      "name": "Sundries Shelf A",
+      "origin": {
+        "column": 2,
+        "row": 12
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "sundries-shelf-b",
+      "name": "Sundries Shelf B",
+      "origin": {
+        "column": 3,
+        "row": 12
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "medicine-shelf",
+      "name": "Medicine Shelf",
+      "origin": {
+        "column": 4,
+        "row": 12
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "bookshelf-a",
+      "name": "Bookshelf A",
+      "origin": {
+        "column": 5,
+        "row": 12
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "bookshelf-b",
+      "name": "Bookshelf B",
+      "origin": {
+        "column": 6,
+        "row": 12
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "bookshelf-b-2",
+      "name": "Bookshelf B",
+      "origin": {
+        "column": 7,
+        "row": 12
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "tipped-shelf-2",
+      "name": "Tipped Shelf",
+      "origin": {
+        "column": 8,
+        "row": 12
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "sundries-shelf-a-3",
+      "name": "Sundries Shelf A",
+      "origin": {
+        "column": 9,
+        "row": 12
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "sundries-shelf-a-4",
+      "name": "Sundries Shelf A",
+      "origin": {
+        "column": 10,
+        "row": 12
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "sundries-shelf-b-2",
+      "name": "Sundries Shelf B",
+      "origin": {
+        "column": 11,
+        "row": 12
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "medicine-shelf-2",
+      "name": "Medicine Shelf",
+      "origin": {
+        "column": 12,
+        "row": 12
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "bookshelf-a-2",
+      "name": "Bookshelf A",
+      "origin": {
+        "column": 13,
+        "row": 12
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "bookshelf-b-3",
+      "name": "Bookshelf B",
+      "origin": {
+        "column": 14,
+        "row": 12
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "bookshelf-b-4",
+      "name": "Bookshelf B",
+      "origin": {
+        "column": 15,
+        "row": 12
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "curtains-a",
+      "name": "Curtains A",
+      "origin": {
+        "column": 0,
+        "row": 13
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "curtains-b",
+      "name": "Curtains B",
+      "origin": {
+        "column": 1,
+        "row": 13
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "curtains-c",
+      "name": "Curtains C",
+      "origin": {
+        "column": 2,
+        "row": 13
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "curtains-d",
+      "name": "Curtains D",
+      "origin": {
+        "column": 3,
+        "row": 13
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "curtains-a-ruins",
+      "name": "Curtains A (Ruins)",
+      "origin": {
+        "column": 4,
+        "row": 13
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "curtains-b-ruins",
+      "name": "Curtains B (Ruins)",
+      "origin": {
+        "column": 5,
+        "row": 13
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "curtains-c-ruins",
+      "name": "Curtains C (Ruins)",
+      "origin": {
+        "column": 6,
+        "row": 13
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "curtains-d-ruins",
+      "name": "Curtains D (Ruins)",
+      "origin": {
+        "column": 7,
+        "row": 13
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "curtains-a-2",
+      "name": "Curtains A",
+      "origin": {
+        "column": 8,
+        "row": 13
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "curtains-b-2",
+      "name": "Curtains B",
+      "origin": {
+        "column": 9,
+        "row": 13
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "curtains-c-2",
+      "name": "Curtains C",
+      "origin": {
+        "column": 10,
+        "row": 13
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "curtains-d-2",
+      "name": "Curtains D",
+      "origin": {
+        "column": 11,
+        "row": 13
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "curtains-a-ruins-2",
+      "name": "Curtains A (Ruins)",
+      "origin": {
+        "column": 12,
+        "row": 13
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "curtains-b-ruins-2",
+      "name": "Curtains B (Ruins)",
+      "origin": {
+        "column": 13,
+        "row": 13
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "curtains-c-ruins-2",
+      "name": "Curtains C (Ruins)",
+      "origin": {
+        "column": 14,
+        "row": 13
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "curtains-d-ruins-2",
+      "name": "Curtains D (Ruins)",
+      "origin": {
+        "column": 15,
+        "row": 13
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "clock",
+      "name": "Clock",
+      "origin": {
+        "column": 0,
+        "row": 14
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "mirror",
+      "name": "Mirror",
+      "origin": {
+        "column": 1,
+        "row": 14
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "clock-ruins",
+      "name": "Clock (Ruins)",
+      "origin": {
+        "column": 2,
+        "row": 14
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "mirror-ruins",
+      "name": "Mirror (Ruins)",
+      "origin": {
+        "column": 3,
+        "row": 14
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "stacked-crates",
+      "name": "Stacked Crates",
+      "origin": {
+        "column": 4,
+        "row": 14
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "stacked-crates-2",
+      "name": "Stacked Crates",
+      "origin": {
+        "column": 5,
+        "row": 14
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "tapestry-a",
+      "name": "Tapestry A",
+      "origin": {
+        "column": 6,
+        "row": 14
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "tapestry-a-ruins",
+      "name": "Tapestry  A (Ruins)",
+      "origin": {
+        "column": 7,
+        "row": 14
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "clock-2",
+      "name": "Clock",
+      "origin": {
+        "column": 8,
+        "row": 14
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "mirror-2",
+      "name": "Mirror",
+      "origin": {
+        "column": 9,
+        "row": 14
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "clock-ruins-2",
+      "name": "Clock (Ruins)",
+      "origin": {
+        "column": 10,
+        "row": 14
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "mirror-ruins-2",
+      "name": "Mirror (Ruins)",
+      "origin": {
+        "column": 11,
+        "row": 14
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "stacked-crates-3",
+      "name": "Stacked Crates",
+      "origin": {
+        "column": 12,
+        "row": 14
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "stacked-crates-4",
+      "name": "Stacked Crates",
+      "origin": {
+        "column": 13,
+        "row": 14
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "tapestry-a-2",
+      "name": "Tapestry A",
+      "origin": {
+        "column": 14,
+        "row": 14
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "tapestry-a-ruins-2",
+      "name": "Tapestry  A (Ruins)",
+      "origin": {
+        "column": 15,
+        "row": 14
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "chair-a-wood",
+      "name": "Chair A (Wood)",
+      "origin": {
+        "column": 0,
+        "row": 15
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "chair-b-stone",
+      "name": "Chair B (Stone)",
+      "origin": {
+        "column": 1,
+        "row": 15
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "throne-a",
+      "name": "Throne A",
+      "origin": {
+        "column": 2,
+        "row": 15
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "throne-a-2",
+      "name": "Throne A",
+      "origin": {
+        "column": 3,
+        "row": 15
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "throne-a-3",
+      "name": "Throne A",
+      "origin": {
+        "column": 4,
+        "row": 15
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "throne-b-demon-castle",
+      "name": "Throne B (Demon Castle)",
+      "origin": {
+        "column": 5,
+        "row": 15
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "throne-b-demon-castle-2",
+      "name": "Throne B (Demon Castle)",
+      "origin": {
+        "column": 6,
+        "row": 15
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "throne-b-demon-castle-3",
+      "name": "Throne B (Demon Castle)",
+      "origin": {
+        "column": 7,
+        "row": 15
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "chair-a-wood-2",
+      "name": "Chair A (Wood)",
+      "origin": {
+        "column": 8,
+        "row": 15
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "chair-b-stone-2",
+      "name": "Chair B (Stone)",
+      "origin": {
+        "column": 9,
+        "row": 15
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "throne-a-4",
+      "name": "Throne A",
+      "origin": {
+        "column": 10,
+        "row": 15
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "throne-a-5",
+      "name": "Throne A",
+      "origin": {
+        "column": 11,
+        "row": 15
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "throne-a-6",
+      "name": "Throne A",
+      "origin": {
+        "column": 12,
+        "row": 15
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "throne-b-demon-castle-4",
+      "name": "Throne B (Demon Castle)",
+      "origin": {
+        "column": 13,
+        "row": 15
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "throne-b-demon-castle-5",
+      "name": "Throne B (Demon Castle)",
+      "origin": {
+        "column": 14,
+        "row": 15
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "throne-b-demon-castle-6",
+      "name": "Throne B (Demon Castle)",
+      "origin": {
+        "column": 15,
+        "row": 15
+      },
+      "collision": {
+        "kind": "none"
+      }
+    }
+  ]
+}

@@ -1,0 +1,2828 @@
+{
+  "id": "rpg-maker-mz-sf-inside-c",
+  "name": "Science Fiction Inside C",
+  "category": "RPG Maker MZ / Science Fiction Inside",
+  "kind": "grid",
+  "image": "tilesets/rpg-maker-mz/SF_Inside_C.png",
+  "tileSize": 48,
+  "columns": 16,
+  "rows": 16,
+  "terrains": [
+    {
+      "id": "black-board",
+      "name": "Black Board",
+      "origin": {
+        "column": 0,
+        "row": 0
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "black-board-2",
+      "name": "Black Board",
+      "origin": {
+        "column": 1,
+        "row": 0
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "black-board-3",
+      "name": "Black Board",
+      "origin": {
+        "column": 2,
+        "row": 0
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "white-board",
+      "name": "White Board",
+      "origin": {
+        "column": 3,
+        "row": 0
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "white-board-2",
+      "name": "White Board",
+      "origin": {
+        "column": 4,
+        "row": 0
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "white-board-3",
+      "name": "White Board",
+      "origin": {
+        "column": 5,
+        "row": 0
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "partition-a",
+      "name": "Partition A",
+      "origin": {
+        "column": 6,
+        "row": 0
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "partition-b",
+      "name": "Partition B",
+      "origin": {
+        "column": 7,
+        "row": 0
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "black-board-4",
+      "name": "Black Board",
+      "origin": {
+        "column": 8,
+        "row": 0
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "black-board-5",
+      "name": "Black Board",
+      "origin": {
+        "column": 9,
+        "row": 0
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "black-board-6",
+      "name": "Black Board",
+      "origin": {
+        "column": 10,
+        "row": 0
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "white-board-4",
+      "name": "White Board",
+      "origin": {
+        "column": 11,
+        "row": 0
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "white-board-5",
+      "name": "White Board",
+      "origin": {
+        "column": 12,
+        "row": 0
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "white-board-6",
+      "name": "White Board",
+      "origin": {
+        "column": 13,
+        "row": 0
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "partition-a-2",
+      "name": "Partition A",
+      "origin": {
+        "column": 14,
+        "row": 0
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "partition-b-2",
+      "name": "Partition B",
+      "origin": {
+        "column": 15,
+        "row": 0
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "stool",
+      "name": "Stool",
+      "origin": {
+        "column": 0,
+        "row": 1
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "skeleton-model",
+      "name": "Skeleton Model",
+      "origin": {
+        "column": 1,
+        "row": 1
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "biological-specimen",
+      "name": "Biological Specimen",
+      "origin": {
+        "column": 2,
+        "row": 1
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "potted-plant",
+      "name": "Potted Plant",
+      "origin": {
+        "column": 3,
+        "row": 1
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "armchair",
+      "name": "Armchair",
+      "origin": {
+        "column": 4,
+        "row": 1
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "insect-specimen",
+      "name": "Insect Specimen",
+      "origin": {
+        "column": 5,
+        "row": 1
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "restroom-mark-men",
+      "name": "Restroom Mark (Men)",
+      "origin": {
+        "column": 6,
+        "row": 1
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "restroom-mark-women",
+      "name": "Restroom Mark (Women)",
+      "origin": {
+        "column": 7,
+        "row": 1
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "wall-speaker",
+      "name": "Wall Speaker",
+      "origin": {
+        "column": 8,
+        "row": 1
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "skeleton-model-2",
+      "name": "Skeleton Model",
+      "origin": {
+        "column": 9,
+        "row": 1
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "biological-specimen-2",
+      "name": "Biological Specimen",
+      "origin": {
+        "column": 10,
+        "row": 1
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "fire-extinguisher",
+      "name": "Fire Extinguisher",
+      "origin": {
+        "column": 11,
+        "row": 1
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "armchair-2",
+      "name": "Armchair",
+      "origin": {
+        "column": 12,
+        "row": 1
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "room-plate",
+      "name": "Room Plate",
+      "origin": {
+        "column": 13,
+        "row": 1
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "exit-sign",
+      "name": "EXIT Sign",
+      "origin": {
+        "column": 14,
+        "row": 1
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "vent",
+      "name": "Vent",
+      "origin": {
+        "column": 15,
+        "row": 1
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "painting-a",
+      "name": "Painting A",
+      "origin": {
+        "column": 0,
+        "row": 2
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "painting-b",
+      "name": "Painting B",
+      "origin": {
+        "column": 1,
+        "row": 2
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "vision-test-chart",
+      "name": "Vision Test Chart",
+      "origin": {
+        "column": 2,
+        "row": 2
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "plaster-bust",
+      "name": "Plaster Bust",
+      "origin": {
+        "column": 3,
+        "row": 2
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "calendar",
+      "name": "Calendar",
+      "origin": {
+        "column": 4,
+        "row": 2
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "plant-a",
+      "name": "Plant A",
+      "origin": {
+        "column": 5,
+        "row": 2
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "plant-b",
+      "name": "Plant B",
+      "origin": {
+        "column": 6,
+        "row": 2
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "plant-c",
+      "name": "Plant C",
+      "origin": {
+        "column": 7,
+        "row": 2
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "painting-c",
+      "name": "Painting C",
+      "origin": {
+        "column": 8,
+        "row": 2
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "painting-d",
+      "name": "Painting D",
+      "origin": {
+        "column": 9,
+        "row": 2
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "anatomical-chart",
+      "name": "Anatomical Chart",
+      "origin": {
+        "column": 10,
+        "row": 2
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "canvas",
+      "name": "Canvas",
+      "origin": {
+        "column": 11,
+        "row": 2
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "bulletin-board",
+      "name": "Bulletin Board",
+      "origin": {
+        "column": 12,
+        "row": 2
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "plant-a-2",
+      "name": "Plant A",
+      "origin": {
+        "column": 13,
+        "row": 2
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "plant-b-2",
+      "name": "Plant B",
+      "origin": {
+        "column": 14,
+        "row": 2
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "plant-c-2",
+      "name": "Plant C",
+      "origin": {
+        "column": 15,
+        "row": 2
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "plumbing",
+      "name": "Plumbing",
+      "origin": {
+        "column": 0,
+        "row": 3
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "plumbing-2",
+      "name": "Plumbing",
+      "origin": {
+        "column": 1,
+        "row": 3
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "valve",
+      "name": "Valve",
+      "origin": {
+        "column": 2,
+        "row": 3
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "machine-a",
+      "name": "Machine A",
+      "origin": {
+        "column": 3,
+        "row": 3
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "machine-b",
+      "name": "Machine B",
+      "origin": {
+        "column": 4,
+        "row": 3
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "machine-c",
+      "name": "Machine C",
+      "origin": {
+        "column": 5,
+        "row": 3
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "air-vent-a",
+      "name": "Air Vent A",
+      "origin": {
+        "column": 6,
+        "row": 3
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "air-vent-b",
+      "name": "Air Vent B",
+      "origin": {
+        "column": 7,
+        "row": 3
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "plumbing-3",
+      "name": "Plumbing",
+      "origin": {
+        "column": 8,
+        "row": 3
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "plumbing-4",
+      "name": "Plumbing",
+      "origin": {
+        "column": 9,
+        "row": 3
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "plumbing-5",
+      "name": "Plumbing",
+      "origin": {
+        "column": 10,
+        "row": 3
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "neon-tube",
+      "name": "Neon Tube",
+      "origin": {
+        "column": 11,
+        "row": 3
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "neon-tube-2",
+      "name": "Neon Tube",
+      "origin": {
+        "column": 12,
+        "row": 3
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "neon-tube-3",
+      "name": "Neon Tube",
+      "origin": {
+        "column": 13,
+        "row": 3
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "fan",
+      "name": "Fan",
+      "origin": {
+        "column": 14,
+        "row": 3
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "fluorescent-light",
+      "name": "Fluorescent Light",
+      "origin": {
+        "column": 15,
+        "row": 3
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "plumbing-6",
+      "name": "Plumbing",
+      "origin": {
+        "column": 0,
+        "row": 4
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "plumbing-7",
+      "name": "Plumbing",
+      "origin": {
+        "column": 1,
+        "row": 4
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "plumbing-8",
+      "name": "Plumbing",
+      "origin": {
+        "column": 2,
+        "row": 4
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "neon-tube-4",
+      "name": "Neon Tube",
+      "origin": {
+        "column": 3,
+        "row": 4
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "neon-tube-5",
+      "name": "Neon Tube",
+      "origin": {
+        "column": 4,
+        "row": 4
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "neon-tube-6",
+      "name": "Neon Tube",
+      "origin": {
+        "column": 5,
+        "row": 4
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "outdoor-air-intake-unit",
+      "name": "Outdoor Air Intake Unit",
+      "origin": {
+        "column": 6,
+        "row": 4
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "shutter",
+      "name": "Shutter",
+      "origin": {
+        "column": 7,
+        "row": 4
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "plumbing-9",
+      "name": "Plumbing",
+      "origin": {
+        "column": 8,
+        "row": 4
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "plumbing-10",
+      "name": "Plumbing",
+      "origin": {
+        "column": 9,
+        "row": 4
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "plumbing-11",
+      "name": "Plumbing",
+      "origin": {
+        "column": 10,
+        "row": 4
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "control-panel-a",
+      "name": "Control Panel A",
+      "origin": {
+        "column": 11,
+        "row": 4
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "control-panel-b",
+      "name": "Control Panel B",
+      "origin": {
+        "column": 12,
+        "row": 4
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "control-panel-c",
+      "name": "Control Panel C",
+      "origin": {
+        "column": 13,
+        "row": 4
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "pipe-h",
+      "name": "Pipe (H)",
+      "origin": {
+        "column": 14,
+        "row": 4
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "pipe-v",
+      "name": "Pipe (V)",
+      "origin": {
+        "column": 15,
+        "row": 4
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "line-a",
+      "name": "Line A",
+      "origin": {
+        "column": 0,
+        "row": 5
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "line-b",
+      "name": "Line B",
+      "origin": {
+        "column": 1,
+        "row": 5
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "road-closed",
+      "name": "Road Closed",
+      "origin": {
+        "column": 2,
+        "row": 5
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "waste",
+      "name": "Waste",
+      "origin": {
+        "column": 3,
+        "row": 5
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "scrap-metal",
+      "name": "Scrap Metal",
+      "origin": {
+        "column": 4,
+        "row": 5
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "mysterious-liquid",
+      "name": "Mysterious Liquid",
+      "origin": {
+        "column": 5,
+        "row": 5
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "scattered-papers",
+      "name": "Scattered Papers",
+      "origin": {
+        "column": 6,
+        "row": 5
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "pipe-v-2",
+      "name": "Pipe (V)",
+      "origin": {
+        "column": 7,
+        "row": 5
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "belt-conveyor-v",
+      "name": "Belt Conveyor (V)",
+      "origin": {
+        "column": 8,
+        "row": 5
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "belt-conveyor-h",
+      "name": "Belt Conveyor (H)",
+      "origin": {
+        "column": 9,
+        "row": 5
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "belt-conveyor-h-2",
+      "name": "Belt Conveyor (H)",
+      "origin": {
+        "column": 10,
+        "row": 5
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "belt-conveyor-h-3",
+      "name": "Belt Conveyor (H)",
+      "origin": {
+        "column": 11,
+        "row": 5
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "duct",
+      "name": "Duct",
+      "origin": {
+        "column": 12,
+        "row": 5
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "mechanical-device",
+      "name": "Mechanical Device",
+      "origin": {
+        "column": 13,
+        "row": 5
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "pile-of-rubble",
+      "name": "Pile of Rubble",
+      "origin": {
+        "column": 14,
+        "row": 5
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "pile-of-rubble-2",
+      "name": "Pile of Rubble",
+      "origin": {
+        "column": 15,
+        "row": 5
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "belt-conveyor-v-2",
+      "name": "Belt Conveyor (V)",
+      "origin": {
+        "column": 0,
+        "row": 6
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "robot-arm",
+      "name": "Robot Arm",
+      "origin": {
+        "column": 1,
+        "row": 6
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "server-machine",
+      "name": "Server Machine",
+      "origin": {
+        "column": 2,
+        "row": 6
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "meters",
+      "name": "Meters",
+      "origin": {
+        "column": 3,
+        "row": 6
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "duct-2",
+      "name": "Duct",
+      "origin": {
+        "column": 4,
+        "row": 6
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "mechanical-device-2",
+      "name": "Mechanical Device",
+      "origin": {
+        "column": 5,
+        "row": 6
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "pile-of-rubble-3",
+      "name": "Pile of Rubble",
+      "origin": {
+        "column": 6,
+        "row": 6
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "pile-of-rubble-4",
+      "name": "Pile of Rubble",
+      "origin": {
+        "column": 7,
+        "row": 6
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "belt-conveyor-v-3",
+      "name": "Belt Conveyor (V)",
+      "origin": {
+        "column": 8,
+        "row": 6
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "robot-arm-2",
+      "name": "Robot Arm",
+      "origin": {
+        "column": 9,
+        "row": 6
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "server-machine-2",
+      "name": "Server Machine",
+      "origin": {
+        "column": 10,
+        "row": 6
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "meters-2",
+      "name": "Meters",
+      "origin": {
+        "column": 11,
+        "row": 6
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "duct-3",
+      "name": "Duct",
+      "origin": {
+        "column": 12,
+        "row": 6
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "drain",
+      "name": "Drain",
+      "origin": {
+        "column": 13,
+        "row": 6
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "graffiti",
+      "name": "Graffiti",
+      "origin": {
+        "column": 14,
+        "row": 6
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "graffiti-2",
+      "name": "Graffiti",
+      "origin": {
+        "column": 15,
+        "row": 6
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "monitor-a",
+      "name": "Monitor A",
+      "origin": {
+        "column": 0,
+        "row": 7
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "monitor-b",
+      "name": "Monitor B",
+      "origin": {
+        "column": 1,
+        "row": 7
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "large-monitor",
+      "name": "Large Monitor",
+      "origin": {
+        "column": 2,
+        "row": 7
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "large-monitor-2",
+      "name": "Large Monitor",
+      "origin": {
+        "column": 3,
+        "row": 7
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "iv-stand",
+      "name": "IV Stand",
+      "origin": {
+        "column": 4,
+        "row": 7
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "ecg-monitor",
+      "name": "ECG Monitor",
+      "origin": {
+        "column": 5,
+        "row": 7
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "sewing-mannequin",
+      "name": "Sewing Mannequin",
+      "origin": {
+        "column": 6,
+        "row": 7
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "rubble",
+      "name": "Rubble",
+      "origin": {
+        "column": 7,
+        "row": 7
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "operation-board-a",
+      "name": "Operation Board A",
+      "origin": {
+        "column": 8,
+        "row": 7
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "operation-board-b",
+      "name": "Operation Board B",
+      "origin": {
+        "column": 9,
+        "row": 7
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "operation-board-c",
+      "name": "Operation Board C",
+      "origin": {
+        "column": 10,
+        "row": 7
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "operation-board-d",
+      "name": "Operation Board D",
+      "origin": {
+        "column": 11,
+        "row": 7
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "iv-stand-2",
+      "name": "IV Stand",
+      "origin": {
+        "column": 12,
+        "row": 7
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "ecg-monitor-2",
+      "name": "ECG Monitor",
+      "origin": {
+        "column": 13,
+        "row": 7
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "sewing-mannequin-2",
+      "name": "Sewing Mannequin",
+      "origin": {
+        "column": 14,
+        "row": 7
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "broken-machine",
+      "name": "Broken Machine",
+      "origin": {
+        "column": 15,
+        "row": 7
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "stairs",
+      "name": "Stairs",
+      "origin": {
+        "column": 0,
+        "row": 8
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "stairs-2",
+      "name": "Stairs",
+      "origin": {
+        "column": 1,
+        "row": 8
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "stairs-3",
+      "name": "Stairs",
+      "origin": {
+        "column": 2,
+        "row": 8
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "cage",
+      "name": "Cage",
+      "origin": {
+        "column": 3,
+        "row": 8
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "cage-2",
+      "name": "Cage",
+      "origin": {
+        "column": 4,
+        "row": 8
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "handrail",
+      "name": "Handrail",
+      "origin": {
+        "column": 5,
+        "row": 8
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "handrail-2",
+      "name": "Handrail",
+      "origin": {
+        "column": 6,
+        "row": 8
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "handrail-3",
+      "name": "Handrail",
+      "origin": {
+        "column": 7,
+        "row": 8
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "stairs-4",
+      "name": "Stairs",
+      "origin": {
+        "column": 8,
+        "row": 8
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "stairs-5",
+      "name": "Stairs",
+      "origin": {
+        "column": 9,
+        "row": 8
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "stairs-6",
+      "name": "Stairs",
+      "origin": {
+        "column": 10,
+        "row": 8
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "curtains-a",
+      "name": "Curtains A",
+      "origin": {
+        "column": 11,
+        "row": 8
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "curtains-b",
+      "name": "Curtains B",
+      "origin": {
+        "column": 12,
+        "row": 8
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "curtains-c",
+      "name": "Curtains C",
+      "origin": {
+        "column": 13,
+        "row": 8
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "curtains-d",
+      "name": "Curtains D",
+      "origin": {
+        "column": 14,
+        "row": 8
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "handrail-4",
+      "name": "Handrail",
+      "origin": {
+        "column": 15,
+        "row": 8
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "stairs-7",
+      "name": "Stairs",
+      "origin": {
+        "column": 0,
+        "row": 9
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "stairs-8",
+      "name": "Stairs",
+      "origin": {
+        "column": 1,
+        "row": 9
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "stairs-9",
+      "name": "Stairs",
+      "origin": {
+        "column": 2,
+        "row": 9
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "curtains-a-2",
+      "name": "Curtains A",
+      "origin": {
+        "column": 3,
+        "row": 9
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "curtains-b-2",
+      "name": "Curtains B",
+      "origin": {
+        "column": 4,
+        "row": 9
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "curtains-c-2",
+      "name": "Curtains C",
+      "origin": {
+        "column": 5,
+        "row": 9
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "curtains-d-2",
+      "name": "Curtains D",
+      "origin": {
+        "column": 6,
+        "row": 9
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "emergency-alarm",
+      "name": "Emergency Alarm",
+      "origin": {
+        "column": 7,
+        "row": 9
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "spider-web",
+      "name": "Spider Web",
+      "origin": {
+        "column": 8,
+        "row": 9
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "mirror",
+      "name": "Mirror",
+      "origin": {
+        "column": 9,
+        "row": 9
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "vase",
+      "name": "Vase",
+      "origin": {
+        "column": 10,
+        "row": 9
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "piano",
+      "name": "Piano",
+      "origin": {
+        "column": 11,
+        "row": 9
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "piano-2",
+      "name": "Piano",
+      "origin": {
+        "column": 12,
+        "row": 9
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "piano-3",
+      "name": "Piano",
+      "origin": {
+        "column": 13,
+        "row": 9
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "stained-glass",
+      "name": "Stained Glass",
+      "origin": {
+        "column": 14,
+        "row": 9
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "decorative-pillar",
+      "name": "Decorative Pillar",
+      "origin": {
+        "column": 15,
+        "row": 9
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "dripping",
+      "name": "Dripping",
+      "origin": {
+        "column": 0,
+        "row": 10
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "mirror-2",
+      "name": "Mirror",
+      "origin": {
+        "column": 1,
+        "row": 10
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "lamp",
+      "name": "Lamp",
+      "origin": {
+        "column": 2,
+        "row": 10
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "piano-4",
+      "name": "Piano",
+      "origin": {
+        "column": 3,
+        "row": 10
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "piano-5",
+      "name": "Piano",
+      "origin": {
+        "column": 4,
+        "row": 10
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "piano-6",
+      "name": "Piano",
+      "origin": {
+        "column": 5,
+        "row": 10
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "stained-glass-2",
+      "name": "Stained Glass",
+      "origin": {
+        "column": 6,
+        "row": 10
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "decorative-pillar-2",
+      "name": "Decorative Pillar",
+      "origin": {
+        "column": 7,
+        "row": 10
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "picture-frame",
+      "name": "Picture Frame",
+      "origin": {
+        "column": 8,
+        "row": 10
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "side-table",
+      "name": "Side Table",
+      "origin": {
+        "column": 9,
+        "row": 10
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "altar",
+      "name": "Altar",
+      "origin": {
+        "column": 10,
+        "row": 10
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "fireplace",
+      "name": "Fireplace",
+      "origin": {
+        "column": 11,
+        "row": 10
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "fireplace-2",
+      "name": "Fireplace",
+      "origin": {
+        "column": 12,
+        "row": 10
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "fireplace-3",
+      "name": "Fireplace",
+      "origin": {
+        "column": 13,
+        "row": 10
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "stuffed-doll-a",
+      "name": "Stuffed Doll A",
+      "origin": {
+        "column": 14,
+        "row": 10
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "decorative-pillar-3",
+      "name": "Decorative Pillar",
+      "origin": {
+        "column": 15,
+        "row": 10
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "book-a",
+      "name": "Book A",
+      "origin": {
+        "column": 0,
+        "row": 11
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "book-b",
+      "name": "Book B",
+      "origin": {
+        "column": 1,
+        "row": 11
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "glass-pieces",
+      "name": "Glass Pieces",
+      "origin": {
+        "column": 2,
+        "row": 11
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "fireplace-4",
+      "name": "Fireplace",
+      "origin": {
+        "column": 3,
+        "row": 11
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "fireplace-5",
+      "name": "Fireplace",
+      "origin": {
+        "column": 4,
+        "row": 11
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "fireplace-6",
+      "name": "Fireplace",
+      "origin": {
+        "column": 5,
+        "row": 11
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "doll",
+      "name": "Doll",
+      "origin": {
+        "column": 6,
+        "row": 11
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "stuffed-doll-b",
+      "name": "Stuffed Doll B",
+      "origin": {
+        "column": 7,
+        "row": 11
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "beer-mug",
+      "name": "Beer Mug",
+      "origin": {
+        "column": 8,
+        "row": 11
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "wine-glass",
+      "name": "Wine & Glass",
+      "origin": {
+        "column": 9,
+        "row": 11
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "noodle-dish",
+      "name": "Noodle Dish",
+      "origin": {
+        "column": 10,
+        "row": 11
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "bread",
+      "name": "Bread",
+      "origin": {
+        "column": 11,
+        "row": 11
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "banister-a-v",
+      "name": "Banister A (V)",
+      "origin": {
+        "column": 12,
+        "row": 11
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "banister-a-v-2",
+      "name": "Banister A (V)",
+      "origin": {
+        "column": 13,
+        "row": 11
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "banister-b-v",
+      "name": "Banister B (V)",
+      "origin": {
+        "column": 14,
+        "row": 11
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "banister-b-v-2",
+      "name": "Banister B (V)",
+      "origin": {
+        "column": 15,
+        "row": 11
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "meat-dish",
+      "name": "Meat Dish",
+      "origin": {
+        "column": 0,
+        "row": 12
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "roast-chicken",
+      "name": "Roast Chicken",
+      "origin": {
+        "column": 1,
+        "row": 12
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "cake",
+      "name": "Cake",
+      "origin": {
+        "column": 2,
+        "row": 12
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "fruit-bowl",
+      "name": "Fruit Bowl",
+      "origin": {
+        "column": 3,
+        "row": 12
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "banister-a-v-3",
+      "name": "Banister A (V)",
+      "origin": {
+        "column": 4,
+        "row": 12
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "banister-a-v-4",
+      "name": "Banister A (V)",
+      "origin": {
+        "column": 5,
+        "row": 12
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "banister-b-v-3",
+      "name": "Banister B (V)",
+      "origin": {
+        "column": 6,
+        "row": 12
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "banister-b-v-4",
+      "name": "Banister B (V)",
+      "origin": {
+        "column": 7,
+        "row": 12
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "plate-a",
+      "name": "Plate A",
+      "origin": {
+        "column": 8,
+        "row": 12
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "teapot-cup",
+      "name": "Teapot & Cup",
+      "origin": {
+        "column": 9,
+        "row": 12
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "ration",
+      "name": "Ration",
+      "origin": {
+        "column": 10,
+        "row": 12
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "plate-b",
+      "name": "Plate B",
+      "origin": {
+        "column": 11,
+        "row": 12
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "banister-a-v-5",
+      "name": "Banister A (V)",
+      "origin": {
+        "column": 12,
+        "row": 12
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "banister-a-v-6",
+      "name": "Banister A (V)",
+      "origin": {
+        "column": 13,
+        "row": 12
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "banister-b-v-5",
+      "name": "Banister B (V)",
+      "origin": {
+        "column": 14,
+        "row": 12
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "banister-b-v-6",
+      "name": "Banister B (V)",
+      "origin": {
+        "column": 15,
+        "row": 12
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "demon-statue",
+      "name": "Demon Statue",
+      "origin": {
+        "column": 0,
+        "row": 13
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "goddess-statue",
+      "name": "Goddess Statue",
+      "origin": {
+        "column": 1,
+        "row": 13
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "soldier-statue",
+      "name": "Soldier Statue",
+      "origin": {
+        "column": 2,
+        "row": 13
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "wall-clock",
+      "name": "Wall Clock",
+      "origin": {
+        "column": 3,
+        "row": 13
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "banister-a-h",
+      "name": "Banister A (H)",
+      "origin": {
+        "column": 4,
+        "row": 13
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "banister-a-h-2",
+      "name": "Banister A (H)",
+      "origin": {
+        "column": 5,
+        "row": 13
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "banister-a-h-3",
+      "name": "Banister A (H)",
+      "origin": {
+        "column": 6,
+        "row": 13
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "banister-a-h-4",
+      "name": "Banister A (H)",
+      "origin": {
+        "column": 7,
+        "row": 13
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "demon-statue-2",
+      "name": "Demon Statue",
+      "origin": {
+        "column": 8,
+        "row": 13
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "goddess-statue-2",
+      "name": "Goddess Statue",
+      "origin": {
+        "column": 9,
+        "row": 13
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "soldier-statue-2",
+      "name": "Soldier Statue",
+      "origin": {
+        "column": 10,
+        "row": 13
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "wall-clock-2",
+      "name": "Wall Clock",
+      "origin": {
+        "column": 11,
+        "row": 13
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "banister-b-h",
+      "name": "Banister B (H)",
+      "origin": {
+        "column": 12,
+        "row": 13
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "banister-b-h-2",
+      "name": "Banister B (H)",
+      "origin": {
+        "column": 13,
+        "row": 13
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "banister-b-h-3",
+      "name": "Banister B (H)",
+      "origin": {
+        "column": 14,
+        "row": 13
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "banister-b-h-4",
+      "name": "Banister B (H)",
+      "origin": {
+        "column": 15,
+        "row": 13
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "monument-a",
+      "name": "Monument A",
+      "origin": {
+        "column": 0,
+        "row": 14
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "monument-b",
+      "name": "Monument B",
+      "origin": {
+        "column": 1,
+        "row": 14
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "huge-stele",
+      "name": "Huge Stele",
+      "origin": {
+        "column": 2,
+        "row": 14
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "huge-stele-2",
+      "name": "Huge Stele",
+      "origin": {
+        "column": 3,
+        "row": 14
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "huge-stele-3",
+      "name": "Huge Stele",
+      "origin": {
+        "column": 4,
+        "row": 14
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "huge-display",
+      "name": "Huge Display",
+      "origin": {
+        "column": 5,
+        "row": 14
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "huge-display-2",
+      "name": "Huge Display",
+      "origin": {
+        "column": 6,
+        "row": 14
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "huge-display-3",
+      "name": "Huge Display",
+      "origin": {
+        "column": 7,
+        "row": 14
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "monument-a-2",
+      "name": "Monument A",
+      "origin": {
+        "column": 8,
+        "row": 14
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "monument-b-2",
+      "name": "Monument B",
+      "origin": {
+        "column": 9,
+        "row": 14
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "huge-stele-4",
+      "name": "Huge Stele",
+      "origin": {
+        "column": 10,
+        "row": 14
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "huge-stele-5",
+      "name": "Huge Stele",
+      "origin": {
+        "column": 11,
+        "row": 14
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "huge-stele-6",
+      "name": "Huge Stele",
+      "origin": {
+        "column": 12,
+        "row": 14
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "huge-display-4",
+      "name": "Huge Display",
+      "origin": {
+        "column": 13,
+        "row": 14
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "huge-display-5",
+      "name": "Huge Display",
+      "origin": {
+        "column": 14,
+        "row": 14
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "huge-display-6",
+      "name": "Huge Display",
+      "origin": {
+        "column": 15,
+        "row": 14
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "monument-c",
+      "name": "Monument C",
+      "origin": {
+        "column": 0,
+        "row": 15
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "monument-d",
+      "name": "Monument D",
+      "origin": {
+        "column": 1,
+        "row": 15
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "sphere-machinery",
+      "name": "Sphere Machinery",
+      "origin": {
+        "column": 2,
+        "row": 15
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "sphere-machinery-2",
+      "name": "Sphere Machinery",
+      "origin": {
+        "column": 3,
+        "row": 15
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "sphere-machinery-3",
+      "name": "Sphere Machinery",
+      "origin": {
+        "column": 4,
+        "row": 15
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "large-machine",
+      "name": "Large Machine",
+      "origin": {
+        "column": 5,
+        "row": 15
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "large-machine-2",
+      "name": "Large Machine",
+      "origin": {
+        "column": 6,
+        "row": 15
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "large-machine-3",
+      "name": "Large Machine",
+      "origin": {
+        "column": 7,
+        "row": 15
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "monument-c-2",
+      "name": "Monument C",
+      "origin": {
+        "column": 8,
+        "row": 15
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "control-panel",
+      "name": "Control Panel",
+      "origin": {
+        "column": 9,
+        "row": 15
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "sphere-machinery-4",
+      "name": "Sphere Machinery",
+      "origin": {
+        "column": 10,
+        "row": 15
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "sphere-machinery-5",
+      "name": "Sphere Machinery",
+      "origin": {
+        "column": 11,
+        "row": 15
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "sphere-machinery-6",
+      "name": "Sphere Machinery",
+      "origin": {
+        "column": 12,
+        "row": 15
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "large-machine-4",
+      "name": "Large Machine",
+      "origin": {
+        "column": 13,
+        "row": 15
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "large-machine-5",
+      "name": "Large Machine",
+      "origin": {
+        "column": 14,
+        "row": 15
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "large-machine-6",
+      "name": "Large Machine",
+      "origin": {
+        "column": 15,
+        "row": 15
+      },
+      "collision": {
+        "kind": "none"
+      }
+    }
+  ]
+}

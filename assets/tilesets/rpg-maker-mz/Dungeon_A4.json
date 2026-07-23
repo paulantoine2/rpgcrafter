@@ -1,0 +1,1579 @@
+{
+  "id": "rpg-maker-mz-dungeon-a4",
+  "name": "Dungeon A4",
+  "category": "RPG Maker MZ / Dungeon",
+  "kind": "a4",
+  "image": "tilesets/rpg-maker-mz/Dungeon_A4.png",
+  "tileSize": 48,
+  "columns": 16,
+  "rows": 15,
+  "terrains": [
+    {
+      "id": "wall-a-dirt-cave",
+      "name": "Wall A (Dirt Cave)",
+      "origin": {
+        "column": 0,
+        "row": 0
+      },
+      "collision": {
+        "kind": "none"
+      },
+      "previewMask": 0,
+      "autotile": "floor"
+    },
+    {
+      "id": "wall-b-rock-cave",
+      "name": "Wall B (Rock Cave)",
+      "origin": {
+        "column": 2,
+        "row": 0
+      },
+      "collision": {
+        "kind": "none"
+      },
+      "previewMask": 0,
+      "autotile": "floor"
+    },
+    {
+      "id": "wall-c-lava-cave",
+      "name": "Wall C (Lava Cave)",
+      "origin": {
+        "column": 4,
+        "row": 0
+      },
+      "collision": {
+        "kind": "none"
+      },
+      "previewMask": 0,
+      "autotile": "floor"
+    },
+    {
+      "id": "wall-d-ice-cave",
+      "name": "Wall D (Ice Cave)",
+      "origin": {
+        "column": 6,
+        "row": 0
+      },
+      "collision": {
+        "kind": "none"
+      },
+      "previewMask": 0,
+      "autotile": "floor"
+    },
+    {
+      "id": "wall-e-grass-maze",
+      "name": "Wall E (Grass Maze)",
+      "origin": {
+        "column": 8,
+        "row": 0
+      },
+      "collision": {
+        "kind": "none"
+      },
+      "previewMask": 0,
+      "autotile": "floor"
+    },
+    {
+      "id": "wall-f-crystal",
+      "name": "Wall F (Crystal)",
+      "origin": {
+        "column": 10,
+        "row": 0
+      },
+      "collision": {
+        "kind": "none"
+      },
+      "previewMask": 0,
+      "autotile": "floor"
+    },
+    {
+      "id": "wall-g-in-body",
+      "name": "Wall G (In Body)",
+      "origin": {
+        "column": 12,
+        "row": 0
+      },
+      "collision": {
+        "kind": "none"
+      },
+      "previewMask": 0,
+      "autotile": "floor"
+    },
+    {
+      "id": "wall-h-demonic-world",
+      "name": "Wall H (Demonic World)",
+      "origin": {
+        "column": 14,
+        "row": 0
+      },
+      "collision": {
+        "kind": "none"
+      },
+      "previewMask": 0,
+      "autotile": "floor"
+    },
+    {
+      "id": "wall-a-dirt-cave-2",
+      "name": "Wall A (Dirt Cave)",
+      "origin": {
+        "column": 0,
+        "row": 3
+      },
+      "collision": {
+        "kind": "none"
+      },
+      "previewMask": 0,
+      "autotile": "wall"
+    },
+    {
+      "id": "wall-b-rock-cave-2",
+      "name": "Wall B (Rock Cave)",
+      "origin": {
+        "column": 2,
+        "row": 3
+      },
+      "collision": {
+        "kind": "none"
+      },
+      "previewMask": 0,
+      "autotile": "wall"
+    },
+    {
+      "id": "wall-c-lava-cave-2",
+      "name": "Wall C (Lava Cave)",
+      "origin": {
+        "column": 4,
+        "row": 3
+      },
+      "collision": {
+        "kind": "none"
+      },
+      "previewMask": 0,
+      "autotile": "wall"
+    },
+    {
+      "id": "wall-d-ice-cave-2",
+      "name": "Wall D (Ice Cave)",
+      "origin": {
+        "column": 6,
+        "row": 3
+      },
+      "collision": {
+        "kind": "none"
+      },
+      "previewMask": 0,
+      "autotile": "wall"
+    },
+    {
+      "id": "wall-e-grass-maze-2",
+      "name": "Wall E (Grass Maze)",
+      "origin": {
+        "column": 8,
+        "row": 3
+      },
+      "collision": {
+        "kind": "none"
+      },
+      "previewMask": 0,
+      "autotile": "wall"
+    },
+    {
+      "id": "wall-f-crystal-2",
+      "name": "Wall F (Crystal)",
+      "origin": {
+        "column": 10,
+        "row": 3
+      },
+      "collision": {
+        "kind": "none"
+      },
+      "previewMask": 0,
+      "autotile": "wall"
+    },
+    {
+      "id": "wall-g-in-body-2",
+      "name": "Wall G (In Body)",
+      "origin": {
+        "column": 12,
+        "row": 3
+      },
+      "collision": {
+        "kind": "none"
+      },
+      "previewMask": 0,
+      "autotile": "wall"
+    },
+    {
+      "id": "wall-h-demonic-world-2",
+      "name": "Wall H (Demonic World)",
+      "origin": {
+        "column": 14,
+        "row": 3
+      },
+      "collision": {
+        "kind": "none"
+      },
+      "previewMask": 0,
+      "autotile": "wall"
+    },
+    {
+      "id": "wall-i-stone",
+      "name": "Wall I (Stone)",
+      "origin": {
+        "column": 0,
+        "row": 5
+      },
+      "collision": {
+        "kind": "none"
+      },
+      "previewMask": 0,
+      "autotile": "floor"
+    },
+    {
+      "id": "wall-j-brick",
+      "name": "Wall J (Brick)",
+      "origin": {
+        "column": 2,
+        "row": 5
+      },
+      "collision": {
+        "kind": "none"
+      },
+      "previewMask": 0,
+      "autotile": "floor"
+    },
+    {
+      "id": "wall-k-stone",
+      "name": "Wall K (Stone)",
+      "origin": {
+        "column": 4,
+        "row": 5
+      },
+      "collision": {
+        "kind": "none"
+      },
+      "previewMask": 0,
+      "autotile": "floor"
+    },
+    {
+      "id": "wall-l-marble",
+      "name": "Wall L (Marble)",
+      "origin": {
+        "column": 6,
+        "row": 5
+      },
+      "collision": {
+        "kind": "none"
+      },
+      "previewMask": 0,
+      "autotile": "floor"
+    },
+    {
+      "id": "wall-m-moss",
+      "name": "Wall M (Moss)",
+      "origin": {
+        "column": 8,
+        "row": 5
+      },
+      "collision": {
+        "kind": "none"
+      },
+      "previewMask": 0,
+      "autotile": "floor"
+    },
+    {
+      "id": "wall-n-castle",
+      "name": "Wall N (Castle)",
+      "origin": {
+        "column": 10,
+        "row": 5
+      },
+      "collision": {
+        "kind": "none"
+      },
+      "previewMask": 0,
+      "autotile": "floor"
+    },
+    {
+      "id": "wall-o-fort",
+      "name": "Wall O (Fort)",
+      "origin": {
+        "column": 12,
+        "row": 5
+      },
+      "collision": {
+        "kind": "none"
+      },
+      "previewMask": 0,
+      "autotile": "floor"
+    },
+    {
+      "id": "wall-p-demon-castle",
+      "name": "Wall P (Demon Castle)",
+      "origin": {
+        "column": 14,
+        "row": 5
+      },
+      "collision": {
+        "kind": "none"
+      },
+      "previewMask": 0,
+      "autotile": "floor"
+    },
+    {
+      "id": "wall-i-stone-2",
+      "name": "Wall I (Stone)",
+      "origin": {
+        "column": 0,
+        "row": 8
+      },
+      "collision": {
+        "kind": "none"
+      },
+      "previewMask": 0,
+      "autotile": "wall"
+    },
+    {
+      "id": "wall-j-brick-2",
+      "name": "Wall J (Brick)",
+      "origin": {
+        "column": 2,
+        "row": 8
+      },
+      "collision": {
+        "kind": "none"
+      },
+      "previewMask": 0,
+      "autotile": "wall"
+    },
+    {
+      "id": "wall-k-stone-2",
+      "name": "Wall K (Stone)",
+      "origin": {
+        "column": 4,
+        "row": 8
+      },
+      "collision": {
+        "kind": "none"
+      },
+      "previewMask": 0,
+      "autotile": "wall"
+    },
+    {
+      "id": "wall-l-marble-2",
+      "name": "Wall L (Marble)",
+      "origin": {
+        "column": 6,
+        "row": 8
+      },
+      "collision": {
+        "kind": "none"
+      },
+      "previewMask": 0,
+      "autotile": "wall"
+    },
+    {
+      "id": "wall-m-moss-2",
+      "name": "Wall M (Moss)",
+      "origin": {
+        "column": 8,
+        "row": 8
+      },
+      "collision": {
+        "kind": "none"
+      },
+      "previewMask": 0,
+      "autotile": "wall"
+    },
+    {
+      "id": "wall-n-castle-2",
+      "name": "Wall N (Castle)",
+      "origin": {
+        "column": 10,
+        "row": 8
+      },
+      "collision": {
+        "kind": "none"
+      },
+      "previewMask": 0,
+      "autotile": "wall"
+    },
+    {
+      "id": "wall-o-fort-2",
+      "name": "Wall O (Fort)",
+      "origin": {
+        "column": 12,
+        "row": 8
+      },
+      "collision": {
+        "kind": "none"
+      },
+      "previewMask": 0,
+      "autotile": "wall"
+    },
+    {
+      "id": "wall-p-demon-castle-2",
+      "name": "Wall P (Demon Castle)",
+      "origin": {
+        "column": 14,
+        "row": 8
+      },
+      "collision": {
+        "kind": "none"
+      },
+      "previewMask": 0,
+      "autotile": "wall"
+    },
+    {
+      "id": "wall-q-mecha",
+      "name": "Wall Q (Mecha)",
+      "origin": {
+        "column": 0,
+        "row": 10
+      },
+      "collision": {
+        "kind": "none"
+      },
+      "previewMask": 0,
+      "autotile": "floor"
+    },
+    {
+      "id": "wall-r-stone",
+      "name": "Wall R (Stone)",
+      "origin": {
+        "column": 2,
+        "row": 10
+      },
+      "collision": {
+        "kind": "none"
+      },
+      "previewMask": 0,
+      "autotile": "floor"
+    },
+    {
+      "id": "wall-s-frozen",
+      "name": "Wall S (Frozen)",
+      "origin": {
+        "column": 4,
+        "row": 10
+      },
+      "collision": {
+        "kind": "none"
+      },
+      "previewMask": 0,
+      "autotile": "floor"
+    },
+    {
+      "id": "wall-t-dirt-cave-gold",
+      "name": "Wall T (Dirt Cave, Gold)",
+      "origin": {
+        "column": 6,
+        "row": 10
+      },
+      "collision": {
+        "kind": "none"
+      },
+      "previewMask": 0,
+      "autotile": "floor"
+    },
+    {
+      "id": "ledge-a-dirt-cave",
+      "name": "Ledge A (Dirt Cave)",
+      "origin": {
+        "column": 8,
+        "row": 10
+      },
+      "collision": {
+        "kind": "none"
+      },
+      "previewMask": 0,
+      "autotile": "floor"
+    },
+    {
+      "id": "ledge-b-rock-cave",
+      "name": "Ledge B (Rock Cave)",
+      "origin": {
+        "column": 10,
+        "row": 10
+      },
+      "collision": {
+        "kind": "none"
+      },
+      "previewMask": 0,
+      "autotile": "floor"
+    },
+    {
+      "id": "ledge-c-lava-cave",
+      "name": "Ledge C (Lava Cave)",
+      "origin": {
+        "column": 12,
+        "row": 10
+      },
+      "collision": {
+        "kind": "none"
+      },
+      "previewMask": 0,
+      "autotile": "floor"
+    },
+    {
+      "id": "ledge-d-ice-cave",
+      "name": "Ledge D (Ice Cave)",
+      "origin": {
+        "column": 14,
+        "row": 10
+      },
+      "collision": {
+        "kind": "none"
+      },
+      "previewMask": 0,
+      "autotile": "floor"
+    },
+    {
+      "id": "wall-q-mecha-2",
+      "name": "Wall Q (Mecha)",
+      "origin": {
+        "column": 0,
+        "row": 13
+      },
+      "collision": {
+        "kind": "none"
+      },
+      "previewMask": 0,
+      "autotile": "wall"
+    },
+    {
+      "id": "wall-r-stone-2",
+      "name": "Wall R (Stone)",
+      "origin": {
+        "column": 2,
+        "row": 13
+      },
+      "collision": {
+        "kind": "none"
+      },
+      "previewMask": 0,
+      "autotile": "wall"
+    },
+    {
+      "id": "wall-s-frozen-2",
+      "name": "Wall S (Frozen)",
+      "origin": {
+        "column": 4,
+        "row": 13
+      },
+      "collision": {
+        "kind": "none"
+      },
+      "previewMask": 0,
+      "autotile": "wall"
+    },
+    {
+      "id": "wall-t-dirt-cave-gold-2",
+      "name": "Wall T (Dirt Cave, Gold)",
+      "origin": {
+        "column": 6,
+        "row": 13
+      },
+      "collision": {
+        "kind": "none"
+      },
+      "previewMask": 0,
+      "autotile": "wall"
+    },
+    {
+      "id": "ledge-a-dirt-cave-2",
+      "name": "Ledge A (Dirt Cave)",
+      "origin": {
+        "column": 8,
+        "row": 13
+      },
+      "collision": {
+        "kind": "none"
+      },
+      "previewMask": 0,
+      "autotile": "wall"
+    },
+    {
+      "id": "ledge-b-rock-cave-2",
+      "name": "Ledge B (Rock Cave)",
+      "origin": {
+        "column": 10,
+        "row": 13
+      },
+      "collision": {
+        "kind": "none"
+      },
+      "previewMask": 0,
+      "autotile": "wall"
+    },
+    {
+      "id": "ledge-c-lava-cave-2",
+      "name": "Ledge C (Lava Cave)",
+      "origin": {
+        "column": 12,
+        "row": 13
+      },
+      "collision": {
+        "kind": "none"
+      },
+      "previewMask": 0,
+      "autotile": "wall"
+    },
+    {
+      "id": "ledge-d-ice-cave-2",
+      "name": "Ledge D (Ice Cave)",
+      "origin": {
+        "column": 14,
+        "row": 13
+      },
+      "collision": {
+        "kind": "none"
+      },
+      "previewMask": 0,
+      "autotile": "wall"
+    }
+  ],
+  "quarterSize": 24,
+  "variants": {
+    "0": {
+      "quarters": [
+        [
+          0,
+          0
+        ],
+        [
+          1,
+          0
+        ],
+        [
+          0,
+          1
+        ],
+        [
+          1,
+          1
+        ]
+      ]
+    },
+    "1": {
+      "quarters": [
+        [
+          0,
+          4
+        ],
+        [
+          3,
+          4
+        ],
+        [
+          0,
+          1
+        ],
+        [
+          1,
+          1
+        ]
+      ]
+    },
+    "2": {
+      "quarters": [
+        [
+          0,
+          0
+        ],
+        [
+          1,
+          2
+        ],
+        [
+          0,
+          1
+        ],
+        [
+          1,
+          5
+        ]
+      ]
+    },
+    "3": {
+      "quarters": [
+        [
+          0,
+          4
+        ],
+        [
+          3,
+          0
+        ],
+        [
+          0,
+          1
+        ],
+        [
+          1,
+          5
+        ]
+      ]
+    },
+    "4": {
+      "quarters": [
+        [
+          0,
+          0
+        ],
+        [
+          1,
+          0
+        ],
+        [
+          0,
+          3
+        ],
+        [
+          3,
+          3
+        ]
+      ]
+    },
+    "5": {
+      "quarters": [
+        [
+          0,
+          4
+        ],
+        [
+          3,
+          4
+        ],
+        [
+          0,
+          3
+        ],
+        [
+          3,
+          3
+        ]
+      ]
+    },
+    "6": {
+      "quarters": [
+        [
+          0,
+          0
+        ],
+        [
+          1,
+          2
+        ],
+        [
+          0,
+          3
+        ],
+        [
+          3,
+          1
+        ]
+      ]
+    },
+    "7": {
+      "quarters": [
+        [
+          0,
+          4
+        ],
+        [
+          3,
+          0
+        ],
+        [
+          0,
+          3
+        ],
+        [
+          3,
+          1
+        ]
+      ]
+    },
+    "8": {
+      "quarters": [
+        [
+          2,
+          2
+        ],
+        [
+          1,
+          0
+        ],
+        [
+          2,
+          5
+        ],
+        [
+          1,
+          1
+        ]
+      ]
+    },
+    "9": {
+      "quarters": [
+        [
+          2,
+          0
+        ],
+        [
+          3,
+          4
+        ],
+        [
+          2,
+          5
+        ],
+        [
+          1,
+          1
+        ]
+      ]
+    },
+    "10": {
+      "quarters": [
+        [
+          2,
+          2
+        ],
+        [
+          1,
+          2
+        ],
+        [
+          2,
+          5
+        ],
+        [
+          1,
+          5
+        ]
+      ]
+    },
+    "11": {
+      "quarters": [
+        [
+          2,
+          0
+        ],
+        [
+          3,
+          0
+        ],
+        [
+          2,
+          5
+        ],
+        [
+          1,
+          5
+        ]
+      ]
+    },
+    "12": {
+      "quarters": [
+        [
+          2,
+          2
+        ],
+        [
+          1,
+          0
+        ],
+        [
+          2,
+          1
+        ],
+        [
+          3,
+          3
+        ]
+      ]
+    },
+    "13": {
+      "quarters": [
+        [
+          2,
+          0
+        ],
+        [
+          3,
+          4
+        ],
+        [
+          2,
+          1
+        ],
+        [
+          3,
+          3
+        ]
+      ]
+    },
+    "14": {
+      "quarters": [
+        [
+          2,
+          2
+        ],
+        [
+          1,
+          2
+        ],
+        [
+          2,
+          1
+        ],
+        [
+          3,
+          1
+        ]
+      ]
+    },
+    "15": {
+      "quarters": [
+        [
+          2,
+          0
+        ],
+        [
+          3,
+          0
+        ],
+        [
+          2,
+          1
+        ],
+        [
+          3,
+          1
+        ]
+      ]
+    },
+    "19": {
+      "quarters": [
+        [
+          0,
+          4
+        ],
+        [
+          1,
+          4
+        ],
+        [
+          0,
+          1
+        ],
+        [
+          1,
+          5
+        ]
+      ]
+    },
+    "23": {
+      "quarters": [
+        [
+          0,
+          4
+        ],
+        [
+          1,
+          4
+        ],
+        [
+          0,
+          3
+        ],
+        [
+          3,
+          1
+        ]
+      ]
+    },
+    "27": {
+      "quarters": [
+        [
+          2,
+          0
+        ],
+        [
+          1,
+          4
+        ],
+        [
+          2,
+          5
+        ],
+        [
+          1,
+          5
+        ]
+      ]
+    },
+    "31": {
+      "quarters": [
+        [
+          2,
+          0
+        ],
+        [
+          1,
+          4
+        ],
+        [
+          2,
+          1
+        ],
+        [
+          3,
+          1
+        ]
+      ]
+    },
+    "38": {
+      "quarters": [
+        [
+          0,
+          0
+        ],
+        [
+          1,
+          2
+        ],
+        [
+          0,
+          3
+        ],
+        [
+          1,
+          3
+        ]
+      ]
+    },
+    "39": {
+      "quarters": [
+        [
+          0,
+          4
+        ],
+        [
+          3,
+          0
+        ],
+        [
+          0,
+          3
+        ],
+        [
+          1,
+          3
+        ]
+      ]
+    },
+    "46": {
+      "quarters": [
+        [
+          2,
+          2
+        ],
+        [
+          1,
+          2
+        ],
+        [
+          2,
+          1
+        ],
+        [
+          1,
+          3
+        ]
+      ]
+    },
+    "47": {
+      "quarters": [
+        [
+          2,
+          0
+        ],
+        [
+          3,
+          0
+        ],
+        [
+          2,
+          1
+        ],
+        [
+          1,
+          3
+        ]
+      ]
+    },
+    "55": {
+      "quarters": [
+        [
+          0,
+          4
+        ],
+        [
+          1,
+          4
+        ],
+        [
+          0,
+          3
+        ],
+        [
+          1,
+          3
+        ]
+      ]
+    },
+    "63": {
+      "quarters": [
+        [
+          2,
+          0
+        ],
+        [
+          1,
+          4
+        ],
+        [
+          2,
+          1
+        ],
+        [
+          1,
+          3
+        ]
+      ]
+    },
+    "76": {
+      "quarters": [
+        [
+          2,
+          2
+        ],
+        [
+          1,
+          0
+        ],
+        [
+          2,
+          3
+        ],
+        [
+          3,
+          3
+        ]
+      ]
+    },
+    "77": {
+      "quarters": [
+        [
+          2,
+          0
+        ],
+        [
+          3,
+          4
+        ],
+        [
+          2,
+          3
+        ],
+        [
+          3,
+          3
+        ]
+      ]
+    },
+    "78": {
+      "quarters": [
+        [
+          2,
+          2
+        ],
+        [
+          1,
+          2
+        ],
+        [
+          2,
+          3
+        ],
+        [
+          3,
+          1
+        ]
+      ]
+    },
+    "79": {
+      "quarters": [
+        [
+          2,
+          0
+        ],
+        [
+          3,
+          0
+        ],
+        [
+          2,
+          3
+        ],
+        [
+          3,
+          1
+        ]
+      ]
+    },
+    "95": {
+      "quarters": [
+        [
+          2,
+          0
+        ],
+        [
+          1,
+          4
+        ],
+        [
+          2,
+          3
+        ],
+        [
+          3,
+          1
+        ]
+      ]
+    },
+    "110": {
+      "quarters": [
+        [
+          2,
+          2
+        ],
+        [
+          1,
+          2
+        ],
+        [
+          2,
+          3
+        ],
+        [
+          1,
+          3
+        ]
+      ]
+    },
+    "111": {
+      "quarters": [
+        [
+          2,
+          0
+        ],
+        [
+          3,
+          0
+        ],
+        [
+          2,
+          3
+        ],
+        [
+          1,
+          3
+        ]
+      ]
+    },
+    "127": {
+      "quarters": [
+        [
+          2,
+          0
+        ],
+        [
+          1,
+          4
+        ],
+        [
+          2,
+          3
+        ],
+        [
+          1,
+          3
+        ]
+      ]
+    },
+    "137": {
+      "quarters": [
+        [
+          2,
+          4
+        ],
+        [
+          3,
+          4
+        ],
+        [
+          2,
+          5
+        ],
+        [
+          1,
+          1
+        ]
+      ]
+    },
+    "139": {
+      "quarters": [
+        [
+          2,
+          4
+        ],
+        [
+          3,
+          0
+        ],
+        [
+          2,
+          5
+        ],
+        [
+          1,
+          5
+        ]
+      ]
+    },
+    "141": {
+      "quarters": [
+        [
+          2,
+          4
+        ],
+        [
+          3,
+          4
+        ],
+        [
+          2,
+          1
+        ],
+        [
+          3,
+          3
+        ]
+      ]
+    },
+    "143": {
+      "quarters": [
+        [
+          2,
+          4
+        ],
+        [
+          3,
+          0
+        ],
+        [
+          2,
+          1
+        ],
+        [
+          3,
+          1
+        ]
+      ]
+    },
+    "155": {
+      "quarters": [
+        [
+          2,
+          4
+        ],
+        [
+          1,
+          4
+        ],
+        [
+          2,
+          5
+        ],
+        [
+          1,
+          5
+        ]
+      ]
+    },
+    "159": {
+      "quarters": [
+        [
+          2,
+          4
+        ],
+        [
+          1,
+          4
+        ],
+        [
+          2,
+          1
+        ],
+        [
+          3,
+          1
+        ]
+      ]
+    },
+    "175": {
+      "quarters": [
+        [
+          2,
+          4
+        ],
+        [
+          3,
+          0
+        ],
+        [
+          2,
+          1
+        ],
+        [
+          1,
+          3
+        ]
+      ]
+    },
+    "191": {
+      "quarters": [
+        [
+          2,
+          4
+        ],
+        [
+          1,
+          4
+        ],
+        [
+          2,
+          1
+        ],
+        [
+          1,
+          3
+        ]
+      ]
+    },
+    "205": {
+      "quarters": [
+        [
+          2,
+          4
+        ],
+        [
+          3,
+          4
+        ],
+        [
+          2,
+          3
+        ],
+        [
+          3,
+          3
+        ]
+      ]
+    },
+    "207": {
+      "quarters": [
+        [
+          2,
+          4
+        ],
+        [
+          3,
+          0
+        ],
+        [
+          2,
+          3
+        ],
+        [
+          3,
+          1
+        ]
+      ]
+    },
+    "223": {
+      "quarters": [
+        [
+          2,
+          4
+        ],
+        [
+          1,
+          4
+        ],
+        [
+          2,
+          3
+        ],
+        [
+          3,
+          1
+        ]
+      ]
+    },
+    "239": {
+      "quarters": [
+        [
+          2,
+          4
+        ],
+        [
+          3,
+          0
+        ],
+        [
+          2,
+          3
+        ],
+        [
+          1,
+          3
+        ]
+      ]
+    },
+    "255": {
+      "quarters": [
+        [
+          2,
+          4
+        ],
+        [
+          1,
+          4
+        ],
+        [
+          2,
+          3
+        ],
+        [
+          1,
+          3
+        ]
+      ]
+    }
+  }
+}

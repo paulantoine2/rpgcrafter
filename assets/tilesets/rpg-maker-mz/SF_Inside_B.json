@@ -1,0 +1,2828 @@
+{
+  "id": "rpg-maker-mz-sf-inside-b",
+  "name": "Science Fiction Inside B",
+  "category": "RPG Maker MZ / Science Fiction Inside",
+  "kind": "grid",
+  "image": "tilesets/rpg-maker-mz/SF_Inside_B.png",
+  "tileSize": 48,
+  "columns": 16,
+  "rows": 16,
+  "terrains": [
+    {
+      "id": "transparent",
+      "name": "Transparent",
+      "origin": {
+        "column": 0,
+        "row": 0
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "stairs-a-up",
+      "name": "Stairs A (Up)",
+      "origin": {
+        "column": 1,
+        "row": 0
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "stairs-b-up",
+      "name": "Stairs B (Up)",
+      "origin": {
+        "column": 2,
+        "row": 0
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "stairs-c-up",
+      "name": "Stairs C (Up)",
+      "origin": {
+        "column": 3,
+        "row": 0
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "stairs-d-up",
+      "name": "Stairs D (Up)",
+      "origin": {
+        "column": 4,
+        "row": 0
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "wood-ladder",
+      "name": "Wood Ladder",
+      "origin": {
+        "column": 5,
+        "row": 0
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "metal-stairs",
+      "name": "Metal Stairs",
+      "origin": {
+        "column": 6,
+        "row": 0
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "crane-rope",
+      "name": "Crane Rope",
+      "origin": {
+        "column": 7,
+        "row": 0
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "hole",
+      "name": "Hole",
+      "origin": {
+        "column": 8,
+        "row": 0
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "stairs-a-down",
+      "name": "Stairs A (Down)",
+      "origin": {
+        "column": 9,
+        "row": 0
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "stairs-b-down",
+      "name": "Stairs B (Down)",
+      "origin": {
+        "column": 10,
+        "row": 0
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "stairs-c-down",
+      "name": "Stairs C (Down)",
+      "origin": {
+        "column": 11,
+        "row": 0
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "stairs-d-down",
+      "name": "Stairs D (Down)",
+      "origin": {
+        "column": 12,
+        "row": 0
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "wood-ladder-2",
+      "name": "Wood Ladder",
+      "origin": {
+        "column": 13,
+        "row": 0
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "metal-stairs-2",
+      "name": "Metal Stairs",
+      "origin": {
+        "column": 14,
+        "row": 0
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "crane-rope-2",
+      "name": "Crane Rope",
+      "origin": {
+        "column": 15,
+        "row": 0
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "midsize-window-a",
+      "name": "Midsize Window A",
+      "origin": {
+        "column": 0,
+        "row": 1
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "midsize-window-b",
+      "name": "Midsize Window B",
+      "origin": {
+        "column": 1,
+        "row": 1
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "large-window-a",
+      "name": "Large Window A",
+      "origin": {
+        "column": 2,
+        "row": 1
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "midsize-window-c",
+      "name": "Midsize Window C",
+      "origin": {
+        "column": 3,
+        "row": 1
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "large-window-b",
+      "name": "Large Window B",
+      "origin": {
+        "column": 4,
+        "row": 1
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "wood-ladder-3",
+      "name": "Wood Ladder",
+      "origin": {
+        "column": 5,
+        "row": 1
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "metal-stairs-3",
+      "name": "Metal Stairs",
+      "origin": {
+        "column": 6,
+        "row": 1
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "crane-rope-3",
+      "name": "Crane Rope",
+      "origin": {
+        "column": 7,
+        "row": 1
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "midsize-window-a-2",
+      "name": "Midsize Window A",
+      "origin": {
+        "column": 8,
+        "row": 1
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "midsize-window-b-2",
+      "name": "Midsize Window B",
+      "origin": {
+        "column": 9,
+        "row": 1
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "large-window-a-2",
+      "name": "Large Window A",
+      "origin": {
+        "column": 10,
+        "row": 1
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "midsize-window-c-2",
+      "name": "Midsize Window C",
+      "origin": {
+        "column": 11,
+        "row": 1
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "large-window-b-2",
+      "name": "Large Window B",
+      "origin": {
+        "column": 12,
+        "row": 1
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "hole-a-wood-ladder",
+      "name": "Hole A (Wood Ladder)",
+      "origin": {
+        "column": 13,
+        "row": 1
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "hole-b-metal-stairs",
+      "name": "Hole B (Metal Stairs)",
+      "origin": {
+        "column": 14,
+        "row": 1
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "hole-c-crane-rope",
+      "name": "Hole C (Crane Rope)",
+      "origin": {
+        "column": 15,
+        "row": 1
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "asphalt-bridge-v",
+      "name": "Asphalt Bridge (V)",
+      "origin": {
+        "column": 0,
+        "row": 2
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "asphalt-bridge-h",
+      "name": "Asphalt Bridge (H)",
+      "origin": {
+        "column": 1,
+        "row": 2
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "stone-bridge-v",
+      "name": "Stone Bridge (V)",
+      "origin": {
+        "column": 2,
+        "row": 2
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "stone-bridge-h",
+      "name": "Stone Bridge (H)",
+      "origin": {
+        "column": 3,
+        "row": 2
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "metal-bridge-a-v",
+      "name": "Metal Bridge A (V)",
+      "origin": {
+        "column": 4,
+        "row": 2
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "metal-bridge-a-h",
+      "name": "Metal Bridge A (H)",
+      "origin": {
+        "column": 5,
+        "row": 2
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "metal-bridge-b-v",
+      "name": "Metal Bridge B (V)",
+      "origin": {
+        "column": 6,
+        "row": 2
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "metal-bridge-b-h",
+      "name": "Metal Bridge B (H)",
+      "origin": {
+        "column": 7,
+        "row": 2
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "bridge-spar-a-asphalt-center-a",
+      "name": "Bridge Spar A (Asphalt, Center A)",
+      "origin": {
+        "column": 8,
+        "row": 2
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "bridge-spar-a-asphalt-left",
+      "name": "Bridge Spar A (Asphalt, Left)",
+      "origin": {
+        "column": 9,
+        "row": 2
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "bridge-spar-a-asphalt-center-b",
+      "name": "Bridge Spar A (Asphalt, Center B)",
+      "origin": {
+        "column": 10,
+        "row": 2
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "bridge-spar-a-asphalt-right",
+      "name": "Bridge Spar A (Asphalt, Right)",
+      "origin": {
+        "column": 11,
+        "row": 2
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "bridge-spar-b-metal-center-a",
+      "name": "Bridge Spar B (Metal, Center A)",
+      "origin": {
+        "column": 12,
+        "row": 2
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "bridge-spar-b-metal-left",
+      "name": "Bridge Spar B (Metal, Left)",
+      "origin": {
+        "column": 13,
+        "row": 2
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "bridge-spar-b-metal-center-b",
+      "name": "Bridge Spar B (Metal, Center B)",
+      "origin": {
+        "column": 14,
+        "row": 2
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "bridge-spar-b-metal-right",
+      "name": "Bridge Spar B (Metal, Right)",
+      "origin": {
+        "column": 15,
+        "row": 2
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "metal-fence",
+      "name": "Metal Fence",
+      "origin": {
+        "column": 0,
+        "row": 3
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "metal-fence-2",
+      "name": "Metal Fence",
+      "origin": {
+        "column": 1,
+        "row": 3
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "metal-fence-3",
+      "name": "Metal Fence",
+      "origin": {
+        "column": 2,
+        "row": 3
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "warning-plate-a",
+      "name": "Warning Plate A",
+      "origin": {
+        "column": 3,
+        "row": 3
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "connecting-bridge-metal",
+      "name": "Connecting Bridge (Metal)",
+      "origin": {
+        "column": 4,
+        "row": 3
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "connecting-bridge-metal-2",
+      "name": "Connecting Bridge (Metal)",
+      "origin": {
+        "column": 5,
+        "row": 3
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "connecting-bridge-metal-3",
+      "name": "Connecting Bridge (Metal)",
+      "origin": {
+        "column": 6,
+        "row": 3
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "connecting-bridge-metal-stairs",
+      "name": "Connecting Bridge (Metal, Stairs)",
+      "origin": {
+        "column": 7,
+        "row": 3
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "metal-fence-4",
+      "name": "Metal Fence",
+      "origin": {
+        "column": 8,
+        "row": 3
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "warning-plate-b",
+      "name": "Warning Plate B",
+      "origin": {
+        "column": 9,
+        "row": 3
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "metal-fence-5",
+      "name": "Metal Fence",
+      "origin": {
+        "column": 10,
+        "row": 3
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "warning-plate-c",
+      "name": "Warning Plate C",
+      "origin": {
+        "column": 11,
+        "row": 3
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "connecting-bridge-metal-4",
+      "name": "Connecting Bridge (Metal)",
+      "origin": {
+        "column": 12,
+        "row": 3
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "connecting-bridge-metal-5",
+      "name": "Connecting Bridge (Metal)",
+      "origin": {
+        "column": 13,
+        "row": 3
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "connecting-bridge-metal-6",
+      "name": "Connecting Bridge (Metal)",
+      "origin": {
+        "column": 14,
+        "row": 3
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "connecting-bridge-metal-stairs-2",
+      "name": "Connecting Bridge (Metal, Stairs)",
+      "origin": {
+        "column": 15,
+        "row": 3
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "metal-fence-6",
+      "name": "Metal Fence",
+      "origin": {
+        "column": 0,
+        "row": 4
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "metal-fence-7",
+      "name": "Metal Fence",
+      "origin": {
+        "column": 1,
+        "row": 4
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "metal-fence-8",
+      "name": "Metal Fence",
+      "origin": {
+        "column": 2,
+        "row": 4
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "warning-plate-biohazard-mark",
+      "name": "Warning Plate (Biohazard Mark)",
+      "origin": {
+        "column": 3,
+        "row": 4
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "connecting-bridge-metal-7",
+      "name": "Connecting Bridge (Metal)",
+      "origin": {
+        "column": 4,
+        "row": 4
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "connecting-bridge-metal-8",
+      "name": "Connecting Bridge (Metal)",
+      "origin": {
+        "column": 5,
+        "row": 4
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "connecting-bridge-metal-9",
+      "name": "Connecting Bridge (Metal)",
+      "origin": {
+        "column": 6,
+        "row": 4
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "podium-h",
+      "name": "Podium (H)",
+      "origin": {
+        "column": 7,
+        "row": 4
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "pillar-a-asphalt",
+      "name": "Pillar A (Asphalt)",
+      "origin": {
+        "column": 8,
+        "row": 4
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "pillar-b-metal",
+      "name": "Pillar B (Metal)",
+      "origin": {
+        "column": 9,
+        "row": 4
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "pillar-c-display",
+      "name": "Pillar C (Display)",
+      "origin": {
+        "column": 10,
+        "row": 4
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "pillar-d-decoration",
+      "name": "Pillar D (Decoration)",
+      "origin": {
+        "column": 11,
+        "row": 4
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "pillar-e-metal",
+      "name": "Pillar E (Metal)",
+      "origin": {
+        "column": 12,
+        "row": 4
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "pillar-f-brick",
+      "name": "Pillar F (Brick)",
+      "origin": {
+        "column": 13,
+        "row": 4
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "large-window-c",
+      "name": "Large Window C",
+      "origin": {
+        "column": 14,
+        "row": 4
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "podium-h-2",
+      "name": "Podium (H)",
+      "origin": {
+        "column": 15,
+        "row": 4
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "pillar-a-asphalt-2",
+      "name": "Pillar A (Asphalt)",
+      "origin": {
+        "column": 0,
+        "row": 5
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "pillar-b-metal-2",
+      "name": "Pillar B (Metal)",
+      "origin": {
+        "column": 1,
+        "row": 5
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "pillar-c-display-2",
+      "name": "Pillar C (Display)",
+      "origin": {
+        "column": 2,
+        "row": 5
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "pillar-d-decoration-2",
+      "name": "Pillar D (Decoration)",
+      "origin": {
+        "column": 3,
+        "row": 5
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "pillar-e-metal-2",
+      "name": "Pillar E (Metal)",
+      "origin": {
+        "column": 4,
+        "row": 5
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "pillar-f-brick-2",
+      "name": "Pillar F (Brick)",
+      "origin": {
+        "column": 5,
+        "row": 5
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "large-window-c-2",
+      "name": "Large Window C",
+      "origin": {
+        "column": 6,
+        "row": 5
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "podium-v",
+      "name": "Podium (V)",
+      "origin": {
+        "column": 7,
+        "row": 5
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "broken-pillar-a-asphalt",
+      "name": "Broken Pillar A (Asphalt)",
+      "origin": {
+        "column": 8,
+        "row": 5
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "broken-pillar-b-metal",
+      "name": "Broken Pillar B (Metal)",
+      "origin": {
+        "column": 9,
+        "row": 5
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "broken-pillar-c-display",
+      "name": "Broken Pillar C (Display)",
+      "origin": {
+        "column": 10,
+        "row": 5
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "broken-pillar-d-decoration",
+      "name": "Broken Pillar D (Decoration)",
+      "origin": {
+        "column": 11,
+        "row": 5
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "broken-pillar-e-metal",
+      "name": "Broken Pillar E (Metal)",
+      "origin": {
+        "column": 12,
+        "row": 5
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "broken-pillar-f-brick",
+      "name": "Broken Pillar F (Brick)",
+      "origin": {
+        "column": 13,
+        "row": 5
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "barricade-no-entry",
+      "name": "Barricade (No Entry)",
+      "origin": {
+        "column": 14,
+        "row": 5
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "podium-v-2",
+      "name": "Podium (V)",
+      "origin": {
+        "column": 15,
+        "row": 5
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "girder-a-asphalt-left",
+      "name": "Girder A (Asphalt, Left)",
+      "origin": {
+        "column": 0,
+        "row": 6
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "girder-a-asphalt-center",
+      "name": "Girder A (Asphalt, Center)",
+      "origin": {
+        "column": 1,
+        "row": 6
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "girder-a-asphalt-right",
+      "name": "Girder A (Asphalt, Right)",
+      "origin": {
+        "column": 2,
+        "row": 6
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "girder-c-decoration-left",
+      "name": "Girder C (Decoration, Left)",
+      "origin": {
+        "column": 3,
+        "row": 6
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "girder-c-decoration-center",
+      "name": "Girder C (Decoration, Center)",
+      "origin": {
+        "column": 4,
+        "row": 6
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "girder-c-decoration-right",
+      "name": "Girder C (Decoration, Right)",
+      "origin": {
+        "column": 5,
+        "row": 6
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "bar-no-entry",
+      "name": "Bar (No Entry)",
+      "origin": {
+        "column": 6,
+        "row": 6
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "bar-no-entry-2",
+      "name": "Bar (No Entry)",
+      "origin": {
+        "column": 7,
+        "row": 6
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "girder-b-metal-left",
+      "name": "Girder B (Metal, Left)",
+      "origin": {
+        "column": 8,
+        "row": 6
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "girder-b-metal-center",
+      "name": "Girder B (Metal, Center)",
+      "origin": {
+        "column": 9,
+        "row": 6
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "girder-b-metal-right",
+      "name": "Girder B (Metal, Right)",
+      "origin": {
+        "column": 10,
+        "row": 6
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "rubble-a-asphalt",
+      "name": "Rubble A (Asphalt)",
+      "origin": {
+        "column": 11,
+        "row": 6
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "rubble-b-metal",
+      "name": "Rubble B (Metal)",
+      "origin": {
+        "column": 12,
+        "row": 6
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "fissures-a",
+      "name": "Fissures A",
+      "origin": {
+        "column": 13,
+        "row": 6
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "fissures-b",
+      "name": "Fissures B",
+      "origin": {
+        "column": 14,
+        "row": 6
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "fissures-c",
+      "name": "Fissures C",
+      "origin": {
+        "column": 15,
+        "row": 6
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "jail-bars",
+      "name": "Jail Bars",
+      "origin": {
+        "column": 0,
+        "row": 7
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "laser-barrier",
+      "name": "Laser Barrier",
+      "origin": {
+        "column": 1,
+        "row": 7
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "wheelchair-left",
+      "name": "Wheelchair (Left)",
+      "origin": {
+        "column": 2,
+        "row": 7
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "wheelchair-right",
+      "name": "Wheelchair (Right)",
+      "origin": {
+        "column": 3,
+        "row": 7
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "pipe-frame-bed-ruins",
+      "name": "Pipe Frame Bed (Ruins)",
+      "origin": {
+        "column": 4,
+        "row": 7
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "fissures-a-2",
+      "name": "Fissures A",
+      "origin": {
+        "column": 5,
+        "row": 7
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "fissures-b-2",
+      "name": "Fissures B",
+      "origin": {
+        "column": 6,
+        "row": 7
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "fissures-c-2",
+      "name": "Fissures C",
+      "origin": {
+        "column": 7,
+        "row": 7
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "jail-bars-2",
+      "name": "Jail Bars",
+      "origin": {
+        "column": 8,
+        "row": 7
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "laser-barrier-2",
+      "name": "Laser Barrier",
+      "origin": {
+        "column": 9,
+        "row": 7
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "wheelchair-bottom",
+      "name": "Wheelchair (Bottom)",
+      "origin": {
+        "column": 10,
+        "row": 7
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "wheelchair-fallen",
+      "name": "Wheelchair (Fallen)",
+      "origin": {
+        "column": 11,
+        "row": 7
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "pipe-frame-bed-ruins-2",
+      "name": "Pipe Frame Bed (Ruins)",
+      "origin": {
+        "column": 12,
+        "row": 7
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "lab-equipment",
+      "name": "Lab Equipment",
+      "origin": {
+        "column": 13,
+        "row": 7
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "school-desk-v",
+      "name": "School Desk (V)",
+      "origin": {
+        "column": 14,
+        "row": 7
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "school-desk-h",
+      "name": "School Desk (H)",
+      "origin": {
+        "column": 15,
+        "row": 7
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "tv",
+      "name": "TV",
+      "origin": {
+        "column": 0,
+        "row": 8
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "computer",
+      "name": "Computer",
+      "origin": {
+        "column": 1,
+        "row": 8
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "laptop",
+      "name": "Laptop",
+      "origin": {
+        "column": 2,
+        "row": 8
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "printer",
+      "name": "Printer",
+      "origin": {
+        "column": 3,
+        "row": 8
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "telephone",
+      "name": "Telephone",
+      "origin": {
+        "column": 4,
+        "row": 8
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "intercom-hanging",
+      "name": "Intercom (Hanging)",
+      "origin": {
+        "column": 5,
+        "row": 8
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "tablet-device",
+      "name": "Tablet Device",
+      "origin": {
+        "column": 6,
+        "row": 8
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "table-clock",
+      "name": "Table Clock",
+      "origin": {
+        "column": 7,
+        "row": 8
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "gas-stove",
+      "name": "Gas Stove",
+      "origin": {
+        "column": 8,
+        "row": 8
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "kitchen-counter",
+      "name": "Kitchen Counter",
+      "origin": {
+        "column": 9,
+        "row": 8
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "sink",
+      "name": "Sink",
+      "origin": {
+        "column": 10,
+        "row": 8
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "exhaust-fan",
+      "name": "Exhaust Fan",
+      "origin": {
+        "column": 11,
+        "row": 8
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "air-conditioner",
+      "name": "Air Conditioner",
+      "origin": {
+        "column": 12,
+        "row": 8
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "wastebasket",
+      "name": "Wastebasket",
+      "origin": {
+        "column": 13,
+        "row": 8
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "book-stand",
+      "name": "Book Stand",
+      "origin": {
+        "column": 14,
+        "row": 8
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "document",
+      "name": "Document",
+      "origin": {
+        "column": 15,
+        "row": 8
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "school-chair-bottom",
+      "name": "School Chair (Bottom)",
+      "origin": {
+        "column": 0,
+        "row": 9
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "school-chair-top",
+      "name": "School Chair (Top)",
+      "origin": {
+        "column": 1,
+        "row": 9
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "school-chair-right",
+      "name": "School Chair (Right)",
+      "origin": {
+        "column": 2,
+        "row": 9
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "school-chair-left",
+      "name": "School Chair (Left)",
+      "origin": {
+        "column": 3,
+        "row": 9
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "sofa-right",
+      "name": "Sofa (Right)",
+      "origin": {
+        "column": 4,
+        "row": 9
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "sofa-left",
+      "name": "Sofa (Left)",
+      "origin": {
+        "column": 5,
+        "row": 9
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "sofa-down",
+      "name": "Sofa (Down)",
+      "origin": {
+        "column": 6,
+        "row": 9
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "sofa-up",
+      "name": "Sofa (Up)",
+      "origin": {
+        "column": 7,
+        "row": 9
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "office-chair-bottom",
+      "name": "Office Chair (Bottom)",
+      "origin": {
+        "column": 8,
+        "row": 9
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "office-chair-top",
+      "name": "Office Chair (Top)",
+      "origin": {
+        "column": 9,
+        "row": 9
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "office-chair-right",
+      "name": "Office Chair (Right)",
+      "origin": {
+        "column": 10,
+        "row": 9
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "office-chair-left",
+      "name": "Office Chair (Left)",
+      "origin": {
+        "column": 11,
+        "row": 9
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "sofa-right-2",
+      "name": "Sofa (Right)",
+      "origin": {
+        "column": 12,
+        "row": 9
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "sofa-left-2",
+      "name": "Sofa (Left)",
+      "origin": {
+        "column": 13,
+        "row": 9
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "sofa-top",
+      "name": "Sofa (Top)",
+      "origin": {
+        "column": 14,
+        "row": 9
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "sofa-top-2",
+      "name": "Sofa (Top)",
+      "origin": {
+        "column": 15,
+        "row": 9
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "washing-machine",
+      "name": "Washing Machine",
+      "origin": {
+        "column": 0,
+        "row": 10
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "western-style-toilet",
+      "name": "Western Style Toilet",
+      "origin": {
+        "column": 1,
+        "row": 10
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "urinal",
+      "name": "Urinal",
+      "origin": {
+        "column": 2,
+        "row": 10
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "bathroom-sink",
+      "name": "Bathroom Sink",
+      "origin": {
+        "column": 3,
+        "row": 10
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "bathtub-v",
+      "name": "Bathtub (V)",
+      "origin": {
+        "column": 4,
+        "row": 10
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "bathtub-h",
+      "name": "Bathtub (H)",
+      "origin": {
+        "column": 5,
+        "row": 10
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "bathtub-h-2",
+      "name": "Bathtub (H)",
+      "origin": {
+        "column": 6,
+        "row": 10
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "glass-table-v",
+      "name": "Glass Table (V)",
+      "origin": {
+        "column": 7,
+        "row": 10
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "washing-machine-2",
+      "name": "Washing Machine",
+      "origin": {
+        "column": 8,
+        "row": 10
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "western-style-toilet-2",
+      "name": "Western Style Toilet",
+      "origin": {
+        "column": 9,
+        "row": 10
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "urinal-2",
+      "name": "Urinal",
+      "origin": {
+        "column": 10,
+        "row": 10
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "wash-basin",
+      "name": "Wash Basin",
+      "origin": {
+        "column": 11,
+        "row": 10
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "bathtub-v-2",
+      "name": "Bathtub (V)",
+      "origin": {
+        "column": 12,
+        "row": 10
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "glass-table-h",
+      "name": "Glass Table (H)",
+      "origin": {
+        "column": 13,
+        "row": 10
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "glass-table-h-2",
+      "name": "Glass Table (H)",
+      "origin": {
+        "column": 14,
+        "row": 10
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "glass-table-v-2",
+      "name": "Glass Table (V)",
+      "origin": {
+        "column": 15,
+        "row": 10
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "refrigerator",
+      "name": "Refrigerator",
+      "origin": {
+        "column": 0,
+        "row": 11
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "bookshelf-a",
+      "name": "Bookshelf A",
+      "origin": {
+        "column": 1,
+        "row": 11
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "chest-of-drawers-a",
+      "name": "Chest of Drawers A",
+      "origin": {
+        "column": 2,
+        "row": 11
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "miscellaneous-item-shelf",
+      "name": "Miscellaneous Item Shelf",
+      "origin": {
+        "column": 3,
+        "row": 11
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "locker-a",
+      "name": "Locker A",
+      "origin": {
+        "column": 4,
+        "row": 11
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "document-shelf",
+      "name": "Document Shelf",
+      "origin": {
+        "column": 5,
+        "row": 11
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "medicine-shelf",
+      "name": "Medicine Shelf",
+      "origin": {
+        "column": 6,
+        "row": 11
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "locker-b-school",
+      "name": "Locker B (School)",
+      "origin": {
+        "column": 7,
+        "row": 11
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "refrigerator-2",
+      "name": "Refrigerator",
+      "origin": {
+        "column": 8,
+        "row": 11
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "bookshelf-a-2",
+      "name": "Bookshelf A",
+      "origin": {
+        "column": 9,
+        "row": 11
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "chest-of-drawers-a-2",
+      "name": "Chest of Drawers A",
+      "origin": {
+        "column": 10,
+        "row": 11
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "miscellaneous-item-shelf-2",
+      "name": "Miscellaneous Item Shelf",
+      "origin": {
+        "column": 11,
+        "row": 11
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "locker-a-2",
+      "name": "Locker A",
+      "origin": {
+        "column": 12,
+        "row": 11
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "document-shelf-2",
+      "name": "Document Shelf",
+      "origin": {
+        "column": 13,
+        "row": 11
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "medicine-shelf-2",
+      "name": "Medicine Shelf",
+      "origin": {
+        "column": 14,
+        "row": 11
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "locker-b-school-2",
+      "name": "Locker B (School)",
+      "origin": {
+        "column": 15,
+        "row": 11
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "display-shelf-a",
+      "name": "Display Shelf A",
+      "origin": {
+        "column": 0,
+        "row": 12
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "display-shelf-b",
+      "name": "Display Shelf B",
+      "origin": {
+        "column": 1,
+        "row": 12
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "convenience-store-shelf-a",
+      "name": "Convenience Store Shelf A",
+      "origin": {
+        "column": 2,
+        "row": 12
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "convenience-store-shelf-b",
+      "name": "Convenience Store Shelf B",
+      "origin": {
+        "column": 3,
+        "row": 12
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "document-shelf-ruins",
+      "name": "Document Shelf (Ruins)",
+      "origin": {
+        "column": 4,
+        "row": 12
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "chest-of-drawers-b-decoration",
+      "name": "Chest of Drawers B (Decoration)",
+      "origin": {
+        "column": 5,
+        "row": 12
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "shelf-a-decoration",
+      "name": "Shelf A (Decoration)",
+      "origin": {
+        "column": 6,
+        "row": 12
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "bookshelf-b-decoration",
+      "name": "Bookshelf B (Decoration)",
+      "origin": {
+        "column": 7,
+        "row": 12
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "display-shelf-a-2",
+      "name": "Display Shelf A",
+      "origin": {
+        "column": 8,
+        "row": 12
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "display-shelf-b-2",
+      "name": "Display Shelf B",
+      "origin": {
+        "column": 9,
+        "row": 12
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "convenience-store-shelf-a-2",
+      "name": "Convenience Store Shelf A",
+      "origin": {
+        "column": 10,
+        "row": 12
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "convenience-store-shelf-b-2",
+      "name": "Convenience Store Shelf B",
+      "origin": {
+        "column": 11,
+        "row": 12
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "document-shelf-ruins-2",
+      "name": "Document Shelf (Ruins)",
+      "origin": {
+        "column": 12,
+        "row": 12
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "chest-of-drawers-b-decoration-2",
+      "name": "Chest of Drawers B (Decoration)",
+      "origin": {
+        "column": 13,
+        "row": 12
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "shelf-a-decoration-2",
+      "name": "Shelf A (Decoration)",
+      "origin": {
+        "column": 14,
+        "row": 12
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "bookshelf-b-decoration-2",
+      "name": "Bookshelf B (Decoration)",
+      "origin": {
+        "column": 15,
+        "row": 12
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "stacked-crates",
+      "name": "Stacked Crates",
+      "origin": {
+        "column": 0,
+        "row": 13
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "shipping-container",
+      "name": "Shipping Container",
+      "origin": {
+        "column": 1,
+        "row": 13
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "stacked-cardboard-boxes",
+      "name": "Stacked Cardboard Boxes",
+      "origin": {
+        "column": 2,
+        "row": 13
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "vending-machine",
+      "name": "Vending Machine",
+      "origin": {
+        "column": 3,
+        "row": 13
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "atm",
+      "name": "ATM",
+      "origin": {
+        "column": 4,
+        "row": 13
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "steel-shelf",
+      "name": "Steel Shelf",
+      "origin": {
+        "column": 5,
+        "row": 13
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "operating-table",
+      "name": "Operating Table",
+      "origin": {
+        "column": 6,
+        "row": 13
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "hospital-bed",
+      "name": "Hospital Bed",
+      "origin": {
+        "column": 7,
+        "row": 13
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "stacked-crates-2",
+      "name": "Stacked Crates",
+      "origin": {
+        "column": 8,
+        "row": 13
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "shipping-container-2",
+      "name": "Shipping Container",
+      "origin": {
+        "column": 9,
+        "row": 13
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "stacked-cardboard-boxes-2",
+      "name": "Stacked Cardboard Boxes",
+      "origin": {
+        "column": 10,
+        "row": 13
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "vending-machine-2",
+      "name": "Vending Machine",
+      "origin": {
+        "column": 11,
+        "row": 13
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "atm-2",
+      "name": "ATM",
+      "origin": {
+        "column": 12,
+        "row": 13
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "steel-shelf-2",
+      "name": "Steel Shelf",
+      "origin": {
+        "column": 13,
+        "row": 13
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "operating-table-2",
+      "name": "Operating Table",
+      "origin": {
+        "column": 14,
+        "row": 13
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "hospital-bed-2",
+      "name": "Hospital Bed",
+      "origin": {
+        "column": 15,
+        "row": 13
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "bed",
+      "name": "Bed",
+      "origin": {
+        "column": 0,
+        "row": 14
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "mattress",
+      "name": "Mattress",
+      "origin": {
+        "column": 1,
+        "row": 14
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "large-bed",
+      "name": "Large Bed",
+      "origin": {
+        "column": 2,
+        "row": 14
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "large-bed-2",
+      "name": "Large Bed",
+      "origin": {
+        "column": 3,
+        "row": 14
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "pipe-frame-bed",
+      "name": "Pipe Frame Bed",
+      "origin": {
+        "column": 4,
+        "row": 14
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "slot-machine",
+      "name": "Slot Machine",
+      "origin": {
+        "column": 5,
+        "row": 14
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "poker-table",
+      "name": "Poker Table",
+      "origin": {
+        "column": 6,
+        "row": 14
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "poker-table-2",
+      "name": "Poker Table",
+      "origin": {
+        "column": 7,
+        "row": 14
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "bed-2",
+      "name": "Bed",
+      "origin": {
+        "column": 8,
+        "row": 14
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "mattress-2",
+      "name": "Mattress",
+      "origin": {
+        "column": 9,
+        "row": 14
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "large-bed-3",
+      "name": "Large Bed",
+      "origin": {
+        "column": 10,
+        "row": 14
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "large-bed-4",
+      "name": "Large Bed",
+      "origin": {
+        "column": 11,
+        "row": 14
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "pipe-frame-bed-2",
+      "name": "Pipe Frame Bed",
+      "origin": {
+        "column": 12,
+        "row": 14
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "slot-machine-2",
+      "name": "Slot Machine",
+      "origin": {
+        "column": 13,
+        "row": 14
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "poker-table-3",
+      "name": "Poker Table",
+      "origin": {
+        "column": 14,
+        "row": 14
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "poker-table-4",
+      "name": "Poker Table",
+      "origin": {
+        "column": 15,
+        "row": 14
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "chest-a-wood",
+      "name": "Chest A (Wood)",
+      "origin": {
+        "column": 0,
+        "row": 15
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "chest-b-metal",
+      "name": "Chest B (Metal)",
+      "origin": {
+        "column": 1,
+        "row": 15
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "chest-c-decoration",
+      "name": "Chest C (Decoration)",
+      "origin": {
+        "column": 2,
+        "row": 15
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "large-desk-a",
+      "name": "Large Desk A",
+      "origin": {
+        "column": 3,
+        "row": 15
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "large-desk-a-2",
+      "name": "Large Desk A",
+      "origin": {
+        "column": 4,
+        "row": 15
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "roulette-table",
+      "name": "Roulette Table",
+      "origin": {
+        "column": 5,
+        "row": 15
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "roulette-table-2",
+      "name": "Roulette Table",
+      "origin": {
+        "column": 6,
+        "row": 15
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "roulette-table-3",
+      "name": "Roulette Table",
+      "origin": {
+        "column": 7,
+        "row": 15
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "side-desk-a-wood",
+      "name": "Side Desk A (Wood)",
+      "origin": {
+        "column": 8,
+        "row": 15
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "side-desk-b-metal",
+      "name": "Side Desk B (Metal)",
+      "origin": {
+        "column": 9,
+        "row": 15
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "desk",
+      "name": "Desk",
+      "origin": {
+        "column": 10,
+        "row": 15
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "large-desk-b",
+      "name": "Large Desk B",
+      "origin": {
+        "column": 11,
+        "row": 15
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "large-desk-b-2",
+      "name": "Large Desk B",
+      "origin": {
+        "column": 12,
+        "row": 15
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "roulette-table-4",
+      "name": "Roulette Table",
+      "origin": {
+        "column": 13,
+        "row": 15
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "roulette-table-5",
+      "name": "Roulette Table",
+      "origin": {
+        "column": 14,
+        "row": 15
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "roulette-table-6",
+      "name": "Roulette Table",
+      "origin": {
+        "column": 15,
+        "row": 15
+      },
+      "collision": {
+        "kind": "none"
+      }
+    }
+  ]
+}

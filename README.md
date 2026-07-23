@@ -25,7 +25,7 @@ RPG Crafter currently includes:
 
 - a three-panel Studio with a map hierarchy, canvas, and property inspector;
 - layered top-down maps with multiple overlapping gameplay planes;
-- terrain painting and A2 or 48 px grid tileset imports;
+- terrain painting and A1/A2/A4 autotile, A5, or arbitrary 48 px grid tileset imports;
 - per-cell and per-edge collision editing;
 - explicit navigation connections between floors, bridges, roofs, and other overlapping surfaces;
 - visual event placement with conditional pages and reusable JSON actions;

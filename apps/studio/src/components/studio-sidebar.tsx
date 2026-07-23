@@ -77,6 +77,9 @@ function TilePalette({ game, assetUrls, activeLayer, selectedTerrain, onSelect }
   const [category, setCategory] = useState(selectedTileset?.category || categories[0] || '');
   const selectionStart = useRef<{ tilesetId: string; terrainId: string } | null>(null);
   useEffect(() => {
+    if (selectedTileset?.category) setCategory(selectedTileset.category);
+  }, [selectedTileset?.category]);
+  useEffect(() => {
     const stopSelection = () => { selectionStart.current = null; };
     window.addEventListener('pointerup', stopSelection);
     return () => window.removeEventListener('pointerup', stopSelection);
@@ -92,13 +95,13 @@ function TilePalette({ game, assetUrls, activeLayer, selectedTerrain, onSelect }
         const selected = selectedTerrain?.tilesetId === tileset.id && (selectedTerrain.terrainId === terrain.id || selectedTerrain.pattern?.some(item => item.terrainId === terrain.id));
         const extendGridSelection = () => {
           const start = selectionStart.current;
-          if (tileset.kind === 'grid' && start?.tilesetId === tileset.id) onSelect(gridTerrainSelection(tileset, start.terrainId, terrain.id));
+          if ((tileset.kind === 'grid' || tileset.kind === 'a5') && start?.tilesetId === tileset.id) onSelect(gridTerrainSelection(tileset, start.terrainId, terrain.id));
         };
         return <button key={terrain.id} type="button" className="group relative size-12 touch-none cursor-pointer overflow-hidden outline-none focus-visible:ring-2 focus-visible:ring-ring" style={{ gridColumnStart: column, gridRowStart: row }} onPointerDown={event => {
-          if (event.button !== 0 || tileset.kind !== 'grid') return;
+          if (event.button !== 0 || (tileset.kind !== 'grid' && tileset.kind !== 'a5')) return;
           selectionStart.current = { tilesetId: tileset.id, terrainId: terrain.id };
           onSelect(gridTerrainSelection(tileset, terrain.id, terrain.id));
-        }} onPointerEnter={event => { if (event.buttons === 1) extendGridSelection(); }} onPointerUp={() => { extendGridSelection(); selectionStart.current = null; }} onClick={() => { if (tileset.kind !== 'grid') onSelect({ tilesetId: tileset.id, terrainId: terrain.id }); }} aria-label={terrain.name} aria-pressed={selected} role="gridcell" title={terrain.name}>
+        }} onPointerEnter={event => { if (event.buttons === 1) extendGridSelection(); }} onPointerUp={() => { extendGridSelection(); selectionStart.current = null; }} onClick={() => { if (tileset.kind !== 'grid' && tileset.kind !== 'a5') onSelect({ tilesetId: tileset.id, terrainId: terrain.id }); }} aria-label={terrain.name} aria-pressed={selected} role="gridcell" title={terrain.name}>
           <TerrainPreview tileset={tileset} terrainId={terrain.id} imageUrl={assetUrls[tileset.image]} />
           <span aria-hidden="true" className={cn('pointer-events-none absolute inset-0 z-10 group-hover:shadow-[inset_0_0_0_2px_#ffffff,inset_0_0_0_4px_#0f172a]', selected && 'shadow-[inset_0_0_0_3px_#ffffff,inset_0_0_0_6px_#0f172a] group-hover:shadow-[inset_0_0_0_3px_#ffffff,inset_0_0_0_6px_#0f172a]')} />
         </button>;

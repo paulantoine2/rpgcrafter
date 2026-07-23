@@ -1,0 +1,1420 @@
+{
+  "id": "rpg-maker-mz-sf-outside-a5",
+  "name": "Science Fiction Outside A5",
+  "category": "RPG Maker MZ / Science Fiction Outside",
+  "kind": "a5",
+  "image": "tilesets/rpg-maker-mz/SF_Outside_A5.png",
+  "tileSize": 48,
+  "columns": 8,
+  "rows": 16,
+  "terrains": [
+    {
+      "id": "darkness",
+      "name": "Darkness",
+      "origin": {
+        "column": 0,
+        "row": 0
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "grid-floor",
+      "name": "Grid floor",
+      "origin": {
+        "column": 1,
+        "row": 0
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "metal-bridge-v-left",
+      "name": "Metal Bridge (V, Left)",
+      "origin": {
+        "column": 2,
+        "row": 0
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "metal-bridge-v-center",
+      "name": "Metal Bridge (V, Center)",
+      "origin": {
+        "column": 3,
+        "row": 0
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "metal-bridge-v-right",
+      "name": "Metal Bridge (V, Right)",
+      "origin": {
+        "column": 4,
+        "row": 0
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "asphalt-bridge-h-top",
+      "name": "Asphalt Bridge (H, Top)",
+      "origin": {
+        "column": 5,
+        "row": 0
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "metal-bridge-h-center",
+      "name": "Metal Bridge (H, Center)",
+      "origin": {
+        "column": 6,
+        "row": 0
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "metal-bridge-h-top",
+      "name": "Metal Bridge (H, Top)",
+      "origin": {
+        "column": 7,
+        "row": 0
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "transparent",
+      "name": "Transparent",
+      "origin": {
+        "column": 0,
+        "row": 1
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "grid-floor-2",
+      "name": "Grid floor",
+      "origin": {
+        "column": 1,
+        "row": 1
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "asphalt-bridge-v-left",
+      "name": "Asphalt Bridge (V, Left)",
+      "origin": {
+        "column": 2,
+        "row": 1
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "asphalt-bridge-v-center",
+      "name": "Asphalt Bridge (V, Center)",
+      "origin": {
+        "column": 3,
+        "row": 1
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "asphalt-bridge-v-right",
+      "name": "Asphalt Bridge (V, Right)",
+      "origin": {
+        "column": 4,
+        "row": 1
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "asphalt-bridge-h-bottom",
+      "name": "Asphalt Bridge (H, Bottom)",
+      "origin": {
+        "column": 5,
+        "row": 1
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "asphalt-bridge-h-center",
+      "name": "Asphalt Bridge (H, Center)",
+      "origin": {
+        "column": 6,
+        "row": 1
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "metal-bridge-h-bottom",
+      "name": "Metal Bridge (H, Bottom)",
+      "origin": {
+        "column": 7,
+        "row": 1
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "waste-land",
+      "name": "Waste Land",
+      "origin": {
+        "column": 0,
+        "row": 2
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "metal-floor-a-factory",
+      "name": "Metal Floor A (Factory)",
+      "origin": {
+        "column": 1,
+        "row": 2
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "concrete-floor",
+      "name": "Concrete Floor",
+      "origin": {
+        "column": 2,
+        "row": 2
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "concrete-floor-ruins",
+      "name": "Concrete Floor (Ruins)",
+      "origin": {
+        "column": 3,
+        "row": 2
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "hole",
+      "name": "Hole",
+      "origin": {
+        "column": 4,
+        "row": 2
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "grid-floor-ruins",
+      "name": "Grid floor (Ruins)",
+      "origin": {
+        "column": 5,
+        "row": 2
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "asphalt-floor-ruins",
+      "name": "Asphalt Floor (Ruins)",
+      "origin": {
+        "column": 6,
+        "row": 2
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "metal-floor-a-factory-ruins",
+      "name": "Metal Floor A (Factory, Ruins)",
+      "origin": {
+        "column": 7,
+        "row": 2
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "waste-land-2",
+      "name": "Waste Land",
+      "origin": {
+        "column": 0,
+        "row": 3
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "metal-floor-a-factory-2",
+      "name": "Metal Floor A (Factory)",
+      "origin": {
+        "column": 1,
+        "row": 3
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "concrete-floor-2",
+      "name": "Concrete Floor",
+      "origin": {
+        "column": 2,
+        "row": 3
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "mecha-floor",
+      "name": "Mecha Floor",
+      "origin": {
+        "column": 3,
+        "row": 3
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "stairs-a-asphalt-left",
+      "name": "Stairs A (Asphalt, Left)",
+      "origin": {
+        "column": 4,
+        "row": 3
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "stairs-a-asphalt-center",
+      "name": "Stairs A (Asphalt, Center)",
+      "origin": {
+        "column": 5,
+        "row": 3
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "stairs-a-asphalt-right",
+      "name": "Stairs A (Asphalt, Right)",
+      "origin": {
+        "column": 6,
+        "row": 3
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "stairs-a-asphalt",
+      "name": "Stairs A (Asphalt)",
+      "origin": {
+        "column": 7,
+        "row": 3
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "dirty-floor",
+      "name": "Dirty Floor",
+      "origin": {
+        "column": 0,
+        "row": 4
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "dirty-floor-ruins",
+      "name": "Dirty Floor (Ruins)",
+      "origin": {
+        "column": 1,
+        "row": 4
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "mecha-floor-ruins-a",
+      "name": "Mecha Floor (Ruins) A",
+      "origin": {
+        "column": 2,
+        "row": 4
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "mecha-floor-ruins-b",
+      "name": "Mecha Floor (Ruins) B",
+      "origin": {
+        "column": 3,
+        "row": 4
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "asphalt-floor-dirty",
+      "name": "Asphalt Floor (Dirty)",
+      "origin": {
+        "column": 4,
+        "row": 4
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "asphalt-floor-dirty-ruins",
+      "name": "Asphalt Floor (Dirty, Ruins)",
+      "origin": {
+        "column": 5,
+        "row": 4
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "wood-floor-a",
+      "name": "Wood Floor A",
+      "origin": {
+        "column": 6,
+        "row": 4
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "wood-floor-a-ruins",
+      "name": "Wood Floor A (Ruins)",
+      "origin": {
+        "column": 7,
+        "row": 4
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "bumpy-tile-a",
+      "name": "Bumpy Tile A",
+      "origin": {
+        "column": 0,
+        "row": 5
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "bumpy-tile-b",
+      "name": "Bumpy Tile B",
+      "origin": {
+        "column": 1,
+        "row": 5
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "bumpy-tile-c",
+      "name": "Bumpy Tile C",
+      "origin": {
+        "column": 2,
+        "row": 5
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "bumpy-tile-c-ruins",
+      "name": "Bumpy Tile C (Ruins)",
+      "origin": {
+        "column": 3,
+        "row": 5
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "stairs-b-metal-left",
+      "name": "Stairs B (Metal, Left)",
+      "origin": {
+        "column": 4,
+        "row": 5
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "stairs-b-metal-center",
+      "name": "Stairs B (Metal, Center)",
+      "origin": {
+        "column": 5,
+        "row": 5
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "stairs-b-metal-right",
+      "name": "Stairs B (Metal, Right)",
+      "origin": {
+        "column": 6,
+        "row": 5
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "stairs-b-metal",
+      "name": "Stairs B (Metal)",
+      "origin": {
+        "column": 7,
+        "row": 5
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "interior-floor-a-green-resin",
+      "name": "Interior Floor A (Green Resin)",
+      "origin": {
+        "column": 0,
+        "row": 6
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "interior-floor-b-tile",
+      "name": "Interior Floor B (Tile)",
+      "origin": {
+        "column": 1,
+        "row": 6
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "interior-floor-b-tile-ruins",
+      "name": "Interior Floor B (Tile, Ruins)",
+      "origin": {
+        "column": 2,
+        "row": 6
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "interior-floor-c-decoration",
+      "name": "Interior Floor C (Decoration)",
+      "origin": {
+        "column": 3,
+        "row": 6
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "interior-floor-d-decoration",
+      "name": "Interior Floor D (Decoration)",
+      "origin": {
+        "column": 4,
+        "row": 6
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "interior-floor-e-decoration",
+      "name": "Interior Floor E (Decoration)",
+      "origin": {
+        "column": 5,
+        "row": 6
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "wood-floor-b",
+      "name": "Wood Floor B",
+      "origin": {
+        "column": 6,
+        "row": 6
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "wood-floor-b-ruins",
+      "name": "Wood Floor B (Ruins)",
+      "origin": {
+        "column": 7,
+        "row": 6
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "stairs-c-meadow-left",
+      "name": "Stairs C (Meadow, Left)",
+      "origin": {
+        "column": 0,
+        "row": 7
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "stairs-c-meadow-center",
+      "name": "Stairs C (Meadow, Center)",
+      "origin": {
+        "column": 1,
+        "row": 7
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "stairs-c-meadow-right",
+      "name": "Stairs C (Meadow, Right)",
+      "origin": {
+        "column": 2,
+        "row": 7
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "stairs-c-meadow",
+      "name": "Stairs C (Meadow)",
+      "origin": {
+        "column": 3,
+        "row": 7
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "stairs-d-wood-left",
+      "name": "Stairs D (Wood, Left)",
+      "origin": {
+        "column": 4,
+        "row": 7
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "stairs-d-wood-center",
+      "name": "Stairs D (Wood, Center)",
+      "origin": {
+        "column": 5,
+        "row": 7
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "stairs-d-wood-right",
+      "name": "Stairs D (Wood, Right)",
+      "origin": {
+        "column": 6,
+        "row": 7
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "stairs-d-wood",
+      "name": "Stairs D (Wood)",
+      "origin": {
+        "column": 7,
+        "row": 7
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "cobblestones-a",
+      "name": "Cobblestones A",
+      "origin": {
+        "column": 0,
+        "row": 8
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "cobblestones-b",
+      "name": "Cobblestones B",
+      "origin": {
+        "column": 1,
+        "row": 8
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "cobblestones-c",
+      "name": "Cobblestones C",
+      "origin": {
+        "column": 2,
+        "row": 8
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "cobblestones-d",
+      "name": "Cobblestones D",
+      "origin": {
+        "column": 3,
+        "row": 8
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "metal-floor-b",
+      "name": "Metal Floor B",
+      "origin": {
+        "column": 4,
+        "row": 8
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "metal-floor-b-rust-ruins",
+      "name": "Metal Floor B (Rust, Ruins)",
+      "origin": {
+        "column": 5,
+        "row": 8
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "metal-floor-c",
+      "name": "Metal Floor C",
+      "origin": {
+        "column": 6,
+        "row": 8
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "metal-floor-c-rust-ruins",
+      "name": "Metal Floor C (Rust, Ruins)",
+      "origin": {
+        "column": 7,
+        "row": 8
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "stairs-e-carpet-left",
+      "name": "Stairs E (Carpet, Left)",
+      "origin": {
+        "column": 0,
+        "row": 9
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "stairs-e-carpet-center",
+      "name": "Stairs E (Carpet, Center)",
+      "origin": {
+        "column": 1,
+        "row": 9
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "stairs-e-carpet-right",
+      "name": "Stairs E (Carpet, Right)",
+      "origin": {
+        "column": 2,
+        "row": 9
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "stairs-e-carpet",
+      "name": "Stairs E (Carpet)",
+      "origin": {
+        "column": 3,
+        "row": 9
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "stairs-f-desert-left",
+      "name": "Stairs F (Desert, Left)",
+      "origin": {
+        "column": 4,
+        "row": 9
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "stairs-f-desert-center",
+      "name": "Stairs F (Desert, Center)",
+      "origin": {
+        "column": 5,
+        "row": 9
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "stairs-f-desert-right",
+      "name": "Stairs F (Desert, Right)",
+      "origin": {
+        "column": 6,
+        "row": 9
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "stairs-f-desert",
+      "name": "Stairs F (Desert)",
+      "origin": {
+        "column": 7,
+        "row": 9
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "mark-floor-a",
+      "name": "Mark Floor A",
+      "origin": {
+        "column": 0,
+        "row": 10
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "mark-floor-b",
+      "name": "Mark Floor B",
+      "origin": {
+        "column": 1,
+        "row": 10
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "mark-floor-c",
+      "name": "Mark Floor C",
+      "origin": {
+        "column": 2,
+        "row": 10
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "mark-floor-d",
+      "name": "Mark Floor D",
+      "origin": {
+        "column": 3,
+        "row": 10
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "mark-floor-e",
+      "name": "Mark Floor E",
+      "origin": {
+        "column": 4,
+        "row": 10
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "mark-floor-e-ruins",
+      "name": "Mark Floor E (Ruins)",
+      "origin": {
+        "column": 5,
+        "row": 10
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "mark-floor-f-off",
+      "name": "Mark Floor F (Off)",
+      "origin": {
+        "column": 6,
+        "row": 10
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "mark-floor-f",
+      "name": "Mark Floor F",
+      "origin": {
+        "column": 7,
+        "row": 10
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "neon-floor",
+      "name": "Neon Floor",
+      "origin": {
+        "column": 0,
+        "row": 11
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "interior-floor-f-tile-carpet",
+      "name": "Interior Floor F (Tile Carpet)",
+      "origin": {
+        "column": 1,
+        "row": 11
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "interior-floor-f-tile-carpet-ruins",
+      "name": "Interior Floor F (Tile Carpet, Ruins)",
+      "origin": {
+        "column": 2,
+        "row": 11
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "ledge-demonic-ground",
+      "name": "Ledge (Demonic Ground)",
+      "origin": {
+        "column": 3,
+        "row": 11
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "ledge-demonic-ground-2",
+      "name": "Ledge (Demonic Ground)",
+      "origin": {
+        "column": 4,
+        "row": 11
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "ledge-demonic-ground-3",
+      "name": "Ledge (Demonic Ground)",
+      "origin": {
+        "column": 5,
+        "row": 11
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "ledge-demonic-ground-4",
+      "name": "Ledge (Demonic Ground)",
+      "origin": {
+        "column": 6,
+        "row": 11
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "ledge-demonic-ground-5",
+      "name": "Ledge (Demonic Ground)",
+      "origin": {
+        "column": 7,
+        "row": 11
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "marble-floor",
+      "name": "Marble Floor",
+      "origin": {
+        "column": 0,
+        "row": 12
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "interior-floor-g-linoleum",
+      "name": "Interior Floor G (Linoleum)",
+      "origin": {
+        "column": 1,
+        "row": 12
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "interior-floor-g-linoleum-ruins",
+      "name": "Interior Floor G (Linoleum, Ruins)",
+      "origin": {
+        "column": 2,
+        "row": 12
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "ledge-demonic-ground-6",
+      "name": "Ledge (Demonic Ground)",
+      "origin": {
+        "column": 3,
+        "row": 12
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "ledge-demonic-ground-7",
+      "name": "Ledge (Demonic Ground)",
+      "origin": {
+        "column": 4,
+        "row": 12
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "ledge-demonic-ground-8",
+      "name": "Ledge (Demonic Ground)",
+      "origin": {
+        "column": 5,
+        "row": 12
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "ledge-demonic-ground-9",
+      "name": "Ledge (Demonic Ground)",
+      "origin": {
+        "column": 6,
+        "row": 12
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "ledge-demonic-ground-10",
+      "name": "Ledge (Demonic Ground)",
+      "origin": {
+        "column": 7,
+        "row": 12
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "stairs-g-tile-carpet-left",
+      "name": "Stairs G (Tile Carpet, Left)",
+      "origin": {
+        "column": 0,
+        "row": 13
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "stairs-g-tile-carpet-center",
+      "name": "Stairs G (Tile Carpet, Center)",
+      "origin": {
+        "column": 1,
+        "row": 13
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "stairs-g-tile-carpet-right",
+      "name": "Stairs G (Tile Carpet, Right)",
+      "origin": {
+        "column": 2,
+        "row": 13
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "stairs-g-tile-carpet",
+      "name": "Stairs G (Tile Carpet)",
+      "origin": {
+        "column": 3,
+        "row": 13
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "cobblestones-e",
+      "name": "Cobblestones E",
+      "origin": {
+        "column": 4,
+        "row": 13
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "ledge-demonic-ground-11",
+      "name": "Ledge (Demonic Ground)",
+      "origin": {
+        "column": 5,
+        "row": 13
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "ledge-demonic-ground-12",
+      "name": "Ledge (Demonic Ground)",
+      "origin": {
+        "column": 6,
+        "row": 13
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "ledge-demonic-ground-13",
+      "name": "Ledge (Demonic Ground)",
+      "origin": {
+        "column": 7,
+        "row": 13
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "stairs-h-linoleum-left",
+      "name": "Stairs H (Linoleum, Left)",
+      "origin": {
+        "column": 0,
+        "row": 14
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "stairs-h-linoleum-center",
+      "name": "Stairs H (Linoleum, Center)",
+      "origin": {
+        "column": 1,
+        "row": 14
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "stairs-h-linoleum-right",
+      "name": "Stairs H (Linoleum, Right)",
+      "origin": {
+        "column": 2,
+        "row": 14
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "stairs-h-linoleum",
+      "name": "Stairs H (Linoleum)",
+      "origin": {
+        "column": 3,
+        "row": 14
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "cobblestones-f",
+      "name": "Cobblestones F",
+      "origin": {
+        "column": 4,
+        "row": 14
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "cliff-demonic-ground",
+      "name": "Cliff (Demonic Ground)",
+      "origin": {
+        "column": 5,
+        "row": 14
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "cliff-demonic-ground-2",
+      "name": "Cliff (Demonic Ground)",
+      "origin": {
+        "column": 6,
+        "row": 14
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "cliff-demonic-ground-3",
+      "name": "Cliff (Demonic Ground)",
+      "origin": {
+        "column": 7,
+        "row": 14
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "marble-floor-ruins",
+      "name": "Marble Floor (Ruins)",
+      "origin": {
+        "column": 0,
+        "row": 15
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "wood-floor-c",
+      "name": "Wood Floor C",
+      "origin": {
+        "column": 1,
+        "row": 15
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "wood-floor-c-ruins",
+      "name": "Wood Floor C (Ruins)",
+      "origin": {
+        "column": 2,
+        "row": 15
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "metal-floor-d-machine",
+      "name": "Metal Floor D (Machine)",
+      "origin": {
+        "column": 3,
+        "row": 15
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "metal-floor-d-machine-ruins",
+      "name": "Metal Floor D (Machine, Ruins)",
+      "origin": {
+        "column": 4,
+        "row": 15
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "cliff-demonic-ground-4",
+      "name": "Cliff (Demonic Ground)",
+      "origin": {
+        "column": 5,
+        "row": 15
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "cliff-demonic-ground-5",
+      "name": "Cliff (Demonic Ground)",
+      "origin": {
+        "column": 6,
+        "row": 15
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "cliff-demonic-ground-6",
+      "name": "Cliff (Demonic Ground)",
+      "origin": {
+        "column": 7,
+        "row": 15
+      },
+      "collision": {
+        "kind": "none"
+      }
+    }
+  ]
+}

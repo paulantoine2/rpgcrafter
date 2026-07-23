@@ -8,14 +8,14 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { EventInspector } from '@/components/event-inspector';
-import { AssetManagerDialog, type LibraryTileset } from '@/components/asset-manager-dialog';
+import { AssetManagerDialog, type LibraryBundle, type LibrarySprite, type LibraryTileset } from '@/components/asset-manager-dialog';
 import { MapCanvas, type MapCanvasHandle } from '@/components/map-canvas';
 import { StudioSidebar, type DrawingTool, type EditorMode, type NavigationPaintMode, type SelectedTerrain } from '@/components/studio-sidebar';
-import { StudioToolbar } from '@/components/studio-toolbar';
+import { StudioToolbar, type EventTool } from '@/components/studio-toolbar';
 import { Menubar, MenubarContent, MenubarItem, MenubarMenu, MenubarSeparator, MenubarShortcut, MenubarTrigger } from '@/components/ui/menubar';
 import { ResizablePanel, ResizablePanelGroup } from '@/components/ui/resizable';
 import { clearDraft, createEmptyProject, draftProjectId, exportGamePackage, listRecentProjects, loadBundledTilesetLibrary, loadReferenceProject, openProjectArchive, openRecentProject, restoreDraft, restoreProjectAssets, saveDraft, saveProjectAssets, validateSourceGame, type DraftDocumentName, type ProjectAssets, type ProjectBundle, type RecentProject } from '@/lib/source-game';
-import { createTilesetDefinition, pngDimensions, uniqueAssetId, type TilesetImportFormat } from '@/lib/tileset-import';
+import { createTilesetDefinition, pngDimensions, tilesetConfigurationBlob, tilesetConfigurationPath, uniqueAssetId, type TilesetImportFormat } from '@/lib/tileset-import';
 import { clearNavigationOverridesForCells, editTerrainLayer, editTerrainPlacementsLayer, floodFillCells, terrainBrushPlacements } from '@/lib/editor-geometry';
 import { createMapEventAt } from '@/lib/editor-events';
 import { readStudioLocation, studioLocationUrl } from '@/lib/studio-location';
@@ -36,6 +36,8 @@ export default function App() {
   const [assetUrls, setAssetUrls] = useState<Record<string, string>>({});
   const [assetUrlSource, setAssetUrlSource] = useState<ProjectAssets | null>(null);
   const [library, setLibrary] = useState<LibraryTileset[]>([]);
+  const [librarySprites, setLibrarySprites] = useState<LibrarySprite[]>([]);
+  const [libraryBundles, setLibraryBundles] = useState<LibraryBundle[]>([]);
   const [recentProjects, setRecentProjects] = useState<RecentProject[]>([]);
   const [selectedMapId, setSelectedMapId] = useState('');
   const [selectedEventId, setSelectedEventId] = useState<string | null>(null);
@@ -49,6 +51,7 @@ export default function App() {
   const [pendingConnection, setPendingConnection] = useState<{ sourcePlaneId: string; x: number; y: number; edge: Direction } | null>(null);
   const [connectionDestinationPlaneId, setConnectionDestinationPlaneId] = useState('');
   const [drawingTool, setDrawingTool] = useState<DrawingTool>('pencil');
+  const [eventTool, setEventTool] = useState<EventTool>('cursor');
   const [gridVisibility, setGridVisibility] = useState<Record<EditorMode, boolean>>({ events: true, drawing: false });
   const [dimInactiveLayers, setDimInactiveLayers] = useState(true);
   const [hoveredTile, setHoveredTile] = useState<Vec2 | null>(null);
@@ -93,14 +96,27 @@ export default function App() {
   useEffect(() => {
     if (!assetManagerDialog || library.length) return;
     let cancelled = false;
-    void loadBundledTilesetLibrary().then(items => {
+    void loadBundledTilesetLibrary().then(catalog => {
       if (cancelled) return;
-      setLibrary(items.map(item => ({ ...item, url: URL.createObjectURL(item.blob) })));
+      const tilesets = catalog.tilesets.map(item => ({ ...item, kind: 'tileset' as const, url: URL.createObjectURL(item.blob) }));
+      const sprites = catalog.sprites.map(item => ({ ...item, kind: 'sprite' as const, url: URL.createObjectURL(item.blob) }));
+      const assetsById = new Map<string, LibraryTileset | LibrarySprite>();
+      for (const item of tilesets) assetsById.set(item.definition.id, item);
+      for (const item of sprites) assetsById.set(item.id, item);
+      setLibrary(tilesets);
+      setLibrarySprites(sprites);
+      setLibraryBundles(catalog.bundles.map(bundle => ({
+        id: bundle.id,
+        name: bundle.name,
+        version: bundle.version,
+        assets: bundle.assetIds.map(id => assetsById.get(id)).filter((asset): asset is NonNullable<typeof asset> => Boolean(asset)),
+      })));
     }).catch(reason => setError(reason instanceof Error ? reason.message : 'The asset library could not be loaded.'));
     return () => { cancelled = true; };
   }, [assetManagerDialog, library.length]);
 
   useEffect(() => () => library.forEach(item => URL.revokeObjectURL(item.url)), [library]);
+  useEffect(() => () => librarySprites.forEach(item => URL.revokeObjectURL(item.url)), [librarySprites]);
 
   useEffect(() => { if (openDialog) void listRecentProjects().then(setRecentProjects).catch(() => setRecentProjects([])); }, [openDialog]);
 
@@ -552,7 +568,23 @@ export default function App() {
   };
   const changeCoverage = (planeId: string, surfaceCoverage: SurfaceCoverage) => setGame(current => { if (!current) return current; markDirty('maps.json'); const next = structuredClone(current); next.maps[selectedMapId].planes.find(plane => plane.id === planeId)!.surfaceCoverage = surfaceCoverage; return next; });
   const changeSurface = (planeId: string, surfaceLayerId: string) => setGame(current => { const map = current?.maps[selectedMapId], layer = map?.tileLayers.find(item => item.id === surfaceLayerId); if (!current || !map || layer?.planeId !== planeId) return current; markDirty('maps.json'); const next = structuredClone(current); next.maps[selectedMapId].planes.find(plane => plane.id === planeId)!.surfaceLayerId = surfaceLayerId; return next; });
-  const changeTerrainCollision = (tilesetId: string, terrainId: string, collision: TerrainCollision) => setGame(current => { const terrain = current?.tilesets[tilesetId]?.terrains.find(item => item.id === terrainId); if (!current || !terrain) return current; markDirty('tilesets.json'); const next = structuredClone(current); next.tilesets[tilesetId].terrains.find(item => item.id === terrainId)!.collision = collision; return next; });
+  const changeTerrainCollision = (tilesetId: string, terrainId: string, collision: TerrainCollision) => {
+    const definition = game?.tilesets[tilesetId];
+    if (!game || !definition?.terrains.some(item => item.id === terrainId)) return;
+    markDirty('tilesets.json');
+    const updatedDefinition = structuredClone(definition);
+    updatedDefinition.terrains.find(item => item.id === terrainId)!.collision = collision;
+    setGame(current => {
+      if (!current?.tilesets[tilesetId]?.terrains.some(item => item.id === terrainId)) return current;
+      const next = structuredClone(current);
+      next.tilesets[tilesetId].terrains.find(item => item.id === terrainId)!.collision = collision;
+      return next;
+    });
+    const configurationPath = tilesetConfigurationPath(updatedDefinition.image);
+    const configurationBlob = tilesetConfigurationBlob(updatedDefinition);
+    setProjectAssets(assets => ({ ...assets, [configurationPath]: configurationBlob }));
+    void saveProjectAssets(game, { [configurationPath]: configurationBlob });
+  };
 
   const paintNavigation = (x: number, y: number, edge?: Direction) => {
     const planeId = selectedLayer?.planeId || (selectedMap ? [...selectedMap.planes].sort((a, b) => a.order - b.order)[0]?.id : undefined); if (!planeId) return;
@@ -690,6 +722,23 @@ export default function App() {
     setEventEditorOpen(true);
   };
 
+  const placePlayerStart = (x: number, y: number, planeId: string) => {
+    setGame(current => {
+      const map = current?.maps[selectedMapId];
+      if (!current || !map?.planes.some(plane => plane.id === planeId)) return current;
+      const previous = current.actors.player.start;
+      const mapChanged = current.manifest.entryPoint.mapId !== selectedMapId;
+      const positionChanged = previous.x !== x || previous.y !== y || previous.planeId !== planeId;
+      if (!mapChanged && !positionChanged) return current;
+      if (mapChanged) markDirty('manifest.json');
+      if (positionChanged) markDirty('actors.json');
+      const next = structuredClone(current);
+      next.manifest.entryPoint.mapId = selectedMapId;
+      next.actors.player.start = { x, y, planeId };
+      return next;
+    });
+  };
+
   const drawMapTiles = (cells: Vec2[], behavior: 'stamp' | 'fill') => {
     if (!selectedLayerId || (drawingTool !== 'eraser' && !selectedTerrain)) return;
     setGame(current => {
@@ -753,7 +802,8 @@ export default function App() {
       const next = structuredClone(sourceGame);
       skipAutosaveRef.current = true;
       setGame(next);
-      setProjectAssets(Object.fromEntries(Object.values(next.tilesets).map(tileset => [tileset.image, projectAssets[tileset.image]]).filter((entry): entry is [string, Blob] => Boolean(entry[1]))));
+      const assetPaths = Object.values(next.tilesets).flatMap(tileset => [tileset.image, tilesetConfigurationPath(tileset.image)]);
+      setProjectAssets(Object.fromEntries(assetPaths.map(assetPath => [assetPath, projectAssets[assetPath]]).filter((entry): entry is [string, Blob] => Boolean(entry[1]))));
       const mapId = next.manifest.entryPoint.mapId;
       setSelectedMapId(mapId);
       setSelectedLayerIds({});
@@ -813,48 +863,86 @@ export default function App() {
     }, 1_000);
   };
 
-  const importTileset = async (definition: SourceGame['tilesets'][string], blob: Blob) => {
-    if (!game || game.tilesets[definition.id]) return;
-    const nextAssets = { ...projectAssets, [definition.image]: blob };
-    setProjectAssets(nextAssets);
+  const importTilesets = async (entries: Array<{ definition: SourceGame['tilesets'][string]; assets: ProjectAssets }>) => {
+    if (!game) return;
+    const pending = entries.filter(entry => !game.tilesets[entry.definition.id]);
+    if (!pending.length) return;
+    const importedAssets = Object.assign({}, ...pending.map(entry => entry.assets)) as ProjectAssets;
+    setProjectAssets(current => ({ ...current, ...importedAssets }));
     setGame(current => {
       if (!current) return current;
       markDirty('tilesets.json');
       const next = structuredClone(current);
-      next.tilesets[definition.id] = structuredClone(definition);
+      for (const entry of pending) if (!next.tilesets[entry.definition.id]) next.tilesets[entry.definition.id] = structuredClone(entry.definition);
       return next;
     });
-    await saveProjectAssets(game, { [definition.image]: blob });
+    await saveProjectAssets(game, importedAssets);
   };
 
-  const importLibraryTileset = (asset: LibraryTileset) => {
+  const importTileset = (definition: SourceGame['tilesets'][string], assets: ProjectAssets) => importTilesets([{ definition, assets }]);
+
+  const libraryImportEntry = (asset: LibraryTileset) => {
     const canonical = game && Object.values(game.tilesets).find(tileset => tileset.category.localeCompare(asset.definition.category, undefined, { sensitivity: 'accent' }) === 0)?.category;
-    void importTileset({ ...asset.definition, category: canonical || asset.definition.category }, asset.blob);
+    const definition = { ...asset.definition, category: canonical || asset.definition.category };
+    return {
+      definition,
+      assets: {
+        [definition.image]: asset.blob,
+        [asset.configurationPath]: canonical ? tilesetConfigurationBlob(definition) : asset.configurationBlob,
+      },
+    };
+  };
+
+  const importLibraryTileset = (asset: LibraryTileset) => importTilesets([libraryImportEntry(asset)]);
+  const importLibrarySprites = async (sprites: LibrarySprite[]) => {
+    if (!game) return;
+    const importedAssets = Object.fromEntries(sprites.filter(sprite => !projectAssets[sprite.imagePath]).map(sprite => [sprite.imagePath, sprite.blob])) as ProjectAssets;
+    if (!Object.keys(importedAssets).length) return;
+    setProjectAssets(current => ({ ...current, ...importedAssets }));
+    await saveProjectAssets(game, importedAssets);
+  };
+  const importLibrarySprite = (asset: LibrarySprite) => importLibrarySprites([asset]);
+  const importLibraryBundle = async (bundle: LibraryBundle) => {
+    const tilesets = bundle.assets.filter((asset): asset is LibraryTileset => asset.kind === 'tileset');
+    const sprites = bundle.assets.filter((asset): asset is LibrarySprite => asset.kind === 'sprite');
+    await importTilesets(tilesets.map(libraryImportEntry));
+    await importLibrarySprites(sprites);
   };
 
   const importLocalTileset = async ({ file, name, category, format }: { file: File; name: string; category: string; format: TilesetImportFormat }) => {
     if (!game) return;
     const id = uniqueAssetId(name, Object.keys(game.tilesets));
     const dimensions = await pngDimensions(file);
-    const a2Template = library.find(item => item.definition.kind === 'a2')?.definition;
+    const autotileTemplate = library.find(item => item.definition.kind === 'a2')?.definition;
     const canonicalCategory = Object.values(game.tilesets).find(tileset => tileset.category.localeCompare(category.trim(), undefined, { sensitivity: 'accent' }) === 0)?.category || category;
-    const definition = createTilesetDefinition({ id, name, category: canonicalCategory, format, ...dimensions, variants: a2Template?.kind === 'a2' ? a2Template.variants : undefined });
-    await importTileset(definition, file);
+    const definition = createTilesetDefinition({ id, name, category: canonicalCategory, format, ...dimensions, variants: autotileTemplate?.kind === 'a2' ? autotileTemplate.variants : undefined });
+    await importTileset(definition, {
+      [definition.image]: file,
+      [tilesetConfigurationPath(definition.image)]: tilesetConfigurationBlob(definition),
+    });
   };
 
-  const updateTileset = (id: string, values: { name: string; category: string }) => setGame(current => {
-    const tileset = current?.tilesets[id];
-    if (!current || !tileset) return current;
+  const updateTileset = (id: string, values: { name: string; category: string }) => {
+    const tileset = game?.tilesets[id];
+    if (!game || !tileset) return;
     const name = values.name.trimStart();
     const requestedCategory = values.category.trimStart();
-    const category = Object.values(current.tilesets).find(item => item.id !== id && item.category.localeCompare(requestedCategory, undefined, { sensitivity: 'accent' }) === 0)?.category || requestedCategory;
-    if (!name || !category || (name === tileset.name && category === tileset.category)) return current;
+    const category = Object.values(game.tilesets).find(item => item.id !== id && item.category.localeCompare(requestedCategory, undefined, { sensitivity: 'accent' }) === 0)?.category || requestedCategory;
+    if (!name || !category || (name === tileset.name && category === tileset.category)) return;
     markDirty('tilesets.json');
-    const next = structuredClone(current);
-    next.tilesets[id].name = name;
-    next.tilesets[id].category = category;
-    return next;
-  });
+    setGame(current => {
+      if (!current?.tilesets[id]) return current;
+      const next = structuredClone(current);
+      next.tilesets[id].name = name;
+      next.tilesets[id].category = category;
+      return next;
+    });
+    const updatedDefinition = { ...tileset, name, category };
+    const configurationPath = tilesetConfigurationPath(updatedDefinition.image);
+    const configurationBlob = tilesetConfigurationBlob(updatedDefinition);
+    setProjectAssets(assets => ({ ...assets, [configurationPath]: configurationBlob }));
+    void saveProjectAssets(game, { [configurationPath]: configurationBlob });
+  };
 
   const issues = validation && !validation.success ? validation.issues : [];
   const saveLabel = saveState === 'saving' ? 'Saving…' : saveState === 'unsaved' ? 'Unsaved' : saveState === 'saved' ? 'Draft saved' : saveState === 'error' ? 'Save failed' : 'Source';
@@ -902,16 +990,16 @@ export default function App() {
         <ResizablePanel defaultSize="100%" minSize="400px"><div className="flex h-full min-h-0 flex-col">
           <div className="flex h-9 shrink-0 items-center border-b bg-card px-3"><div className="flex min-w-0 items-center gap-3"><span className="truncate text-xs font-medium">{selectedMap.name}</span><span className="font-mono text-[10px] text-muted-foreground">{selectedMap.bounds.w}×{selectedMap.bounds.h}</span><span className="min-w-20 font-mono text-[10px] text-muted-foreground">{hoveredTile ? `x ${hoveredTile.x} · y ${hoveredTile.y}` : 'x — · y —'}</span></div><div className="ml-auto flex items-center gap-1"><Button variant={gridVisibility[editorMode] ? 'secondary' : 'ghost'} size="icon-xs" aria-label="Toggle grid" aria-pressed={gridVisibility[editorMode]} onClick={() => setGridVisibility(current => ({ ...current, [editorMode]: !current[editorMode] }))}><Grid3X3 /></Button>{editorMode === 'drawing' && <Button variant={dimInactiveLayers ? 'secondary' : 'ghost'} size="icon-xs" aria-label="Dim inactive layers" aria-pressed={dimInactiveLayers} onClick={() => setDimInactiveLayers(value => !value)}><Contrast /></Button>}<div className="mx-1 h-5 w-px bg-border" aria-hidden="true"/><Button variant="ghost" size="icon-xs" onClick={() => mapCanvasRef.current?.zoomOut()} aria-label="Zoom out"><Minus /></Button><Button variant="ghost" size="icon-xs" onClick={() => mapCanvasRef.current?.fit()} aria-label="Fit map"><Maximize2 /></Button><Button variant="ghost" size="icon-xs" onClick={() => mapCanvasRef.current?.zoomIn()} aria-label="Zoom in"><Plus /></Button></div></div>
           <div className="relative min-h-0 flex-1">{tilesetAssetsReady
-            ? <MapCanvas ref={mapCanvasRef} map={selectedMap} tilesets={game.tilesets} assetUrls={assetUrls} mode={editorMode} activePlaneId={selectedLayer?.planeId || selectedMap.planes[0].id} activeLayerId={selectedLayerId} selectedTerrain={selectedTerrain} drawingTool={drawingTool} showGrid={gridVisibility[editorMode]} dimInactiveLayers={dimInactiveLayers} navigationPaintMode={navigationPaintMode} selectedEventId={selectedEventId} onSelectEvent={setSelectedEventId} onActivateEvent={openEventEditor} onCreateEvent={createEvent} onMoveEvent={moveEvent} onDrawTiles={drawMapTiles} onFillTile={fillMapTile} onNavigateTarget={requestNavigationEdit} onHoverTile={setHoveredTile} />
+            ? <MapCanvas ref={mapCanvasRef} map={selectedMap} tilesets={game.tilesets} assetUrls={assetUrls} mode={editorMode} activePlaneId={selectedLayer?.planeId || selectedMap.planes[0].id} activeLayerId={selectedLayerId} selectedTerrain={selectedTerrain} drawingTool={drawingTool} eventTool={eventTool} playerStartMapId={game.manifest.entryPoint.mapId} playerStart={game.actors.player.start} showGrid={gridVisibility[editorMode]} dimInactiveLayers={dimInactiveLayers} navigationPaintMode={navigationPaintMode} selectedEventId={selectedEventId} onSelectEvent={setSelectedEventId} onActivateEvent={openEventEditor} onCreateEvent={createEvent} onMoveEvent={moveEvent} onDrawTiles={drawMapTiles} onFillTile={fillMapTile} onPickTerrain={setSelectedTerrain} onPlacePlayerStart={placePlayerStart} onNavigateTarget={requestNavigationEdit} onHoverTile={setHoveredTile} />
             : <div className="grid size-full place-items-center bg-[#9E9E9E] text-xs text-muted-foreground">Loading tileset images…</div>}
-            <StudioToolbar mode={editorMode} layers={selectedMap.tileLayers} activeLayerId={selectedLayerId} drawingTool={drawingTool} onChangeMode={mode => { setEditorMode(mode); if (mode !== 'events') setEventEditorOpen(false); }} onSelectLayer={selectLayer} onChangeDrawingTool={setDrawingTool} /></div>
+            <StudioToolbar mode={editorMode} layers={selectedMap.tileLayers} activeLayerId={selectedLayerId} drawingTool={drawingTool} eventTool={eventTool} onChangeMode={mode => { setEditorMode(mode); if (mode !== 'events') setEventEditorOpen(false); }} onSelectLayer={selectLayer} onChangeDrawingTool={setDrawingTool} onChangeEventTool={setEventTool} /></div>
         </div></ResizablePanel>
       </ResizablePanelGroup>
     </main>}
 
     <Dialog open={openDialog} onOpenChange={setOpenDialog}><DialogContent><DialogHeader><DialogTitle>Open Project</DialogTitle><DialogDescription>Open a recent project, the bundled example, or an exported RPGCrafter ZIP.</DialogDescription></DialogHeader>{recentProjects.length > 0 && <div className="space-y-1"><div className="text-xs font-medium text-muted-foreground">Recent projects</div>{recentProjects.slice(0, 5).map(project => <button key={project.id} type="button" className="flex w-full items-center justify-between border px-3 py-2 text-left hover:bg-muted/30" onClick={() => void openRecent(project.id)}><span className="truncate text-sm">{project.title}</span><span className="text-[10px] text-muted-foreground">{project.gameVersion}</span></button>)}</div>}<button type="button" className="flex w-full items-center gap-3 border bg-muted/20 p-4 text-left outline-none hover:bg-muted/50 focus-visible:ring-2 focus-visible:ring-ring" onClick={() => void openReference()} disabled={loading}><div className="grid size-10 place-items-center bg-primary/15 text-primary"><FolderOpen /></div><span><span className="block text-sm font-medium">La Cloche des Brumes</span><span className="block text-xs text-muted-foreground">Bundled reference game · migrates to schema 0.6</span></span></button><label className="flex cursor-pointer items-center justify-center gap-2 border border-dashed p-4 text-sm hover:bg-muted/30"><Upload className="size-4"/>Choose project ZIP<Input className="sr-only" type="file" accept=".zip,application/zip" onChange={event => { const file = event.target.files?.[0]; if (file) void openArchive(file); }}/></label>{error && <pre className="max-h-36 overflow-auto whitespace-pre-wrap border border-destructive/40 bg-destructive/5 p-3 text-xs text-destructive">{error}</pre>}<DialogFooter><Button variant="outline" onClick={() => setOpenDialog(false)}>Cancel</Button></DialogFooter></DialogContent></Dialog>
     <Dialog open={newProjectDialog} onOpenChange={setNewProjectDialog}><DialogContent><DialogHeader><DialogTitle>New Project</DialogTitle><DialogDescription>The project starts with an empty map and no tilesets.</DialogDescription></DialogHeader><Input autoFocus value={newProjectTitle} placeholder="Project title" onChange={event => setNewProjectTitle(event.target.value)} onKeyDown={event => { if (event.key === 'Enter') void createProject(); }}/><DialogFooter><Button variant="outline" onClick={() => setNewProjectDialog(false)}>Cancel</Button><Button disabled={!newProjectTitle.trim()} onClick={() => void createProject()}>Create</Button></DialogFooter></DialogContent></Dialog>
-    {game && <AssetManagerDialog open={assetManagerDialog} onOpenChange={setAssetManagerDialog} game={game} assetUrls={assetUrls} library={library} onImportLibrary={importLibraryTileset} onImportLocal={importLocalTileset} onUpdate={updateTileset} onChangeTerrainCollision={changeTerrainCollision}/>}
+    {game && <AssetManagerDialog open={assetManagerDialog} onOpenChange={setAssetManagerDialog} game={game} assetUrls={assetUrls} library={library} sprites={librarySprites} bundles={libraryBundles} onImportLibrary={importLibraryTileset} onImportSprite={importLibrarySprite} onImportLibraryBundle={importLibraryBundle} onImportLocal={importLocalTileset} onUpdate={updateTileset} onChangeTerrainCollision={changeTerrainCollision}/>}
     {selectedMap && selectedEvent && <Dialog open={eventEditorOpen && editorMode === 'events'} onOpenChange={setEventEditorOpen}><DialogContent className="flex h-[min(88vh,900px)] max-w-5xl flex-col gap-0 p-0 sm:max-w-5xl"><DialogHeader className="sr-only"><DialogTitle>Event editor</DialogTitle></DialogHeader><EventInspector game={game!} mapId={selectedMapId} event={selectedEvent} issues={issues} onSelectEvent={setSelectedEventId} onChangeEvent={changeEvent} onChangeScript={changeScript} /></DialogContent></Dialog>}
     {selectedMap && <Dialog open={Boolean(pendingConnection)} onOpenChange={open => { if (!open) setPendingConnection(null); }}><DialogContent><DialogHeader><DialogTitle>Create plane connection</DialogTitle><DialogDescription>Choose the destination plane for this bidirectional passage.</DialogDescription></DialogHeader>{pendingConnection && <div className="space-y-3"><div className="border bg-muted/20 px-3 py-2 text-xs"><span className="font-medium">{selectedMap.planes.find(plane => plane.id === pendingConnection.sourcePlaneId)?.name}</span><span className="text-muted-foreground"> · cell {pendingConnection.x}, {pendingConnection.y} · {pendingConnection.edge} edge</span></div><label className="block space-y-1"><span className="text-xs font-medium">Destination plane</span><select autoFocus aria-label="Destination plane" className="h-9 w-full border bg-background px-2 text-sm outline-none focus-visible:ring-2 focus-visible:ring-ring" value={connectionDestinationPlaneId} onChange={event => setConnectionDestinationPlaneId(event.target.value)}>{[...selectedMap.planes].sort((a, b) => a.order - b.order).filter(plane => plane.id !== pendingConnection.sourcePlaneId).map(plane => <option key={plane.id} value={plane.id}>{plane.name}</option>)}</select></label></div>}<DialogFooter><Button variant="outline" onClick={() => setPendingConnection(null)}>Cancel</Button><Button disabled={!pendingConnection || !connectionDestinationPlaneId} onClick={() => { if (!pendingConnection) return; if (addConnection(connectionDestinationPlaneId, pendingConnection.x, pendingConnection.y, pendingConnection.edge, true, pendingConnection.sourcePlaneId)) setPendingConnection(null); }}>Create connection</Button></DialogFooter></DialogContent></Dialog>}
     <Dialog open={newPlaneDialog} onOpenChange={setNewPlaneDialog}><DialogContent><DialogHeader><DialogTitle>Create navigation plane</DialogTitle><DialogDescription>Choose any name that describes this gameplay surface. Names have no engine semantics.</DialogDescription></DialogHeader><Input autoFocus value={newPlaneName} placeholder="Plane name" onChange={event => setNewPlaneName(event.target.value)} onKeyDown={event => { if (event.key === 'Enter') addPlane(); }}/><DialogFooter><Button variant="outline" onClick={() => setNewPlaneDialog(false)}>Cancel</Button><Button disabled={!newPlaneName.trim()} onClick={addPlane}>Create</Button></DialogFooter></DialogContent></Dialog>

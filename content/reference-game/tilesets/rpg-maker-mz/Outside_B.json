@@ -1,0 +1,2828 @@
+{
+  "id": "rpg-maker-mz-outside-b",
+  "name": "Outside B",
+  "category": "RPG Maker MZ / Outside",
+  "kind": "grid",
+  "image": "tilesets/rpg-maker-mz/Outside_B.png",
+  "tileSize": 48,
+  "columns": 16,
+  "rows": 16,
+  "terrains": [
+    {
+      "id": "transparent",
+      "name": "Transparent",
+      "origin": {
+        "column": 0,
+        "row": 0
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "stairs-a-up",
+      "name": "Stairs A (Up)",
+      "origin": {
+        "column": 1,
+        "row": 0
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "stairs-b-up",
+      "name": "Stairs B (Up)",
+      "origin": {
+        "column": 2,
+        "row": 0
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "stairs-c-up",
+      "name": "Stairs C (Up)",
+      "origin": {
+        "column": 3,
+        "row": 0
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "stairs-d-up",
+      "name": "Stairs D (Up)",
+      "origin": {
+        "column": 4,
+        "row": 0
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "tent-a",
+      "name": "Tent A",
+      "origin": {
+        "column": 5,
+        "row": 0
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "tent-a-2",
+      "name": "Tent A",
+      "origin": {
+        "column": 6,
+        "row": 0
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "tent-a-3",
+      "name": "Tent A",
+      "origin": {
+        "column": 7,
+        "row": 0
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "streetlight-a",
+      "name": "Streetlight A",
+      "origin": {
+        "column": 8,
+        "row": 0
+      },
+      "collision": {
+        "kind": "blockCell"
+      }
+    },
+    {
+      "id": "stairs-a-down",
+      "name": "Stairs A (Down)",
+      "origin": {
+        "column": 9,
+        "row": 0
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "stairs-b-down",
+      "name": "Stairs B (Down)",
+      "origin": {
+        "column": 10,
+        "row": 0
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "stairs-c-down",
+      "name": "Stairs C (Down)",
+      "origin": {
+        "column": 11,
+        "row": 0
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "stairs-d-down",
+      "name": "Stairs D (Down)",
+      "origin": {
+        "column": 12,
+        "row": 0
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "tent-a-4",
+      "name": "Tent A",
+      "origin": {
+        "column": 13,
+        "row": 0
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "tent-a-5",
+      "name": "Tent A",
+      "origin": {
+        "column": 14,
+        "row": 0
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "tent-a-6",
+      "name": "Tent A",
+      "origin": {
+        "column": 15,
+        "row": 0
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "streetlight-a-2",
+      "name": "Streetlight A",
+      "origin": {
+        "column": 0,
+        "row": 1
+      },
+      "collision": {
+        "kind": "blockCell"
+      }
+    },
+    {
+      "id": "metal-ladder",
+      "name": "Metal Ladder",
+      "origin": {
+        "column": 1,
+        "row": 1
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "wood-ladder",
+      "name": "Wood Ladder",
+      "origin": {
+        "column": 2,
+        "row": 1
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "rope",
+      "name": "Rope",
+      "origin": {
+        "column": 3,
+        "row": 1
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "vines-a",
+      "name": "Vines A",
+      "origin": {
+        "column": 4,
+        "row": 1
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "tent-a-7",
+      "name": "Tent A",
+      "origin": {
+        "column": 5,
+        "row": 1
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "tent-a-entrance",
+      "name": "Tent A (Entrance)",
+      "origin": {
+        "column": 6,
+        "row": 1
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "tent-a-8",
+      "name": "Tent A",
+      "origin": {
+        "column": 7,
+        "row": 1
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "streetlight-a-3",
+      "name": "Streetlight A",
+      "origin": {
+        "column": 8,
+        "row": 1
+      },
+      "collision": {
+        "kind": "blockCell"
+      }
+    },
+    {
+      "id": "metal-ladder-2",
+      "name": "Metal Ladder",
+      "origin": {
+        "column": 9,
+        "row": 1
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "wood-ladder-2",
+      "name": "Wood Ladder",
+      "origin": {
+        "column": 10,
+        "row": 1
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "rope-2",
+      "name": "Rope",
+      "origin": {
+        "column": 11,
+        "row": 1
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "vines-a-2",
+      "name": "Vines A",
+      "origin": {
+        "column": 12,
+        "row": 1
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "tent-b",
+      "name": "Tent B",
+      "origin": {
+        "column": 13,
+        "row": 1
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "tent-b-2",
+      "name": "Tent B",
+      "origin": {
+        "column": 14,
+        "row": 1
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "tent-b-3",
+      "name": "Tent B",
+      "origin": {
+        "column": 15,
+        "row": 1
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "streetlight-b-snow",
+      "name": "Streetlight B (Snow)",
+      "origin": {
+        "column": 0,
+        "row": 2
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "metal-ladder-3",
+      "name": "Metal Ladder",
+      "origin": {
+        "column": 1,
+        "row": 2
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "wood-ladder-3",
+      "name": "Wood Ladder",
+      "origin": {
+        "column": 2,
+        "row": 2
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "rope-3",
+      "name": "Rope",
+      "origin": {
+        "column": 3,
+        "row": 2
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "vines-b-down",
+      "name": "Vines B (Down)",
+      "origin": {
+        "column": 4,
+        "row": 2
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "tent-b-4",
+      "name": "Tent B",
+      "origin": {
+        "column": 5,
+        "row": 2
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "tent-b-5",
+      "name": "Tent B",
+      "origin": {
+        "column": 6,
+        "row": 2
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "tent-b-6",
+      "name": "Tent B",
+      "origin": {
+        "column": 7,
+        "row": 2
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "streetlight-b-snow-2",
+      "name": "Streetlight B (Snow)",
+      "origin": {
+        "column": 8,
+        "row": 2
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "hole-a-metal-ladder",
+      "name": "Hole A (Metal Ladder)",
+      "origin": {
+        "column": 9,
+        "row": 2
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "hole-b-wood-ladder",
+      "name": "Hole B (Wood Ladder)",
+      "origin": {
+        "column": 10,
+        "row": 2
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "hole-c-rope",
+      "name": "Hole C (Rope)",
+      "origin": {
+        "column": 11,
+        "row": 2
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "hole-d",
+      "name": "Hole D",
+      "origin": {
+        "column": 12,
+        "row": 2
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "tent-b-7",
+      "name": "Tent B",
+      "origin": {
+        "column": 13,
+        "row": 2
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "tent-b-entrance-snow",
+      "name": "Tent B (Entrance, Snow)",
+      "origin": {
+        "column": 14,
+        "row": 2
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "tent-b-8",
+      "name": "Tent B",
+      "origin": {
+        "column": 15,
+        "row": 2
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "streetlight-b-snow-3",
+      "name": "Streetlight B (Snow)",
+      "origin": {
+        "column": 0,
+        "row": 3
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "wall-vines-a",
+      "name": "Wall Vines A",
+      "origin": {
+        "column": 1,
+        "row": 3
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "wall-vines-b",
+      "name": "Wall Vines B",
+      "origin": {
+        "column": 2,
+        "row": 3
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "wall-vines-c",
+      "name": "Wall Vines C",
+      "origin": {
+        "column": 3,
+        "row": 3
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "fissures-a",
+      "name": "Fissures A",
+      "origin": {
+        "column": 4,
+        "row": 3
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "fissures-b",
+      "name": "Fissures B",
+      "origin": {
+        "column": 5,
+        "row": 3
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "fissures-c",
+      "name": "Fissures C",
+      "origin": {
+        "column": 6,
+        "row": 3
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "fissures-d",
+      "name": "Fissures D",
+      "origin": {
+        "column": 7,
+        "row": 3
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "wall-moss",
+      "name": "Wall Moss",
+      "origin": {
+        "column": 8,
+        "row": 3
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "wall-vines-a-2",
+      "name": "Wall Vines A",
+      "origin": {
+        "column": 9,
+        "row": 3
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "wall-vines-b-2",
+      "name": "Wall Vines B",
+      "origin": {
+        "column": 10,
+        "row": 3
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "wall-vines-c-2",
+      "name": "Wall Vines C",
+      "origin": {
+        "column": 11,
+        "row": 3
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "fissures-a-2",
+      "name": "Fissures A",
+      "origin": {
+        "column": 12,
+        "row": 3
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "fissures-b-2",
+      "name": "Fissures B",
+      "origin": {
+        "column": 13,
+        "row": 3
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "fissures-c-2",
+      "name": "Fissures C",
+      "origin": {
+        "column": 14,
+        "row": 3
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "fissures-e",
+      "name": "Fissures E",
+      "origin": {
+        "column": 15,
+        "row": 3
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "wall-fern",
+      "name": "Wall Fern",
+      "origin": {
+        "column": 0,
+        "row": 4
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "shop-sign-sword",
+      "name": "Shop Sign (Sword)",
+      "origin": {
+        "column": 1,
+        "row": 4
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "shop-sign-sword-shield",
+      "name": "Shop Sign (Sword & Shield)",
+      "origin": {
+        "column": 2,
+        "row": 4
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "shop-sign-armor",
+      "name": "Shop Sign (Armor)",
+      "origin": {
+        "column": 3,
+        "row": 4
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "shop-sign-sack",
+      "name": "Shop Sign (Sack)",
+      "origin": {
+        "column": 4,
+        "row": 4
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "shop-sign-teapot",
+      "name": "Shop Sign (Teapot)",
+      "origin": {
+        "column": 5,
+        "row": 4
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "shop-sign-inn",
+      "name": "Shop Sign (Inn)",
+      "origin": {
+        "column": 6,
+        "row": 4
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "shop-sign-pub",
+      "name": "Shop Sign (Pub)",
+      "origin": {
+        "column": 7,
+        "row": 4
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "shop-sign-eatery",
+      "name": "Shop Sign (Eatery)",
+      "origin": {
+        "column": 8,
+        "row": 4
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "shop-sign-hexagram",
+      "name": "Shop Sign (Hexagram)",
+      "origin": {
+        "column": 9,
+        "row": 4
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "shop-sign-staves",
+      "name": "Shop Sign (Staves)",
+      "origin": {
+        "column": 10,
+        "row": 4
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "shop-sign-coin",
+      "name": "Shop Sign (Coin)",
+      "origin": {
+        "column": 11,
+        "row": 4
+      },
+      "collision": {
+        "kind": "blockCell"
+      }
+    },
+    {
+      "id": "shop-sign-necklace",
+      "name": "Shop Sign (Necklace)",
+      "origin": {
+        "column": 12,
+        "row": 4
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "shop-sign-hammer",
+      "name": "Shop Sign (Hammer)",
+      "origin": {
+        "column": 13,
+        "row": 4
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "shop-sign-crest",
+      "name": "Shop Sign (Crest)",
+      "origin": {
+        "column": 14,
+        "row": 4
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "shop-sign-blank",
+      "name": "Shop Sign (Blank)",
+      "origin": {
+        "column": 15,
+        "row": 4
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "log-bridge-v",
+      "name": "Log Bridge (V)",
+      "origin": {
+        "column": 0,
+        "row": 5
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "log-bridge-h",
+      "name": "Log Bridge (H)",
+      "origin": {
+        "column": 1,
+        "row": 5
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "wood-bridge-v",
+      "name": "Wood Bridge (V)",
+      "origin": {
+        "column": 2,
+        "row": 5
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "wood-bridge-h",
+      "name": "Wood Bridge (H)",
+      "origin": {
+        "column": 3,
+        "row": 5
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "stone-bridge-v",
+      "name": "Stone Bridge (V)",
+      "origin": {
+        "column": 4,
+        "row": 5
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "stone-bridge-h",
+      "name": "Stone Bridge (H)",
+      "origin": {
+        "column": 5,
+        "row": 5
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "wood-bridge-v-2",
+      "name": "Wood Bridge (V)",
+      "origin": {
+        "column": 6,
+        "row": 5
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "wood-bridge-h-2",
+      "name": "Wood Bridge (H)",
+      "origin": {
+        "column": 7,
+        "row": 5
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "bridge-spar-wood-center-a",
+      "name": "Bridge Spar (Wood, Center A)",
+      "origin": {
+        "column": 8,
+        "row": 5
+      },
+      "collision": {
+        "kind": "blockCell"
+      }
+    },
+    {
+      "id": "bridge-spar-wood-left",
+      "name": "Bridge Spar (Wood, Left)",
+      "origin": {
+        "column": 9,
+        "row": 5
+      },
+      "collision": {
+        "kind": "blockCell"
+      }
+    },
+    {
+      "id": "bridge-spar-wood-center-b",
+      "name": "Bridge Spar (Wood, Center B)",
+      "origin": {
+        "column": 10,
+        "row": 5
+      },
+      "collision": {
+        "kind": "blockCell"
+      }
+    },
+    {
+      "id": "bridge-spar-wood-right",
+      "name": "Bridge Spar (Wood, Right)",
+      "origin": {
+        "column": 11,
+        "row": 5
+      },
+      "collision": {
+        "kind": "blockCell"
+      }
+    },
+    {
+      "id": "bridge-spar-stone-center-a",
+      "name": "Bridge Spar (Stone, Center A)",
+      "origin": {
+        "column": 12,
+        "row": 5
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "bridge-spar-stone-left",
+      "name": "Bridge Spar (Stone, Left)",
+      "origin": {
+        "column": 13,
+        "row": 5
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "bridge-spar-stone-center-b",
+      "name": "Bridge Spar (Stone, Center B)",
+      "origin": {
+        "column": 14,
+        "row": 5
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "bridge-spar-stone-right",
+      "name": "Bridge Spar (Stone, Right)",
+      "origin": {
+        "column": 15,
+        "row": 5
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "window-a",
+      "name": "Window A",
+      "origin": {
+        "column": 0,
+        "row": 6
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "window-b",
+      "name": "Window B",
+      "origin": {
+        "column": 1,
+        "row": 6
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "window-c",
+      "name": "Window C",
+      "origin": {
+        "column": 2,
+        "row": 6
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "window-d",
+      "name": "Window D",
+      "origin": {
+        "column": 3,
+        "row": 6
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "middle-window-a",
+      "name": "Middle Window A",
+      "origin": {
+        "column": 4,
+        "row": 6
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "middle-window-b",
+      "name": "Middle Window B",
+      "origin": {
+        "column": 5,
+        "row": 6
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "middle-window-c",
+      "name": "Middle Window C",
+      "origin": {
+        "column": 6,
+        "row": 6
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "middle-window-d",
+      "name": "Middle Window D",
+      "origin": {
+        "column": 7,
+        "row": 6
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "window-e",
+      "name": "Window E",
+      "origin": {
+        "column": 8,
+        "row": 6
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "window-f",
+      "name": "Window F",
+      "origin": {
+        "column": 9,
+        "row": 6
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "window-g",
+      "name": "Window G",
+      "origin": {
+        "column": 10,
+        "row": 6
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "window-h",
+      "name": "Window H",
+      "origin": {
+        "column": 11,
+        "row": 6
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "middle-window-a-2",
+      "name": "Middle Window A",
+      "origin": {
+        "column": 12,
+        "row": 6
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "middle-window-e",
+      "name": "Middle Window E",
+      "origin": {
+        "column": 13,
+        "row": 6
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "middle-window-c-2",
+      "name": "Middle Window C",
+      "origin": {
+        "column": 14,
+        "row": 6
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "middle-window-d-2",
+      "name": "Middle Window D",
+      "origin": {
+        "column": 15,
+        "row": 6
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "large-window-a",
+      "name": "Large Window A",
+      "origin": {
+        "column": 0,
+        "row": 7
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "large-window-b",
+      "name": "Large Window B",
+      "origin": {
+        "column": 1,
+        "row": 7
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "large-window-c",
+      "name": "Large Window C",
+      "origin": {
+        "column": 2,
+        "row": 7
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "stained-glass-window",
+      "name": "Stained Glass Window",
+      "origin": {
+        "column": 3,
+        "row": 7
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "large-window-d",
+      "name": "Large Window D",
+      "origin": {
+        "column": 4,
+        "row": 7
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "middle-window-f",
+      "name": "Middle Window F",
+      "origin": {
+        "column": 5,
+        "row": 7
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "middle-window-g",
+      "name": "Middle Window G",
+      "origin": {
+        "column": 6,
+        "row": 7
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "middle-window-h",
+      "name": "Middle Window H",
+      "origin": {
+        "column": 7,
+        "row": 7
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "large-window-a-2",
+      "name": "Large Window A",
+      "origin": {
+        "column": 8,
+        "row": 7
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "large-window-e",
+      "name": "Large Window E",
+      "origin": {
+        "column": 9,
+        "row": 7
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "large-window-c-2",
+      "name": "Large Window C",
+      "origin": {
+        "column": 10,
+        "row": 7
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "stained-glass-window-b",
+      "name": "Stained Glass Window B",
+      "origin": {
+        "column": 11,
+        "row": 7
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "large-window-d-2",
+      "name": "Large Window D",
+      "origin": {
+        "column": 12,
+        "row": 7
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "middle-window-f-2",
+      "name": "Middle Window F",
+      "origin": {
+        "column": 13,
+        "row": 7
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "middle-window-g-2",
+      "name": "Middle Window G",
+      "origin": {
+        "column": 14,
+        "row": 7
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "middle-window-h-2",
+      "name": "Middle Window H",
+      "origin": {
+        "column": 15,
+        "row": 7
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "chimney",
+      "name": "Chimney",
+      "origin": {
+        "column": 0,
+        "row": 8
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "mooring-bollard-a",
+      "name": "Mooring Bollard A",
+      "origin": {
+        "column": 1,
+        "row": 8
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "mooring-bollard-b-rope",
+      "name": "Mooring Bollard B (Rope)",
+      "origin": {
+        "column": 2,
+        "row": 8
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "entrance-a",
+      "name": "Entrance A",
+      "origin": {
+        "column": 3,
+        "row": 8
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "entrance-a-extend",
+      "name": "Entrance A (Extend)",
+      "origin": {
+        "column": 4,
+        "row": 8
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "entrance-a-top-half-a",
+      "name": "Entrance A (Top Half A)",
+      "origin": {
+        "column": 5,
+        "row": 8
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "entrance-b",
+      "name": "Entrance B",
+      "origin": {
+        "column": 6,
+        "row": 8
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "entrance-a-top-half-b",
+      "name": "Entrance A (Top Half B)",
+      "origin": {
+        "column": 7,
+        "row": 8
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "chimney-2",
+      "name": "Chimney",
+      "origin": {
+        "column": 8,
+        "row": 8
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "sign-a",
+      "name": "Sign A",
+      "origin": {
+        "column": 9,
+        "row": 8
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "sign-b",
+      "name": "Sign B",
+      "origin": {
+        "column": 10,
+        "row": 8
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "well",
+      "name": "Well",
+      "origin": {
+        "column": 11,
+        "row": 8
+      },
+      "collision": {
+        "kind": "blockCell"
+      }
+    },
+    {
+      "id": "stepping-stones",
+      "name": "Stepping Stones",
+      "origin": {
+        "column": 12,
+        "row": 8
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "barrel",
+      "name": "Barrel",
+      "origin": {
+        "column": 13,
+        "row": 8
+      },
+      "collision": {
+        "kind": "blockCell"
+      }
+    },
+    {
+      "id": "grave-a",
+      "name": "Grave A",
+      "origin": {
+        "column": 14,
+        "row": 8
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "grave-b",
+      "name": "Grave B",
+      "origin": {
+        "column": 15,
+        "row": 8
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "pot",
+      "name": "Pot",
+      "origin": {
+        "column": 0,
+        "row": 9
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "basin-a",
+      "name": "Basin A",
+      "origin": {
+        "column": 1,
+        "row": 9
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "basin-b",
+      "name": "Basin B",
+      "origin": {
+        "column": 2,
+        "row": 9
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "rock-fire-pit-a",
+      "name": "Rock Fire Pit A",
+      "origin": {
+        "column": 3,
+        "row": 9
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "rock-fire-pit-b",
+      "name": "Rock Fire Pit B",
+      "origin": {
+        "column": 4,
+        "row": 9
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "barricade-h",
+      "name": "Barricade (H)",
+      "origin": {
+        "column": 5,
+        "row": 9
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "barricade-v",
+      "name": "Barricade (V)",
+      "origin": {
+        "column": 6,
+        "row": 9
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "beanstalk",
+      "name": "Beanstalk",
+      "origin": {
+        "column": 7,
+        "row": 9
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "grass-a",
+      "name": "Grass A",
+      "origin": {
+        "column": 8,
+        "row": 9
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "grass-b",
+      "name": "Grass B",
+      "origin": {
+        "column": 9,
+        "row": 9
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "grass-c",
+      "name": "Grass C",
+      "origin": {
+        "column": 10,
+        "row": 9
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "grass-d",
+      "name": "Grass D",
+      "origin": {
+        "column": 11,
+        "row": 9
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "stump",
+      "name": "Stump",
+      "origin": {
+        "column": 12,
+        "row": 9
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "tree",
+      "name": "Tree",
+      "origin": {
+        "column": 13,
+        "row": 9
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "tree-2",
+      "name": "Tree",
+      "origin": {
+        "column": 14,
+        "row": 9
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "boulder-a",
+      "name": "Boulder A",
+      "origin": {
+        "column": 15,
+        "row": 9
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "flowers-a",
+      "name": "Flowers A",
+      "origin": {
+        "column": 0,
+        "row": 10
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "flowers-b",
+      "name": "Flowers B",
+      "origin": {
+        "column": 1,
+        "row": 10
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "flowers-c",
+      "name": "Flowers C",
+      "origin": {
+        "column": 2,
+        "row": 10
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "flowers-d",
+      "name": "Flowers D",
+      "origin": {
+        "column": 3,
+        "row": 10
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "fallen-log",
+      "name": "Fallen Log",
+      "origin": {
+        "column": 4,
+        "row": 10
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "tree-3",
+      "name": "Tree",
+      "origin": {
+        "column": 5,
+        "row": 10
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "bush",
+      "name": "Bush",
+      "origin": {
+        "column": 6,
+        "row": 10
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "boulder-b",
+      "name": "Boulder B",
+      "origin": {
+        "column": 7,
+        "row": 10
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "scarecrow",
+      "name": "Scarecrow",
+      "origin": {
+        "column": 8,
+        "row": 10
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "hole",
+      "name": "Hole",
+      "origin": {
+        "column": 9,
+        "row": 10
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "firewood",
+      "name": "Firewood",
+      "origin": {
+        "column": 10,
+        "row": 10
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "rocks",
+      "name": "Rocks",
+      "origin": {
+        "column": 11,
+        "row": 10
+      },
+      "collision": {
+        "kind": "blockCell"
+      }
+    },
+    {
+      "id": "crops-a",
+      "name": "Crops A",
+      "origin": {
+        "column": 12,
+        "row": 10
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "crops-b",
+      "name": "Crops B",
+      "origin": {
+        "column": 13,
+        "row": 10
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "crops-c",
+      "name": "Crops C",
+      "origin": {
+        "column": 14,
+        "row": 10
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "crops-d",
+      "name": "Crops D",
+      "origin": {
+        "column": 15,
+        "row": 10
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "large-tree",
+      "name": "Large Tree",
+      "origin": {
+        "column": 0,
+        "row": 11
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "large-tree-2",
+      "name": "Large Tree",
+      "origin": {
+        "column": 1,
+        "row": 11
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "large-tree-3",
+      "name": "Large Tree",
+      "origin": {
+        "column": 2,
+        "row": 11
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "large-tree-4",
+      "name": "Large Tree",
+      "origin": {
+        "column": 3,
+        "row": 11
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "large-crate",
+      "name": "Large Crate",
+      "origin": {
+        "column": 4,
+        "row": 11
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "crate-a",
+      "name": "Crate A",
+      "origin": {
+        "column": 5,
+        "row": 11
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "crate-b",
+      "name": "Crate B",
+      "origin": {
+        "column": 6,
+        "row": 11
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "crate-c",
+      "name": "Crate C",
+      "origin": {
+        "column": 7,
+        "row": 11
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "large-tree-5",
+      "name": "Large Tree",
+      "origin": {
+        "column": 8,
+        "row": 11
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "large-tree-6",
+      "name": "Large Tree",
+      "origin": {
+        "column": 9,
+        "row": 11
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "large-tree-7",
+      "name": "Large Tree",
+      "origin": {
+        "column": 10,
+        "row": 11
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "large-tree-8",
+      "name": "Large Tree",
+      "origin": {
+        "column": 11,
+        "row": 11
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "large-crate-2",
+      "name": "Large Crate",
+      "origin": {
+        "column": 12,
+        "row": 11
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "crate-d",
+      "name": "Crate D",
+      "origin": {
+        "column": 13,
+        "row": 11
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "crate-e",
+      "name": "Crate E",
+      "origin": {
+        "column": 14,
+        "row": 11
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "crate-f",
+      "name": "Crate F",
+      "origin": {
+        "column": 15,
+        "row": 11
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "conifer-tree-snow",
+      "name": "Conifer Tree (Snow)",
+      "origin": {
+        "column": 0,
+        "row": 12
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "conifer-tree-snow-2",
+      "name": "Conifer Tree (Snow)",
+      "origin": {
+        "column": 1,
+        "row": 12
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "conifer-tree-snow-3",
+      "name": "Conifer Tree (Snow)",
+      "origin": {
+        "column": 2,
+        "row": 12
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "conifer-tree-snow-4",
+      "name": "Conifer Tree (Snow)",
+      "origin": {
+        "column": 3,
+        "row": 12
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "scarecrow-snow",
+      "name": "Scarecrow (Snow)",
+      "origin": {
+        "column": 4,
+        "row": 12
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "pot-snow",
+      "name": "Pot (Snow)",
+      "origin": {
+        "column": 5,
+        "row": 12
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "bucket-snow",
+      "name": "Bucket (Snow)",
+      "origin": {
+        "column": 6,
+        "row": 12
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "crate-snow",
+      "name": "Crate (Snow)",
+      "origin": {
+        "column": 7,
+        "row": 12
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "large-conifer-tree-snow",
+      "name": "Large Conifer Tree (Snow)",
+      "origin": {
+        "column": 8,
+        "row": 12
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "large-conifer-tree-snow-2",
+      "name": "Large Conifer Tree (Snow)",
+      "origin": {
+        "column": 9,
+        "row": 12
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "large-conifer-tree-snow-3",
+      "name": "Large Conifer Tree (Snow)",
+      "origin": {
+        "column": 10,
+        "row": 12
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "large-conifer-tree-snow-4",
+      "name": "Large Conifer Tree (Snow)",
+      "origin": {
+        "column": 11,
+        "row": 12
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "mooring-bollard-snow",
+      "name": "Mooring Bollard (Snow)",
+      "origin": {
+        "column": 12,
+        "row": 12
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "barricade-h-snow",
+      "name": "Barricade (H, Snow)",
+      "origin": {
+        "column": 13,
+        "row": 12
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "barricade-h-snow-2",
+      "name": "Barricade (H, Snow)",
+      "origin": {
+        "column": 14,
+        "row": 12
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "beanstalk-snow",
+      "name": "Beanstalk (Snow)",
+      "origin": {
+        "column": 15,
+        "row": 12
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "stump-snow",
+      "name": "Stump (Snow)",
+      "origin": {
+        "column": 0,
+        "row": 13
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "sign-a-snow",
+      "name": "Sign A (Snow)",
+      "origin": {
+        "column": 1,
+        "row": 13
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "sign-b-snow",
+      "name": "Sign B (Snow)",
+      "origin": {
+        "column": 2,
+        "row": 13
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "well-snow",
+      "name": "Well (Snow)",
+      "origin": {
+        "column": 3,
+        "row": 13
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "stepping-stones-snow",
+      "name": "Stepping Stones (Snow)",
+      "origin": {
+        "column": 4,
+        "row": 13
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "barrel-snow",
+      "name": "Barrel (Snow)",
+      "origin": {
+        "column": 5,
+        "row": 13
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "grave-a-snow",
+      "name": "Grave A (Snow)",
+      "origin": {
+        "column": 6,
+        "row": 13
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "grave-b-snow",
+      "name": "Grave B (Snow)",
+      "origin": {
+        "column": 7,
+        "row": 13
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "snowman",
+      "name": "Snowman",
+      "origin": {
+        "column": 8,
+        "row": 13
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "grass-a-snow",
+      "name": "Grass A (Snow)",
+      "origin": {
+        "column": 9,
+        "row": 13
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "grass-b-snow",
+      "name": "Grass B (Snow)",
+      "origin": {
+        "column": 10,
+        "row": 13
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "grass-c-snow",
+      "name": "Grass C (Snow)",
+      "origin": {
+        "column": 11,
+        "row": 13
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "grass-d-snow",
+      "name": "Grass D (Snow)",
+      "origin": {
+        "column": 12,
+        "row": 13
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "conifer-tree-snow-5",
+      "name": "Conifer Tree (Snow)",
+      "origin": {
+        "column": 13,
+        "row": 13
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "conifer-tree-snow-6",
+      "name": "Conifer Tree (Snow)",
+      "origin": {
+        "column": 14,
+        "row": 13
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "boulder-a-snow",
+      "name": "Boulder A (Snow)",
+      "origin": {
+        "column": 15,
+        "row": 13
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "dead-beanstalk",
+      "name": "Dead Beanstalk",
+      "origin": {
+        "column": 0,
+        "row": 14
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "hole-snow",
+      "name": "Hole (Snow)",
+      "origin": {
+        "column": 1,
+        "row": 14
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "firewood-snow",
+      "name": "Firewood (Snow)",
+      "origin": {
+        "column": 2,
+        "row": 14
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "rocks-snow",
+      "name": "Rocks (Snow)",
+      "origin": {
+        "column": 3,
+        "row": 14
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "fallen-log-snow",
+      "name": "Fallen Log (Snow)",
+      "origin": {
+        "column": 4,
+        "row": 14
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "conifer-tree-snow-7",
+      "name": "Conifer Tree (Snow)",
+      "origin": {
+        "column": 5,
+        "row": 14
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "bush-snow",
+      "name": "Bush (Snow)",
+      "origin": {
+        "column": 6,
+        "row": 14
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "boulder-b-snow",
+      "name": "Boulder B (Snow)",
+      "origin": {
+        "column": 7,
+        "row": 14
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "dead-tree",
+      "name": "Dead Tree",
+      "origin": {
+        "column": 8,
+        "row": 14
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "dead-tree-2",
+      "name": "Dead Tree",
+      "origin": {
+        "column": 9,
+        "row": 14
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "mushrooms-a",
+      "name": "Mushrooms A",
+      "origin": {
+        "column": 10,
+        "row": 14
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "mushrooms-b",
+      "name": "Mushrooms B",
+      "origin": {
+        "column": 11,
+        "row": 14
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "palm-tree",
+      "name": "Palm Tree",
+      "origin": {
+        "column": 12,
+        "row": 14
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "palm-tree-2",
+      "name": "Palm Tree",
+      "origin": {
+        "column": 13,
+        "row": 14
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "cactus",
+      "name": "Cactus",
+      "origin": {
+        "column": 14,
+        "row": 14
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "dead-grass-a",
+      "name": "Dead Grass A",
+      "origin": {
+        "column": 15,
+        "row": 14
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "dead-tree-3",
+      "name": "Dead Tree",
+      "origin": {
+        "column": 0,
+        "row": 15
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "dead-tree-shrub",
+      "name": "Dead Tree (Shrub)",
+      "origin": {
+        "column": 1,
+        "row": 15
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "rafflesia",
+      "name": "Rafflesia",
+      "origin": {
+        "column": 2,
+        "row": 15
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "stump-moss",
+      "name": "Stump (Moss)",
+      "origin": {
+        "column": 3,
+        "row": 15
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "palm-tree-3",
+      "name": "Palm Tree",
+      "origin": {
+        "column": 4,
+        "row": 15
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "bush-flowers",
+      "name": "Bush (Flowers)",
+      "origin": {
+        "column": 5,
+        "row": 15
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "fern",
+      "name": "Fern",
+      "origin": {
+        "column": 6,
+        "row": 15
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "dead-grass-b",
+      "name": "Dead Grass B",
+      "origin": {
+        "column": 7,
+        "row": 15
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "hay",
+      "name": "Hay",
+      "origin": {
+        "column": 8,
+        "row": 15
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "hay-snow",
+      "name": "Hay (Snow)",
+      "origin": {
+        "column": 9,
+        "row": 15
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "floral-patch",
+      "name": "Floral Patch",
+      "origin": {
+        "column": 10,
+        "row": 15
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "susuki-grass",
+      "name": "Susuki Grass",
+      "origin": {
+        "column": 11,
+        "row": 15
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "fallen-leaves",
+      "name": "Fallen Leaves",
+      "origin": {
+        "column": 12,
+        "row": 15
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "lotus-pads-a",
+      "name": "Lotus Pads A",
+      "origin": {
+        "column": 13,
+        "row": 15
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "lotus-pads-b-flowers",
+      "name": "Lotus Pads B (Flowers)",
+      "origin": {
+        "column": 14,
+        "row": 15
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "lotus-pads-c",
+      "name": "Lotus Pads C",
+      "origin": {
+        "column": 15,
+        "row": 15
+      },
+      "collision": {
+        "kind": "none"
+      }
+    }
+  ]
+}

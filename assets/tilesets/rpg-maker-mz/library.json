@@ -1,0 +1,477 @@
+{
+  "id": "rpg-maker-mz",
+  "name": "RPG Maker MZ",
+  "version": 1,
+  "assets": [
+    {
+      "id": "rpg-maker-mz-dungeon-a1",
+      "name": "Dungeon A1",
+      "type": "tileset",
+      "tags": [
+        "a1",
+        "autotile",
+        "dungeon",
+        "inside",
+        "water",
+        "lava"
+      ],
+      "image": "tilesets/rpg-maker-mz/Dungeon_A1.png",
+      "configuration": "tilesets/rpg-maker-mz/Dungeon_A1.json"
+    },
+    {
+      "id": "rpg-maker-mz-dungeon-a2",
+      "name": "Dungeon A2",
+      "type": "tileset",
+      "tags": [
+        "a2",
+        "autotile",
+        "dungeon",
+        "inside",
+        "snow",
+        "lava"
+      ],
+      "image": "tilesets/rpg-maker-mz/Dungeon_A2.png",
+      "configuration": "tilesets/rpg-maker-mz/Dungeon_A2.json"
+    },
+    {
+      "id": "rpg-maker-mz-dungeon-a4",
+      "name": "Dungeon A4",
+      "type": "tileset",
+      "tags": [
+        "a4",
+        "autotile",
+        "dungeon",
+        "inside",
+        "snow",
+        "lava",
+        "castle"
+      ],
+      "image": "tilesets/rpg-maker-mz/Dungeon_A4.png",
+      "configuration": "tilesets/rpg-maker-mz/Dungeon_A4.json"
+    },
+    {
+      "id": "rpg-maker-mz-dungeon-a5",
+      "name": "Dungeon A5",
+      "type": "tileset",
+      "tags": [
+        "a5",
+        "grid",
+        "dungeon",
+        "inside",
+        "snow",
+        "lava",
+        "castle"
+      ],
+      "image": "tilesets/rpg-maker-mz/Dungeon_A5.png",
+      "configuration": "tilesets/rpg-maker-mz/Dungeon_A5.json"
+    },
+    {
+      "id": "rpg-maker-mz-dungeon-b",
+      "name": "Dungeon B",
+      "type": "tileset",
+      "tags": [
+        "b",
+        "grid",
+        "dungeon",
+        "inside",
+        "snow",
+        "lava"
+      ],
+      "image": "tilesets/rpg-maker-mz/Dungeon_B.png",
+      "configuration": "tilesets/rpg-maker-mz/Dungeon_B.json"
+    },
+    {
+      "id": "rpg-maker-mz-dungeon-c",
+      "name": "Dungeon C",
+      "type": "tileset",
+      "tags": [
+        "c",
+        "grid",
+        "dungeon",
+        "inside",
+        "castle"
+      ],
+      "image": "tilesets/rpg-maker-mz/Dungeon_C.png",
+      "configuration": "tilesets/rpg-maker-mz/Dungeon_C.json"
+    },
+    {
+      "id": "rpg-maker-mz-inside-a1",
+      "name": "Inside A1",
+      "type": "tileset",
+      "tags": [
+        "a1",
+        "autotile",
+        "fantasy",
+        "inside",
+        "water"
+      ],
+      "image": "tilesets/rpg-maker-mz/Inside_A1.png",
+      "configuration": "tilesets/rpg-maker-mz/Inside_A1.json"
+    },
+    {
+      "id": "rpg-maker-mz-inside-a2",
+      "name": "Inside A2",
+      "type": "tileset",
+      "tags": [
+        "a2",
+        "autotile",
+        "fantasy",
+        "inside",
+        "snow"
+      ],
+      "image": "tilesets/rpg-maker-mz/Inside_A2.png",
+      "configuration": "tilesets/rpg-maker-mz/Inside_A2.json"
+    },
+    {
+      "id": "rpg-maker-mz-inside-a4",
+      "name": "Inside A4",
+      "type": "tileset",
+      "tags": [
+        "a4",
+        "autotile",
+        "fantasy",
+        "inside",
+        "snow",
+        "desert",
+        "castle"
+      ],
+      "image": "tilesets/rpg-maker-mz/Inside_A4.png",
+      "configuration": "tilesets/rpg-maker-mz/Inside_A4.json"
+    },
+    {
+      "id": "rpg-maker-mz-inside-a5",
+      "name": "Inside A5",
+      "type": "tileset",
+      "tags": [
+        "a5",
+        "grid",
+        "fantasy",
+        "inside",
+        "snow",
+        "castle"
+      ],
+      "image": "tilesets/rpg-maker-mz/Inside_A5.png",
+      "configuration": "tilesets/rpg-maker-mz/Inside_A5.json"
+    },
+    {
+      "id": "rpg-maker-mz-inside-b",
+      "name": "Inside B",
+      "type": "tileset",
+      "tags": [
+        "b",
+        "grid",
+        "fantasy",
+        "inside",
+        "snow",
+        "castle"
+      ],
+      "image": "tilesets/rpg-maker-mz/Inside_B.png",
+      "configuration": "tilesets/rpg-maker-mz/Inside_B.json"
+    },
+    {
+      "id": "rpg-maker-mz-inside-c",
+      "name": "Inside C",
+      "type": "tileset",
+      "tags": [
+        "c",
+        "grid",
+        "fantasy",
+        "inside",
+        "snow",
+        "castle"
+      ],
+      "image": "tilesets/rpg-maker-mz/Inside_C.png",
+      "configuration": "tilesets/rpg-maker-mz/Inside_C.json"
+    },
+    {
+      "id": "rpg-maker-mz-outside-a1",
+      "name": "Outside A1",
+      "type": "tileset",
+      "tags": [
+        "a1",
+        "autotile",
+        "fantasy",
+        "outside",
+        "snow",
+        "desert",
+        "water"
+      ],
+      "image": "tilesets/rpg-maker-mz/Outside_A1.png",
+      "configuration": "tilesets/rpg-maker-mz/Outside_A1.json"
+    },
+    {
+      "id": "rpg-maker-mz-outside-a2",
+      "name": "Outside A2",
+      "type": "tileset",
+      "tags": [
+        "a2",
+        "autotile",
+        "fantasy",
+        "outside",
+        "snow",
+        "desert"
+      ],
+      "image": "tilesets/rpg-maker-mz/Outside_A2.png",
+      "configuration": "tilesets/rpg-maker-mz/Outside_A2.json"
+    },
+    {
+      "id": "rpg-maker-mz-outside-a3",
+      "name": "Outside A3",
+      "type": "tileset",
+      "tags": [
+        "a3",
+        "autotile",
+        "fantasy",
+        "outside",
+        "snow",
+        "castle"
+      ],
+      "image": "tilesets/rpg-maker-mz/Outside_A3.png",
+      "configuration": "tilesets/rpg-maker-mz/Outside_A3.json"
+    },
+    {
+      "id": "rpg-maker-mz-outside-a4",
+      "name": "Outside A4",
+      "type": "tileset",
+      "tags": [
+        "a4",
+        "autotile",
+        "fantasy",
+        "outside",
+        "snow",
+        "desert",
+        "castle",
+        "urban"
+      ],
+      "image": "tilesets/rpg-maker-mz/Outside_A4.png",
+      "configuration": "tilesets/rpg-maker-mz/Outside_A4.json"
+    },
+    {
+      "id": "rpg-maker-mz-outside-a5",
+      "name": "Outside A5",
+      "type": "tileset",
+      "tags": [
+        "a5",
+        "grid",
+        "fantasy",
+        "outside",
+        "snow",
+        "desert",
+        "castle"
+      ],
+      "image": "tilesets/rpg-maker-mz/Outside_A5.png",
+      "configuration": "tilesets/rpg-maker-mz/Outside_A5.json"
+    },
+    {
+      "id": "rpg-maker-mz-outside-b",
+      "name": "Outside B",
+      "type": "tileset",
+      "tags": [
+        "b",
+        "grid",
+        "fantasy",
+        "outside",
+        "snow",
+        "jungle"
+      ],
+      "image": "tilesets/rpg-maker-mz/Outside_B.png",
+      "configuration": "tilesets/rpg-maker-mz/Outside_B.json"
+    },
+    {
+      "id": "rpg-maker-mz-outside-c",
+      "name": "Outside C",
+      "type": "tileset",
+      "tags": [
+        "c",
+        "grid",
+        "fantasy",
+        "outside",
+        "snow",
+        "castle"
+      ],
+      "image": "tilesets/rpg-maker-mz/Outside_C.png",
+      "configuration": "tilesets/rpg-maker-mz/Outside_C.json"
+    },
+    {
+      "id": "rpg-maker-mz-sf-inside-a4",
+      "name": "Science Fiction Inside A4",
+      "type": "tileset",
+      "tags": [
+        "a4",
+        "autotile",
+        "sci-fi",
+        "inside",
+        "urban"
+      ],
+      "image": "tilesets/rpg-maker-mz/SF_Inside_A4.png",
+      "configuration": "tilesets/rpg-maker-mz/SF_Inside_A4.json"
+    },
+    {
+      "id": "rpg-maker-mz-sf-inside-b",
+      "name": "Science Fiction Inside B",
+      "type": "tileset",
+      "tags": [
+        "b",
+        "grid",
+        "sci-fi",
+        "inside",
+        "snow",
+        "urban"
+      ],
+      "image": "tilesets/rpg-maker-mz/SF_Inside_B.png",
+      "configuration": "tilesets/rpg-maker-mz/SF_Inside_B.json"
+    },
+    {
+      "id": "rpg-maker-mz-sf-inside-c",
+      "name": "Science Fiction Inside C",
+      "type": "tileset",
+      "tags": [
+        "c",
+        "grid",
+        "sci-fi",
+        "inside",
+        "snow"
+      ],
+      "image": "tilesets/rpg-maker-mz/SF_Inside_C.png",
+      "configuration": "tilesets/rpg-maker-mz/SF_Inside_C.json"
+    },
+    {
+      "id": "rpg-maker-mz-sf-outside-a3",
+      "name": "Science Fiction Outside A3",
+      "type": "tileset",
+      "tags": [
+        "a3",
+        "autotile",
+        "sci-fi",
+        "outside"
+      ],
+      "image": "tilesets/rpg-maker-mz/SF_Outside_A3.png",
+      "configuration": "tilesets/rpg-maker-mz/SF_Outside_A3.json"
+    },
+    {
+      "id": "rpg-maker-mz-sf-outside-a4",
+      "name": "Science Fiction Outside A4",
+      "type": "tileset",
+      "tags": [
+        "a4",
+        "autotile",
+        "sci-fi",
+        "outside",
+        "urban"
+      ],
+      "image": "tilesets/rpg-maker-mz/SF_Outside_A4.png",
+      "configuration": "tilesets/rpg-maker-mz/SF_Outside_A4.json"
+    },
+    {
+      "id": "rpg-maker-mz-sf-outside-a5",
+      "name": "Science Fiction Outside A5",
+      "type": "tileset",
+      "tags": [
+        "a5",
+        "grid",
+        "sci-fi",
+        "outside",
+        "desert",
+        "urban"
+      ],
+      "image": "tilesets/rpg-maker-mz/SF_Outside_A5.png",
+      "configuration": "tilesets/rpg-maker-mz/SF_Outside_A5.json"
+    },
+    {
+      "id": "rpg-maker-mz-sf-outside-b",
+      "name": "Science Fiction Outside B",
+      "type": "tileset",
+      "tags": [
+        "b",
+        "grid",
+        "sci-fi",
+        "outside",
+        "snow",
+        "urban"
+      ],
+      "image": "tilesets/rpg-maker-mz/SF_Outside_B.png",
+      "configuration": "tilesets/rpg-maker-mz/SF_Outside_B.json"
+    },
+    {
+      "id": "rpg-maker-mz-sf-outside-c",
+      "name": "Science Fiction Outside C",
+      "type": "tileset",
+      "tags": [
+        "c",
+        "grid",
+        "sci-fi",
+        "outside",
+        "water",
+        "urban"
+      ],
+      "image": "tilesets/rpg-maker-mz/SF_Outside_C.png",
+      "configuration": "tilesets/rpg-maker-mz/SF_Outside_C.json"
+    },
+    {
+      "id": "rpg-maker-mz-world-a1",
+      "name": "World A1",
+      "type": "tileset",
+      "tags": [
+        "a1",
+        "autotile",
+        "overworld",
+        "world-map",
+        "snow",
+        "water",
+        "lava"
+      ],
+      "image": "tilesets/rpg-maker-mz/World_A1.png",
+      "configuration": "tilesets/rpg-maker-mz/World_A1.json"
+    },
+    {
+      "id": "rpg-maker-mz-world-a2",
+      "name": "World A2",
+      "type": "tileset",
+      "tags": [
+        "a2",
+        "autotile",
+        "overworld",
+        "world-map",
+        "snow",
+        "desert",
+        "jungle",
+        "lava"
+      ],
+      "image": "tilesets/rpg-maker-mz/World_A2.png",
+      "configuration": "tilesets/rpg-maker-mz/World_A2.json"
+    },
+    {
+      "id": "rpg-maker-mz-world-b",
+      "name": "World B",
+      "type": "tileset",
+      "tags": [
+        "b",
+        "grid",
+        "overworld",
+        "world-map",
+        "snow",
+        "desert",
+        "water",
+        "lava",
+        "castle"
+      ],
+      "image": "tilesets/rpg-maker-mz/World_B.png",
+      "configuration": "tilesets/rpg-maker-mz/World_B.json"
+    },
+    {
+      "id": "rpg-maker-mz-world-c",
+      "name": "World C",
+      "type": "tileset",
+      "tags": [
+        "c",
+        "grid",
+        "overworld",
+        "world-map",
+        "snow",
+        "urban"
+      ],
+      "image": "tilesets/rpg-maker-mz/World_C.png",
+      "configuration": "tilesets/rpg-maker-mz/World_C.json"
+    }
+  ]
+}

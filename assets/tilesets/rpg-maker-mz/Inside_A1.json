@@ -1,0 +1,1163 @@
+{
+  "id": "rpg-maker-mz-inside-a1",
+  "name": "Inside A1",
+  "category": "RPG Maker MZ / Inside",
+  "kind": "a1",
+  "image": "tilesets/rpg-maker-mz/Inside_A1.png",
+  "tileSize": 48,
+  "columns": 16,
+  "rows": 12,
+  "terrains": [
+    {
+      "id": "water-a",
+      "name": "Water A",
+      "origin": {
+        "column": 0,
+        "row": 0
+      },
+      "collision": {
+        "kind": "none"
+      },
+      "previewMask": 0,
+      "animation": "horizontal"
+    },
+    {
+      "id": "deep-water",
+      "name": "Deep Water",
+      "origin": {
+        "column": 0,
+        "row": 3
+      },
+      "collision": {
+        "kind": "none"
+      },
+      "previewMask": 0,
+      "animation": "horizontal"
+    },
+    {
+      "id": "lotus-pads-flowers",
+      "name": "Lotus Pads (Flowers)",
+      "origin": {
+        "column": 6,
+        "row": 0
+      },
+      "collision": {
+        "kind": "none"
+      },
+      "previewMask": 0,
+      "animation": "none"
+    },
+    {
+      "id": "purple-water",
+      "name": "Purple Water",
+      "origin": {
+        "column": 6,
+        "row": 3
+      },
+      "collision": {
+        "kind": "none"
+      },
+      "previewMask": 0,
+      "animation": "none"
+    },
+    {
+      "id": "water-b-surround-stonewall",
+      "name": "Water B (Surround Stonewall)",
+      "origin": {
+        "column": 8,
+        "row": 0
+      },
+      "collision": {
+        "kind": "none"
+      },
+      "previewMask": 0,
+      "animation": "horizontal"
+    },
+    {
+      "id": "waterfall-a-shine-fall",
+      "name": "Waterfall A (Shine Fall)",
+      "origin": {
+        "column": 14,
+        "row": 0
+      },
+      "collision": {
+        "kind": "none"
+      },
+      "previewMask": 0,
+      "animation": "vertical"
+    },
+    {
+      "id": "pond-a-rock-pond",
+      "name": "Pond A (Rock Pond)",
+      "origin": {
+        "column": 8,
+        "row": 3
+      },
+      "collision": {
+        "kind": "none"
+      },
+      "previewMask": 0,
+      "animation": "horizontal"
+    },
+    {
+      "id": "waterfall-b-grid-fall",
+      "name": "Waterfall B (Grid Fall)",
+      "origin": {
+        "column": 14,
+        "row": 3
+      },
+      "collision": {
+        "kind": "none"
+      },
+      "previewMask": 0,
+      "animation": "vertical"
+    },
+    {
+      "id": "water-c-tile",
+      "name": "Water C (Tile)",
+      "origin": {
+        "column": 0,
+        "row": 6
+      },
+      "collision": {
+        "kind": "none"
+      },
+      "previewMask": 0,
+      "animation": "horizontal"
+    },
+    {
+      "id": "water-d-small-hole",
+      "name": "Water D (Small Hole)",
+      "origin": {
+        "column": 6,
+        "row": 6
+      },
+      "collision": {
+        "kind": "none"
+      },
+      "previewMask": 0,
+      "animation": "vertical"
+    },
+    {
+      "id": "water-e-water-surface",
+      "name": "Water E (Water Surface)",
+      "origin": {
+        "column": 0,
+        "row": 9
+      },
+      "collision": {
+        "kind": "none"
+      },
+      "previewMask": 0,
+      "animation": "horizontal"
+    },
+    {
+      "id": "water-f-water-footing",
+      "name": "Water F (Water Footing)",
+      "origin": {
+        "column": 6,
+        "row": 9
+      },
+      "collision": {
+        "kind": "none"
+      },
+      "previewMask": 0,
+      "animation": "vertical"
+    },
+    {
+      "id": "water-g-surround-waterwall",
+      "name": "Water G (Surround Waterwall)",
+      "origin": {
+        "column": 8,
+        "row": 6
+      },
+      "collision": {
+        "kind": "none"
+      },
+      "previewMask": 0,
+      "animation": "horizontal"
+    },
+    {
+      "id": "water-h-big-hole",
+      "name": "Water H (Big Hole)",
+      "origin": {
+        "column": 14,
+        "row": 6
+      },
+      "collision": {
+        "kind": "none"
+      },
+      "previewMask": 0,
+      "animation": "vertical"
+    },
+    {
+      "id": "pond-b-purple-rock-pond",
+      "name": "Pond B (Purple Rock Pond)",
+      "origin": {
+        "column": 8,
+        "row": 9
+      },
+      "collision": {
+        "kind": "none"
+      },
+      "previewMask": 0,
+      "animation": "horizontal"
+    },
+    {
+      "id": "waterfall-c-purple-fall",
+      "name": "Waterfall C (Purple Fall)",
+      "origin": {
+        "column": 14,
+        "row": 9
+      },
+      "collision": {
+        "kind": "none"
+      },
+      "previewMask": 0,
+      "animation": "vertical"
+    }
+  ],
+  "quarterSize": 24,
+  "variants": {
+    "0": {
+      "quarters": [
+        [
+          0,
+          0
+        ],
+        [
+          1,
+          0
+        ],
+        [
+          0,
+          1
+        ],
+        [
+          1,
+          1
+        ]
+      ]
+    },
+    "1": {
+      "quarters": [
+        [
+          0,
+          4
+        ],
+        [
+          3,
+          4
+        ],
+        [
+          0,
+          1
+        ],
+        [
+          1,
+          1
+        ]
+      ]
+    },
+    "2": {
+      "quarters": [
+        [
+          0,
+          0
+        ],
+        [
+          1,
+          2
+        ],
+        [
+          0,
+          1
+        ],
+        [
+          1,
+          5
+        ]
+      ]
+    },
+    "3": {
+      "quarters": [
+        [
+          0,
+          4
+        ],
+        [
+          3,
+          0
+        ],
+        [
+          0,
+          1
+        ],
+        [
+          1,
+          5
+        ]
+      ]
+    },
+    "4": {
+      "quarters": [
+        [
+          0,
+          0
+        ],
+        [
+          1,
+          0
+        ],
+        [
+          0,
+          3
+        ],
+        [
+          3,
+          3
+        ]
+      ]
+    },
+    "5": {
+      "quarters": [
+        [
+          0,
+          4
+        ],
+        [
+          3,
+          4
+        ],
+        [
+          0,
+          3
+        ],
+        [
+          3,
+          3
+        ]
+      ]
+    },
+    "6": {
+      "quarters": [
+        [
+          0,
+          0
+        ],
+        [
+          1,
+          2
+        ],
+        [
+          0,
+          3
+        ],
+        [
+          3,
+          1
+        ]
+      ]
+    },
+    "7": {
+      "quarters": [
+        [
+          0,
+          4
+        ],
+        [
+          3,
+          0
+        ],
+        [
+          0,
+          3
+        ],
+        [
+          3,
+          1
+        ]
+      ]
+    },
+    "8": {
+      "quarters": [
+        [
+          2,
+          2
+        ],
+        [
+          1,
+          0
+        ],
+        [
+          2,
+          5
+        ],
+        [
+          1,
+          1
+        ]
+      ]
+    },
+    "9": {
+      "quarters": [
+        [
+          2,
+          0
+        ],
+        [
+          3,
+          4
+        ],
+        [
+          2,
+          5
+        ],
+        [
+          1,
+          1
+        ]
+      ]
+    },
+    "10": {
+      "quarters": [
+        [
+          2,
+          2
+        ],
+        [
+          1,
+          2
+        ],
+        [
+          2,
+          5
+        ],
+        [
+          1,
+          5
+        ]
+      ]
+    },
+    "11": {
+      "quarters": [
+        [
+          2,
+          0
+        ],
+        [
+          3,
+          0
+        ],
+        [
+          2,
+          5
+        ],
+        [
+          1,
+          5
+        ]
+      ]
+    },
+    "12": {
+      "quarters": [
+        [
+          2,
+          2
+        ],
+        [
+          1,
+          0
+        ],
+        [
+          2,
+          1
+        ],
+        [
+          3,
+          3
+        ]
+      ]
+    },
+    "13": {
+      "quarters": [
+        [
+          2,
+          0
+        ],
+        [
+          3,
+          4
+        ],
+        [
+          2,
+          1
+        ],
+        [
+          3,
+          3
+        ]
+      ]
+    },
+    "14": {
+      "quarters": [
+        [
+          2,
+          2
+        ],
+        [
+          1,
+          2
+        ],
+        [
+          2,
+          1
+        ],
+        [
+          3,
+          1
+        ]
+      ]
+    },
+    "15": {
+      "quarters": [
+        [
+          2,
+          0
+        ],
+        [
+          3,
+          0
+        ],
+        [
+          2,
+          1
+        ],
+        [
+          3,
+          1
+        ]
+      ]
+    },
+    "19": {
+      "quarters": [
+        [
+          0,
+          4
+        ],
+        [
+          1,
+          4
+        ],
+        [
+          0,
+          1
+        ],
+        [
+          1,
+          5
+        ]
+      ]
+    },
+    "23": {
+      "quarters": [
+        [
+          0,
+          4
+        ],
+        [
+          1,
+          4
+        ],
+        [
+          0,
+          3
+        ],
+        [
+          3,
+          1
+        ]
+      ]
+    },
+    "27": {
+      "quarters": [
+        [
+          2,
+          0
+        ],
+        [
+          1,
+          4
+        ],
+        [
+          2,
+          5
+        ],
+        [
+          1,
+          5
+        ]
+      ]
+    },
+    "31": {
+      "quarters": [
+        [
+          2,
+          0
+        ],
+        [
+          1,
+          4
+        ],
+        [
+          2,
+          1
+        ],
+        [
+          3,
+          1
+        ]
+      ]
+    },
+    "38": {
+      "quarters": [
+        [
+          0,
+          0
+        ],
+        [
+          1,
+          2
+        ],
+        [
+          0,
+          3
+        ],
+        [
+          1,
+          3
+        ]
+      ]
+    },
+    "39": {
+      "quarters": [
+        [
+          0,
+          4
+        ],
+        [
+          3,
+          0
+        ],
+        [
+          0,
+          3
+        ],
+        [
+          1,
+          3
+        ]
+      ]
+    },
+    "46": {
+      "quarters": [
+        [
+          2,
+          2
+        ],
+        [
+          1,
+          2
+        ],
+        [
+          2,
+          1
+        ],
+        [
+          1,
+          3
+        ]
+      ]
+    },
+    "47": {
+      "quarters": [
+        [
+          2,
+          0
+        ],
+        [
+          3,
+          0
+        ],
+        [
+          2,
+          1
+        ],
+        [
+          1,
+          3
+        ]
+      ]
+    },
+    "55": {
+      "quarters": [
+        [
+          0,
+          4
+        ],
+        [
+          1,
+          4
+        ],
+        [
+          0,
+          3
+        ],
+        [
+          1,
+          3
+        ]
+      ]
+    },
+    "63": {
+      "quarters": [
+        [
+          2,
+          0
+        ],
+        [
+          1,
+          4
+        ],
+        [
+          2,
+          1
+        ],
+        [
+          1,
+          3
+        ]
+      ]
+    },
+    "76": {
+      "quarters": [
+        [
+          2,
+          2
+        ],
+        [
+          1,
+          0
+        ],
+        [
+          2,
+          3
+        ],
+        [
+          3,
+          3
+        ]
+      ]
+    },
+    "77": {
+      "quarters": [
+        [
+          2,
+          0
+        ],
+        [
+          3,
+          4
+        ],
+        [
+          2,
+          3
+        ],
+        [
+          3,
+          3
+        ]
+      ]
+    },
+    "78": {
+      "quarters": [
+        [
+          2,
+          2
+        ],
+        [
+          1,
+          2
+        ],
+        [
+          2,
+          3
+        ],
+        [
+          3,
+          1
+        ]
+      ]
+    },
+    "79": {
+      "quarters": [
+        [
+          2,
+          0
+        ],
+        [
+          3,
+          0
+        ],
+        [
+          2,
+          3
+        ],
+        [
+          3,
+          1
+        ]
+      ]
+    },
+    "95": {
+      "quarters": [
+        [
+          2,
+          0
+        ],
+        [
+          1,
+          4
+        ],
+        [
+          2,
+          3
+        ],
+        [
+          3,
+          1
+        ]
+      ]
+    },
+    "110": {
+      "quarters": [
+        [
+          2,
+          2
+        ],
+        [
+          1,
+          2
+        ],
+        [
+          2,
+          3
+        ],
+        [
+          1,
+          3
+        ]
+      ]
+    },
+    "111": {
+      "quarters": [
+        [
+          2,
+          0
+        ],
+        [
+          3,
+          0
+        ],
+        [
+          2,
+          3
+        ],
+        [
+          1,
+          3
+        ]
+      ]
+    },
+    "127": {
+      "quarters": [
+        [
+          2,
+          0
+        ],
+        [
+          1,
+          4
+        ],
+        [
+          2,
+          3
+        ],
+        [
+          1,
+          3
+        ]
+      ]
+    },
+    "137": {
+      "quarters": [
+        [
+          2,
+          4
+        ],
+        [
+          3,
+          4
+        ],
+        [
+          2,
+          5
+        ],
+        [
+          1,
+          1
+        ]
+      ]
+    },
+    "139": {
+      "quarters": [
+        [
+          2,
+          4
+        ],
+        [
+          3,
+          0
+        ],
+        [
+          2,
+          5
+        ],
+        [
+          1,
+          5
+        ]
+      ]
+    },
+    "141": {
+      "quarters": [
+        [
+          2,
+          4
+        ],
+        [
+          3,
+          4
+        ],
+        [
+          2,
+          1
+        ],
+        [
+          3,
+          3
+        ]
+      ]
+    },
+    "143": {
+      "quarters": [
+        [
+          2,
+          4
+        ],
+        [
+          3,
+          0
+        ],
+        [
+          2,
+          1
+        ],
+        [
+          3,
+          1
+        ]
+      ]
+    },
+    "155": {
+      "quarters": [
+        [
+          2,
+          4
+        ],
+        [
+          1,
+          4
+        ],
+        [
+          2,
+          5
+        ],
+        [
+          1,
+          5
+        ]
+      ]
+    },
+    "159": {
+      "quarters": [
+        [
+          2,
+          4
+        ],
+        [
+          1,
+          4
+        ],
+        [
+          2,
+          1
+        ],
+        [
+          3,
+          1
+        ]
+      ]
+    },
+    "175": {
+      "quarters": [
+        [
+          2,
+          4
+        ],
+        [
+          3,
+          0
+        ],
+        [
+          2,
+          1
+        ],
+        [
+          1,
+          3
+        ]
+      ]
+    },
+    "191": {
+      "quarters": [
+        [
+          2,
+          4
+        ],
+        [
+          1,
+          4
+        ],
+        [
+          2,
+          1
+        ],
+        [
+          1,
+          3
+        ]
+      ]
+    },
+    "205": {
+      "quarters": [
+        [
+          2,
+          4
+        ],
+        [
+          3,
+          4
+        ],
+        [
+          2,
+          3
+        ],
+        [
+          3,
+          3
+        ]
+      ]
+    },
+    "207": {
+      "quarters": [
+        [
+          2,
+          4
+        ],
+        [
+          3,
+          0
+        ],
+        [
+          2,
+          3
+        ],
+        [
+          3,
+          1
+        ]
+      ]
+    },
+    "223": {
+      "quarters": [
+        [
+          2,
+          4
+        ],
+        [
+          1,
+          4
+        ],
+        [
+          2,
+          3
+        ],
+        [
+          3,
+          1
+        ]
+      ]
+    },
+    "239": {
+      "quarters": [
+        [
+          2,
+          4
+        ],
+        [
+          3,
+          0
+        ],
+        [
+          2,
+          3
+        ],
+        [
+          1,
+          3
+        ]
+      ]
+    },
+    "255": {
+      "quarters": [
+        [
+          2,
+          4
+        ],
+        [
+          1,
+          4
+        ],
+        [
+          2,
+          3
+        ],
+        [
+          1,
+          3
+        ]
+      ]
+    }
+  }
+}

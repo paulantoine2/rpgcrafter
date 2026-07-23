@@ -1,0 +1,2828 @@
+{
+  "id": "rpg-maker-mz-world-c",
+  "name": "World C",
+  "category": "RPG Maker MZ / World",
+  "kind": "grid",
+  "image": "tilesets/rpg-maker-mz/World_C.png",
+  "tileSize": 48,
+  "columns": 16,
+  "rows": 16,
+  "terrains": [
+    {
+      "id": "hole",
+      "name": "Hole",
+      "origin": {
+        "column": 0,
+        "row": 0
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "signboard-a",
+      "name": "Signboard A",
+      "origin": {
+        "column": 1,
+        "row": 0
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "signboard-b",
+      "name": "Signboard B",
+      "origin": {
+        "column": 2,
+        "row": 0
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "signboard-c",
+      "name": "Signboard C",
+      "origin": {
+        "column": 3,
+        "row": 0
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "iron-bridge-h",
+      "name": "Iron Bridge (H)",
+      "origin": {
+        "column": 4,
+        "row": 0
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "iron-bridge-v",
+      "name": "Iron Bridge (V)",
+      "origin": {
+        "column": 5,
+        "row": 0
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "reservoir-a",
+      "name": "Reservoir A",
+      "origin": {
+        "column": 6,
+        "row": 0
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "reservoir-b",
+      "name": "Reservoir B",
+      "origin": {
+        "column": 7,
+        "row": 0
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "hut",
+      "name": "Hut",
+      "origin": {
+        "column": 8,
+        "row": 0
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "shanty",
+      "name": "Shanty",
+      "origin": {
+        "column": 9,
+        "row": 0
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "signboard-d",
+      "name": "Signboard D",
+      "origin": {
+        "column": 10,
+        "row": 0
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "digital-signage-a",
+      "name": "Digital Signage A",
+      "origin": {
+        "column": 11,
+        "row": 0
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "digital-signage-b",
+      "name": "Digital Signage B",
+      "origin": {
+        "column": 12,
+        "row": 0
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "windmill",
+      "name": "Windmill",
+      "origin": {
+        "column": 13,
+        "row": 0
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "parabolic-antenna",
+      "name": "Parabolic Antenna",
+      "origin": {
+        "column": 14,
+        "row": 0
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "heliport",
+      "name": "Heliport",
+      "origin": {
+        "column": 15,
+        "row": 0
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "entrance-a-open",
+      "name": "Entrance A (Open)",
+      "origin": {
+        "column": 0,
+        "row": 1
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "entrance-a-closed",
+      "name": "Entrance A (Closed)",
+      "origin": {
+        "column": 1,
+        "row": 1
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "entrance-b-open",
+      "name": "Entrance B (Open)",
+      "origin": {
+        "column": 2,
+        "row": 1
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "entrance-b-closed",
+      "name": "Entrance B (Closed)",
+      "origin": {
+        "column": 3,
+        "row": 1
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "entrance-c-open",
+      "name": "Entrance C (Open)",
+      "origin": {
+        "column": 4,
+        "row": 1
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "entrance-c-closed",
+      "name": "Entrance C (Closed)",
+      "origin": {
+        "column": 5,
+        "row": 1
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "entrance-d-closed",
+      "name": "Entrance D (Closed)",
+      "origin": {
+        "column": 6,
+        "row": 1
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "entrance-e-closed",
+      "name": "Entrance E (Closed)",
+      "origin": {
+        "column": 7,
+        "row": 1
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "road",
+      "name": "Road",
+      "origin": {
+        "column": 8,
+        "row": 1
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "road-2",
+      "name": "Road",
+      "origin": {
+        "column": 9,
+        "row": 1
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "road-closed",
+      "name": "Road Closed",
+      "origin": {
+        "column": 10,
+        "row": 1
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "rocky-mountain-a",
+      "name": "Rocky Mountain A",
+      "origin": {
+        "column": 11,
+        "row": 1
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "rocky-mountain-a-2",
+      "name": "Rocky Mountain A",
+      "origin": {
+        "column": 12,
+        "row": 1
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "rocky-mountain-b",
+      "name": "Rocky Mountain B",
+      "origin": {
+        "column": 13,
+        "row": 1
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "rocky-mountain-b-2",
+      "name": "Rocky Mountain B",
+      "origin": {
+        "column": 14,
+        "row": 1
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "rocky-mountain-c",
+      "name": "Rocky Mountain C",
+      "origin": {
+        "column": 15,
+        "row": 1
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "road-3",
+      "name": "Road",
+      "origin": {
+        "column": 0,
+        "row": 2
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "road-4",
+      "name": "Road",
+      "origin": {
+        "column": 1,
+        "row": 2
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "road-5",
+      "name": "Road",
+      "origin": {
+        "column": 2,
+        "row": 2
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "rocky-mountain-a-3",
+      "name": "Rocky Mountain A",
+      "origin": {
+        "column": 3,
+        "row": 2
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "rocky-mountain-a-4",
+      "name": "Rocky Mountain A",
+      "origin": {
+        "column": 4,
+        "row": 2
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "rocky-mountain-b-3",
+      "name": "Rocky Mountain B",
+      "origin": {
+        "column": 5,
+        "row": 2
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "rocky-mountain-b-4",
+      "name": "Rocky Mountain B",
+      "origin": {
+        "column": 6,
+        "row": 2
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "rocky-mountain-c-2",
+      "name": "Rocky Mountain C",
+      "origin": {
+        "column": 7,
+        "row": 2
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "road-6",
+      "name": "Road",
+      "origin": {
+        "column": 8,
+        "row": 2
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "road-7",
+      "name": "Road",
+      "origin": {
+        "column": 9,
+        "row": 2
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "road-8",
+      "name": "Road",
+      "origin": {
+        "column": 10,
+        "row": 2
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "rocky-mountain-a-5",
+      "name": "Rocky Mountain A",
+      "origin": {
+        "column": 11,
+        "row": 2
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "rocky-mountain-a-6",
+      "name": "Rocky Mountain A",
+      "origin": {
+        "column": 12,
+        "row": 2
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "rocky-mountain-b-5",
+      "name": "Rocky Mountain B",
+      "origin": {
+        "column": 13,
+        "row": 2
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "rocky-mountain-b-6",
+      "name": "Rocky Mountain B",
+      "origin": {
+        "column": 14,
+        "row": 2
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "rocky-mountain-d",
+      "name": "Rocky Mountain D",
+      "origin": {
+        "column": 15,
+        "row": 2
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "road-9",
+      "name": "Road",
+      "origin": {
+        "column": 0,
+        "row": 3
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "road-10",
+      "name": "Road",
+      "origin": {
+        "column": 1,
+        "row": 3
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "road-11",
+      "name": "Road",
+      "origin": {
+        "column": 2,
+        "row": 3
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "rocky-mountain-a-7",
+      "name": "Rocky Mountain A",
+      "origin": {
+        "column": 3,
+        "row": 3
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "rocky-mountain-a-8",
+      "name": "Rocky Mountain A",
+      "origin": {
+        "column": 4,
+        "row": 3
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "rocky-mountain-b-7",
+      "name": "Rocky Mountain B",
+      "origin": {
+        "column": 5,
+        "row": 3
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "rocky-mountain-b-8",
+      "name": "Rocky Mountain B",
+      "origin": {
+        "column": 6,
+        "row": 3
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "broken-buildings",
+      "name": "Broken Buildings",
+      "origin": {
+        "column": 7,
+        "row": 3
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "town-a",
+      "name": "Town A",
+      "origin": {
+        "column": 8,
+        "row": 3
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "town-b",
+      "name": "Town B",
+      "origin": {
+        "column": 9,
+        "row": 3
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "slum-a",
+      "name": "Slum A",
+      "origin": {
+        "column": 10,
+        "row": 3
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "slum-b",
+      "name": "Slum B",
+      "origin": {
+        "column": 11,
+        "row": 3
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "mansion-a",
+      "name": "Mansion A",
+      "origin": {
+        "column": 12,
+        "row": 3
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "mansion-a-2",
+      "name": "Mansion A",
+      "origin": {
+        "column": 13,
+        "row": 3
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "gate-a",
+      "name": "Gate A",
+      "origin": {
+        "column": 14,
+        "row": 3
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "gate-b",
+      "name": "Gate B",
+      "origin": {
+        "column": 15,
+        "row": 3
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "shopping-area-a",
+      "name": "Shopping Area A",
+      "origin": {
+        "column": 0,
+        "row": 4
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "shopping-area-b",
+      "name": "Shopping Area B",
+      "origin": {
+        "column": 1,
+        "row": 4
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "buildings-a",
+      "name": "Buildings A",
+      "origin": {
+        "column": 2,
+        "row": 4
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "buildings-b",
+      "name": "Buildings B",
+      "origin": {
+        "column": 3,
+        "row": 4
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "mansion-b",
+      "name": "Mansion B",
+      "origin": {
+        "column": 4,
+        "row": 4
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "mansion-b-2",
+      "name": "Mansion B",
+      "origin": {
+        "column": 5,
+        "row": 4
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "gate-c",
+      "name": "Gate C",
+      "origin": {
+        "column": 6,
+        "row": 4
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "gate-d",
+      "name": "Gate D",
+      "origin": {
+        "column": 7,
+        "row": 4
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "residential-street",
+      "name": "Residential Street",
+      "origin": {
+        "column": 8,
+        "row": 4
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "residential-street-2",
+      "name": "Residential Street",
+      "origin": {
+        "column": 9,
+        "row": 4
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "slum",
+      "name": "Slum",
+      "origin": {
+        "column": 10,
+        "row": 4
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "slum-2",
+      "name": "Slum",
+      "origin": {
+        "column": 11,
+        "row": 4
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "school",
+      "name": "School",
+      "origin": {
+        "column": 12,
+        "row": 4
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "school-2",
+      "name": "School",
+      "origin": {
+        "column": 13,
+        "row": 4
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "hospital",
+      "name": "Hospital",
+      "origin": {
+        "column": 14,
+        "row": 4
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "hospital-2",
+      "name": "Hospital",
+      "origin": {
+        "column": 15,
+        "row": 4
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "residential-street-3",
+      "name": "Residential Street",
+      "origin": {
+        "column": 0,
+        "row": 5
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "residential-street-4",
+      "name": "Residential Street",
+      "origin": {
+        "column": 1,
+        "row": 5
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "slum-3",
+      "name": "Slum",
+      "origin": {
+        "column": 2,
+        "row": 5
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "slum-4",
+      "name": "Slum",
+      "origin": {
+        "column": 3,
+        "row": 5
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "school-3",
+      "name": "School",
+      "origin": {
+        "column": 4,
+        "row": 5
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "school-4",
+      "name": "School",
+      "origin": {
+        "column": 5,
+        "row": 5
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "hospital-3",
+      "name": "Hospital",
+      "origin": {
+        "column": 6,
+        "row": 5
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "hospital-4",
+      "name": "Hospital",
+      "origin": {
+        "column": 7,
+        "row": 5
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "city-a",
+      "name": "City A",
+      "origin": {
+        "column": 8,
+        "row": 5
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "city-a-2",
+      "name": "City A",
+      "origin": {
+        "column": 9,
+        "row": 5
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "city-b",
+      "name": "City B",
+      "origin": {
+        "column": 10,
+        "row": 5
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "city-b-2",
+      "name": "City B",
+      "origin": {
+        "column": 11,
+        "row": 5
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "residence-a",
+      "name": "Residence A",
+      "origin": {
+        "column": 12,
+        "row": 5
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "residence-a-2",
+      "name": "Residence A",
+      "origin": {
+        "column": 13,
+        "row": 5
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "residence-b",
+      "name": "Residence B",
+      "origin": {
+        "column": 14,
+        "row": 5
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "residence-b-2",
+      "name": "Residence B",
+      "origin": {
+        "column": 15,
+        "row": 5
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "city-a-3",
+      "name": "City A",
+      "origin": {
+        "column": 0,
+        "row": 6
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "city-a-4",
+      "name": "City A",
+      "origin": {
+        "column": 1,
+        "row": 6
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "city-b-3",
+      "name": "City B",
+      "origin": {
+        "column": 2,
+        "row": 6
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "city-b-4",
+      "name": "City B",
+      "origin": {
+        "column": 3,
+        "row": 6
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "residence-a-3",
+      "name": "Residence A",
+      "origin": {
+        "column": 4,
+        "row": 6
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "residence-a-4",
+      "name": "Residence A",
+      "origin": {
+        "column": 5,
+        "row": 6
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "residence-b-3",
+      "name": "Residence B",
+      "origin": {
+        "column": 6,
+        "row": 6
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "residence-b-4",
+      "name": "Residence B",
+      "origin": {
+        "column": 7,
+        "row": 6
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "bridge-a-v",
+      "name": "Bridge A (V)",
+      "origin": {
+        "column": 8,
+        "row": 6
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "bridge-a-h",
+      "name": "Bridge A (H)",
+      "origin": {
+        "column": 9,
+        "row": 6
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "broken-bridge-a-v",
+      "name": "Broken Bridge A (V)",
+      "origin": {
+        "column": 10,
+        "row": 6
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "broken-bridge-a-h",
+      "name": "Broken Bridge A (H)",
+      "origin": {
+        "column": 11,
+        "row": 6
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "bridge-b-v",
+      "name": "Bridge B (V)",
+      "origin": {
+        "column": 12,
+        "row": 6
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "bridge-b-h",
+      "name": "Bridge B (H)",
+      "origin": {
+        "column": 13,
+        "row": 6
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "broken-bridge-b-v",
+      "name": "Broken Bridge B (V)",
+      "origin": {
+        "column": 14,
+        "row": 6
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "broken-bridge-b-h",
+      "name": "Broken Bridge B (H)",
+      "origin": {
+        "column": 15,
+        "row": 6
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "building-a",
+      "name": "Building A",
+      "origin": {
+        "column": 0,
+        "row": 7
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "building-b",
+      "name": "Building B",
+      "origin": {
+        "column": 1,
+        "row": 7
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "building-c",
+      "name": "Building C",
+      "origin": {
+        "column": 2,
+        "row": 7
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "building-d",
+      "name": "Building D",
+      "origin": {
+        "column": 3,
+        "row": 7
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "apartment",
+      "name": "Apartment",
+      "origin": {
+        "column": 4,
+        "row": 7
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "apartment-complex",
+      "name": "Apartment Complex",
+      "origin": {
+        "column": 5,
+        "row": 7
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "collapsed-building-a",
+      "name": "Collapsed Building A",
+      "origin": {
+        "column": 6,
+        "row": 7
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "collapsed-building-b",
+      "name": "Collapsed Building B",
+      "origin": {
+        "column": 7,
+        "row": 7
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "building-a-2",
+      "name": "Building A",
+      "origin": {
+        "column": 8,
+        "row": 7
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "building-b-2",
+      "name": "Building B",
+      "origin": {
+        "column": 9,
+        "row": 7
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "building-c-2",
+      "name": "Building C",
+      "origin": {
+        "column": 10,
+        "row": 7
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "building-d-2",
+      "name": "Building D",
+      "origin": {
+        "column": 11,
+        "row": 7
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "apartment-2",
+      "name": "Apartment",
+      "origin": {
+        "column": 12,
+        "row": 7
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "apartment-complex-2",
+      "name": "Apartment Complex",
+      "origin": {
+        "column": 13,
+        "row": 7
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "collapsed-building-a-2",
+      "name": "Collapsed Building A",
+      "origin": {
+        "column": 14,
+        "row": 7
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "collapsed-building-b-2",
+      "name": "Collapsed Building B",
+      "origin": {
+        "column": 15,
+        "row": 7
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "large-town-a",
+      "name": "Large Town A",
+      "origin": {
+        "column": 0,
+        "row": 8
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "large-town-a-2",
+      "name": "Large Town A",
+      "origin": {
+        "column": 1,
+        "row": 8
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "entertainment-district-a",
+      "name": "Entertainment District A",
+      "origin": {
+        "column": 2,
+        "row": 8
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "entertainment-district-a-2",
+      "name": "Entertainment District A",
+      "origin": {
+        "column": 3,
+        "row": 8
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "police-station",
+      "name": "Police Station",
+      "origin": {
+        "column": 4,
+        "row": 8
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "police-station-2",
+      "name": "Police Station",
+      "origin": {
+        "column": 5,
+        "row": 8
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "island-a",
+      "name": "Island A",
+      "origin": {
+        "column": 6,
+        "row": 8
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "island-a-2",
+      "name": "Island A",
+      "origin": {
+        "column": 7,
+        "row": 8
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "large-town-a-3",
+      "name": "Large Town A",
+      "origin": {
+        "column": 8,
+        "row": 8
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "large-town-a-4",
+      "name": "Large Town A",
+      "origin": {
+        "column": 9,
+        "row": 8
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "entertainment-district-a-3",
+      "name": "Entertainment District A",
+      "origin": {
+        "column": 10,
+        "row": 8
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "entertainment-district-a-4",
+      "name": "Entertainment District A",
+      "origin": {
+        "column": 11,
+        "row": 8
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "police-station-3",
+      "name": "Police Station",
+      "origin": {
+        "column": 12,
+        "row": 8
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "police-station-4",
+      "name": "Police Station",
+      "origin": {
+        "column": 13,
+        "row": 8
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "island-a-3",
+      "name": "Island A",
+      "origin": {
+        "column": 14,
+        "row": 8
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "island-a-4",
+      "name": "Island A",
+      "origin": {
+        "column": 15,
+        "row": 8
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "large-town-b",
+      "name": "Large Town B",
+      "origin": {
+        "column": 0,
+        "row": 9
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "large-town-b-2",
+      "name": "Large Town B",
+      "origin": {
+        "column": 1,
+        "row": 9
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "entertainment-district-b",
+      "name": "Entertainment District B",
+      "origin": {
+        "column": 2,
+        "row": 9
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "entertainment-district-b-2",
+      "name": "Entertainment District B",
+      "origin": {
+        "column": 3,
+        "row": 9
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "museum",
+      "name": "Museum",
+      "origin": {
+        "column": 4,
+        "row": 9
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "museum-2",
+      "name": "Museum",
+      "origin": {
+        "column": 5,
+        "row": 9
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "island-b",
+      "name": "Island B",
+      "origin": {
+        "column": 6,
+        "row": 9
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "island-b-2",
+      "name": "Island B",
+      "origin": {
+        "column": 7,
+        "row": 9
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "large-town-b-3",
+      "name": "Large Town B",
+      "origin": {
+        "column": 8,
+        "row": 9
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "large-town-b-4",
+      "name": "Large Town B",
+      "origin": {
+        "column": 9,
+        "row": 9
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "entertainment-district-b-3",
+      "name": "Entertainment District B",
+      "origin": {
+        "column": 10,
+        "row": 9
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "entertainment-district-b-4",
+      "name": "Entertainment District B",
+      "origin": {
+        "column": 11,
+        "row": 9
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "museum-3",
+      "name": "Museum",
+      "origin": {
+        "column": 12,
+        "row": 9
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "museum-4",
+      "name": "Museum",
+      "origin": {
+        "column": 13,
+        "row": 9
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "island-b-3",
+      "name": "Island B",
+      "origin": {
+        "column": 14,
+        "row": 9
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "island-b-4",
+      "name": "Island B",
+      "origin": {
+        "column": 15,
+        "row": 9
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "warehouse-a",
+      "name": "Warehouse A",
+      "origin": {
+        "column": 0,
+        "row": 10
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "warehouse-a-2",
+      "name": "Warehouse A",
+      "origin": {
+        "column": 1,
+        "row": 10
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "factory",
+      "name": "Factory",
+      "origin": {
+        "column": 2,
+        "row": 10
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "factory-2",
+      "name": "Factory",
+      "origin": {
+        "column": 3,
+        "row": 10
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "warehouse-b",
+      "name": "Warehouse B",
+      "origin": {
+        "column": 4,
+        "row": 10
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "gantry-crane",
+      "name": "Gantry Crane",
+      "origin": {
+        "column": 5,
+        "row": 10
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "park",
+      "name": "Park",
+      "origin": {
+        "column": 6,
+        "row": 10
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "island-c",
+      "name": "Island C",
+      "origin": {
+        "column": 7,
+        "row": 10
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "warehouse-a-3",
+      "name": "Warehouse A",
+      "origin": {
+        "column": 8,
+        "row": 10
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "warehouse-a-4",
+      "name": "Warehouse A",
+      "origin": {
+        "column": 9,
+        "row": 10
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "factory-3",
+      "name": "Factory",
+      "origin": {
+        "column": 10,
+        "row": 10
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "factory-4",
+      "name": "Factory",
+      "origin": {
+        "column": 11,
+        "row": 10
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "warehouse-b-2",
+      "name": "Warehouse B",
+      "origin": {
+        "column": 12,
+        "row": 10
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "gantry-crane-2",
+      "name": "Gantry Crane",
+      "origin": {
+        "column": 13,
+        "row": 10
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "statue-a",
+      "name": "Statue A",
+      "origin": {
+        "column": 14,
+        "row": 10
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "statue-b",
+      "name": "Statue B",
+      "origin": {
+        "column": 15,
+        "row": 10
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "laboratory",
+      "name": "Laboratory",
+      "origin": {
+        "column": 0,
+        "row": 11
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "laboratory-2",
+      "name": "Laboratory",
+      "origin": {
+        "column": 1,
+        "row": 11
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "construction-site",
+      "name": "Construction Site",
+      "origin": {
+        "column": 2,
+        "row": 11
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "construction-site-2",
+      "name": "Construction Site",
+      "origin": {
+        "column": 3,
+        "row": 11
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "watchtower",
+      "name": "Watchtower",
+      "origin": {
+        "column": 4,
+        "row": 11
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "steel-tower",
+      "name": "Steel Tower",
+      "origin": {
+        "column": 5,
+        "row": 11
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "tower-a",
+      "name": "Tower A",
+      "origin": {
+        "column": 6,
+        "row": 11
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "tower-b",
+      "name": "Tower B",
+      "origin": {
+        "column": 7,
+        "row": 11
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "laboratory-3",
+      "name": "Laboratory",
+      "origin": {
+        "column": 8,
+        "row": 11
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "laboratory-4",
+      "name": "Laboratory",
+      "origin": {
+        "column": 9,
+        "row": 11
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "construction-site-3",
+      "name": "Construction Site",
+      "origin": {
+        "column": 10,
+        "row": 11
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "construction-site-4",
+      "name": "Construction Site",
+      "origin": {
+        "column": 11,
+        "row": 11
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "watchtower-2",
+      "name": "Watchtower",
+      "origin": {
+        "column": 12,
+        "row": 11
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "steel-tower-2",
+      "name": "Steel Tower",
+      "origin": {
+        "column": 13,
+        "row": 11
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "tower-a-2",
+      "name": "Tower A",
+      "origin": {
+        "column": 14,
+        "row": 11
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "tower-b-2",
+      "name": "Tower B",
+      "origin": {
+        "column": 15,
+        "row": 11
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "outer-wall",
+      "name": "Outer Wall",
+      "origin": {
+        "column": 0,
+        "row": 12
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "outer-wall-2",
+      "name": "Outer Wall",
+      "origin": {
+        "column": 1,
+        "row": 12
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "outer-wall-3",
+      "name": "Outer Wall",
+      "origin": {
+        "column": 2,
+        "row": 12
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "outer-wall-4",
+      "name": "Outer Wall",
+      "origin": {
+        "column": 3,
+        "row": 12
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "outer-wall-5",
+      "name": "Outer Wall",
+      "origin": {
+        "column": 4,
+        "row": 12
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "outer-wall-6",
+      "name": "Outer Wall",
+      "origin": {
+        "column": 5,
+        "row": 12
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "outer-wall-7",
+      "name": "Outer Wall",
+      "origin": {
+        "column": 6,
+        "row": 12
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "outer-wall-8",
+      "name": "Outer Wall",
+      "origin": {
+        "column": 7,
+        "row": 12
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "outer-wall-9",
+      "name": "Outer Wall",
+      "origin": {
+        "column": 8,
+        "row": 12
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "outer-wall-gate",
+      "name": "Outer Wall (Gate)",
+      "origin": {
+        "column": 9,
+        "row": 12
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "outer-wall-10",
+      "name": "Outer Wall",
+      "origin": {
+        "column": 10,
+        "row": 12
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "outer-wall-11",
+      "name": "Outer Wall",
+      "origin": {
+        "column": 11,
+        "row": 12
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "outer-wall-12",
+      "name": "Outer Wall",
+      "origin": {
+        "column": 12,
+        "row": 12
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "outer-wall-13",
+      "name": "Outer Wall",
+      "origin": {
+        "column": 13,
+        "row": 12
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "outer-wall-14",
+      "name": "Outer Wall",
+      "origin": {
+        "column": 14,
+        "row": 12
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "outer-wall-15",
+      "name": "Outer Wall",
+      "origin": {
+        "column": 15,
+        "row": 12
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "outer-wall-16",
+      "name": "Outer Wall",
+      "origin": {
+        "column": 0,
+        "row": 13
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "outer-wall-17",
+      "name": "Outer Wall",
+      "origin": {
+        "column": 1,
+        "row": 13
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "outer-wall-18",
+      "name": "Outer Wall",
+      "origin": {
+        "column": 2,
+        "row": 13
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "outer-wall-19",
+      "name": "Outer Wall",
+      "origin": {
+        "column": 3,
+        "row": 13
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "outer-wall-20",
+      "name": "Outer Wall",
+      "origin": {
+        "column": 4,
+        "row": 13
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "outer-wall-21",
+      "name": "Outer Wall",
+      "origin": {
+        "column": 5,
+        "row": 13
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "outer-wall-22",
+      "name": "Outer Wall",
+      "origin": {
+        "column": 6,
+        "row": 13
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "outer-wall-gate-2",
+      "name": "Outer Wall (Gate)",
+      "origin": {
+        "column": 7,
+        "row": 13
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "outer-wall-23",
+      "name": "Outer Wall",
+      "origin": {
+        "column": 8,
+        "row": 13
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "outer-wall-24",
+      "name": "Outer Wall",
+      "origin": {
+        "column": 9,
+        "row": 13
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "outer-wall-25",
+      "name": "Outer Wall",
+      "origin": {
+        "column": 10,
+        "row": 13
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "outer-wall-26",
+      "name": "Outer Wall",
+      "origin": {
+        "column": 11,
+        "row": 13
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "outer-wall-27",
+      "name": "Outer Wall",
+      "origin": {
+        "column": 12,
+        "row": 13
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "outer-wall-28",
+      "name": "Outer Wall",
+      "origin": {
+        "column": 13,
+        "row": 13
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "outer-wall-29",
+      "name": "Outer Wall",
+      "origin": {
+        "column": 14,
+        "row": 13
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "outer-wall-30",
+      "name": "Outer Wall",
+      "origin": {
+        "column": 15,
+        "row": 13
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "outer-wall-31",
+      "name": "Outer Wall",
+      "origin": {
+        "column": 0,
+        "row": 14
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "outer-wall-32",
+      "name": "Outer Wall",
+      "origin": {
+        "column": 1,
+        "row": 14
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "outer-wall-33",
+      "name": "Outer Wall",
+      "origin": {
+        "column": 2,
+        "row": 14
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "outer-wall-34",
+      "name": "Outer Wall",
+      "origin": {
+        "column": 3,
+        "row": 14
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "outer-wall-35",
+      "name": "Outer Wall",
+      "origin": {
+        "column": 4,
+        "row": 14
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "outer-wall-36",
+      "name": "Outer Wall",
+      "origin": {
+        "column": 5,
+        "row": 14
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "outer-wall-37",
+      "name": "Outer Wall",
+      "origin": {
+        "column": 6,
+        "row": 14
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "outer-wall-38",
+      "name": "Outer Wall",
+      "origin": {
+        "column": 7,
+        "row": 14
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "theme-park",
+      "name": "Theme Park",
+      "origin": {
+        "column": 8,
+        "row": 14
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "theme-park-2",
+      "name": "Theme Park",
+      "origin": {
+        "column": 9,
+        "row": 14
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "port",
+      "name": "Port",
+      "origin": {
+        "column": 10,
+        "row": 14
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "port-2",
+      "name": "Port",
+      "origin": {
+        "column": 11,
+        "row": 14
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "military-base",
+      "name": "Military Base",
+      "origin": {
+        "column": 12,
+        "row": 14
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "military-base-2",
+      "name": "Military Base",
+      "origin": {
+        "column": 13,
+        "row": 14
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "dome",
+      "name": "Dome",
+      "origin": {
+        "column": 14,
+        "row": 14
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "dome-2",
+      "name": "Dome",
+      "origin": {
+        "column": 15,
+        "row": 14
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "theme-park-3",
+      "name": "Theme Park",
+      "origin": {
+        "column": 0,
+        "row": 15
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "theme-park-4",
+      "name": "Theme Park",
+      "origin": {
+        "column": 1,
+        "row": 15
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "port-3",
+      "name": "Port",
+      "origin": {
+        "column": 2,
+        "row": 15
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "port-4",
+      "name": "Port",
+      "origin": {
+        "column": 3,
+        "row": 15
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "military-base-3",
+      "name": "Military Base",
+      "origin": {
+        "column": 4,
+        "row": 15
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "military-base-4",
+      "name": "Military Base",
+      "origin": {
+        "column": 5,
+        "row": 15
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "dome-3",
+      "name": "Dome",
+      "origin": {
+        "column": 6,
+        "row": 15
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "dome-4",
+      "name": "Dome",
+      "origin": {
+        "column": 7,
+        "row": 15
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "lighthouse",
+      "name": "Lighthouse",
+      "origin": {
+        "column": 8,
+        "row": 15
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "broken-lighthouse",
+      "name": "Broken Lighthouse",
+      "origin": {
+        "column": 9,
+        "row": 15
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "temple",
+      "name": "Temple",
+      "origin": {
+        "column": 10,
+        "row": 15
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "church",
+      "name": "Church",
+      "origin": {
+        "column": 11,
+        "row": 15
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "cemetery-a",
+      "name": "Cemetery A",
+      "origin": {
+        "column": 12,
+        "row": 15
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "cemetery-b",
+      "name": "Cemetery B",
+      "origin": {
+        "column": 13,
+        "row": 15
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "prison",
+      "name": "Prison",
+      "origin": {
+        "column": 14,
+        "row": 15
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "prison-2",
+      "name": "Prison",
+      "origin": {
+        "column": 15,
+        "row": 15
+      },
+      "collision": {
+        "kind": "none"
+      }
+    }
+  ]
+}

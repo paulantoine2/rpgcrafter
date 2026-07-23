@@ -1,0 +1,1357 @@
+{
+  "id": "rpg-maker-mz-outside-a2",
+  "name": "Outside A2",
+  "category": "RPG Maker MZ / Outside",
+  "kind": "a2",
+  "image": "tilesets/rpg-maker-mz/Outside_A2.png",
+  "tileSize": 48,
+  "quarterSize": 24,
+  "columns": 16,
+  "rows": 12,
+  "terrains": [
+    {
+      "id": "meadow",
+      "name": "Meadow",
+      "origin": {
+        "column": 0,
+        "row": 0
+      },
+      "previewMask": 0,
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "dirt-meadow",
+      "name": "Dirt (Meadow)",
+      "origin": {
+        "column": 2,
+        "row": 0
+      },
+      "previewMask": 0,
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "road-meadow",
+      "name": "Road (Meadow)",
+      "origin": {
+        "column": 4,
+        "row": 0
+      },
+      "previewMask": 0,
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "cobblestones-a",
+      "name": "Cobblestones A",
+      "origin": {
+        "column": 6,
+        "row": 0
+      },
+      "previewMask": 0,
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "bush",
+      "name": "Bush",
+      "origin": {
+        "column": 8,
+        "row": 0
+      },
+      "previewMask": 0,
+      "collision": {
+        "kind": "blockCell"
+      }
+    },
+    {
+      "id": "road-edging",
+      "name": "Road Edging",
+      "origin": {
+        "column": 10,
+        "row": 0
+      },
+      "previewMask": 0,
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "fencepost-a-wood",
+      "name": "Fencepost A (Wood)",
+      "origin": {
+        "column": 12,
+        "row": 0
+      },
+      "previewMask": 0,
+      "collision": {
+        "kind": "edges",
+        "edges": [
+          "north",
+          "east",
+          "south",
+          "west"
+        ]
+      }
+    },
+    {
+      "id": "fissures",
+      "name": "Fissures",
+      "origin": {
+        "column": 14,
+        "row": 0
+      },
+      "previewMask": 0,
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "dirt",
+      "name": "Dirt",
+      "origin": {
+        "column": 0,
+        "row": 3
+      },
+      "previewMask": 0,
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "grass-dirt",
+      "name": "Grass (Dirt)",
+      "origin": {
+        "column": 2,
+        "row": 3
+      },
+      "previewMask": 0,
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "road-dirt",
+      "name": "Road (Dirt)",
+      "origin": {
+        "column": 4,
+        "row": 3
+      },
+      "previewMask": 0,
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "cobblestones-a-dirt",
+      "name": "Cobblestones A (Dirt)",
+      "origin": {
+        "column": 6,
+        "row": 3
+      },
+      "previewMask": 0,
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "bush-dead",
+      "name": "Bush (Dead)",
+      "origin": {
+        "column": 8,
+        "row": 3
+      },
+      "previewMask": 0,
+      "collision": {
+        "kind": "blockCell"
+      }
+    },
+    {
+      "id": "road-edging-snow",
+      "name": "Road Edging (Snow)",
+      "origin": {
+        "column": 10,
+        "row": 3
+      },
+      "previewMask": 0,
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "fencepost-b-metal",
+      "name": "Fencepost B (Metal)",
+      "origin": {
+        "column": 12,
+        "row": 3
+      },
+      "previewMask": 0,
+      "collision": {
+        "kind": "edges",
+        "edges": [
+          "north",
+          "east",
+          "south",
+          "west"
+        ]
+      }
+    },
+    {
+      "id": "soil",
+      "name": "Soil",
+      "origin": {
+        "column": 14,
+        "row": 3
+      },
+      "previewMask": 0,
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "sand",
+      "name": "Sand",
+      "origin": {
+        "column": 0,
+        "row": 6
+      },
+      "previewMask": 0,
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "grass-sand",
+      "name": "Grass (Sand)",
+      "origin": {
+        "column": 2,
+        "row": 6
+      },
+      "previewMask": 0,
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "road-sand",
+      "name": "Road (Sand)",
+      "origin": {
+        "column": 4,
+        "row": 6
+      },
+      "previewMask": 0,
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "cobblestones-b",
+      "name": "Cobblestones B",
+      "origin": {
+        "column": 6,
+        "row": 6
+      },
+      "previewMask": 0,
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "bush-sand",
+      "name": "Bush (Sand)",
+      "origin": {
+        "column": 8,
+        "row": 6
+      },
+      "previewMask": 0,
+      "collision": {
+        "kind": "blockCell"
+      }
+    },
+    {
+      "id": "hole",
+      "name": "Hole",
+      "origin": {
+        "column": 10,
+        "row": 6
+      },
+      "previewMask": 0,
+      "collision": {
+        "kind": "blockCell"
+      }
+    },
+    {
+      "id": "fencepost-c-stone",
+      "name": "Fencepost C (Stone)",
+      "origin": {
+        "column": 12,
+        "row": 6
+      },
+      "previewMask": 0,
+      "collision": {
+        "kind": "edges",
+        "edges": [
+          "north",
+          "east",
+          "south",
+          "west"
+        ]
+      }
+    },
+    {
+      "id": "moss",
+      "name": "Moss",
+      "origin": {
+        "column": 14,
+        "row": 6
+      },
+      "previewMask": 0,
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "snow",
+      "name": "Snow",
+      "origin": {
+        "column": 0,
+        "row": 9
+      },
+      "previewMask": 0,
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "dirt-snow",
+      "name": "Dirt (Snow)",
+      "origin": {
+        "column": 2,
+        "row": 9
+      },
+      "previewMask": 0,
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "road-snow",
+      "name": "Road (Snow)",
+      "origin": {
+        "column": 4,
+        "row": 9
+      },
+      "previewMask": 0,
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "carpet",
+      "name": "Carpet",
+      "origin": {
+        "column": 6,
+        "row": 9
+      },
+      "previewMask": 0,
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "bush-snow",
+      "name": "Bush (Snow)",
+      "origin": {
+        "column": 8,
+        "row": 9
+      },
+      "previewMask": 0,
+      "collision": {
+        "kind": "blockCell"
+      }
+    },
+    {
+      "id": "hole-2",
+      "name": "Hole",
+      "origin": {
+        "column": 10,
+        "row": 9
+      },
+      "previewMask": 0,
+      "collision": {
+        "kind": "blockCell"
+      }
+    },
+    {
+      "id": "fencepost-a-wood-snow",
+      "name": "Fencepost A (Wood, Snow)",
+      "origin": {
+        "column": 12,
+        "row": 9
+      },
+      "previewMask": 0,
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "ledge",
+      "name": "Ledge",
+      "origin": {
+        "column": 14,
+        "row": 9
+      },
+      "previewMask": 0,
+      "collision": {
+        "kind": "blockCell"
+      }
+    }
+  ],
+  "variants": {
+    "0": {
+      "quarters": [
+        [
+          0,
+          0
+        ],
+        [
+          1,
+          0
+        ],
+        [
+          0,
+          1
+        ],
+        [
+          1,
+          1
+        ]
+      ]
+    },
+    "1": {
+      "quarters": [
+        [
+          0,
+          4
+        ],
+        [
+          3,
+          4
+        ],
+        [
+          0,
+          1
+        ],
+        [
+          1,
+          1
+        ]
+      ]
+    },
+    "2": {
+      "quarters": [
+        [
+          0,
+          0
+        ],
+        [
+          1,
+          2
+        ],
+        [
+          0,
+          1
+        ],
+        [
+          1,
+          5
+        ]
+      ]
+    },
+    "3": {
+      "quarters": [
+        [
+          0,
+          4
+        ],
+        [
+          3,
+          0
+        ],
+        [
+          0,
+          1
+        ],
+        [
+          1,
+          5
+        ]
+      ]
+    },
+    "4": {
+      "quarters": [
+        [
+          0,
+          0
+        ],
+        [
+          1,
+          0
+        ],
+        [
+          0,
+          3
+        ],
+        [
+          3,
+          3
+        ]
+      ]
+    },
+    "5": {
+      "quarters": [
+        [
+          0,
+          4
+        ],
+        [
+          3,
+          4
+        ],
+        [
+          0,
+          3
+        ],
+        [
+          3,
+          3
+        ]
+      ]
+    },
+    "6": {
+      "quarters": [
+        [
+          0,
+          0
+        ],
+        [
+          1,
+          2
+        ],
+        [
+          0,
+          3
+        ],
+        [
+          3,
+          1
+        ]
+      ]
+    },
+    "7": {
+      "quarters": [
+        [
+          0,
+          4
+        ],
+        [
+          3,
+          0
+        ],
+        [
+          0,
+          3
+        ],
+        [
+          3,
+          1
+        ]
+      ]
+    },
+    "8": {
+      "quarters": [
+        [
+          2,
+          2
+        ],
+        [
+          1,
+          0
+        ],
+        [
+          2,
+          5
+        ],
+        [
+          1,
+          1
+        ]
+      ]
+    },
+    "9": {
+      "quarters": [
+        [
+          2,
+          0
+        ],
+        [
+          3,
+          4
+        ],
+        [
+          2,
+          5
+        ],
+        [
+          1,
+          1
+        ]
+      ]
+    },
+    "10": {
+      "quarters": [
+        [
+          2,
+          2
+        ],
+        [
+          1,
+          2
+        ],
+        [
+          2,
+          5
+        ],
+        [
+          1,
+          5
+        ]
+      ]
+    },
+    "11": {
+      "quarters": [
+        [
+          2,
+          0
+        ],
+        [
+          3,
+          0
+        ],
+        [
+          2,
+          5
+        ],
+        [
+          1,
+          5
+        ]
+      ]
+    },
+    "12": {
+      "quarters": [
+        [
+          2,
+          2
+        ],
+        [
+          1,
+          0
+        ],
+        [
+          2,
+          1
+        ],
+        [
+          3,
+          3
+        ]
+      ]
+    },
+    "13": {
+      "quarters": [
+        [
+          2,
+          0
+        ],
+        [
+          3,
+          4
+        ],
+        [
+          2,
+          1
+        ],
+        [
+          3,
+          3
+        ]
+      ]
+    },
+    "14": {
+      "quarters": [
+        [
+          2,
+          2
+        ],
+        [
+          1,
+          2
+        ],
+        [
+          2,
+          1
+        ],
+        [
+          3,
+          1
+        ]
+      ]
+    },
+    "15": {
+      "quarters": [
+        [
+          2,
+          0
+        ],
+        [
+          3,
+          0
+        ],
+        [
+          2,
+          1
+        ],
+        [
+          3,
+          1
+        ]
+      ]
+    },
+    "19": {
+      "quarters": [
+        [
+          0,
+          4
+        ],
+        [
+          1,
+          4
+        ],
+        [
+          0,
+          1
+        ],
+        [
+          1,
+          5
+        ]
+      ]
+    },
+    "23": {
+      "quarters": [
+        [
+          0,
+          4
+        ],
+        [
+          1,
+          4
+        ],
+        [
+          0,
+          3
+        ],
+        [
+          3,
+          1
+        ]
+      ]
+    },
+    "27": {
+      "quarters": [
+        [
+          2,
+          0
+        ],
+        [
+          1,
+          4
+        ],
+        [
+          2,
+          5
+        ],
+        [
+          1,
+          5
+        ]
+      ]
+    },
+    "31": {
+      "quarters": [
+        [
+          2,
+          0
+        ],
+        [
+          1,
+          4
+        ],
+        [
+          2,
+          1
+        ],
+        [
+          3,
+          1
+        ]
+      ]
+    },
+    "38": {
+      "quarters": [
+        [
+          0,
+          0
+        ],
+        [
+          1,
+          2
+        ],
+        [
+          0,
+          3
+        ],
+        [
+          1,
+          3
+        ]
+      ]
+    },
+    "39": {
+      "quarters": [
+        [
+          0,
+          4
+        ],
+        [
+          3,
+          0
+        ],
+        [
+          0,
+          3
+        ],
+        [
+          1,
+          3
+        ]
+      ]
+    },
+    "46": {
+      "quarters": [
+        [
+          2,
+          2
+        ],
+        [
+          1,
+          2
+        ],
+        [
+          2,
+          1
+        ],
+        [
+          1,
+          3
+        ]
+      ]
+    },
+    "47": {
+      "quarters": [
+        [
+          2,
+          0
+        ],
+        [
+          3,
+          0
+        ],
+        [
+          2,
+          1
+        ],
+        [
+          1,
+          3
+        ]
+      ]
+    },
+    "55": {
+      "quarters": [
+        [
+          0,
+          4
+        ],
+        [
+          1,
+          4
+        ],
+        [
+          0,
+          3
+        ],
+        [
+          1,
+          3
+        ]
+      ]
+    },
+    "63": {
+      "quarters": [
+        [
+          2,
+          0
+        ],
+        [
+          1,
+          4
+        ],
+        [
+          2,
+          1
+        ],
+        [
+          1,
+          3
+        ]
+      ]
+    },
+    "76": {
+      "quarters": [
+        [
+          2,
+          2
+        ],
+        [
+          1,
+          0
+        ],
+        [
+          2,
+          3
+        ],
+        [
+          3,
+          3
+        ]
+      ]
+    },
+    "77": {
+      "quarters": [
+        [
+          2,
+          0
+        ],
+        [
+          3,
+          4
+        ],
+        [
+          2,
+          3
+        ],
+        [
+          3,
+          3
+        ]
+      ]
+    },
+    "78": {
+      "quarters": [
+        [
+          2,
+          2
+        ],
+        [
+          1,
+          2
+        ],
+        [
+          2,
+          3
+        ],
+        [
+          3,
+          1
+        ]
+      ]
+    },
+    "79": {
+      "quarters": [
+        [
+          2,
+          0
+        ],
+        [
+          3,
+          0
+        ],
+        [
+          2,
+          3
+        ],
+        [
+          3,
+          1
+        ]
+      ]
+    },
+    "95": {
+      "quarters": [
+        [
+          2,
+          0
+        ],
+        [
+          1,
+          4
+        ],
+        [
+          2,
+          3
+        ],
+        [
+          3,
+          1
+        ]
+      ]
+    },
+    "110": {
+      "quarters": [
+        [
+          2,
+          2
+        ],
+        [
+          1,
+          2
+        ],
+        [
+          2,
+          3
+        ],
+        [
+          1,
+          3
+        ]
+      ]
+    },
+    "111": {
+      "quarters": [
+        [
+          2,
+          0
+        ],
+        [
+          3,
+          0
+        ],
+        [
+          2,
+          3
+        ],
+        [
+          1,
+          3
+        ]
+      ]
+    },
+    "127": {
+      "quarters": [
+        [
+          2,
+          0
+        ],
+        [
+          1,
+          4
+        ],
+        [
+          2,
+          3
+        ],
+        [
+          1,
+          3
+        ]
+      ]
+    },
+    "137": {
+      "quarters": [
+        [
+          2,
+          4
+        ],
+        [
+          3,
+          4
+        ],
+        [
+          2,
+          5
+        ],
+        [
+          1,
+          1
+        ]
+      ]
+    },
+    "139": {
+      "quarters": [
+        [
+          2,
+          4
+        ],
+        [
+          3,
+          0
+        ],
+        [
+          2,
+          5
+        ],
+        [
+          1,
+          5
+        ]
+      ]
+    },
+    "141": {
+      "quarters": [
+        [
+          2,
+          4
+        ],
+        [
+          3,
+          4
+        ],
+        [
+          2,
+          1
+        ],
+        [
+          3,
+          3
+        ]
+      ]
+    },
+    "143": {
+      "quarters": [
+        [
+          2,
+          4
+        ],
+        [
+          3,
+          0
+        ],
+        [
+          2,
+          1
+        ],
+        [
+          3,
+          1
+        ]
+      ]
+    },
+    "155": {
+      "quarters": [
+        [
+          2,
+          4
+        ],
+        [
+          1,
+          4
+        ],
+        [
+          2,
+          5
+        ],
+        [
+          1,
+          5
+        ]
+      ]
+    },
+    "159": {
+      "quarters": [
+        [
+          2,
+          4
+        ],
+        [
+          1,
+          4
+        ],
+        [
+          2,
+          1
+        ],
+        [
+          3,
+          1
+        ]
+      ]
+    },
+    "175": {
+      "quarters": [
+        [
+          2,
+          4
+        ],
+        [
+          3,
+          0
+        ],
+        [
+          2,
+          1
+        ],
+        [
+          1,
+          3
+        ]
+      ]
+    },
+    "191": {
+      "quarters": [
+        [
+          2,
+          4
+        ],
+        [
+          1,
+          4
+        ],
+        [
+          2,
+          1
+        ],
+        [
+          1,
+          3
+        ]
+      ]
+    },
+    "205": {
+      "quarters": [
+        [
+          2,
+          4
+        ],
+        [
+          3,
+          4
+        ],
+        [
+          2,
+          3
+        ],
+        [
+          3,
+          3
+        ]
+      ]
+    },
+    "207": {
+      "quarters": [
+        [
+          2,
+          4
+        ],
+        [
+          3,
+          0
+        ],
+        [
+          2,
+          3
+        ],
+        [
+          3,
+          1
+        ]
+      ]
+    },
+    "223": {
+      "quarters": [
+        [
+          2,
+          4
+        ],
+        [
+          1,
+          4
+        ],
+        [
+          2,
+          3
+        ],
+        [
+          3,
+          1
+        ]
+      ]
+    },
+    "239": {
+      "quarters": [
+        [
+          2,
+          4
+        ],
+        [
+          3,
+          0
+        ],
+        [
+          2,
+          3
+        ],
+        [
+          1,
+          3
+        ]
+      ]
+    },
+    "255": {
+      "quarters": [
+        [
+          2,
+          4
+        ],
+        [
+          1,
+          4
+        ],
+        [
+          2,
+          3
+        ],
+        [
+          1,
+          3
+        ]
+      ]
+    }
+  }
+}

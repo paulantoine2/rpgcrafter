@@ -1,25 +1,68 @@
 import { Application, Assets, Container, Graphics, Rectangle, Sprite, Text, Texture } from 'pixi.js';
-import { autotileVariant, resolveTerrainPlacements, type A2TilesetDefinition, type AutotileTerrain, type AutotileVariant, type TerrainPlacement, type TilesetDefinition } from '@rpgcrafter/game-schema';
+import { A1_ANIMATION_FRAME_STRIDE, autotileAnimationFrame, autotileVariant, resolveTerrainPlacements, type A1AnimationLayout, type AutotileRecipe, type AutotileTerrain, type AutotileTilesetDefinition, type AutotileVariant, type TerrainPlacement, type TilesetDefinition } from '@rpgcrafter/game-schema';
+import { CHARACTER_DIRECTIONS, CHARACTER_FRAME_SIZE, characterDirection, characterFrame, walkFrame, type CharacterDirection } from './character-sprite.js';
 import { actorRenderZ, planeRenderBase, tileLayerRenderZ, type RenderEnemy, type RenderState, type Renderer } from './renderer.js';
 
 const WIDTH = 960;
 const HEIGHT = 540;
 const SOURCE_TILE_SIZE = 48;
+const PLAYER_CHARACTER_INDEX = 0;
 
 type FrameName = 'hero' | 'mayor' | 'merchant' | 'guardian' | 'wisp' | 'slime' | 'beetle' | 'chest' | 'door';
-function frame(texture: Texture, column: number, row: number, columns: number, rows: number) {
-  const left = Math.round(column * texture.width / columns);
-  const top = Math.round(row * texture.height / rows);
-  const right = Math.round((column + 1) * texture.width / columns);
-  const bottom = Math.round((row + 1) * texture.height / rows);
-  return new Texture({ source: texture.source, frame: new Rectangle(left, top, right - left, bottom - top) });
+type PlayerFrames = Record<CharacterDirection, Texture[]>;
+
+function playerFrames(texture: Texture, characterIndex: number): PlayerFrames {
+  return Object.fromEntries(CHARACTER_DIRECTIONS.map(direction => [direction, [0, 1, 2].map(pattern => {
+    const frame = characterFrame(characterIndex, direction, pattern);
+    return new Texture({ source: texture.source, frame: new Rectangle(frame.x, frame.y, frame.width, frame.height) });
+  })])) as PlayerFrames;
+}
+
+function fallbackFrame(name: FrameName) {
+  const canvas = document.createElement('canvas');
+  canvas.width = 48;
+  canvas.height = 48;
+  const context = canvas.getContext('2d');
+  if (!context) throw new Error(`Impossible de créer la texture de secours ${name}.`);
+  context.imageSmoothingEnabled = false;
+  const rect = (color: string, x: number, y: number, width: number, height: number) => {
+    context.fillStyle = color;
+    context.fillRect(x, y, width, height);
+  };
+
+  if (name === 'door') {
+    rect('#172033', 10, 4, 28, 42); rect('#6d3f2c', 13, 7, 22, 39); rect('#a9683e', 16, 10, 16, 33); rect('#f3cf72', 28, 27, 3, 3);
+  } else if (name === 'chest') {
+    rect('#351d25', 6, 18, 36, 24); rect('#8e4b2f', 8, 15, 32, 12); rect('#c9793c', 10, 18, 28, 7); rect('#f3cf72', 21, 24, 6, 10); rect('#291822', 8, 28, 32, 3);
+  } else if (name === 'slime') {
+    context.fillStyle = '#70d6a7'; context.beginPath(); context.arc(24, 27, 15, Math.PI, 0); context.lineTo(39, 39); context.lineTo(9, 39); context.closePath(); context.fill();
+    rect('#173042', 17, 27, 4, 4); rect('#173042', 29, 27, 4, 4); rect('#d9fff0', 18, 27, 1, 1); rect('#d9fff0', 30, 27, 1, 1);
+  } else if (name === 'beetle') {
+    rect('#302044', 21, 6, 6, 10); rect('#7f5af0', 10, 14, 28, 27); rect('#4f378f', 22, 14, 4, 27); rect('#c4b5fd', 13, 18, 7, 5); rect('#c4b5fd', 28, 18, 7, 5);
+    rect('#302044', 4, 18, 8, 3); rect('#302044', 36, 18, 8, 3); rect('#302044', 4, 32, 8, 3); rect('#302044', 36, 32, 8, 3);
+  } else if (name === 'wisp') {
+    context.fillStyle = '#9ee7ff'; context.beginPath(); context.arc(24, 20, 12, 0, Math.PI * 2); context.fill();
+    context.fillStyle = '#57bfe5'; context.beginPath(); context.moveTo(14, 26); context.lineTo(20, 43); context.lineTo(25, 29); context.lineTo(31, 40); context.lineTo(34, 24); context.closePath(); context.fill();
+    rect('#ffffff', 18, 18, 3, 4); rect('#ffffff', 28, 18, 3, 4);
+  } else {
+    const colors: Record<Exclude<FrameName, 'door' | 'chest' | 'slime' | 'beetle' | 'wisp'>, [string, string]> = {
+      hero: ['#3b82f6', '#f5c9a5'], mayor: ['#8b5cf6', '#e8bea0'], merchant: ['#d97706', '#efc6a4'], guardian: ['#31566e', '#8fc1cf'],
+    };
+    const [body, skin] = colors[name];
+    rect('#182235', 17, 4, 14, 7); rect(skin, 16, 9, 16, 14); rect('#182235', 18, 13, 3, 3); rect('#182235', 27, 13, 3, 3);
+    rect(body, 12, 23, 24, 18); rect('#172033', 14, 41, 8, 6); rect('#172033', 26, 41, 8, 6); rect('#dbeafe', 22, 25, 4, 11);
+  }
+
+  const texture = Texture.from(canvas);
+  texture.source.scaleMode = 'nearest';
+  return texture;
 }
 
 function sourceTile(texture: Texture, column: number, row: number) {
   return new Texture({ source: texture.source, frame: new Rectangle(column * SOURCE_TILE_SIZE, row * SOURCE_TILE_SIZE, SOURCE_TILE_SIZE, SOURCE_TILE_SIZE) });
 }
 
-function composeAutotileTexture(atlas: Texture, tileset: A2TilesetDefinition, terrain: AutotileTerrain, variant: AutotileVariant) {
+function composeAutotileTexture(atlas: Texture, tileset: AutotileTilesetDefinition, terrain: AutotileTerrain, variant: AutotileVariant, animationFrame = 0, animation: A1AnimationLayout = 'none') {
   const canvas = document.createElement('canvas');
   canvas.width = tileset.tileSize;
   canvas.height = tileset.tileSize;
@@ -28,8 +71,8 @@ function composeAutotileTexture(atlas: Texture, tileset: A2TilesetDefinition, te
   context.imageSmoothingEnabled = false;
   variant.quarters.forEach(([quarterX, quarterY], index) => context.drawImage(
     atlas.source.resource as CanvasImageSource,
-    terrain.origin.column * tileset.tileSize + quarterX * tileset.quarterSize,
-    terrain.origin.row * tileset.tileSize + quarterY * tileset.quarterSize,
+    (terrain.origin.column + (animation === 'horizontal' ? animationFrame * A1_ANIMATION_FRAME_STRIDE : 0)) * tileset.tileSize + quarterX * tileset.quarterSize,
+    (terrain.origin.row + (animation === 'vertical' ? animationFrame : 0)) * tileset.tileSize + quarterY * tileset.quarterSize,
     tileset.quarterSize, tileset.quarterSize,
     (index % 2) * tileset.quarterSize, Math.floor(index / 2) * tileset.quarterSize,
     tileset.quarterSize, tileset.quarterSize,
@@ -54,6 +97,7 @@ export class PixiRenderer implements Renderer {
   private constructor(
     private readonly app: Application,
     private readonly frames: Record<FrameName, Texture>,
+    private readonly playerFrames: PlayerFrames,
     private readonly tilesets: Record<string, TilesetDefinition>,
     private readonly tilesetTextures: Map<string, Texture>,
     private readonly terrain = new Graphics(),
@@ -78,11 +122,13 @@ export class PixiRenderer implements Renderer {
     canvas.style.width = '100%';
     canvas.style.height = '100%';
     canvas.style.aspectRatio = `${WIDTH} / ${HEIGHT}`;
-    const [characters, creatures, props] = await Promise.all([
-      Assets.load<Texture>(new URL('../../../assets/sprites/reference-characters.png', import.meta.url).href),
-      Assets.load<Texture>(new URL('../../../assets/sprites/reference-creatures.png', import.meta.url).href),
-      Assets.load<Texture>(new URL('../../../assets/sprites/reference-props.png', import.meta.url).href),
-    ]);
+    let playerSheet: Texture;
+    try {
+      playerSheet = await Assets.load<Texture>(new URL('../../../assets/sprites/rpg-maker-mz/Actor1.png', import.meta.url).href);
+      playerSheet.source.scaleMode = 'nearest';
+    } catch (error) {
+      throw new Error('Impossible de charger le spriteset du joueur (Actor1.png)', { cause: error });
+    }
     const tilesetTextures = new Map<string, Texture>();
     await Promise.all(Object.values(tilesets).map(async tileset => {
       const url = assetUrls[tileset.image];
@@ -97,13 +143,8 @@ export class PixiRenderer implements Renderer {
         throw new Error(`Impossible de charger tilesets.${tileset.id}.image (${tileset.image})`, { cause: error });
       }
     }));
-    for (const texture of [characters, creatures, props]) texture.source.scaleMode = 'nearest';
-    const characterFrames = {
-      hero: frame(characters, 0, 0, 4, 3), mayor: frame(characters, 1, 0, 4, 3), guardian: frame(characters, 2, 0, 4, 3), wisp: frame(characters, 3, 0, 4, 3),
-      slime: frame(creatures, 0, 0, 3, 2), beetle: frame(creatures, 1, 0, 3, 2), merchant: frame(creatures, 2, 0, 3, 2),
-      chest: frame(props, 1, 0, 4, 3), door: frame(props, 2, 0, 4, 3),
-    };
-    return new PixiRenderer(app, characterFrames, tilesets, tilesetTextures);
+    const characterFrames = Object.fromEntries((['hero', 'mayor', 'merchant', 'guardian', 'wisp', 'slime', 'beetle', 'chest', 'door'] as const).map(name => [name, fallbackFrame(name)])) as Record<FrameName, Texture>;
+    return new PixiRenderer(app, characterFrames, playerFrames(playerSheet, PLAYER_CHARACTER_INDEX), tilesets, tilesetTextures);
   }
 
   render(state: RenderState) {
@@ -192,14 +233,19 @@ export class PixiRenderer implements Renderer {
 
   private drawPlayer(graphics: Graphics, state: RenderState, activeSprites: Set<string>) {
     const { player, facing } = state;
-    const sprite = this.placeSprite('player', 'hero', player.x, player.y, player.planeId, 96, 102, activeSprites);
+    const direction = characterDirection(facing);
+    const texture = this.playerFrames[direction][walkFrame(state.playerAnimationTime, state.playerMoving)];
+    const sprite = this.placeTexturedSprite('player', texture, player.x, player.y, player.planeId, CHARACTER_FRAME_SIZE, CHARACTER_FRAME_SIZE, activeSprites);
     sprite.alpha = player.invuln > 0 && Math.floor(player.invuln * 18) % 2 ? 0.4 : 1;
     graphics.moveTo(player.x + facing.x * 7, player.y + facing.y * 7).lineTo(player.x + facing.x * 29, player.y + facing.y * 29).stroke({ color: '#fff4bd', alpha: sprite.alpha, width: 4 });
   }
 
   private placeSprite(key: string, frameName: FrameName, x: number, y: number, planeId: string, width: number, height: number, activeSprites: Set<string>) {
+    return this.placeTexturedSprite(key, this.frames[frameName], x, y, planeId, width, height, activeSprites);
+  }
+
+  private placeTexturedSprite(key: string, texture: Texture, x: number, y: number, planeId: string, width: number, height: number, activeSprites: Set<string>) {
     let sprite = this.spriteCache.get(key);
-    const texture = this.frames[frameName];
     if (!sprite) { sprite = new Sprite(texture); sprite.anchor.set(0.5); this.spriteCache.set(key, sprite); this.planeContentLayer.addChild(sprite); }
     if (sprite.texture !== texture) sprite.texture = texture;
     sprite.position.set(x, y); sprite.width = width; sprite.height = height; sprite.zIndex = this.activeMap ? actorRenderZ(this.activeMap, planeId, y) : y; sprite.alpha = 1; sprite.visible = true;
@@ -221,6 +267,7 @@ export class PixiRenderer implements Renderer {
   private syncAuthoredLayers(map: RenderState['map'], ground: string) {
     this.activeMap = map;
     const { id: mapId, tileSize, tileLayers: layers } = map;
+    const animationElapsed = performance.now();
     for (const tile of this.authoredTiles.values()) tile.visible = false;
     this.authoredTileBacking.clear();
     const backedPositions = new Set<string>();
@@ -244,11 +291,15 @@ export class PixiRenderer implements Renderer {
         const terrain = tileset?.terrains.find(item => item.id === authored.terrainId);
         if (!tileset || !atlas || !terrain) continue;
         const key = `${mapId}:${layer.id}:${authored.x}:${authored.y}`;
-        const textureKey = `${tileset.id}:${terrain.id}:${tileset.kind === 'a2' ? authored.mask : 'grid'}`;
+        const animation: A1AnimationLayout = tileset.kind === 'a1' && 'animation' in terrain ? terrain.animation as A1AnimationLayout : 'none';
+        const recipe: AutotileRecipe = animation === 'vertical' ? 'waterfall' : tileset.kind === 'a3' || tileset.kind === 'a4' && 'autotile' in terrain && terrain.autotile === 'wall' ? 'wall' : 'floor';
+        const animationFrame = tileset.kind === 'a1' ? autotileAnimationFrame(animationElapsed, animation) : 0;
+        const isAutotile = tileset.kind === 'a1' || tileset.kind === 'a2' || tileset.kind === 'a3' || tileset.kind === 'a4';
+        const textureKey = `${tileset.id}:${terrain.id}:${isAutotile ? `${authored.mask}:${animationFrame}` : 'grid'}`;
         let texture = this.authoredTileTextures.get(textureKey);
         if (!texture) {
-          texture = tileset.kind === 'a2' && 'previewMask' in terrain
-            ? composeAutotileTexture(atlas, tileset, terrain as AutotileTerrain, autotileVariant(tileset, authored.mask))
+          texture = isAutotile && 'previewMask' in terrain
+            ? composeAutotileTexture(atlas, tileset, terrain as AutotileTerrain, autotileVariant(tileset, authored.mask, recipe), animationFrame, animation)
             : sourceTile(atlas, terrain.origin.column, terrain.origin.row);
           this.authoredTileTextures.set(textureKey, texture);
         }

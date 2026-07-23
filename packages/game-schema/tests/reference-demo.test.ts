@@ -11,6 +11,30 @@ const referenceGame = () => assertSourceGame({
 });
 
 describe('reference multi-plane demonstration', () => {
+  it('uses the RPG Maker tilesets and four-layer map defaults', () => {
+    const game = referenceGame();
+    expect(Object.keys(game.tilesets)).toEqual([
+      'rpg-maker-mz-outside-a1', 'rpg-maker-mz-outside-a2', 'rpg-maker-mz-outside-a3',
+      'rpg-maker-mz-outside-a4', 'rpg-maker-mz-outside-a5', 'rpg-maker-mz-outside-b',
+      'rpg-maker-mz-outside-c',
+    ]);
+    expect(Object.values(game.maps).every(map => map.tileLayers.length === 4)).toBe(true);
+    expect(game.maps.village.tileLayers[0].tiles[0]).toMatchObject({
+      tilesetId: 'rpg-maker-mz-outside-a2', terrainId: 'meadow',
+    });
+  });
+
+  it('builds each authored map from tiles selected by semantic names', () => {
+    const game = referenceGame();
+    const names = (mapId: string, layerId: string) => new Set(game.maps[mapId].tileLayers.find(layer => layer.id === layerId)?.tiles.map(tile => game.tilesets[tile.tilesetId].terrains.find(terrain => terrain.id === tile.terrainId)?.name));
+    expect([...names('village', 'layer-2')]).toEqual(expect.arrayContaining(['Road (Meadow)', 'Cobblestones A']));
+    expect([...names('village', 'layer-3')]).toEqual(expect.arrayContaining(['Roof E (Wood)', 'Outer Wall E (Wood)']));
+    expect(names('path', 'bridge-surface')).toEqual(new Set(['Large Bridge (H, Top)', 'Large Bridge (H, Center)', 'Large Bridge (H, Bottom)']));
+    expect(names('sanctuary', 'surface')).toEqual(new Set(['Cobblestones A', 'Pond']));
+    expect(names('arena', 'layer-3')).toEqual(new Set(['Wall I (Hedge)']));
+    expect(game.maps['empty-map'].tileLayers.every(layer => layer.tiles.length === 0)).toBe(true);
+  });
+
   it('crosses the mist trail only through its explicit connection', () => {
     const game = referenceGame(), map = game.maps.path, graph = buildNavigationGraph(map, game.tilesets);
     expect(map.planes.map(plane => plane.name)).toEqual(['Sentier des brumes', 'Passerelle ancienne']);

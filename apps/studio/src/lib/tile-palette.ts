@@ -1,4 +1,4 @@
-import type { TilesetDefinition } from '@rpgcrafter/game-schema';
+import type { TileLayer, TilesetDefinition, Vec2 } from '@rpgcrafter/game-schema';
 
 export const PALETTE_COLUMNS = 8;
 
@@ -8,9 +8,17 @@ export type SelectedTerrain = {
   pattern?: Array<{ x: number; y: number; terrainId: string }>;
 };
 
+export function terrainSelectionAt(layers: readonly TileLayer[], layerId: string | null, cell: Vec2): SelectedTerrain | null {
+  const tile = layers.find(layer => layer.id === layerId)?.tiles.find(item => item.x === cell.x && item.y === cell.y);
+  return tile ? { tilesetId: tile.tilesetId, terrainId: tile.terrainId } : null;
+}
+
 export function paletteTerrains(tileset: TilesetDefinition) {
+  if (tileset.kind === 'a1' || tileset.kind === 'a3' || tileset.kind === 'a4') return tileset.terrains.map((terrain, index) => ({
+    terrain, column: index % PALETTE_COLUMNS + 1, row: Math.floor(index / PALETTE_COLUMNS) + 1,
+  }));
   const terrainWidth = tileset.kind === 'a2' ? 2 : 1;
-  const terrainHeight = tileset.kind === 'a2' ? 3 : 1;
+  const terrainHeight = tileset.kind === 'grid' || tileset.kind === 'a5' ? 1 : 3;
   const sourceRows = Math.ceil(tileset.rows / terrainHeight);
 
   return tileset.terrains.map(terrain => {
@@ -49,7 +57,7 @@ export function terrainSelectionExists(tilesets: Record<string, TilesetDefinitio
 export function gridTerrainSelection(tileset: TilesetDefinition, startTerrainId: string, endTerrainId: string): SelectedTerrain {
   const start = tileset.terrains.find(terrain => terrain.id === startTerrainId);
   const end = tileset.terrains.find(terrain => terrain.id === endTerrainId);
-  if (tileset.kind !== 'grid' || !start || !end) return { tilesetId: tileset.id, terrainId: endTerrainId };
+  if ((tileset.kind !== 'grid' && tileset.kind !== 'a5') || !start || !end) return { tilesetId: tileset.id, terrainId: endTerrainId };
   const left = Math.min(start.origin.column, end.origin.column);
   const right = Math.max(start.origin.column, end.origin.column);
   const top = Math.min(start.origin.row, end.origin.row);

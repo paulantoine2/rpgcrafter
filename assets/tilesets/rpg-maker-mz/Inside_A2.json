@@ -1,0 +1,1339 @@
+{
+  "id": "rpg-maker-mz-inside-a2",
+  "name": "Inside A2",
+  "category": "RPG Maker MZ / Inside",
+  "kind": "a2",
+  "image": "tilesets/rpg-maker-mz/Inside_A2.png",
+  "tileSize": 48,
+  "quarterSize": 24,
+  "columns": 16,
+  "rows": 12,
+  "terrains": [
+    {
+      "id": "ground-a-wood-floor-stripe",
+      "name": "Ground A (Wood Floor Stripe)",
+      "origin": {
+        "column": 0,
+        "row": 0
+      },
+      "previewMask": 0,
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "ground-b-stone-floor-tile",
+      "name": "Ground B (Stone Floor Tile)",
+      "origin": {
+        "column": 2,
+        "row": 0
+      },
+      "previewMask": 0,
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "ground-c-dirt-floor",
+      "name": "Ground C (Dirt Floor)",
+      "origin": {
+        "column": 4,
+        "row": 0
+      },
+      "previewMask": 0,
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "tatami",
+      "name": "Tatami",
+      "origin": {
+        "column": 6,
+        "row": 0
+      },
+      "previewMask": 0,
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "hole-a-orange-cave",
+      "name": "Hole A (Orange Cave)",
+      "origin": {
+        "column": 8,
+        "row": 0
+      },
+      "previewMask": 0,
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "raised-stone-a-blue",
+      "name": "Raised Stone A (Blue)",
+      "origin": {
+        "column": 10,
+        "row": 0
+      },
+      "previewMask": 0,
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "ground-d-black-floor",
+      "name": "Ground D (Black Floor)",
+      "origin": {
+        "column": 12,
+        "row": 0
+      },
+      "previewMask": 0,
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "table-a-wood",
+      "name": "Table A (Wood)",
+      "origin": {
+        "column": 14,
+        "row": 0
+      },
+      "previewMask": 0,
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "ground-e-wood-floor-border",
+      "name": "Ground E (Wood Floor Border)",
+      "origin": {
+        "column": 0,
+        "row": 3
+      },
+      "previewMask": 0,
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "ground-f-stone-floor-brick",
+      "name": "Ground F (Stone Floor Brick)",
+      "origin": {
+        "column": 2,
+        "row": 3
+      },
+      "previewMask": 0,
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "rug-a-red-flower",
+      "name": "Rug A (Red Flower)",
+      "origin": {
+        "column": 4,
+        "row": 3
+      },
+      "previewMask": 0,
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "rug-b-oriental-green",
+      "name": "Rug B (Oriental Green)",
+      "origin": {
+        "column": 6,
+        "row": 3
+      },
+      "previewMask": 0,
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "hole-b-brown-cave",
+      "name": "Hole B (Brown Cave)",
+      "origin": {
+        "column": 8,
+        "row": 3
+      },
+      "previewMask": 0,
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "raised-stone-b-purple",
+      "name": "Raised Stone B (Purple)",
+      "origin": {
+        "column": 10,
+        "row": 3
+      },
+      "previewMask": 0,
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "ground-g-dark-enclave-floor",
+      "name": "Ground G (Dark Enclave Floor)",
+      "origin": {
+        "column": 12,
+        "row": 3
+      },
+      "previewMask": 0,
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "table-b-dark-wood",
+      "name": "Table B (Dark Wood)",
+      "origin": {
+        "column": 14,
+        "row": 3
+      },
+      "previewMask": 0,
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "ground-h-wood-floor-lattice",
+      "name": "Ground H (Wood Floor Lattice)",
+      "origin": {
+        "column": 0,
+        "row": 6
+      },
+      "previewMask": 0,
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "ground-i-stone-floor-color-tile",
+      "name": "Ground I (Stone Floor Color Tile)",
+      "origin": {
+        "column": 2,
+        "row": 6
+      },
+      "previewMask": 0,
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "rug-c-oriental-blue",
+      "name": "Rug C (Oriental Blue)",
+      "origin": {
+        "column": 4,
+        "row": 6
+      },
+      "previewMask": 0,
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "rug-d-oriental-redpink",
+      "name": "Rug D (Oriental Redpink)",
+      "origin": {
+        "column": 6,
+        "row": 6
+      },
+      "previewMask": 0,
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "hole-c-black-cave",
+      "name": "Hole C (Black Cave)",
+      "origin": {
+        "column": 8,
+        "row": 6
+      },
+      "previewMask": 0,
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "raised-stone-b-yellow",
+      "name": "Raised Stone B (Yellow)",
+      "origin": {
+        "column": 10,
+        "row": 6
+      },
+      "previewMask": 0,
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "ground-j-enclave-floor",
+      "name": "Ground J (Enclave Floor)",
+      "origin": {
+        "column": 12,
+        "row": 6
+      },
+      "previewMask": 0,
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "table-c-white-wood",
+      "name": "Table C (White Wood)",
+      "origin": {
+        "column": 14,
+        "row": 6
+      },
+      "previewMask": 0,
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "ground-k-oriental-floor",
+      "name": "Ground K (Oriental Floor)",
+      "origin": {
+        "column": 0,
+        "row": 9
+      },
+      "previewMask": 0,
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "ground-l-stone-floor-x-tile",
+      "name": "Ground L (Stone Floor X Tile)",
+      "origin": {
+        "column": 2,
+        "row": 9
+      },
+      "previewMask": 0,
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "rug-e-oriental-red",
+      "name": "Rug E (Oriental Red)",
+      "origin": {
+        "column": 4,
+        "row": 9
+      },
+      "previewMask": 0,
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "rug-f-oriental-purple",
+      "name": "Rug F (Oriental Purple)",
+      "origin": {
+        "column": 6,
+        "row": 9
+      },
+      "previewMask": 0,
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "hole-d-square-black-cave",
+      "name": "Hole D (Square Black Cave)",
+      "origin": {
+        "column": 8,
+        "row": 9
+      },
+      "previewMask": 0,
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "raised-stone-c-gray",
+      "name": "Raised Stone C (Gray)",
+      "origin": {
+        "column": 10,
+        "row": 9
+      },
+      "previewMask": 0,
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "ground-m-stone-enclave-floor",
+      "name": "Ground M (Stone Enclave Floor)",
+      "origin": {
+        "column": 12,
+        "row": 9
+      },
+      "previewMask": 0,
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "table-d-white-cloth",
+      "name": "Table D (White Cloth)",
+      "origin": {
+        "column": 14,
+        "row": 9
+      },
+      "previewMask": 0,
+      "collision": {
+        "kind": "none"
+      }
+    }
+  ],
+  "variants": {
+    "0": {
+      "quarters": [
+        [
+          0,
+          0
+        ],
+        [
+          1,
+          0
+        ],
+        [
+          0,
+          1
+        ],
+        [
+          1,
+          1
+        ]
+      ]
+    },
+    "1": {
+      "quarters": [
+        [
+          0,
+          4
+        ],
+        [
+          3,
+          4
+        ],
+        [
+          0,
+          1
+        ],
+        [
+          1,
+          1
+        ]
+      ]
+    },
+    "2": {
+      "quarters": [
+        [
+          0,
+          0
+        ],
+        [
+          1,
+          2
+        ],
+        [
+          0,
+          1
+        ],
+        [
+          1,
+          5
+        ]
+      ]
+    },
+    "3": {
+      "quarters": [
+        [
+          0,
+          4
+        ],
+        [
+          3,
+          0
+        ],
+        [
+          0,
+          1
+        ],
+        [
+          1,
+          5
+        ]
+      ]
+    },
+    "4": {
+      "quarters": [
+        [
+          0,
+          0
+        ],
+        [
+          1,
+          0
+        ],
+        [
+          0,
+          3
+        ],
+        [
+          3,
+          3
+        ]
+      ]
+    },
+    "5": {
+      "quarters": [
+        [
+          0,
+          4
+        ],
+        [
+          3,
+          4
+        ],
+        [
+          0,
+          3
+        ],
+        [
+          3,
+          3
+        ]
+      ]
+    },
+    "6": {
+      "quarters": [
+        [
+          0,
+          0
+        ],
+        [
+          1,
+          2
+        ],
+        [
+          0,
+          3
+        ],
+        [
+          3,
+          1
+        ]
+      ]
+    },
+    "7": {
+      "quarters": [
+        [
+          0,
+          4
+        ],
+        [
+          3,
+          0
+        ],
+        [
+          0,
+          3
+        ],
+        [
+          3,
+          1
+        ]
+      ]
+    },
+    "8": {
+      "quarters": [
+        [
+          2,
+          2
+        ],
+        [
+          1,
+          0
+        ],
+        [
+          2,
+          5
+        ],
+        [
+          1,
+          1
+        ]
+      ]
+    },
+    "9": {
+      "quarters": [
+        [
+          2,
+          0
+        ],
+        [
+          3,
+          4
+        ],
+        [
+          2,
+          5
+        ],
+        [
+          1,
+          1
+        ]
+      ]
+    },
+    "10": {
+      "quarters": [
+        [
+          2,
+          2
+        ],
+        [
+          1,
+          2
+        ],
+        [
+          2,
+          5
+        ],
+        [
+          1,
+          5
+        ]
+      ]
+    },
+    "11": {
+      "quarters": [
+        [
+          2,
+          0
+        ],
+        [
+          3,
+          0
+        ],
+        [
+          2,
+          5
+        ],
+        [
+          1,
+          5
+        ]
+      ]
+    },
+    "12": {
+      "quarters": [
+        [
+          2,
+          2
+        ],
+        [
+          1,
+          0
+        ],
+        [
+          2,
+          1
+        ],
+        [
+          3,
+          3
+        ]
+      ]
+    },
+    "13": {
+      "quarters": [
+        [
+          2,
+          0
+        ],
+        [
+          3,
+          4
+        ],
+        [
+          2,
+          1
+        ],
+        [
+          3,
+          3
+        ]
+      ]
+    },
+    "14": {
+      "quarters": [
+        [
+          2,
+          2
+        ],
+        [
+          1,
+          2
+        ],
+        [
+          2,
+          1
+        ],
+        [
+          3,
+          1
+        ]
+      ]
+    },
+    "15": {
+      "quarters": [
+        [
+          2,
+          0
+        ],
+        [
+          3,
+          0
+        ],
+        [
+          2,
+          1
+        ],
+        [
+          3,
+          1
+        ]
+      ]
+    },
+    "19": {
+      "quarters": [
+        [
+          0,
+          4
+        ],
+        [
+          1,
+          4
+        ],
+        [
+          0,
+          1
+        ],
+        [
+          1,
+          5
+        ]
+      ]
+    },
+    "23": {
+      "quarters": [
+        [
+          0,
+          4
+        ],
+        [
+          1,
+          4
+        ],
+        [
+          0,
+          3
+        ],
+        [
+          3,
+          1
+        ]
+      ]
+    },
+    "27": {
+      "quarters": [
+        [
+          2,
+          0
+        ],
+        [
+          1,
+          4
+        ],
+        [
+          2,
+          5
+        ],
+        [
+          1,
+          5
+        ]
+      ]
+    },
+    "31": {
+      "quarters": [
+        [
+          2,
+          0
+        ],
+        [
+          1,
+          4
+        ],
+        [
+          2,
+          1
+        ],
+        [
+          3,
+          1
+        ]
+      ]
+    },
+    "38": {
+      "quarters": [
+        [
+          0,
+          0
+        ],
+        [
+          1,
+          2
+        ],
+        [
+          0,
+          3
+        ],
+        [
+          1,
+          3
+        ]
+      ]
+    },
+    "39": {
+      "quarters": [
+        [
+          0,
+          4
+        ],
+        [
+          3,
+          0
+        ],
+        [
+          0,
+          3
+        ],
+        [
+          1,
+          3
+        ]
+      ]
+    },
+    "46": {
+      "quarters": [
+        [
+          2,
+          2
+        ],
+        [
+          1,
+          2
+        ],
+        [
+          2,
+          1
+        ],
+        [
+          1,
+          3
+        ]
+      ]
+    },
+    "47": {
+      "quarters": [
+        [
+          2,
+          0
+        ],
+        [
+          3,
+          0
+        ],
+        [
+          2,
+          1
+        ],
+        [
+          1,
+          3
+        ]
+      ]
+    },
+    "55": {
+      "quarters": [
+        [
+          0,
+          4
+        ],
+        [
+          1,
+          4
+        ],
+        [
+          0,
+          3
+        ],
+        [
+          1,
+          3
+        ]
+      ]
+    },
+    "63": {
+      "quarters": [
+        [
+          2,
+          0
+        ],
+        [
+          1,
+          4
+        ],
+        [
+          2,
+          1
+        ],
+        [
+          1,
+          3
+        ]
+      ]
+    },
+    "76": {
+      "quarters": [
+        [
+          2,
+          2
+        ],
+        [
+          1,
+          0
+        ],
+        [
+          2,
+          3
+        ],
+        [
+          3,
+          3
+        ]
+      ]
+    },
+    "77": {
+      "quarters": [
+        [
+          2,
+          0
+        ],
+        [
+          3,
+          4
+        ],
+        [
+          2,
+          3
+        ],
+        [
+          3,
+          3
+        ]
+      ]
+    },
+    "78": {
+      "quarters": [
+        [
+          2,
+          2
+        ],
+        [
+          1,
+          2
+        ],
+        [
+          2,
+          3
+        ],
+        [
+          3,
+          1
+        ]
+      ]
+    },
+    "79": {
+      "quarters": [
+        [
+          2,
+          0
+        ],
+        [
+          3,
+          0
+        ],
+        [
+          2,
+          3
+        ],
+        [
+          3,
+          1
+        ]
+      ]
+    },
+    "95": {
+      "quarters": [
+        [
+          2,
+          0
+        ],
+        [
+          1,
+          4
+        ],
+        [
+          2,
+          3
+        ],
+        [
+          3,
+          1
+        ]
+      ]
+    },
+    "110": {
+      "quarters": [
+        [
+          2,
+          2
+        ],
+        [
+          1,
+          2
+        ],
+        [
+          2,
+          3
+        ],
+        [
+          1,
+          3
+        ]
+      ]
+    },
+    "111": {
+      "quarters": [
+        [
+          2,
+          0
+        ],
+        [
+          3,
+          0
+        ],
+        [
+          2,
+          3
+        ],
+        [
+          1,
+          3
+        ]
+      ]
+    },
+    "127": {
+      "quarters": [
+        [
+          2,
+          0
+        ],
+        [
+          1,
+          4
+        ],
+        [
+          2,
+          3
+        ],
+        [
+          1,
+          3
+        ]
+      ]
+    },
+    "137": {
+      "quarters": [
+        [
+          2,
+          4
+        ],
+        [
+          3,
+          4
+        ],
+        [
+          2,
+          5
+        ],
+        [
+          1,
+          1
+        ]
+      ]
+    },
+    "139": {
+      "quarters": [
+        [
+          2,
+          4
+        ],
+        [
+          3,
+          0
+        ],
+        [
+          2,
+          5
+        ],
+        [
+          1,
+          5
+        ]
+      ]
+    },
+    "141": {
+      "quarters": [
+        [
+          2,
+          4
+        ],
+        [
+          3,
+          4
+        ],
+        [
+          2,
+          1
+        ],
+        [
+          3,
+          3
+        ]
+      ]
+    },
+    "143": {
+      "quarters": [
+        [
+          2,
+          4
+        ],
+        [
+          3,
+          0
+        ],
+        [
+          2,
+          1
+        ],
+        [
+          3,
+          1
+        ]
+      ]
+    },
+    "155": {
+      "quarters": [
+        [
+          2,
+          4
+        ],
+        [
+          1,
+          4
+        ],
+        [
+          2,
+          5
+        ],
+        [
+          1,
+          5
+        ]
+      ]
+    },
+    "159": {
+      "quarters": [
+        [
+          2,
+          4
+        ],
+        [
+          1,
+          4
+        ],
+        [
+          2,
+          1
+        ],
+        [
+          3,
+          1
+        ]
+      ]
+    },
+    "175": {
+      "quarters": [
+        [
+          2,
+          4
+        ],
+        [
+          3,
+          0
+        ],
+        [
+          2,
+          1
+        ],
+        [
+          1,
+          3
+        ]
+      ]
+    },
+    "191": {
+      "quarters": [
+        [
+          2,
+          4
+        ],
+        [
+          1,
+          4
+        ],
+        [
+          2,
+          1
+        ],
+        [
+          1,
+          3
+        ]
+      ]
+    },
+    "205": {
+      "quarters": [
+        [
+          2,
+          4
+        ],
+        [
+          3,
+          4
+        ],
+        [
+          2,
+          3
+        ],
+        [
+          3,
+          3
+        ]
+      ]
+    },
+    "207": {
+      "quarters": [
+        [
+          2,
+          4
+        ],
+        [
+          3,
+          0
+        ],
+        [
+          2,
+          3
+        ],
+        [
+          3,
+          1
+        ]
+      ]
+    },
+    "223": {
+      "quarters": [
+        [
+          2,
+          4
+        ],
+        [
+          1,
+          4
+        ],
+        [
+          2,
+          3
+        ],
+        [
+          3,
+          1
+        ]
+      ]
+    },
+    "239": {
+      "quarters": [
+        [
+          2,
+          4
+        ],
+        [
+          3,
+          0
+        ],
+        [
+          2,
+          3
+        ],
+        [
+          1,
+          3
+        ]
+      ]
+    },
+    "255": {
+      "quarters": [
+        [
+          2,
+          4
+        ],
+        [
+          1,
+          4
+        ],
+        [
+          2,
+          3
+        ],
+        [
+          1,
+          3
+        ]
+      ]
+    }
+  }
+}

@@ -1,9 +1,11 @@
 import { forwardRef, useEffect, useImperativeHandle, useRef, useState } from 'react';
-import { Application, Assets, Container, Graphics, Rectangle, Sprite, Text, Texture } from 'pixi.js';
+import { AnimatedSprite, Application, Assets, Container, Graphics, Rectangle, Sprite, Text, Texture } from 'pixi.js';
 import 'pixi.js/advanced-blend-modes';
-import { autotileVariant, buildNavigationGraph, navigationCellKey, navigationEdgeKey, resolveTerrainPlacements, type A2TilesetDefinition, type AutotileTerrain, type AutotileVariant, type Direction, type GameMap, type TilesetDefinition, type Vec2 } from '@rpgcrafter/game-schema';
+import { A1_ANIMATION_FRAME_COUNT, A1_ANIMATION_FRAME_DURATION_MS, A1_ANIMATION_FRAME_STRIDE, A1_HORIZONTAL_ANIMATION_SEQUENCE, autotileVariant, buildNavigationGraph, navigationCellKey, navigationEdgeKey, resolveTerrainPlacements, type A1AnimationLayout, type AutotileRecipe, type AutotileTerrain, type AutotileTilesetDefinition, type AutotileVariant, type Direction, type GameMap, type PlanePosition, type TilesetDefinition, type Vec2 } from '@rpgcrafter/game-schema';
 import { ellipseCells, floodFillCells, navigationTargetAtWorldPosition, rectangleCells, snapAndClampEventPosition, terrainBrushPlacements, tileAtWorldPosition } from '@/lib/editor-geometry';
+import { terrainSelectionAt } from '@/lib/tile-palette';
 import type { DrawingTool, EditorMode, NavigationPaintMode, SelectedTerrain } from '@/components/studio-sidebar';
+import type { EventTool } from '@/components/studio-toolbar';
 
 const SOURCE_TILE_SIZE = 48;
 type CanvasMode = EditorMode | 'navigation';
@@ -23,6 +25,9 @@ type Props = {
   activeLayerId: string | null;
   selectedTerrain: SelectedTerrain | null;
   drawingTool: DrawingTool;
+  eventTool: EventTool;
+  playerStartMapId: string;
+  playerStart: PlanePosition;
   showGrid: boolean;
   dimInactiveLayers: boolean;
   navigationPaintMode: NavigationPaintMode;
@@ -33,6 +38,8 @@ type Props = {
   onMoveEvent: (id: string, x: number, y: number) => void;
   onDrawTiles: (cells: Vec2[], behavior: 'stamp' | 'fill') => void;
   onFillTile: (x: number, y: number) => void;
+  onPickTerrain: (terrain: SelectedTerrain) => void;
+  onPlacePlayerStart: (x: number, y: number, planeId: string) => void;
   onNavigateTarget: (x: number, y: number, edge?: Direction) => void;
   onHoverTile: (tile: Vec2 | null) => void;
 };
@@ -41,7 +48,7 @@ function sourceTile(texture: Texture, column: number, row: number) {
   return new Texture({ source: texture.source, frame: new Rectangle(column * SOURCE_TILE_SIZE, row * SOURCE_TILE_SIZE, SOURCE_TILE_SIZE, SOURCE_TILE_SIZE) });
 }
 
-function composeAutotileTexture(atlas: Texture, tileset: A2TilesetDefinition, terrain: AutotileTerrain, variant: AutotileVariant) {
+function composeAutotileTexture(atlas: Texture, tileset: AutotileTilesetDefinition, terrain: AutotileTerrain, variant: AutotileVariant, animationFrame = 0, animation: A1AnimationLayout = 'none') {
   const canvas = document.createElement('canvas');
   canvas.width = tileset.tileSize;
   canvas.height = tileset.tileSize;
@@ -50,8 +57,8 @@ function composeAutotileTexture(atlas: Texture, tileset: A2TilesetDefinition, te
   context.imageSmoothingEnabled = false;
   variant.quarters.forEach(([quarterX, quarterY], index) => context.drawImage(
     atlas.source.resource as CanvasImageSource,
-    terrain.origin.column * tileset.tileSize + quarterX * tileset.quarterSize,
-    terrain.origin.row * tileset.tileSize + quarterY * tileset.quarterSize,
+    (terrain.origin.column + (animation === 'horizontal' ? animationFrame * A1_ANIMATION_FRAME_STRIDE : 0)) * tileset.tileSize + quarterX * tileset.quarterSize,
+    (terrain.origin.row + (animation === 'vertical' ? animationFrame : 0)) * tileset.tileSize + quarterY * tileset.quarterSize,
     tileset.quarterSize, tileset.quarterSize,
     (index % 2) * tileset.quarterSize, Math.floor(index / 2) * tileset.quarterSize,
     tileset.quarterSize, tileset.quarterSize,
@@ -177,7 +184,7 @@ export const MapCanvas = forwardRef<MapCanvasHandle, Props>(function MapCanvas(p
   const draw = () => {
     const runtime = runtimeRef.current;
     if (!runtime) return;
-    const { map, tilesets, selectedEventId, onSelectEvent, onActivateEvent, activeLayerId } = propsRef.current;
+    const { map, tilesets, selectedEventId, onSelectEvent, onActivateEvent, activeLayerId, eventTool, playerStartMapId, playerStart } = propsRef.current;
     const brushHover = runtime.brushHover;
     for (const child of runtime.world.removeChildren()) {
       if (child !== brushHover) child.destroy({ children: true });
@@ -197,15 +204,34 @@ export const MapCanvas = forwardRef<MapCanvasHandle, Props>(function MapCanvas(p
         const authoredAtlas = authoredTileset && runtime.atlases.get(authoredTileset.id);
         const terrain = authoredTileset?.terrains.find(item => item.id === tile.terrainId);
         if (!authoredTileset || !authoredAtlas || !terrain) continue;
-        const textureKey = `${authoredTileset.id}:${terrain.id}:${authoredTileset.kind === 'a2' ? tile.mask : 'grid'}`;
+        const animation: A1AnimationLayout = authoredTileset.kind === 'a1' && 'animation' in terrain ? terrain.animation as A1AnimationLayout : 'none';
+        const recipe: AutotileRecipe = animation === 'vertical' ? 'waterfall' : authoredTileset.kind === 'a4' && 'autotile' in terrain && terrain.autotile === 'wall' ? 'wall' : 'floor';
+        const isAutotile = authoredTileset.kind === 'a1' || authoredTileset.kind === 'a2' || authoredTileset.kind === 'a4';
+        const textureKey = `${authoredTileset.id}:${terrain.id}:${isAutotile ? `${tile.mask}:0` : 'grid'}`;
         let texture = runtime.autotileTextures.get(textureKey);
         if (!texture) {
-          texture = authoredTileset.kind === 'a2' && 'previewMask' in terrain
-            ? composeAutotileTexture(authoredAtlas, authoredTileset, terrain as AutotileTerrain, autotileVariant(authoredTileset, tile.mask))
+          texture = isAutotile && 'previewMask' in terrain
+            ? composeAutotileTexture(authoredAtlas, authoredTileset, terrain as AutotileTerrain, autotileVariant(authoredTileset, tile.mask, recipe))
             : sourceTile(authoredAtlas, terrain.origin.column, terrain.origin.row);
           runtime.autotileTextures.set(textureKey, texture);
         }
-        const sprite = new Sprite(texture);
+        let sprite: Sprite;
+        if (authoredTileset.kind === 'a1' && animation !== 'none') {
+          const sequence = animation === 'horizontal' ? A1_HORIZONTAL_ANIMATION_SEQUENCE : Array.from({ length: A1_ANIMATION_FRAME_COUNT }, (_, index) => index);
+          const textures = sequence.map(animationFrame => {
+            const frameKey = `${authoredTileset.id}:${terrain.id}:${tile.mask}:${animationFrame}`;
+            let frameTexture = runtime.autotileTextures.get(frameKey);
+            if (!frameTexture) {
+              frameTexture = composeAutotileTexture(authoredAtlas, authoredTileset, terrain as AutotileTerrain, autotileVariant(authoredTileset, tile.mask, recipe), animationFrame, animation);
+              runtime.autotileTextures.set(frameKey, frameTexture);
+            }
+            return frameTexture;
+          });
+          const animated = new AnimatedSprite(textures);
+          animated.animationSpeed = 1000 / (A1_ANIMATION_FRAME_DURATION_MS * 60);
+          animated.play();
+          sprite = animated;
+        } else sprite = new Sprite(texture);
         sprite.position.set(tile.x * tileSize, tile.y * tileSize);
         sprite.width = tileSize;
         sprite.height = tileSize;
@@ -263,7 +289,7 @@ export const MapCanvas = forwardRef<MapCanvasHandle, Props>(function MapCanvas(p
       const color = event.visual && event.visual.type !== 'exit' ? event.visual.color : event.visual?.type === 'exit' ? '#f59e0b' : '#a78bfa';
       marker.circle(x, y, selected ? 14 : 11).fill({ color, alpha: 0.95 }).stroke({ color: selected ? '#ffffff' : '#111827', width: selected ? 4 : 2 });
       marker.moveTo(x, y - 5).lineTo(x + 5, y).lineTo(x, y + 5).lineTo(x - 5, y).closePath().fill('#ffffff');
-      if (propsRef.current.mode === 'events') {
+      if (propsRef.current.mode === 'events' && eventTool === 'cursor') {
         marker.eventMode = 'static';
         marker.cursor = 'grab';
         marker.hitArea = new Rectangle(x - 18, y - 18, 36, 36);
@@ -283,6 +309,18 @@ export const MapCanvas = forwardRef<MapCanvasHandle, Props>(function MapCanvas(p
         runtime.world.addChild(label);
       }
     }
+    if (propsRef.current.mode === 'events' && map.id === playerStartMapId) {
+      const x = playerStart.x * tileSize, y = playerStart.y * tileSize;
+      const marker = new Graphics();
+      marker.circle(x, y, 14).fill({ color: '#16a34a', alpha: 0.96 }).stroke({ color: '#ffffff', width: 3 });
+      marker.circle(x, y - 4, 3.5).fill('#ffffff');
+      marker.moveTo(x - 6, y + 7).quadraticCurveTo(x, y - 1, x + 6, y + 7).stroke({ color: '#ffffff', width: 3 });
+      runtime.world.addChild(marker);
+      const label = new Text({ text: 'PLAYER START', style: { fill: '#ffffff', fontFamily: 'Geist Variable, sans-serif', fontSize: 10, fontWeight: '700', stroke: { color: '#14532d', width: 3 } } });
+      label.anchor.set(0.5, 1);
+      label.position.set(x, y - 18);
+      runtime.world.addChild(label);
+    }
     if (brushHover && !brushHover.destroyed) runtime.world.addChild(brushHover);
   };
 
@@ -291,6 +329,7 @@ export const MapCanvas = forwardRef<MapCanvasHandle, Props>(function MapCanvas(p
     let resizeObserver: ResizeObserver | undefined;
     let canvas: HTMLCanvasElement | undefined;
     let pointerLeaveHandler: (() => void) | undefined;
+    let contextMenuHandler: ((event: MouseEvent) => void) | undefined;
     const onKeyDown = (event: KeyboardEvent) => {
       const runtime = runtimeRef.current;
       if (!runtime || event.code !== 'Space' || document.activeElement !== runtime.app.canvas) return;
@@ -302,7 +341,7 @@ export const MapCanvas = forwardRef<MapCanvasHandle, Props>(function MapCanvas(p
       const runtime = runtimeRef.current;
       if (!runtime || event.code !== 'Space') return;
       runtime.spacePressed = false;
-      runtime.app.canvas.style.cursor = propsRef.current.mode === 'drawing' && (propsRef.current.drawingTool === 'eraser' || propsRef.current.selectedTerrain) ? 'crosshair' : '';
+      runtime.app.canvas.style.cursor = propsRef.current.mode === 'navigation' || (propsRef.current.mode === 'events' && propsRef.current.eventTool === 'playerStart') || (propsRef.current.mode === 'drawing' && (propsRef.current.drawingTool === 'eraser' || propsRef.current.selectedTerrain)) ? 'crosshair' : '';
     };
     const stopPointer = (commitShape = false) => {
       const runtime = runtimeRef.current;
@@ -321,7 +360,7 @@ export const MapCanvas = forwardRef<MapCanvasHandle, Props>(function MapCanvas(p
       runtime.painting = false;
       runtime.lastPainted = null;
       runtime.panning = null;
-      runtime.app.canvas.style.cursor = propsRef.current.mode === 'drawing' && (propsRef.current.drawingTool === 'eraser' || propsRef.current.selectedTerrain) ? 'crosshair' : '';
+      runtime.app.canvas.style.cursor = propsRef.current.mode === 'navigation' || (propsRef.current.mode === 'events' && propsRef.current.eventTool === 'playerStart') || (propsRef.current.mode === 'drawing' && (propsRef.current.drawingTool === 'eraser' || propsRef.current.selectedTerrain)) ? 'crosshair' : '';
     };
     const cancelPointer = () => {
       stopPointer(false);
@@ -474,6 +513,17 @@ export const MapCanvas = forwardRef<MapCanvasHandle, Props>(function MapCanvas(p
           runtime.brushHover = null;
         }
         app.canvas.focus();
+        if (propsRef.current.mode === 'events' && propsRef.current.eventTool === 'playerStart' && pointer.button === 0) {
+          const tile = tileAt(pointer.global);
+          if (tile) propsRef.current.onPlacePlayerStart(tile.x + 0.5, tile.y + 0.5, propsRef.current.activePlaneId);
+          return;
+        }
+        if (propsRef.current.mode === 'drawing' && pointer.button === 2) {
+          const tile = tileAt(pointer.global);
+          const selection = tile && terrainSelectionAt(propsRef.current.map.tileLayers, propsRef.current.activeLayerId, tile);
+          if (selection) propsRef.current.onPickTerrain(selection);
+          return;
+        }
         if (propsRef.current.mode === 'drawing' || propsRef.current.mode === 'navigation') {
           if (runtime.spacePressed) {
             runtime.panning = { x: pointer.global.x, y: pointer.global.y, originX: runtime.x, originY: runtime.y };
@@ -504,7 +554,7 @@ export const MapCanvas = forwardRef<MapCanvasHandle, Props>(function MapCanvas(p
       });
       app.stage.on('click', pointer => {
         const { mode, map, activePlaneId, onCreateEvent } = propsRef.current;
-        if (mode !== 'events' || pointer.detail !== 2) return;
+        if (mode !== 'events' || propsRef.current.eventTool !== 'cursor' || pointer.detail !== 2) return;
         const tile = tileAt(pointer.global);
         if (!tile) return;
         const occupied = map.events.some(event => event.position.planeId === activePlaneId && Math.floor(event.position.x) === tile.x && Math.floor(event.position.y) === tile.y);
@@ -545,6 +595,8 @@ export const MapCanvas = forwardRef<MapCanvasHandle, Props>(function MapCanvas(p
       });
       app.stage.on('pointerupoutside', () => stopPointer(true));
       app.canvas.addEventListener('wheel', event => { event.preventDefault(); zoomBy(event.deltaY < 0 ? 1.12 : 1 / 1.12, event.offsetX, event.offsetY); }, { passive: false });
+      contextMenuHandler = event => { if (propsRef.current.mode === 'drawing') event.preventDefault(); };
+      app.canvas.addEventListener('contextmenu', contextMenuHandler);
       pointerLeaveHandler = () => { updateHoveredTile(); cancelPointer(); };
       app.canvas.addEventListener('pointerleave', pointerLeaveHandler);
       window.addEventListener('keydown', onKeyDown);
@@ -565,6 +617,7 @@ export const MapCanvas = forwardRef<MapCanvasHandle, Props>(function MapCanvas(p
       cancelled = true;
       resizeObserver?.disconnect();
       if (pointerLeaveHandler) canvas?.removeEventListener('pointerleave', pointerLeaveHandler);
+      if (contextMenuHandler) canvas?.removeEventListener('contextmenu', contextMenuHandler);
       propsRef.current.onHoverTile(null);
       window.removeEventListener('keydown', onKeyDown);
       window.removeEventListener('keyup', onKeyUp);
@@ -575,12 +628,12 @@ export const MapCanvas = forwardRef<MapCanvasHandle, Props>(function MapCanvas(p
     };
   }, [Object.values(props.assetUrls).join('|')]);
 
-  useEffect(() => { draw(); }, [props.map, props.tilesets, props.selectedEventId, props.mode, props.activePlaneId, props.activeLayerId, props.showGrid, props.dimInactiveLayers]);
+  useEffect(() => { draw(); }, [props.map, props.tilesets, props.selectedEventId, props.mode, props.eventTool, props.playerStartMapId, props.playerStart, props.activePlaneId, props.activeLayerId, props.showGrid, props.dimInactiveLayers]);
   useEffect(() => { requestAnimationFrame(fit); }, [props.map.id]);
   useEffect(() => {
     const runtime = runtimeRef.current;
     if (runtime) {
-      runtime.app.canvas.style.cursor = props.mode === 'navigation' || (props.mode === 'drawing' && (props.drawingTool === 'eraser' || props.selectedTerrain)) ? 'crosshair' : '';
+      runtime.app.canvas.style.cursor = props.mode === 'navigation' || (props.mode === 'events' && props.eventTool === 'playerStart') || (props.mode === 'drawing' && (props.drawingTool === 'eraser' || props.selectedTerrain)) ? 'crosshair' : '';
       runtime.navigationHover?.removeFromParent();
       runtime.navigationHover?.destroy();
       runtime.navigationHover = null;
@@ -588,7 +641,7 @@ export const MapCanvas = forwardRef<MapCanvasHandle, Props>(function MapCanvas(p
       runtime.brushHover?.destroy();
       runtime.brushHover = null;
     }
-  }, [props.mode, props.selectedTerrain, props.drawingTool, props.navigationPaintMode]);
+  }, [props.mode, props.eventTool, props.selectedTerrain, props.drawingTool, props.navigationPaintMode]);
 
   return <div className="relative size-full overflow-hidden bg-[#9E9E9E]" aria-label={`${props.map.name} map editor`}>
     <div ref={hostRef} className="size-full" />

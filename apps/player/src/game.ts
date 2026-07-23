@@ -1,4 +1,5 @@
 import { isStudioPreview, loadGameContent } from './content-loader.js';
+import { circleIntersectsBlockedDiagonal } from './circle-collision.js';
 import { MapEventRuntime, teleportDisposition } from './event-runtime.js';
 import { PixiRenderer } from './pixi-renderer.js';
 import type { Renderer, RenderState } from './renderer.js';
@@ -17,7 +18,9 @@ void (async () => {
   const studioPreview = isStudioPreview();
   const SAVE_SCHEMA = '0.6';
   const VIEW_WIDTH = 960, VIEW_HEIGHT = 540;
-  let content: LoadedGame, game: any, renderer: Renderer, eventRuntime: MapEventRuntime, completedMapEvents = new Set<string>(), visitRevision = 0, dialogue: { choices: Array<{ label: string; actions: Action[] }>; choiceIndex: number } | null = null, paused = false, pauseTabIndex = 0, inventorySelection = 0, lastTime = performance.now(), toastTimer = 0, showTileGrid = false;
+  // Keep a small clearance inside one-tile-wide (48 px) passages.
+  const PLAYER_RADIUS = 20;
+  let content: LoadedGame, game: any, renderer: Renderer, eventRuntime: MapEventRuntime, completedMapEvents = new Set<string>(), visitRevision = 0, dialogue: { choices: Array<{ label: string; actions: Action[] }>; choiceIndex: number } | null = null, paused = false, pauseTabIndex = 0, inventorySelection = 0, lastTime = performance.now(), toastTimer = 0, showTileGrid = false, playerMoving = false, playerAnimationTime = 0;
   let facing = { x: 0, y: 1 };
   const cooldowns: Record<string, number> = {};
 
@@ -149,7 +152,9 @@ void (async () => {
       south: (cell.y + 1) * size - position.y,
       west: position.x - cell.x * size,
     };
-    return (Object.entries(distances) as Array<[Direction, number]>).some(([edge, edgeDistance]) => edge !== ignoredEdge && edgeDistance < radius && !navigationTarget(graph, position.planeId, cell.x, cell.y, edge));
+    const touchesBlockedEdge = (Object.entries(distances) as Array<[Direction, number]>).some(([edge, edgeDistance]) => edge !== ignoredEdge && edgeDistance < radius && !navigationTarget(graph, position.planeId, cell.x, cell.y, edge));
+    if (touchesBlockedEdge) return true;
+    return circleIntersectsBlockedDiagonal(position, radius, size, (x, y) => !navigationHasCell(graph, position.planeId, x, y));
   }
   function moveAxis(entity: PlanePosition, axis: 'x' | 'y', delta: number, radius: number) {
     if (!delta) return;
@@ -173,7 +178,7 @@ void (async () => {
     moveAxis(entity, 'x', dx, radius);
     moveAxis(entity, 'y', dy, radius);
   }
-  function movePlayer(dx: number, dy: number, dt: number) { const length = Math.hypot(dx, dy); if (!length) return; dx /= length; dy /= length; facing = { x: dx, y: dy }; moveWithCollisions(game.player, dx * (game.player.dash > 0 ? 420 : 185) * dt, dy * (game.player.dash > 0 ? 420 : 185) * dt, 16); }
+  function movePlayer(dx: number, dy: number, dt: number) { const length = Math.hypot(dx, dy); if (!length) return false; dx /= length; dy /= length; facing = { x: dx, y: dy }; const previous = { x: game.player.x, y: game.player.y }; moveWithCollisions(game.player, dx * (game.player.dash > 0 ? 420 : 185) * dt, dy * (game.player.dash > 0 ? 420 : 185) * dt, PLAYER_RADIUS); return previous.x !== game.player.x || previous.y !== game.player.y; }
   function moveEnemy(enemy: any, dx: number, dy: number) { moveWithCollisions(enemy, dx, dy, enemy.radius); }
   function equippedStat(stat: string) { return Object.values(game.equipment).reduce<number>((total, itemId) => { const id = typeof itemId === 'string' ? itemId : ''; return total + (content.items[id]?.stats?.[stat] || 0); }, 0); }
   function effectiveDamage(damage: number) { return Math.max(0, damage + equippedStat('attack')); }
@@ -213,9 +218,12 @@ void (async () => {
   }
 
   function update(dt: number) {
-    if (toastTimer > 0 && (toastTimer -= dt) <= 0) ui.toast.classList.add('hidden'); if (dialogue || paused || document.hidden) return;
+    playerMoving = false;
+    if (toastTimer > 0 && (toastTimer -= dt) <= 0) ui.toast.classList.add('hidden');
+    if (dialogue || paused || document.hidden) { playerAnimationTime = 0; return; }
     Object.keys(cooldowns).forEach(key => cooldowns[key] = Math.max(0, cooldowns[key] - dt)); game.player.invuln = Math.max(0, game.player.invuln - dt); game.player.dash = Math.max(0, game.player.dash - dt);
-    movePlayer((keys.has('ArrowRight') || keys.has('KeyD') ? 1 : 0) - (keys.has('ArrowLeft') || keys.has('KeyA') ? 1 : 0), (keys.has('ArrowDown') || keys.has('KeyS') ? 1 : 0) - (keys.has('ArrowUp') || keys.has('KeyW') ? 1 : 0), dt);
+    playerMoving = movePlayer((keys.has('ArrowRight') || keys.has('KeyD') ? 1 : 0) - (keys.has('ArrowLeft') || keys.has('KeyA') ? 1 : 0), (keys.has('ArrowDown') || keys.has('KeyS') ? 1 : 0) - (keys.has('ArrowUp') || keys.has('KeyW') ? 1 : 0), dt);
+    playerAnimationTime = playerMoving ? playerAnimationTime + dt : 0;
     updateProjectiles(dt); updateEnemies(dt); game.particles.forEach((particle: any) => particle.t -= dt); game.particles = game.particles.filter((particle: any) => particle.t > 0); eventRuntime.update(currentMap(), game.player, dt, eventCallbacks());
   }
   function projectileCanContinue(projectile: any, previous: Vec2) {
@@ -227,14 +235,14 @@ void (async () => {
     }
     return !circleBlocked(projectile, projectile.r);
   }
-  function updateProjectiles(dt: number) { for (const projectile of game.projectiles) { const previous = { x: projectile.x, y: projectile.y }; projectile.x += projectile.dx * dt; projectile.y += projectile.dy * dt; projectile.t -= dt; if (!projectileCanContinue(projectile, previous)) { projectile.t = 0; continue; } if (projectile.from === 'player') { const enemy = currentEnemies().find((candidate: any) => candidate.alive && candidate.planeId === projectile.planeId && distance(candidate, projectile) < candidate.radius + projectile.r); if (enemy) { hurtEnemy(enemy, projectile.damage); projectile.t = 0; } } else if (projectile.planeId === game.player.planeId && distance(game.player, projectile) < 20) { hurtPlayer(projectile.damage); projectile.t = 0; } } game.projectiles = game.projectiles.filter((projectile: any) => projectile.t > 0); }
+  function updateProjectiles(dt: number) { for (const projectile of game.projectiles) { const previous = { x: projectile.x, y: projectile.y }; projectile.x += projectile.dx * dt; projectile.y += projectile.dy * dt; projectile.t -= dt; if (!projectileCanContinue(projectile, previous)) { projectile.t = 0; continue; } if (projectile.from === 'player') { const enemy = currentEnemies().find((candidate: any) => candidate.alive && candidate.planeId === projectile.planeId && distance(candidate, projectile) < candidate.radius + projectile.r); if (enemy) { hurtEnemy(enemy, projectile.damage); projectile.t = 0; } } else if (projectile.planeId === game.player.planeId && distance(game.player, projectile) < PLAYER_RADIUS + projectile.r) { hurtPlayer(projectile.damage); projectile.t = 0; } } game.projectiles = game.projectiles.filter((projectile: any) => projectile.t > 0); }
   function updateEnemies(dt: number) {
     for (const enemy of currentEnemies()) {
       if (!enemy.alive) continue; enemy.cooldown = Math.max(0, enemy.cooldown - dt); if (enemy.planeId !== game.player.planeId) continue; const d = distance(enemy, game.player), nx = (game.player.x - enemy.x) / (d || 1), ny = (game.player.y - enemy.y) / (d || 1); const phase = enemy.phases?.find((item: any) => enemy.hp / enemy.maxHp <= item.atHpRatio); enemy.phase = phase ? enemy.phases.indexOf(phase) + 1 : 0; const speed = enemy.speed * (phase?.speedMultiplier || 1);
       if (enemy.behavior === 'ranged' && d < 270) { if (d < 105) moveEnemy(enemy, -nx * speed * dt, -ny * speed * dt); if (enemy.cooldown <= 0) { fireEnemyProjectile(enemy, nx, ny, { cooldown: 1.45, speed: 230, damage: enemy.damage, color: '#d3a3ff' }); } }
       else if (enemy.behavior === 'charge') { if (enemy.charge > 0) { moveEnemy(enemy, enemy.chargeX * 235 * dt, enemy.chargeY * 235 * dt); enemy.charge -= dt; } else if (d < 210 && enemy.cooldown <= 0) { enemy.chargeX = nx; enemy.chargeY = ny; enemy.charge = .42; enemy.cooldown = 1.35; } else if (d < 190) moveEnemy(enemy, nx * speed * dt, ny * speed * dt); }
       else { if (d < 290) moveEnemy(enemy, nx * speed * dt, ny * speed * dt); if (phase?.projectile && enemy.cooldown <= 0 && d < 310) fireEnemyProjectile(enemy, nx, ny, phase.projectile); }
-      if (d < enemy.radius + 19 && enemy.cooldown <= 0) { hurtPlayer(enemy.damage); enemy.cooldown = .95; }
+      if (d < enemy.radius + PLAYER_RADIUS && enemy.cooldown <= 0) { hurtPlayer(enemy.damage); enemy.cooldown = .95; }
     }
   }
   function fireEnemyProjectile(enemy: any, nx: number, ny: number, projectile: any) { game.projectiles.push({ from: 'enemy', x: enemy.x, y: enemy.y, planeId: enemy.planeId, dx: nx * projectile.speed, dy: ny * projectile.speed, r: 7, damage: projectile.damage, t: 1.4, color: projectile.color }); enemy.cooldown = projectile.cooldown; }
@@ -253,7 +261,9 @@ void (async () => {
       particles: game.particles,
       camera,
       showTileGrid,
-      player: { ...game.player, radius: 16 },
+      player: { ...game.player, radius: PLAYER_RADIUS },
+      playerMoving,
+      playerAnimationTime,
       facing,
       hud: { panel: content.ui.theme.panel, text: content.ui.theme.text, health: content.ui.theme.health, slots: content.ui.hud.slots }
     };

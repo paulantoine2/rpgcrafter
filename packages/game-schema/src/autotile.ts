@@ -1,4 +1,20 @@
-import type { A2TilesetDefinition, AutotileVariant, TerrainPlacement } from './types.js';
+import type { A1AnimationLayout, AutotileTilesetDefinition, AutotileVariant, TerrainPlacement } from './types.js';
+
+export const A1_ANIMATION_FRAME_COUNT = 3;
+export const A1_ANIMATION_FRAME_DURATION_MS = 500;
+export const A1_ANIMATION_FRAME_STRIDE = 2;
+export const A1_HORIZONTAL_ANIMATION_SEQUENCE = [0, 1, 2, 1] as const;
+
+const WALL_AUTOTILE_VARIANTS: AutotileVariant[] = [
+  { quarters: [[2, 2], [1, 2], [2, 1], [1, 1]] }, { quarters: [[0, 2], [1, 2], [0, 1], [1, 1]] },
+  { quarters: [[2, 0], [1, 0], [2, 1], [1, 1]] }, { quarters: [[0, 0], [1, 0], [0, 1], [1, 1]] },
+  { quarters: [[2, 2], [3, 2], [2, 1], [3, 1]] }, { quarters: [[0, 2], [3, 2], [0, 1], [3, 1]] },
+  { quarters: [[2, 0], [3, 0], [2, 1], [3, 1]] }, { quarters: [[0, 0], [3, 0], [0, 1], [3, 1]] },
+  { quarters: [[2, 2], [1, 2], [2, 3], [1, 3]] }, { quarters: [[0, 2], [1, 2], [0, 3], [1, 3]] },
+  { quarters: [[2, 0], [1, 0], [2, 3], [1, 3]] }, { quarters: [[0, 0], [1, 0], [0, 3], [1, 3]] },
+  { quarters: [[2, 2], [3, 2], [2, 3], [3, 3]] }, { quarters: [[0, 2], [3, 2], [0, 3], [3, 3]] },
+  { quarters: [[2, 0], [3, 0], [2, 3], [3, 3]] }, { quarters: [[0, 0], [3, 0], [0, 3], [3, 3]] },
+];
 
 export const AUTOTILE_BITS = {
   north: 1,
@@ -52,9 +68,31 @@ export function resolveTerrainPlacements(tiles: readonly TerrainPlacement[], coo
   });
 }
 
-export function autotileVariant(tileset: A2TilesetDefinition, mask: number): AutotileVariant {
+export type AutotileRecipe = 'floor' | 'waterfall' | 'wall';
+
+export function autotileVariant(tileset: AutotileTilesetDefinition, mask: number, recipe: AutotileRecipe = 'floor'): AutotileVariant {
+  if (recipe === 'waterfall') {
+    const west = Boolean(mask & AUTOTILE_BITS.west), east = Boolean(mask & AUTOTILE_BITS.east);
+    return { quarters: west
+      ? east ? [[2, 0], [1, 0], [2, 1], [1, 1]] : [[2, 0], [3, 0], [2, 1], [3, 1]]
+      : east ? [[0, 0], [1, 0], [0, 1], [1, 1]] : [[0, 0], [3, 0], [0, 1], [3, 1]] };
+  }
+  if (recipe === 'wall') {
+    const missingEdges = (mask & AUTOTILE_BITS.west ? 0 : 1)
+      | (mask & AUTOTILE_BITS.north ? 0 : 2)
+      | (mask & AUTOTILE_BITS.east ? 0 : 4)
+      | (mask & AUTOTILE_BITS.south ? 0 : 8);
+    return WALL_AUTOTILE_VARIANTS[missingEdges];
+  }
   const canonical = canonicalizeAutotileMask(mask);
   const variant = tileset.variants[String(canonical)];
   if (!variant) throw new Error(`Tileset ${tileset.id} is missing autotile mask ${canonical}.`);
   return variant;
+}
+
+export function autotileAnimationFrame(elapsedMs: number, layout: A1AnimationLayout = 'horizontal') {
+  const tick = Math.floor(Math.max(0, elapsedMs) / A1_ANIMATION_FRAME_DURATION_MS);
+  if (layout === 'none') return 0;
+  if (layout === 'vertical') return tick % A1_ANIMATION_FRAME_COUNT;
+  return A1_HORIZONTAL_ANIMATION_SEQUENCE[tick % A1_HORIZONTAL_ANIMATION_SEQUENCE.length];
 }

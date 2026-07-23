@@ -12,7 +12,8 @@ const common = {
     { id: 'layer-4', name: 'Layer 4', planeId: 'plane-1', renderPhase: 'aboveActors' as const, tiles: [] },
   ],
   activeLayerId: 'layer-1', drawingTool: 'pencil' as const,
-  onChangeMode: vi.fn(), onSelectLayer: vi.fn(), onChangeDrawingTool: vi.fn(),
+  eventTool: 'cursor' as const,
+  onChangeMode: vi.fn(), onSelectLayer: vi.fn(), onChangeDrawingTool: vi.fn(), onChangeEventTool: vi.fn(),
 };
 
 describe('StudioToolbar', () => {
@@ -24,11 +25,15 @@ describe('StudioToolbar', () => {
     expect(onChangeMode).toHaveBeenCalledWith('drawing');
   });
 
-  it('shows a single always-selected cursor in events mode', () => {
-    render(<StudioToolbar {...common} mode="events" />);
+  it('switches between the event cursor and player-start placement', async () => {
+    const onChangeEventTool = vi.fn();
+    render(<StudioToolbar {...common} mode="events" onChangeEventTool={onChangeEventTool} />);
     const toolbar = screen.getByRole('toolbar', { name: 'Event tools' });
-    expect(toolbar.querySelectorAll('button')).toHaveLength(1);
+    expect(toolbar.querySelectorAll('button')).toHaveLength(2);
     expect(screen.getByRole('button', { name: 'Event cursor' })).toHaveAttribute('aria-pressed', 'true');
+    expect(screen.getByRole('button', { name: 'Player start' })).toHaveAttribute('aria-pressed', 'false');
+    await userEvent.click(screen.getByRole('button', { name: 'Player start' }));
+    expect(onChangeEventTool).toHaveBeenCalledWith('playerStart');
   });
 
   it('exposes four painting tools followed by the hybrid eraser', async () => {

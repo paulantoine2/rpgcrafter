@@ -1,8 +1,8 @@
-import { fireEvent, render, screen } from '@testing-library/react';
+import { fireEvent, render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, expect, it, vi } from 'vitest';
 import type { SourceGame, TilesetDefinition } from '@rpgcrafter/game-schema';
-import { AssetManagerDialog, type LibraryTileset } from '../src/components/asset-manager-dialog';
+import { AssetManagerDialog, type LibrarySprite, type LibraryTileset } from '../src/components/asset-manager-dialog';
 
 const grid: TilesetDefinition = {
   id: 'decor', name: 'Decor', category: 'Nature', kind: 'grid', image: 'tilesets/decor.png', tileSize: 48, columns: 2, rows: 1,
@@ -22,14 +22,30 @@ const libraryDefinition: TilesetDefinition = {
 };
 
 function props(overrides: Record<string, unknown> = {}) {
-  const library: LibraryTileset = { definition: libraryDefinition, blob: new Blob(['png'], { type: 'image/png' }), url: 'library.png' };
+  const library: LibraryTileset = {
+    kind: 'tileset',
+    definition: libraryDefinition,
+    blob: new Blob(['png'], { type: 'image/png' }),
+    configurationPath: 'tilesets/library-decor.json',
+    configurationBlob: new Blob([JSON.stringify(libraryDefinition)], { type: 'application/json' }),
+    url: 'library.png',
+    assetType: 'tileset',
+    bundleId: 'starter-pack',
+    bundleName: 'Starter Pack',
+    tags: ['sci-fi', 'inside'],
+  };
+  const bundle = { id: 'starter-pack', name: 'Starter Pack', version: 1, assets: [library] };
   return {
     open: true,
     onOpenChange: vi.fn(),
     game: { tilesets: { decor: grid, cliffs: a2 } } as unknown as SourceGame,
     assetUrls: { 'tilesets/decor.png': 'decor.png', 'tilesets/cliffs.png': 'cliffs.png' },
     library: [library],
+    sprites: [],
+    bundles: [bundle],
     onImportLibrary: vi.fn(),
+    onImportSprite: vi.fn(),
+    onImportLibraryBundle: vi.fn(),
     onImportLocal: vi.fn().mockResolvedValue(undefined),
     onUpdate: vi.fn(),
     onChangeTerrainCollision: vi.fn(),
@@ -77,11 +93,54 @@ describe('AssetManagerDialog obstacle editor', () => {
     const onImportLibrary = vi.fn();
     const values = props({ onImportLibrary });
     render(<AssetManagerDialog {...values} />);
-    await userEvent.click(screen.getByRole('button', { name: 'Open library' }));
-    expect(screen.getByRole('dialog', { name: 'Tileset Library' })).toBeInTheDocument();
+    await userEvent.click(screen.getByRole('button', { name: 'Open Assets Library' }));
+    expect(screen.getByRole('dialog', { name: 'Assets Library' })).toBeInTheDocument();
+    expect(screen.getByText('Tileset')).toBeInTheDocument();
+    expect(screen.getByText('Bundle · Starter Pack')).toBeInTheDocument();
+    expect(screen.getByText('sci-fi')).toBeInTheDocument();
     await userEvent.click(screen.getByRole('button', { name: 'Import' }));
     expect(onImportLibrary).toHaveBeenCalledWith(values.library[0]);
     expect(values.library[0].definition.terrains[0].collision).toEqual({ kind: 'edges', edges: ['west'] });
+  });
+
+  it('switches to Bundles and imports every remaining asset in a bundle', async () => {
+    const onImportLibraryBundle = vi.fn();
+    const values = props({ onImportLibraryBundle });
+    render(<AssetManagerDialog {...values} />);
+    await userEvent.click(screen.getByRole('button', { name: 'Open Assets Library' }));
+    expect(screen.getByRole('tab', { name: 'Tilesets' })).toHaveAttribute('aria-selected', 'true');
+    await userEvent.click(screen.getByRole('tab', { name: 'Bundles' }));
+    expect(screen.getByRole('tabpanel', { name: 'Bundles' })).toBeInTheDocument();
+    expect(screen.getByText('Starter Pack')).toBeInTheDocument();
+    await userEvent.click(screen.getByRole('button', { name: 'Import bundle (1)' }));
+    expect(onImportLibraryBundle).toHaveBeenCalledWith(values.bundles[0]);
+  });
+
+  it('searches assets by tag, type, and parent bundle', async () => {
+    const values = props();
+    render(<AssetManagerDialog {...values} />);
+    await userEvent.click(screen.getByRole('button', { name: 'Open Assets Library' }));
+    const search = screen.getByRole('searchbox', { name: 'Search assets' });
+    await userEvent.type(search, 'sci-fi');
+    expect(screen.getByText('Library Decor')).toBeInTheDocument();
+    await userEvent.clear(search);
+    await userEvent.type(search, 'missing-tag');
+    expect(screen.getByText('No assets match “missing-tag”.')).toBeInTheDocument();
+  });
+
+  it('lists and imports character sprites from the library', async () => {
+    const sprite: LibrarySprite = {
+      kind: 'sprite', id: 'actor-1', name: 'Actor 1', blob: new Blob(['png'], { type: 'image/png' }), imagePath: 'sprites/rpg-maker-mz/Actor1.png', url: 'actor.png', assetType: 'character-sprite', bundleId: 'rpg-maker-mz', bundleName: 'RPG Maker MZ', tags: ['fantasy'],
+      layout: { characterCount: 8, frameWidth: 48, frameHeight: 48, objectAligned: false },
+    };
+    const onImportSprite = vi.fn();
+    render(<AssetManagerDialog {...props({ sprites: [sprite], onImportSprite })} />);
+    await userEvent.click(screen.getByRole('button', { name: 'Open Assets Library' }));
+    await userEvent.click(screen.getByRole('tab', { name: 'Sprites' }));
+    expect(screen.getByText('Actor 1')).toBeInTheDocument();
+    expect(screen.getByText('8 characters · 48×48px frames')).toBeInTheDocument();
+    await userEvent.click(within(screen.getByRole('tabpanel', { name: 'Sprites' })).getByRole('button', { name: 'Import' }));
+    expect(onImportSprite).toHaveBeenCalledWith(sprite);
   });
 
   it('opens import and metadata forms in separate dialogs', async () => {

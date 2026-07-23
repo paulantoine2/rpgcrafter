@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import type { GridTilesetDefinition } from '@rpgcrafter/game-schema';
-import { defaultTerrainSelection, gridTerrainSelection, paletteTerrains, terrainSelectionExists } from '../src/lib/tile-palette';
+import { defaultTerrainSelection, gridTerrainSelection, paletteTerrains, terrainSelectionAt, terrainSelectionExists } from '../src/lib/tile-palette';
 
 function gridTileset(columns: number, rows: number): GridTilesetDefinition {
   return {
@@ -52,5 +52,16 @@ describe('tile palette layout', () => {
     expect(selection).toEqual({ tilesetId: 'decor', terrainId: 'tile-0-0' });
     expect(terrainSelectionExists({ decor: tileset }, selection)).toBe(true);
     expect(terrainSelectionExists({ decor: tileset }, { tilesetId: 'decor', terrainId: 'missing' })).toBe(false);
+  });
+
+  it('picks a terrain only from the active layer', () => {
+    const layers = [
+      { id: 'ground', name: 'Ground', planeId: 'p', renderPhase: 'belowActors' as const, tiles: [{ x: 2, y: 3, tilesetId: 'ground', terrainId: 'grass' }] },
+      { id: 'details', name: 'Details', planeId: 'p', renderPhase: 'aboveActors' as const, tiles: [{ x: 2, y: 3, tilesetId: 'decor', terrainId: 'flowers' }] },
+    ];
+
+    expect(terrainSelectionAt(layers, 'ground', { x: 2, y: 3 })).toEqual({ tilesetId: 'ground', terrainId: 'grass' });
+    expect(terrainSelectionAt(layers, 'details', { x: 2, y: 3 })).toEqual({ tilesetId: 'decor', terrainId: 'flowers' });
+    expect(terrainSelectionAt(layers, 'details', { x: 4, y: 3 })).toBeNull();
   });
 });

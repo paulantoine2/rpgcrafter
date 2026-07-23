@@ -1,0 +1,1579 @@
+{
+  "id": "rpg-maker-mz-outside-a4",
+  "name": "Outside A4",
+  "category": "RPG Maker MZ / Outside",
+  "kind": "a4",
+  "image": "tilesets/rpg-maker-mz/Outside_A4.png",
+  "tileSize": 48,
+  "columns": 16,
+  "rows": 15,
+  "terrains": [
+    {
+      "id": "wall-a-stone",
+      "name": "Wall A (Stone)",
+      "origin": {
+        "column": 0,
+        "row": 0
+      },
+      "collision": {
+        "kind": "none"
+      },
+      "previewMask": 0,
+      "autotile": "floor"
+    },
+    {
+      "id": "wall-b-stone",
+      "name": "Wall B (Stone)",
+      "origin": {
+        "column": 2,
+        "row": 0
+      },
+      "collision": {
+        "kind": "none"
+      },
+      "previewMask": 0,
+      "autotile": "floor"
+    },
+    {
+      "id": "wall-c-stone",
+      "name": "Wall C (Stone)",
+      "origin": {
+        "column": 4,
+        "row": 0
+      },
+      "collision": {
+        "kind": "none"
+      },
+      "previewMask": 0,
+      "autotile": "floor"
+    },
+    {
+      "id": "building-a-castle",
+      "name": "Building A (Castle)",
+      "origin": {
+        "column": 6,
+        "row": 0
+      },
+      "collision": {
+        "kind": "none"
+      },
+      "previewMask": 0,
+      "autotile": "floor"
+    },
+    {
+      "id": "building-b-castle-snow",
+      "name": "Building B (Castle, Snow)",
+      "origin": {
+        "column": 8,
+        "row": 0
+      },
+      "collision": {
+        "kind": "none"
+      },
+      "previewMask": 0,
+      "autotile": "floor"
+    },
+    {
+      "id": "building-c-fort",
+      "name": "Building C (Fort)",
+      "origin": {
+        "column": 10,
+        "row": 0
+      },
+      "collision": {
+        "kind": "none"
+      },
+      "previewMask": 0,
+      "autotile": "floor"
+    },
+    {
+      "id": "building-d-fort-snow",
+      "name": "Building D (Fort, Snow)",
+      "origin": {
+        "column": 12,
+        "row": 0
+      },
+      "collision": {
+        "kind": "none"
+      },
+      "previewMask": 0,
+      "autotile": "floor"
+    },
+    {
+      "id": "demon-castle",
+      "name": "Demon Castle",
+      "origin": {
+        "column": 14,
+        "row": 0
+      },
+      "collision": {
+        "kind": "none"
+      },
+      "previewMask": 0,
+      "autotile": "floor"
+    },
+    {
+      "id": "wall-a-stone-2",
+      "name": "Wall A (Stone)",
+      "origin": {
+        "column": 0,
+        "row": 3
+      },
+      "collision": {
+        "kind": "none"
+      },
+      "previewMask": 0,
+      "autotile": "wall"
+    },
+    {
+      "id": "wall-b-stone-2",
+      "name": "Wall B (Stone)",
+      "origin": {
+        "column": 2,
+        "row": 3
+      },
+      "collision": {
+        "kind": "none"
+      },
+      "previewMask": 0,
+      "autotile": "wall"
+    },
+    {
+      "id": "wall-c-stone-2",
+      "name": "Wall C (Stone)",
+      "origin": {
+        "column": 4,
+        "row": 3
+      },
+      "collision": {
+        "kind": "none"
+      },
+      "previewMask": 0,
+      "autotile": "wall"
+    },
+    {
+      "id": "building-a-castle-2",
+      "name": "Building A (Castle)",
+      "origin": {
+        "column": 6,
+        "row": 3
+      },
+      "collision": {
+        "kind": "none"
+      },
+      "previewMask": 0,
+      "autotile": "wall"
+    },
+    {
+      "id": "building-b-castle-snow-2",
+      "name": "Building B (Castle, Snow)",
+      "origin": {
+        "column": 8,
+        "row": 3
+      },
+      "collision": {
+        "kind": "none"
+      },
+      "previewMask": 0,
+      "autotile": "wall"
+    },
+    {
+      "id": "building-c-fort-2",
+      "name": "Building C (Fort)",
+      "origin": {
+        "column": 10,
+        "row": 3
+      },
+      "collision": {
+        "kind": "none"
+      },
+      "previewMask": 0,
+      "autotile": "wall"
+    },
+    {
+      "id": "building-d-fort-snow-2",
+      "name": "Building D (Fort, Snow)",
+      "origin": {
+        "column": 12,
+        "row": 3
+      },
+      "collision": {
+        "kind": "none"
+      },
+      "previewMask": 0,
+      "autotile": "wall"
+    },
+    {
+      "id": "demon-castle-2",
+      "name": "Demon Castle",
+      "origin": {
+        "column": 14,
+        "row": 3
+      },
+      "collision": {
+        "kind": "none"
+      },
+      "previewMask": 0,
+      "autotile": "wall"
+    },
+    {
+      "id": "wall-c-brick",
+      "name": "Wall C (Brick)",
+      "origin": {
+        "column": 0,
+        "row": 5
+      },
+      "collision": {
+        "kind": "none"
+      },
+      "previewMask": 0,
+      "autotile": "floor"
+    },
+    {
+      "id": "wall-d-stone",
+      "name": "Wall D (Stone)",
+      "origin": {
+        "column": 2,
+        "row": 5
+      },
+      "collision": {
+        "kind": "none"
+      },
+      "previewMask": 0,
+      "autotile": "floor"
+    },
+    {
+      "id": "wall-e-marble",
+      "name": "Wall E (Marble)",
+      "origin": {
+        "column": 4,
+        "row": 5
+      },
+      "collision": {
+        "kind": "none"
+      },
+      "previewMask": 0,
+      "autotile": "floor"
+    },
+    {
+      "id": "wall-f-marble",
+      "name": "Wall F (Marble)",
+      "origin": {
+        "column": 6,
+        "row": 5
+      },
+      "collision": {
+        "kind": "none"
+      },
+      "previewMask": 0,
+      "autotile": "floor"
+    },
+    {
+      "id": "building-e-dirt-wall",
+      "name": "Building E (Dirt Wall)",
+      "origin": {
+        "column": 8,
+        "row": 5
+      },
+      "collision": {
+        "kind": "none"
+      },
+      "previewMask": 0,
+      "autotile": "floor"
+    },
+    {
+      "id": "building-f-desert",
+      "name": "Building F (Desert)",
+      "origin": {
+        "column": 10,
+        "row": 5
+      },
+      "collision": {
+        "kind": "none"
+      },
+      "previewMask": 0,
+      "autotile": "floor"
+    },
+    {
+      "id": "wall-g-gold",
+      "name": "Wall G (Gold)",
+      "origin": {
+        "column": 12,
+        "row": 5
+      },
+      "collision": {
+        "kind": "none"
+      },
+      "previewMask": 0,
+      "autotile": "floor"
+    },
+    {
+      "id": "building-g-mecha",
+      "name": "Building G (Mecha)",
+      "origin": {
+        "column": 14,
+        "row": 5
+      },
+      "collision": {
+        "kind": "none"
+      },
+      "previewMask": 0,
+      "autotile": "floor"
+    },
+    {
+      "id": "wall-c-brick-2",
+      "name": "Wall C (Brick)",
+      "origin": {
+        "column": 0,
+        "row": 8
+      },
+      "collision": {
+        "kind": "none"
+      },
+      "previewMask": 0,
+      "autotile": "wall"
+    },
+    {
+      "id": "wall-d-stone-2",
+      "name": "Wall D (Stone)",
+      "origin": {
+        "column": 2,
+        "row": 8
+      },
+      "collision": {
+        "kind": "none"
+      },
+      "previewMask": 0,
+      "autotile": "wall"
+    },
+    {
+      "id": "wall-e-marble-2",
+      "name": "Wall E (Marble)",
+      "origin": {
+        "column": 4,
+        "row": 8
+      },
+      "collision": {
+        "kind": "none"
+      },
+      "previewMask": 0,
+      "autotile": "wall"
+    },
+    {
+      "id": "wall-f-marble-2",
+      "name": "Wall F (Marble)",
+      "origin": {
+        "column": 6,
+        "row": 8
+      },
+      "collision": {
+        "kind": "none"
+      },
+      "previewMask": 0,
+      "autotile": "wall"
+    },
+    {
+      "id": "building-e-dirt-wall-2",
+      "name": "Building E (Dirt Wall)",
+      "origin": {
+        "column": 8,
+        "row": 8
+      },
+      "collision": {
+        "kind": "none"
+      },
+      "previewMask": 0,
+      "autotile": "wall"
+    },
+    {
+      "id": "building-f-desert-2",
+      "name": "Building F (Desert)",
+      "origin": {
+        "column": 10,
+        "row": 8
+      },
+      "collision": {
+        "kind": "none"
+      },
+      "previewMask": 0,
+      "autotile": "wall"
+    },
+    {
+      "id": "wall-g-gold-2",
+      "name": "Wall G (Gold)",
+      "origin": {
+        "column": 12,
+        "row": 8
+      },
+      "collision": {
+        "kind": "none"
+      },
+      "previewMask": 0,
+      "autotile": "wall"
+    },
+    {
+      "id": "building-g-mecha-2",
+      "name": "Building G (Mecha)",
+      "origin": {
+        "column": 14,
+        "row": 8
+      },
+      "collision": {
+        "kind": "none"
+      },
+      "previewMask": 0,
+      "autotile": "wall"
+    },
+    {
+      "id": "wall-h-moss",
+      "name": "Wall H (Moss)",
+      "origin": {
+        "column": 0,
+        "row": 10
+      },
+      "collision": {
+        "kind": "none"
+      },
+      "previewMask": 0,
+      "autotile": "floor"
+    },
+    {
+      "id": "wall-i-hedge",
+      "name": "Wall I (Hedge)",
+      "origin": {
+        "column": 2,
+        "row": 10
+      },
+      "collision": {
+        "kind": "blockCell"
+      },
+      "previewMask": 0,
+      "autotile": "floor"
+    },
+    {
+      "id": "forest-a",
+      "name": "Forest A",
+      "origin": {
+        "column": 4,
+        "row": 10
+      },
+      "collision": {
+        "kind": "none"
+      },
+      "previewMask": 0,
+      "autotile": "floor"
+    },
+    {
+      "id": "forest-b-snow",
+      "name": "Forest B (Snow)",
+      "origin": {
+        "column": 6,
+        "row": 10
+      },
+      "collision": {
+        "kind": "none"
+      },
+      "previewMask": 0,
+      "autotile": "floor"
+    },
+    {
+      "id": "ledge-a-meadow",
+      "name": "Ledge A (Meadow)",
+      "origin": {
+        "column": 8,
+        "row": 10
+      },
+      "collision": {
+        "kind": "none"
+      },
+      "previewMask": 0,
+      "autotile": "floor"
+    },
+    {
+      "id": "ledge-b-dirt",
+      "name": "Ledge B (Dirt)",
+      "origin": {
+        "column": 10,
+        "row": 10
+      },
+      "collision": {
+        "kind": "none"
+      },
+      "previewMask": 0,
+      "autotile": "floor"
+    },
+    {
+      "id": "ledge-c-desert",
+      "name": "Ledge C (Desert)",
+      "origin": {
+        "column": 12,
+        "row": 10
+      },
+      "collision": {
+        "kind": "none"
+      },
+      "previewMask": 0,
+      "autotile": "floor"
+    },
+    {
+      "id": "ledge-d-snow",
+      "name": "Ledge D (Snow)",
+      "origin": {
+        "column": 14,
+        "row": 10
+      },
+      "collision": {
+        "kind": "none"
+      },
+      "previewMask": 0,
+      "autotile": "floor"
+    },
+    {
+      "id": "wall-h-moss-2",
+      "name": "Wall H (Moss)",
+      "origin": {
+        "column": 0,
+        "row": 13
+      },
+      "collision": {
+        "kind": "none"
+      },
+      "previewMask": 0,
+      "autotile": "wall"
+    },
+    {
+      "id": "wall-i-hedge-2",
+      "name": "Wall I (Hedge)",
+      "origin": {
+        "column": 2,
+        "row": 13
+      },
+      "collision": {
+        "kind": "blockCell"
+      },
+      "previewMask": 0,
+      "autotile": "wall"
+    },
+    {
+      "id": "forest-a-2",
+      "name": "Forest A",
+      "origin": {
+        "column": 4,
+        "row": 13
+      },
+      "collision": {
+        "kind": "none"
+      },
+      "previewMask": 0,
+      "autotile": "wall"
+    },
+    {
+      "id": "forest-b-snow-2",
+      "name": "Forest B (Snow)",
+      "origin": {
+        "column": 6,
+        "row": 13
+      },
+      "collision": {
+        "kind": "none"
+      },
+      "previewMask": 0,
+      "autotile": "wall"
+    },
+    {
+      "id": "ledge-a-meadow-2",
+      "name": "Ledge A (Meadow)",
+      "origin": {
+        "column": 8,
+        "row": 13
+      },
+      "collision": {
+        "kind": "none"
+      },
+      "previewMask": 0,
+      "autotile": "wall"
+    },
+    {
+      "id": "ledge-b-dirt-2",
+      "name": "Ledge B (Dirt)",
+      "origin": {
+        "column": 10,
+        "row": 13
+      },
+      "collision": {
+        "kind": "none"
+      },
+      "previewMask": 0,
+      "autotile": "wall"
+    },
+    {
+      "id": "ledge-c-desert-2",
+      "name": "Ledge C (Desert)",
+      "origin": {
+        "column": 12,
+        "row": 13
+      },
+      "collision": {
+        "kind": "none"
+      },
+      "previewMask": 0,
+      "autotile": "wall"
+    },
+    {
+      "id": "ledge-d-snow-2",
+      "name": "Ledge D (Snow)",
+      "origin": {
+        "column": 14,
+        "row": 13
+      },
+      "collision": {
+        "kind": "none"
+      },
+      "previewMask": 0,
+      "autotile": "wall"
+    }
+  ],
+  "quarterSize": 24,
+  "variants": {
+    "0": {
+      "quarters": [
+        [
+          0,
+          0
+        ],
+        [
+          1,
+          0
+        ],
+        [
+          0,
+          1
+        ],
+        [
+          1,
+          1
+        ]
+      ]
+    },
+    "1": {
+      "quarters": [
+        [
+          0,
+          4
+        ],
+        [
+          3,
+          4
+        ],
+        [
+          0,
+          1
+        ],
+        [
+          1,
+          1
+        ]
+      ]
+    },
+    "2": {
+      "quarters": [
+        [
+          0,
+          0
+        ],
+        [
+          1,
+          2
+        ],
+        [
+          0,
+          1
+        ],
+        [
+          1,
+          5
+        ]
+      ]
+    },
+    "3": {
+      "quarters": [
+        [
+          0,
+          4
+        ],
+        [
+          3,
+          0
+        ],
+        [
+          0,
+          1
+        ],
+        [
+          1,
+          5
+        ]
+      ]
+    },
+    "4": {
+      "quarters": [
+        [
+          0,
+          0
+        ],
+        [
+          1,
+          0
+        ],
+        [
+          0,
+          3
+        ],
+        [
+          3,
+          3
+        ]
+      ]
+    },
+    "5": {
+      "quarters": [
+        [
+          0,
+          4
+        ],
+        [
+          3,
+          4
+        ],
+        [
+          0,
+          3
+        ],
+        [
+          3,
+          3
+        ]
+      ]
+    },
+    "6": {
+      "quarters": [
+        [
+          0,
+          0
+        ],
+        [
+          1,
+          2
+        ],
+        [
+          0,
+          3
+        ],
+        [
+          3,
+          1
+        ]
+      ]
+    },
+    "7": {
+      "quarters": [
+        [
+          0,
+          4
+        ],
+        [
+          3,
+          0
+        ],
+        [
+          0,
+          3
+        ],
+        [
+          3,
+          1
+        ]
+      ]
+    },
+    "8": {
+      "quarters": [
+        [
+          2,
+          2
+        ],
+        [
+          1,
+          0
+        ],
+        [
+          2,
+          5
+        ],
+        [
+          1,
+          1
+        ]
+      ]
+    },
+    "9": {
+      "quarters": [
+        [
+          2,
+          0
+        ],
+        [
+          3,
+          4
+        ],
+        [
+          2,
+          5
+        ],
+        [
+          1,
+          1
+        ]
+      ]
+    },
+    "10": {
+      "quarters": [
+        [
+          2,
+          2
+        ],
+        [
+          1,
+          2
+        ],
+        [
+          2,
+          5
+        ],
+        [
+          1,
+          5
+        ]
+      ]
+    },
+    "11": {
+      "quarters": [
+        [
+          2,
+          0
+        ],
+        [
+          3,
+          0
+        ],
+        [
+          2,
+          5
+        ],
+        [
+          1,
+          5
+        ]
+      ]
+    },
+    "12": {
+      "quarters": [
+        [
+          2,
+          2
+        ],
+        [
+          1,
+          0
+        ],
+        [
+          2,
+          1
+        ],
+        [
+          3,
+          3
+        ]
+      ]
+    },
+    "13": {
+      "quarters": [
+        [
+          2,
+          0
+        ],
+        [
+          3,
+          4
+        ],
+        [
+          2,
+          1
+        ],
+        [
+          3,
+          3
+        ]
+      ]
+    },
+    "14": {
+      "quarters": [
+        [
+          2,
+          2
+        ],
+        [
+          1,
+          2
+        ],
+        [
+          2,
+          1
+        ],
+        [
+          3,
+          1
+        ]
+      ]
+    },
+    "15": {
+      "quarters": [
+        [
+          2,
+          0
+        ],
+        [
+          3,
+          0
+        ],
+        [
+          2,
+          1
+        ],
+        [
+          3,
+          1
+        ]
+      ]
+    },
+    "19": {
+      "quarters": [
+        [
+          0,
+          4
+        ],
+        [
+          1,
+          4
+        ],
+        [
+          0,
+          1
+        ],
+        [
+          1,
+          5
+        ]
+      ]
+    },
+    "23": {
+      "quarters": [
+        [
+          0,
+          4
+        ],
+        [
+          1,
+          4
+        ],
+        [
+          0,
+          3
+        ],
+        [
+          3,
+          1
+        ]
+      ]
+    },
+    "27": {
+      "quarters": [
+        [
+          2,
+          0
+        ],
+        [
+          1,
+          4
+        ],
+        [
+          2,
+          5
+        ],
+        [
+          1,
+          5
+        ]
+      ]
+    },
+    "31": {
+      "quarters": [
+        [
+          2,
+          0
+        ],
+        [
+          1,
+          4
+        ],
+        [
+          2,
+          1
+        ],
+        [
+          3,
+          1
+        ]
+      ]
+    },
+    "38": {
+      "quarters": [
+        [
+          0,
+          0
+        ],
+        [
+          1,
+          2
+        ],
+        [
+          0,
+          3
+        ],
+        [
+          1,
+          3
+        ]
+      ]
+    },
+    "39": {
+      "quarters": [
+        [
+          0,
+          4
+        ],
+        [
+          3,
+          0
+        ],
+        [
+          0,
+          3
+        ],
+        [
+          1,
+          3
+        ]
+      ]
+    },
+    "46": {
+      "quarters": [
+        [
+          2,
+          2
+        ],
+        [
+          1,
+          2
+        ],
+        [
+          2,
+          1
+        ],
+        [
+          1,
+          3
+        ]
+      ]
+    },
+    "47": {
+      "quarters": [
+        [
+          2,
+          0
+        ],
+        [
+          3,
+          0
+        ],
+        [
+          2,
+          1
+        ],
+        [
+          1,
+          3
+        ]
+      ]
+    },
+    "55": {
+      "quarters": [
+        [
+          0,
+          4
+        ],
+        [
+          1,
+          4
+        ],
+        [
+          0,
+          3
+        ],
+        [
+          1,
+          3
+        ]
+      ]
+    },
+    "63": {
+      "quarters": [
+        [
+          2,
+          0
+        ],
+        [
+          1,
+          4
+        ],
+        [
+          2,
+          1
+        ],
+        [
+          1,
+          3
+        ]
+      ]
+    },
+    "76": {
+      "quarters": [
+        [
+          2,
+          2
+        ],
+        [
+          1,
+          0
+        ],
+        [
+          2,
+          3
+        ],
+        [
+          3,
+          3
+        ]
+      ]
+    },
+    "77": {
+      "quarters": [
+        [
+          2,
+          0
+        ],
+        [
+          3,
+          4
+        ],
+        [
+          2,
+          3
+        ],
+        [
+          3,
+          3
+        ]
+      ]
+    },
+    "78": {
+      "quarters": [
+        [
+          2,
+          2
+        ],
+        [
+          1,
+          2
+        ],
+        [
+          2,
+          3
+        ],
+        [
+          3,
+          1
+        ]
+      ]
+    },
+    "79": {
+      "quarters": [
+        [
+          2,
+          0
+        ],
+        [
+          3,
+          0
+        ],
+        [
+          2,
+          3
+        ],
+        [
+          3,
+          1
+        ]
+      ]
+    },
+    "95": {
+      "quarters": [
+        [
+          2,
+          0
+        ],
+        [
+          1,
+          4
+        ],
+        [
+          2,
+          3
+        ],
+        [
+          3,
+          1
+        ]
+      ]
+    },
+    "110": {
+      "quarters": [
+        [
+          2,
+          2
+        ],
+        [
+          1,
+          2
+        ],
+        [
+          2,
+          3
+        ],
+        [
+          1,
+          3
+        ]
+      ]
+    },
+    "111": {
+      "quarters": [
+        [
+          2,
+          0
+        ],
+        [
+          3,
+          0
+        ],
+        [
+          2,
+          3
+        ],
+        [
+          1,
+          3
+        ]
+      ]
+    },
+    "127": {
+      "quarters": [
+        [
+          2,
+          0
+        ],
+        [
+          1,
+          4
+        ],
+        [
+          2,
+          3
+        ],
+        [
+          1,
+          3
+        ]
+      ]
+    },
+    "137": {
+      "quarters": [
+        [
+          2,
+          4
+        ],
+        [
+          3,
+          4
+        ],
+        [
+          2,
+          5
+        ],
+        [
+          1,
+          1
+        ]
+      ]
+    },
+    "139": {
+      "quarters": [
+        [
+          2,
+          4
+        ],
+        [
+          3,
+          0
+        ],
+        [
+          2,
+          5
+        ],
+        [
+          1,
+          5
+        ]
+      ]
+    },
+    "141": {
+      "quarters": [
+        [
+          2,
+          4
+        ],
+        [
+          3,
+          4
+        ],
+        [
+          2,
+          1
+        ],
+        [
+          3,
+          3
+        ]
+      ]
+    },
+    "143": {
+      "quarters": [
+        [
+          2,
+          4
+        ],
+        [
+          3,
+          0
+        ],
+        [
+          2,
+          1
+        ],
+        [
+          3,
+          1
+        ]
+      ]
+    },
+    "155": {
+      "quarters": [
+        [
+          2,
+          4
+        ],
+        [
+          1,
+          4
+        ],
+        [
+          2,
+          5
+        ],
+        [
+          1,
+          5
+        ]
+      ]
+    },
+    "159": {
+      "quarters": [
+        [
+          2,
+          4
+        ],
+        [
+          1,
+          4
+        ],
+        [
+          2,
+          1
+        ],
+        [
+          3,
+          1
+        ]
+      ]
+    },
+    "175": {
+      "quarters": [
+        [
+          2,
+          4
+        ],
+        [
+          3,
+          0
+        ],
+        [
+          2,
+          1
+        ],
+        [
+          1,
+          3
+        ]
+      ]
+    },
+    "191": {
+      "quarters": [
+        [
+          2,
+          4
+        ],
+        [
+          1,
+          4
+        ],
+        [
+          2,
+          1
+        ],
+        [
+          1,
+          3
+        ]
+      ]
+    },
+    "205": {
+      "quarters": [
+        [
+          2,
+          4
+        ],
+        [
+          3,
+          4
+        ],
+        [
+          2,
+          3
+        ],
+        [
+          3,
+          3
+        ]
+      ]
+    },
+    "207": {
+      "quarters": [
+        [
+          2,
+          4
+        ],
+        [
+          3,
+          0
+        ],
+        [
+          2,
+          3
+        ],
+        [
+          3,
+          1
+        ]
+      ]
+    },
+    "223": {
+      "quarters": [
+        [
+          2,
+          4
+        ],
+        [
+          1,
+          4
+        ],
+        [
+          2,
+          3
+        ],
+        [
+          3,
+          1
+        ]
+      ]
+    },
+    "239": {
+      "quarters": [
+        [
+          2,
+          4
+        ],
+        [
+          3,
+          0
+        ],
+        [
+          2,
+          3
+        ],
+        [
+          1,
+          3
+        ]
+      ]
+    },
+    "255": {
+      "quarters": [
+        [
+          2,
+          4
+        ],
+        [
+          1,
+          4
+        ],
+        [
+          2,
+          3
+        ],
+        [
+          1,
+          3
+        ]
+      ]
+    }
+  }
+}

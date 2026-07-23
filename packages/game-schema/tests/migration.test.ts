@@ -14,10 +14,16 @@ describe('V0.4 migration', () => {
     };
     const legacy = structuredClone(files) as any;
     legacy.manifest.schemaVersion = '0.4'; legacy.manifest.engineRange = '>=0.4 <0.5';
+    legacy.tilesets = { 'outside-a2': { ...legacy.tilesets['rpg-maker-mz-outside-a2'], id: 'outside-a2' } };
     for (const map of Object.values(legacy.maps) as any[]) {
       map.obstacles = map.blockedRegions.map(({ planeId: _planeId, ...region }: any) => region);
       delete map.planes; delete map.planeConnections; delete map.navigationOverrides; delete map.blockedRegions;
-      map.tileLayers.forEach((layer: any) => { delete layer.planeId; delete layer.renderPhase; });
+      map.tileLayers.forEach((layer: any) => {
+        layer.tileset = 'outside-a2';
+        layer.tiles.forEach((tile: any) => { tile.terrainId = 'meadow'; delete tile.tilesetId; });
+        delete layer.planeId;
+        delete layer.renderPhase;
+      });
       map.events.forEach((event: any) => { delete event.position.planeId; });
       map.enemySpawns.forEach((spawn: any) => { delete spawn.planeId; });
       if (map.deathDestination) delete map.deathDestination.spawn.planeId;

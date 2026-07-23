@@ -1,0 +1,2828 @@
+{
+  "id": "rpg-maker-mz-outside-c",
+  "name": "Outside C",
+  "category": "RPG Maker MZ / Outside",
+  "kind": "grid",
+  "image": "tilesets/rpg-maker-mz/Outside_C.png",
+  "tileSize": 48,
+  "columns": 16,
+  "rows": 16,
+  "terrains": [
+    {
+      "id": "obelisk",
+      "name": "Obelisk",
+      "origin": {
+        "column": 0,
+        "row": 0
+      },
+      "collision": {
+        "kind": "blockCell"
+      }
+    },
+    {
+      "id": "stone-pillar-a",
+      "name": "Stone Pillar A",
+      "origin": {
+        "column": 1,
+        "row": 0
+      },
+      "collision": {
+        "kind": "blockCell"
+      }
+    },
+    {
+      "id": "stone-pillar-b",
+      "name": "Stone Pillar B",
+      "origin": {
+        "column": 2,
+        "row": 0
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "stone-pillar-b-moss",
+      "name": "Stone Pillar B (Moss)",
+      "origin": {
+        "column": 3,
+        "row": 0
+      },
+      "collision": {
+        "kind": "blockCell"
+      }
+    },
+    {
+      "id": "stone-pillar-b-snow",
+      "name": "Stone Pillar B (Snow)",
+      "origin": {
+        "column": 4,
+        "row": 0
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "stone-pillar-c",
+      "name": "Stone Pillar C",
+      "origin": {
+        "column": 5,
+        "row": 0
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "stone-pillar-d",
+      "name": "Stone Pillar D",
+      "origin": {
+        "column": 6,
+        "row": 0
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "demon-castle-pillar",
+      "name": "Demon Castle Pillar",
+      "origin": {
+        "column": 7,
+        "row": 0
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "obelisk-2",
+      "name": "Obelisk",
+      "origin": {
+        "column": 8,
+        "row": 0
+      },
+      "collision": {
+        "kind": "blockCell"
+      }
+    },
+    {
+      "id": "stone-pillar-a-2",
+      "name": "Stone Pillar A",
+      "origin": {
+        "column": 9,
+        "row": 0
+      },
+      "collision": {
+        "kind": "blockCell"
+      }
+    },
+    {
+      "id": "stone-pillar-b-2",
+      "name": "Stone Pillar B",
+      "origin": {
+        "column": 10,
+        "row": 0
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "stone-pillar-b-moss-2",
+      "name": "Stone Pillar B (Moss)",
+      "origin": {
+        "column": 11,
+        "row": 0
+      },
+      "collision": {
+        "kind": "blockCell"
+      }
+    },
+    {
+      "id": "stone-pillar-b-snow-2",
+      "name": "Stone Pillar B (Snow)",
+      "origin": {
+        "column": 12,
+        "row": 0
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "stone-pillar-c-2",
+      "name": "Stone Pillar C",
+      "origin": {
+        "column": 13,
+        "row": 0
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "stone-pillar-d-2",
+      "name": "Stone Pillar D",
+      "origin": {
+        "column": 14,
+        "row": 0
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "demon-castle-pillar-2",
+      "name": "Demon Castle Pillar",
+      "origin": {
+        "column": 15,
+        "row": 0
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "obelisk-3",
+      "name": "Obelisk",
+      "origin": {
+        "column": 0,
+        "row": 1
+      },
+      "collision": {
+        "kind": "blockCell"
+      }
+    },
+    {
+      "id": "broken-stone-pillar-a",
+      "name": "Broken Stone Pillar A",
+      "origin": {
+        "column": 1,
+        "row": 1
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "broken-stone-pillar-b",
+      "name": "Broken Stone Pillar B",
+      "origin": {
+        "column": 2,
+        "row": 1
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "broken-stone-pillar-b-moss",
+      "name": "Broken Stone Pillar B (Moss)",
+      "origin": {
+        "column": 3,
+        "row": 1
+      },
+      "collision": {
+        "kind": "blockCell"
+      }
+    },
+    {
+      "id": "broken-stone-pillar-b-snow",
+      "name": "Broken Stone Pillar B (Snow)",
+      "origin": {
+        "column": 4,
+        "row": 1
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "broken-stone-pillar-c",
+      "name": "Broken Stone Pillar C",
+      "origin": {
+        "column": 5,
+        "row": 1
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "broken-stone-pillar-d",
+      "name": "Broken Stone Pillar D",
+      "origin": {
+        "column": 6,
+        "row": 1
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "broken-demon-castle-pillar",
+      "name": "Broken Demon Castle Pillar",
+      "origin": {
+        "column": 7,
+        "row": 1
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "bones-a",
+      "name": "Bones A",
+      "origin": {
+        "column": 8,
+        "row": 1
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "bones-b",
+      "name": "Bones B",
+      "origin": {
+        "column": 9,
+        "row": 1
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "rubble",
+      "name": "Rubble",
+      "origin": {
+        "column": 10,
+        "row": 1
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "rubble-b-moss",
+      "name": "Rubble B (Moss)",
+      "origin": {
+        "column": 11,
+        "row": 1
+      },
+      "collision": {
+        "kind": "blockCell"
+      }
+    },
+    {
+      "id": "rubble-c-snow",
+      "name": "Rubble C (Snow)",
+      "origin": {
+        "column": 12,
+        "row": 1
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "rubble-d",
+      "name": "Rubble D",
+      "origin": {
+        "column": 13,
+        "row": 1
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "rubble-e",
+      "name": "Rubble E",
+      "origin": {
+        "column": 14,
+        "row": 1
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "rubble-f-demon-castle",
+      "name": "Rubble F (Demon Castle)",
+      "origin": {
+        "column": 15,
+        "row": 1
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "monument-a",
+      "name": "Monument A",
+      "origin": {
+        "column": 0,
+        "row": 2
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "monument-b",
+      "name": "Monument B",
+      "origin": {
+        "column": 1,
+        "row": 2
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "large-monument",
+      "name": "Large Monument",
+      "origin": {
+        "column": 2,
+        "row": 2
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "large-monument-2",
+      "name": "Large Monument",
+      "origin": {
+        "column": 3,
+        "row": 2
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "large-monument-3",
+      "name": "Large Monument",
+      "origin": {
+        "column": 4,
+        "row": 2
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "large-monument-4",
+      "name": "Large Monument",
+      "origin": {
+        "column": 5,
+        "row": 2
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "large-monument-5",
+      "name": "Large Monument",
+      "origin": {
+        "column": 6,
+        "row": 2
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "large-monument-6",
+      "name": "Large Monument",
+      "origin": {
+        "column": 7,
+        "row": 2
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "monument-a-2",
+      "name": "Monument A",
+      "origin": {
+        "column": 8,
+        "row": 2
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "monument-c",
+      "name": "Monument C",
+      "origin": {
+        "column": 9,
+        "row": 2
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "large-monument-7",
+      "name": "Large Monument",
+      "origin": {
+        "column": 10,
+        "row": 2
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "large-monument-8",
+      "name": "Large Monument",
+      "origin": {
+        "column": 11,
+        "row": 2
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "large-monument-9",
+      "name": "Large Monument",
+      "origin": {
+        "column": 12,
+        "row": 2
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "large-monument-10",
+      "name": "Large Monument",
+      "origin": {
+        "column": 13,
+        "row": 2
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "large-monument-11",
+      "name": "Large Monument",
+      "origin": {
+        "column": 14,
+        "row": 2
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "large-monument-12",
+      "name": "Large Monument",
+      "origin": {
+        "column": 15,
+        "row": 2
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "monument-a-snow",
+      "name": "Monument A (Snow)",
+      "origin": {
+        "column": 0,
+        "row": 3
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "monument-b-snow",
+      "name": "Monument B (Snow)",
+      "origin": {
+        "column": 1,
+        "row": 3
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "large-monument-snow",
+      "name": "Large Monument (Snow)",
+      "origin": {
+        "column": 2,
+        "row": 3
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "large-monument-snow-2",
+      "name": "Large Monument (Snow)",
+      "origin": {
+        "column": 3,
+        "row": 3
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "large-monument-snow-3",
+      "name": "Large Monument (Snow)",
+      "origin": {
+        "column": 4,
+        "row": 3
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "large-monument-snow-4",
+      "name": "Large Monument (Snow)",
+      "origin": {
+        "column": 5,
+        "row": 3
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "large-monument-snow-5",
+      "name": "Large Monument (Snow)",
+      "origin": {
+        "column": 6,
+        "row": 3
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "large-monument-snow-6",
+      "name": "Large Monument (Snow)",
+      "origin": {
+        "column": 7,
+        "row": 3
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "monument-a-snow-2",
+      "name": "Monument A (Snow)",
+      "origin": {
+        "column": 8,
+        "row": 3
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "monument-c-snow",
+      "name": "Monument C (Snow)",
+      "origin": {
+        "column": 9,
+        "row": 3
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "large-monument-snow-7",
+      "name": "Large Monument (Snow)",
+      "origin": {
+        "column": 10,
+        "row": 3
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "large-monument-snow-8",
+      "name": "Large Monument (Snow)",
+      "origin": {
+        "column": 11,
+        "row": 3
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "large-monument-snow-9",
+      "name": "Large Monument (Snow)",
+      "origin": {
+        "column": 12,
+        "row": 3
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "large-monument-snow-10",
+      "name": "Large Monument (Snow)",
+      "origin": {
+        "column": 13,
+        "row": 3
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "large-monument-snow-11",
+      "name": "Large Monument (Snow)",
+      "origin": {
+        "column": 14,
+        "row": 3
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "large-monument-snow-12",
+      "name": "Large Monument (Snow)",
+      "origin": {
+        "column": 15,
+        "row": 3
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "statue-a",
+      "name": "Statue A",
+      "origin": {
+        "column": 0,
+        "row": 4
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "statue-b",
+      "name": "Statue B",
+      "origin": {
+        "column": 1,
+        "row": 4
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "angel-statue",
+      "name": "Angel Statue",
+      "origin": {
+        "column": 2,
+        "row": 4
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "demon-statue",
+      "name": "Demon Statue",
+      "origin": {
+        "column": 3,
+        "row": 4
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "dais",
+      "name": "Dais",
+      "origin": {
+        "column": 4,
+        "row": 4
+      },
+      "collision": {
+        "kind": "blockCell"
+      }
+    },
+    {
+      "id": "dragon-statue",
+      "name": "Dragon Statue",
+      "origin": {
+        "column": 5,
+        "row": 4
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "dragon-statue-2",
+      "name": "Dragon Statue",
+      "origin": {
+        "column": 6,
+        "row": 4
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "god-statue",
+      "name": "God Statue",
+      "origin": {
+        "column": 7,
+        "row": 4
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "statue-a-2",
+      "name": "Statue A",
+      "origin": {
+        "column": 8,
+        "row": 4
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "statue-b-2",
+      "name": "Statue B",
+      "origin": {
+        "column": 9,
+        "row": 4
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "angel-statue-2",
+      "name": "Angel Statue",
+      "origin": {
+        "column": 10,
+        "row": 4
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "demon-statue-2",
+      "name": "Demon Statue",
+      "origin": {
+        "column": 11,
+        "row": 4
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "broken-dais",
+      "name": "Broken Dais",
+      "origin": {
+        "column": 12,
+        "row": 4
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "dragon-statue-3",
+      "name": "Dragon Statue",
+      "origin": {
+        "column": 13,
+        "row": 4
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "dragon-statue-4",
+      "name": "Dragon Statue",
+      "origin": {
+        "column": 14,
+        "row": 4
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "god-statue-2",
+      "name": "God Statue",
+      "origin": {
+        "column": 15,
+        "row": 4
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "statue-a-snow",
+      "name": "Statue A (Snow)",
+      "origin": {
+        "column": 0,
+        "row": 5
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "statue-b-snow",
+      "name": "Statue B (Snow)",
+      "origin": {
+        "column": 1,
+        "row": 5
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "angel-statue-snow",
+      "name": "Angel Statue (Snow)",
+      "origin": {
+        "column": 2,
+        "row": 5
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "demon-statue-snow",
+      "name": "Demon Statue (Snow)",
+      "origin": {
+        "column": 3,
+        "row": 5
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "dais-snow",
+      "name": "Dais (Snow)",
+      "origin": {
+        "column": 4,
+        "row": 5
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "dragon-statue-snow",
+      "name": "Dragon Statue (Snow)",
+      "origin": {
+        "column": 5,
+        "row": 5
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "dragon-statue-snow-2",
+      "name": "Dragon Statue (Snow)",
+      "origin": {
+        "column": 6,
+        "row": 5
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "ice-statue",
+      "name": "Ice Statue",
+      "origin": {
+        "column": 7,
+        "row": 5
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "statue-a-snow-2",
+      "name": "Statue A (Snow)",
+      "origin": {
+        "column": 8,
+        "row": 5
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "statue-b-snow-2",
+      "name": "Statue B (Snow)",
+      "origin": {
+        "column": 9,
+        "row": 5
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "angel-statue-snow-2",
+      "name": "Angel Statue (Snow)",
+      "origin": {
+        "column": 10,
+        "row": 5
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "demon-statue-snow-2",
+      "name": "Demon Statue (Snow)",
+      "origin": {
+        "column": 11,
+        "row": 5
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "broken-dais-snow",
+      "name": "Broken Dais (Snow)",
+      "origin": {
+        "column": 12,
+        "row": 5
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "dragon-statue-snow-3",
+      "name": "Dragon Statue (Snow)",
+      "origin": {
+        "column": 13,
+        "row": 5
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "dragon-statue-snow-4",
+      "name": "Dragon Statue (Snow)",
+      "origin": {
+        "column": 14,
+        "row": 5
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "ice-statue-2",
+      "name": "Ice Statue",
+      "origin": {
+        "column": 15,
+        "row": 5
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "tapestry-a",
+      "name": "Tapestry A",
+      "origin": {
+        "column": 0,
+        "row": 6
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "tapestry-a-ruins",
+      "name": "Tapestry A (Ruins)",
+      "origin": {
+        "column": 1,
+        "row": 6
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "tapestry-b",
+      "name": "Tapestry B",
+      "origin": {
+        "column": 2,
+        "row": 6
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "tapestry-b-ruins",
+      "name": "Tapestry B (Ruins)",
+      "origin": {
+        "column": 3,
+        "row": 6
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "tapestry-c",
+      "name": "Tapestry C",
+      "origin": {
+        "column": 4,
+        "row": 6
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "tapestry-c-ruins",
+      "name": "Tapestry C (Ruins)",
+      "origin": {
+        "column": 5,
+        "row": 6
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "tapestry-d",
+      "name": "Tapestry D",
+      "origin": {
+        "column": 6,
+        "row": 6
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "tapestry-d-ruins",
+      "name": "Tapestry D (Ruins)",
+      "origin": {
+        "column": 7,
+        "row": 6
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "tapestry-a-2",
+      "name": "Tapestry A",
+      "origin": {
+        "column": 8,
+        "row": 6
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "tapestry-a-ruins-2",
+      "name": "Tapestry A (Ruins)",
+      "origin": {
+        "column": 9,
+        "row": 6
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "tapestry-b-2",
+      "name": "Tapestry B",
+      "origin": {
+        "column": 10,
+        "row": 6
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "tapestry-b-ruins-2",
+      "name": "Tapestry B (Ruins)",
+      "origin": {
+        "column": 11,
+        "row": 6
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "tapestry-c-2",
+      "name": "Tapestry C",
+      "origin": {
+        "column": 12,
+        "row": 6
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "tapestry-c-ruins-2",
+      "name": "Tapestry C (Ruins)",
+      "origin": {
+        "column": 13,
+        "row": 6
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "tapestry-d-2",
+      "name": "Tapestry D",
+      "origin": {
+        "column": 14,
+        "row": 6
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "tapestry-d-ruins-2",
+      "name": "Tapestry D (Ruins)",
+      "origin": {
+        "column": 15,
+        "row": 6
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "window-a-demon-castle",
+      "name": "Window A (Demon Castle)",
+      "origin": {
+        "column": 0,
+        "row": 7
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "window-b-demon-castle",
+      "name": "Window B (Demon Castle)",
+      "origin": {
+        "column": 1,
+        "row": 7
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "window-c-demon-castle",
+      "name": "Window C (Demon Castle)",
+      "origin": {
+        "column": 2,
+        "row": 7
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "antenna",
+      "name": "Antenna",
+      "origin": {
+        "column": 3,
+        "row": 7
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "chimney",
+      "name": "Chimney",
+      "origin": {
+        "column": 4,
+        "row": 7
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "chimney-2",
+      "name": "Chimney",
+      "origin": {
+        "column": 5,
+        "row": 7
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "cave-entrance",
+      "name": "Cave Entrance",
+      "origin": {
+        "column": 6,
+        "row": 7
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "mine-entrance",
+      "name": "Mine Entrance",
+      "origin": {
+        "column": 7,
+        "row": 7
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "window-a-demon-castle-2",
+      "name": "Window A (Demon Castle)",
+      "origin": {
+        "column": 8,
+        "row": 7
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "window-b-demon-castle-2",
+      "name": "Window B (Demon Castle)",
+      "origin": {
+        "column": 9,
+        "row": 7
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "window-d-demon-castle",
+      "name": "Window D (Demon Castle)",
+      "origin": {
+        "column": 10,
+        "row": 7
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "antenna-2",
+      "name": "Antenna",
+      "origin": {
+        "column": 11,
+        "row": 7
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "chimney-3",
+      "name": "Chimney",
+      "origin": {
+        "column": 12,
+        "row": 7
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "chimney-4",
+      "name": "Chimney",
+      "origin": {
+        "column": 13,
+        "row": 7
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "cave-entrance-2",
+      "name": "Cave Entrance",
+      "origin": {
+        "column": 14,
+        "row": 7
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "mine-entrance-2",
+      "name": "Mine Entrance",
+      "origin": {
+        "column": 15,
+        "row": 7
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "roof-a-green-tile",
+      "name": "Roof A (Green Tile)",
+      "origin": {
+        "column": 0,
+        "row": 8
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "roof-a-green-tile-2",
+      "name": "Roof A (Green Tile)",
+      "origin": {
+        "column": 1,
+        "row": 8
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "roof-a-green-tile-3",
+      "name": "Roof A (Green Tile)",
+      "origin": {
+        "column": 2,
+        "row": 8
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "roof-a-green-tile-4",
+      "name": "Roof A (Green Tile)",
+      "origin": {
+        "column": 3,
+        "row": 8
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "roof-a-green-tile-5",
+      "name": "Roof A (Green Tile)",
+      "origin": {
+        "column": 4,
+        "row": 8
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "roof-b-snow",
+      "name": "Roof B (Snow)",
+      "origin": {
+        "column": 5,
+        "row": 8
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "roof-b-snow-2",
+      "name": "Roof B (Snow)",
+      "origin": {
+        "column": 6,
+        "row": 8
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "roof-b-snow-3",
+      "name": "Roof B (Snow)",
+      "origin": {
+        "column": 7,
+        "row": 8
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "roof-a-green-tile-6",
+      "name": "Roof A (Green Tile)",
+      "origin": {
+        "column": 8,
+        "row": 8
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "roof-a-green-tile-7",
+      "name": "Roof A (Green Tile)",
+      "origin": {
+        "column": 9,
+        "row": 8
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "roof-a-green-tile-8",
+      "name": "Roof A (Green Tile)",
+      "origin": {
+        "column": 10,
+        "row": 8
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "roof-a-green-tile-9",
+      "name": "Roof A (Green Tile)",
+      "origin": {
+        "column": 11,
+        "row": 8
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "roof-a-green-tile-10",
+      "name": "Roof A (Green Tile)",
+      "origin": {
+        "column": 12,
+        "row": 8
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "roof-b-snow-4",
+      "name": "Roof B (Snow)",
+      "origin": {
+        "column": 13,
+        "row": 8
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "roof-b-snow-5",
+      "name": "Roof B (Snow)",
+      "origin": {
+        "column": 14,
+        "row": 8
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "roof-b-snow-6",
+      "name": "Roof B (Snow)",
+      "origin": {
+        "column": 15,
+        "row": 8
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "roof-a-green-tile-11",
+      "name": "Roof A (Green Tile)",
+      "origin": {
+        "column": 0,
+        "row": 9
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "roof-a-green-tile-12",
+      "name": "Roof A (Green Tile)",
+      "origin": {
+        "column": 1,
+        "row": 9
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "roof-a-green-tile-13",
+      "name": "Roof A (Green Tile)",
+      "origin": {
+        "column": 2,
+        "row": 9
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "roof-b-snow-7",
+      "name": "Roof B (Snow)",
+      "origin": {
+        "column": 3,
+        "row": 9
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "roof-b-snow-8",
+      "name": "Roof B (Snow)",
+      "origin": {
+        "column": 4,
+        "row": 9
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "roof-b-snow-9",
+      "name": "Roof B (Snow)",
+      "origin": {
+        "column": 5,
+        "row": 9
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "roof-b-snow-10",
+      "name": "Roof B (Snow)",
+      "origin": {
+        "column": 6,
+        "row": 9
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "roof-b-snow-11",
+      "name": "Roof B (Snow)",
+      "origin": {
+        "column": 7,
+        "row": 9
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "roof-c-yellow-tile",
+      "name": "Roof C (Yellow Tile)",
+      "origin": {
+        "column": 8,
+        "row": 9
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "roof-c-yellow-tile-2",
+      "name": "Roof C (Yellow Tile)",
+      "origin": {
+        "column": 9,
+        "row": 9
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "roof-c-yellow-tile-3",
+      "name": "Roof C (Yellow Tile)",
+      "origin": {
+        "column": 10,
+        "row": 9
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "roof-b-snow-12",
+      "name": "Roof B (Snow)",
+      "origin": {
+        "column": 11,
+        "row": 9
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "roof-b-snow-13",
+      "name": "Roof B (Snow)",
+      "origin": {
+        "column": 12,
+        "row": 9
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "roof-d-wood",
+      "name": "Roof D (Wood)",
+      "origin": {
+        "column": 13,
+        "row": 9
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "roof-d-wood-2",
+      "name": "Roof D (Wood)",
+      "origin": {
+        "column": 14,
+        "row": 9
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "roof-d-wood-3",
+      "name": "Roof D (Wood)",
+      "origin": {
+        "column": 15,
+        "row": 9
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "roof-c-yellow-tile-4",
+      "name": "Roof C (Yellow Tile)",
+      "origin": {
+        "column": 0,
+        "row": 10
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "roof-c-yellow-tile-5",
+      "name": "Roof C (Yellow Tile)",
+      "origin": {
+        "column": 1,
+        "row": 10
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "roof-c-yellow-tile-6",
+      "name": "Roof C (Yellow Tile)",
+      "origin": {
+        "column": 2,
+        "row": 10
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "roof-c-yellow-tile-7",
+      "name": "Roof C (Yellow Tile)",
+      "origin": {
+        "column": 3,
+        "row": 10
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "roof-c-yellow-tile-8",
+      "name": "Roof C (Yellow Tile)",
+      "origin": {
+        "column": 4,
+        "row": 10
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "roof-d-wood-4",
+      "name": "Roof D (Wood)",
+      "origin": {
+        "column": 5,
+        "row": 10
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "roof-d-wood-5",
+      "name": "Roof D (Wood)",
+      "origin": {
+        "column": 6,
+        "row": 10
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "roof-d-wood-6",
+      "name": "Roof D (Wood)",
+      "origin": {
+        "column": 7,
+        "row": 10
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "roof-c-yellow-tile-9",
+      "name": "Roof C (Yellow Tile)",
+      "origin": {
+        "column": 8,
+        "row": 10
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "roof-c-yellow-tile-10",
+      "name": "Roof C (Yellow Tile)",
+      "origin": {
+        "column": 9,
+        "row": 10
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "roof-c-yellow-tile-11",
+      "name": "Roof C (Yellow Tile)",
+      "origin": {
+        "column": 10,
+        "row": 10
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "roof-c-yellow-tile-12",
+      "name": "Roof C (Yellow Tile)",
+      "origin": {
+        "column": 11,
+        "row": 10
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "roof-c-yellow-tile-13",
+      "name": "Roof C (Yellow Tile)",
+      "origin": {
+        "column": 12,
+        "row": 10
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "roof-d-wood-7",
+      "name": "Roof D (Wood)",
+      "origin": {
+        "column": 13,
+        "row": 10
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "roof-d-wood-8",
+      "name": "Roof D (Wood)",
+      "origin": {
+        "column": 14,
+        "row": 10
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "roof-d-wood-9",
+      "name": "Roof D (Wood)",
+      "origin": {
+        "column": 15,
+        "row": 10
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "round-tower-a-castle",
+      "name": "Round Tower A (Castle)",
+      "origin": {
+        "column": 0,
+        "row": 11
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "round-tower-a-castle-2",
+      "name": "Round Tower A (Castle)",
+      "origin": {
+        "column": 1,
+        "row": 11
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "round-tower-b-fort",
+      "name": "Round Tower B (Fort)",
+      "origin": {
+        "column": 2,
+        "row": 11
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "round-tower-b-fort-2",
+      "name": "Round Tower B (Fort)",
+      "origin": {
+        "column": 3,
+        "row": 11
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "roof-detail-a-green-tile",
+      "name": "Roof Detail A (Green Tile)",
+      "origin": {
+        "column": 4,
+        "row": 11
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "roof-detail-b-snow",
+      "name": "Roof Detail B (Snow)",
+      "origin": {
+        "column": 5,
+        "row": 11
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "roof-d-wood-10",
+      "name": "Roof D (Wood)",
+      "origin": {
+        "column": 6,
+        "row": 11
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "roof-d-wood-11",
+      "name": "Roof D (Wood)",
+      "origin": {
+        "column": 7,
+        "row": 11
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "round-tower-a-castle-3",
+      "name": "Round Tower A (Castle)",
+      "origin": {
+        "column": 8,
+        "row": 11
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "round-tower-a-castle-4",
+      "name": "Round Tower A (Castle)",
+      "origin": {
+        "column": 9,
+        "row": 11
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "round-tower-b-fort-3",
+      "name": "Round Tower B (Fort)",
+      "origin": {
+        "column": 10,
+        "row": 11
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "round-tower-b-fort-4",
+      "name": "Round Tower B (Fort)",
+      "origin": {
+        "column": 11,
+        "row": 11
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "roof-detail-c-yellow-tile",
+      "name": "Roof Detail C (Yellow Tile)",
+      "origin": {
+        "column": 12,
+        "row": 11
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "roof-detail-d-wood",
+      "name": "Roof Detail D (Wood)",
+      "origin": {
+        "column": 13,
+        "row": 11
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "roof-d-wood-12",
+      "name": "Roof D (Wood)",
+      "origin": {
+        "column": 14,
+        "row": 11
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "roof-d-wood-13",
+      "name": "Roof D (Wood)",
+      "origin": {
+        "column": 15,
+        "row": 11
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "round-tower-a-castle-5",
+      "name": "Round Tower A (Castle)",
+      "origin": {
+        "column": 0,
+        "row": 12
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "round-tower-a-castle-6",
+      "name": "Round Tower A (Castle)",
+      "origin": {
+        "column": 1,
+        "row": 12
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "round-tower-b-fort-5",
+      "name": "Round Tower B (Fort)",
+      "origin": {
+        "column": 2,
+        "row": 12
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "round-tower-b-fort-6",
+      "name": "Round Tower B (Fort)",
+      "origin": {
+        "column": 3,
+        "row": 12
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "round-tower-a-castle-s-spire",
+      "name": "Round Tower A (Castle's Spire)",
+      "origin": {
+        "column": 4,
+        "row": 12
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "round-tower-a-castle-s-spire-2",
+      "name": "Round Tower A (Castle's Spire)",
+      "origin": {
+        "column": 5,
+        "row": 12
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "round-tower-b-fort-7",
+      "name": "Round Tower B (Fort)",
+      "origin": {
+        "column": 6,
+        "row": 12
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "round-tower-b-fort-8",
+      "name": "Round Tower B (Fort)",
+      "origin": {
+        "column": 7,
+        "row": 12
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "round-tower-a-castle-7",
+      "name": "Round Tower A (Castle)",
+      "origin": {
+        "column": 8,
+        "row": 12
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "round-tower-a-castle-8",
+      "name": "Round Tower A (Castle)",
+      "origin": {
+        "column": 9,
+        "row": 12
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "round-tower-b-fort-9",
+      "name": "Round Tower B (Fort)",
+      "origin": {
+        "column": 10,
+        "row": 12
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "round-tower-b-fort-10",
+      "name": "Round Tower B (Fort)",
+      "origin": {
+        "column": 11,
+        "row": 12
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "round-tower-a-castle-s-spire-3",
+      "name": "Round Tower A (Castle's Spire)",
+      "origin": {
+        "column": 12,
+        "row": 12
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "round-tower-a-castle-s-spire-4",
+      "name": "Round Tower A (Castle's Spire)",
+      "origin": {
+        "column": 13,
+        "row": 12
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "round-tower-b-fort-snow",
+      "name": "Round Tower B (Fort, Snow)",
+      "origin": {
+        "column": 14,
+        "row": 12
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "round-tower-b-fort-snow-2",
+      "name": "Round Tower B (Fort, Snow)",
+      "origin": {
+        "column": 15,
+        "row": 12
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "round-tower-a-castle-9",
+      "name": "Round Tower A (Castle)",
+      "origin": {
+        "column": 0,
+        "row": 13
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "round-tower-a-castle-10",
+      "name": "Round Tower A (Castle)",
+      "origin": {
+        "column": 1,
+        "row": 13
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "round-tower-b-fort-11",
+      "name": "Round Tower B (Fort)",
+      "origin": {
+        "column": 2,
+        "row": 13
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "round-tower-b-fort-12",
+      "name": "Round Tower B (Fort)",
+      "origin": {
+        "column": 3,
+        "row": 13
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "round-tower-a-castle-s-spire-5",
+      "name": "Round Tower A (Castle's Spire)",
+      "origin": {
+        "column": 4,
+        "row": 13
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "round-tower-a-castle-s-spire-6",
+      "name": "Round Tower A (Castle's Spire)",
+      "origin": {
+        "column": 5,
+        "row": 13
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "round-tower-c-demon-castle",
+      "name": "Round Tower C (Demon Castle)",
+      "origin": {
+        "column": 6,
+        "row": 13
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "round-tower-c-demon-castle-2",
+      "name": "Round Tower C (Demon Castle)",
+      "origin": {
+        "column": 7,
+        "row": 13
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "round-tower-a-castle-snow",
+      "name": "Round Tower A (Castle, Snow)",
+      "origin": {
+        "column": 8,
+        "row": 13
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "round-tower-a-castle-snow-2",
+      "name": "Round Tower A (Castle, Snow)",
+      "origin": {
+        "column": 9,
+        "row": 13
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "round-tower-b-fort-snow-3",
+      "name": "Round Tower B (Fort, Snow)",
+      "origin": {
+        "column": 10,
+        "row": 13
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "round-tower-b-fort-snow-4",
+      "name": "Round Tower B (Fort, Snow)",
+      "origin": {
+        "column": 11,
+        "row": 13
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "round-tower-a-castle-11",
+      "name": "Round Tower A (Castle)",
+      "origin": {
+        "column": 12,
+        "row": 13
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "round-tower-a-castle-12",
+      "name": "Round Tower A (Castle)",
+      "origin": {
+        "column": 13,
+        "row": 13
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "round-tower-c-demon-castle-3",
+      "name": "Round Tower C (Demon Castle)",
+      "origin": {
+        "column": 14,
+        "row": 13
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "round-tower-c-demon-castle-4",
+      "name": "Round Tower C (Demon Castle)",
+      "origin": {
+        "column": 15,
+        "row": 13
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "round-tower-a-castle-snow-3",
+      "name": "Round Tower A (Castle, Snow)",
+      "origin": {
+        "column": 0,
+        "row": 14
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "round-tower-a-castle-snow-4",
+      "name": "Round Tower A (Castle, Snow)",
+      "origin": {
+        "column": 1,
+        "row": 14
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "round-tower-b-fort-snow-5",
+      "name": "Round Tower B (Fort, Snow)",
+      "origin": {
+        "column": 2,
+        "row": 14
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "round-tower-b-fort-snow-6",
+      "name": "Round Tower B (Fort, Snow)",
+      "origin": {
+        "column": 3,
+        "row": 14
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "round-tower-a-castle-s-spire-snow",
+      "name": "Round Tower A (Castle's Spire, Snow)",
+      "origin": {
+        "column": 4,
+        "row": 14
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "round-tower-a-castle-s-spire-snow-2",
+      "name": "Round Tower A (Castle's Spire, Snow)",
+      "origin": {
+        "column": 5,
+        "row": 14
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "round-tower-c-demon-castle-5",
+      "name": "Round Tower C (Demon Castle)",
+      "origin": {
+        "column": 6,
+        "row": 14
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "round-tower-c-demon-castle-6",
+      "name": "Round Tower C (Demon Castle)",
+      "origin": {
+        "column": 7,
+        "row": 14
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "round-tower-a-castle-snow-5",
+      "name": "Round Tower A (Castle, Snow)",
+      "origin": {
+        "column": 8,
+        "row": 14
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "round-tower-a-castle-snow-6",
+      "name": "Round Tower A (Castle, Snow)",
+      "origin": {
+        "column": 9,
+        "row": 14
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "round-tower-b-fort-snow-7",
+      "name": "Round Tower B (Fort, Snow)",
+      "origin": {
+        "column": 10,
+        "row": 14
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "round-tower-b-fort-snow-8",
+      "name": "Round Tower B (Fort, Snow)",
+      "origin": {
+        "column": 11,
+        "row": 14
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "round-tower-a-castle-s-spire-snow-3",
+      "name": "Round Tower A (Castle's Spire, Snow)",
+      "origin": {
+        "column": 12,
+        "row": 14
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "round-tower-a-castle-s-spire-snow-4",
+      "name": "Round Tower A (Castle's Spire, Snow)",
+      "origin": {
+        "column": 13,
+        "row": 14
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "round-tower-c-demon-castle-7",
+      "name": "Round Tower C (Demon Castle)",
+      "origin": {
+        "column": 14,
+        "row": 14
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "round-tower-c-demon-castle-8",
+      "name": "Round Tower C (Demon Castle)",
+      "origin": {
+        "column": 15,
+        "row": 14
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "round-tower-a-castle-snow-7",
+      "name": "Round Tower A (Castle, Snow)",
+      "origin": {
+        "column": 0,
+        "row": 15
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "round-tower-a-castle-snow-8",
+      "name": "Round Tower A (Castle, Snow)",
+      "origin": {
+        "column": 1,
+        "row": 15
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "round-tower-b-fort-snow-9",
+      "name": "Round Tower B (Fort, Snow)",
+      "origin": {
+        "column": 2,
+        "row": 15
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "round-tower-b-fort-snow-10",
+      "name": "Round Tower B (Fort, Snow)",
+      "origin": {
+        "column": 3,
+        "row": 15
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "round-tower-a-castle-s-spire-snow-5",
+      "name": "Round Tower A (Castle's Spire, Snow)",
+      "origin": {
+        "column": 4,
+        "row": 15
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "round-tower-a-castle-s-spire-snow-6",
+      "name": "Round Tower A (Castle's Spire, Snow)",
+      "origin": {
+        "column": 5,
+        "row": 15
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "round-tower-c-demon-castle-9",
+      "name": "Round Tower C (Demon Castle)",
+      "origin": {
+        "column": 6,
+        "row": 15
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "round-tower-c-demon-castle-10",
+      "name": "Round Tower C (Demon Castle)",
+      "origin": {
+        "column": 7,
+        "row": 15
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "round-tower-a-castle-snow-9",
+      "name": "Round Tower A (Castle, Snow)",
+      "origin": {
+        "column": 8,
+        "row": 15
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "round-tower-a-castle-snow-10",
+      "name": "Round Tower A (Castle, Snow)",
+      "origin": {
+        "column": 9,
+        "row": 15
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "round-tower-b-fort-snow-11",
+      "name": "Round Tower B (Fort, Snow)",
+      "origin": {
+        "column": 10,
+        "row": 15
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "round-tower-b-fort-snow-12",
+      "name": "Round Tower B (Fort, Snow)",
+      "origin": {
+        "column": 11,
+        "row": 15
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "round-tower-a-castle-snow-11",
+      "name": "Round Tower A (Castle, Snow)",
+      "origin": {
+        "column": 12,
+        "row": 15
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "round-tower-a-castle-snow-12",
+      "name": "Round Tower A (Castle, Snow)",
+      "origin": {
+        "column": 13,
+        "row": 15
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "round-tower-c-demon-castle-11",
+      "name": "Round Tower C (Demon Castle)",
+      "origin": {
+        "column": 14,
+        "row": 15
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "round-tower-c-demon-castle-12",
+      "name": "Round Tower C (Demon Castle)",
+      "origin": {
+        "column": 15,
+        "row": 15
+      },
+      "collision": {
+        "kind": "none"
+      }
+    }
+  ]
+}

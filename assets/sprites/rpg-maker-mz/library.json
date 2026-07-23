@@ -1,0 +1,1331 @@
+{
+  "id": "rpg-maker-mz",
+  "name": "RPG Maker MZ",
+  "version": 1,
+  "assets": [
+    {
+      "id": "rpg-maker-mz-gate1",
+      "name": "Gate1",
+      "type": "character-sprite",
+      "tags": [
+        "rpg-maker-mz",
+        "animated",
+        "single-character",
+        "fantasy",
+        "object",
+        "prop"
+      ],
+      "image": "sprites/rpg-maker-mz/!$Gate1.png",
+      "layout": {
+        "format": "rpg-maker-mz-character",
+        "characterColumns": 1,
+        "characterRows": 1,
+        "characterCount": 1,
+        "patterns": 3,
+        "directions": [
+          "down",
+          "left",
+          "right",
+          "up"
+        ],
+        "frameWidth": 144,
+        "frameHeight": 96,
+        "objectAligned": true
+      }
+    },
+    {
+      "id": "rpg-maker-mz-gate2",
+      "name": "Gate2",
+      "type": "character-sprite",
+      "tags": [
+        "rpg-maker-mz",
+        "animated",
+        "single-character",
+        "fantasy",
+        "object",
+        "prop"
+      ],
+      "image": "sprites/rpg-maker-mz/!$Gate2.png",
+      "layout": {
+        "format": "rpg-maker-mz-character",
+        "characterColumns": 1,
+        "characterRows": 1,
+        "characterCount": 1,
+        "patterns": 3,
+        "directions": [
+          "down",
+          "left",
+          "right",
+          "up"
+        ],
+        "frameWidth": 144,
+        "frameHeight": 96,
+        "objectAligned": true
+      }
+    },
+    {
+      "id": "rpg-maker-mz-sf-gate1",
+      "name": "Science Fiction Gate1",
+      "type": "character-sprite",
+      "tags": [
+        "rpg-maker-mz",
+        "animated",
+        "single-character",
+        "sci-fi",
+        "object",
+        "prop"
+      ],
+      "image": "sprites/rpg-maker-mz/!$SF_Gate1.png",
+      "layout": {
+        "format": "rpg-maker-mz-character",
+        "characterColumns": 1,
+        "characterRows": 1,
+        "characterCount": 1,
+        "patterns": 3,
+        "directions": [
+          "down",
+          "left",
+          "right",
+          "up"
+        ],
+        "frameWidth": 144,
+        "frameHeight": 96,
+        "objectAligned": true
+      }
+    },
+    {
+      "id": "rpg-maker-mz-sf-gate2",
+      "name": "Science Fiction Gate2",
+      "type": "character-sprite",
+      "tags": [
+        "rpg-maker-mz",
+        "animated",
+        "single-character",
+        "sci-fi",
+        "object",
+        "prop"
+      ],
+      "image": "sprites/rpg-maker-mz/!$SF_Gate2.png",
+      "layout": {
+        "format": "rpg-maker-mz-character",
+        "characterColumns": 1,
+        "characterRows": 1,
+        "characterCount": 1,
+        "patterns": 3,
+        "directions": [
+          "down",
+          "left",
+          "right",
+          "up"
+        ],
+        "frameWidth": 144,
+        "frameHeight": 96,
+        "objectAligned": true
+      }
+    },
+    {
+      "id": "rpg-maker-mz-sf-gate3",
+      "name": "Science Fiction Gate3",
+      "type": "character-sprite",
+      "tags": [
+        "rpg-maker-mz",
+        "animated",
+        "single-character",
+        "sci-fi",
+        "object",
+        "prop"
+      ],
+      "image": "sprites/rpg-maker-mz/!$SF_Gate3.png",
+      "layout": {
+        "format": "rpg-maker-mz-character",
+        "characterColumns": 1,
+        "characterRows": 1,
+        "characterCount": 1,
+        "patterns": 3,
+        "directions": [
+          "down",
+          "left",
+          "right",
+          "up"
+        ],
+        "frameWidth": 144,
+        "frameHeight": 96,
+        "objectAligned": true
+      }
+    },
+    {
+      "id": "rpg-maker-mz-chest",
+      "name": "Chest",
+      "type": "character-sprite",
+      "tags": [
+        "rpg-maker-mz",
+        "animated",
+        "character-sheet",
+        "fantasy",
+        "object",
+        "prop"
+      ],
+      "image": "sprites/rpg-maker-mz/!Chest.png",
+      "layout": {
+        "format": "rpg-maker-mz-character",
+        "characterColumns": 4,
+        "characterRows": 2,
+        "characterCount": 8,
+        "patterns": 3,
+        "directions": [
+          "down",
+          "left",
+          "right",
+          "up"
+        ],
+        "frameWidth": 48,
+        "frameHeight": 48,
+        "objectAligned": true
+      }
+    },
+    {
+      "id": "rpg-maker-mz-crystal",
+      "name": "Crystal",
+      "type": "character-sprite",
+      "tags": [
+        "rpg-maker-mz",
+        "animated",
+        "character-sheet",
+        "fantasy",
+        "object",
+        "prop"
+      ],
+      "image": "sprites/rpg-maker-mz/!Crystal.png",
+      "layout": {
+        "format": "rpg-maker-mz-character",
+        "characterColumns": 4,
+        "characterRows": 2,
+        "characterCount": 8,
+        "patterns": 3,
+        "directions": [
+          "down",
+          "left",
+          "right",
+          "up"
+        ],
+        "frameWidth": 48,
+        "frameHeight": 96,
+        "objectAligned": true
+      }
+    },
+    {
+      "id": "rpg-maker-mz-door1",
+      "name": "Door1",
+      "type": "character-sprite",
+      "tags": [
+        "rpg-maker-mz",
+        "animated",
+        "character-sheet",
+        "fantasy",
+        "object",
+        "prop"
+      ],
+      "image": "sprites/rpg-maker-mz/!Door1.png",
+      "layout": {
+        "format": "rpg-maker-mz-character",
+        "characterColumns": 4,
+        "characterRows": 2,
+        "characterCount": 8,
+        "patterns": 3,
+        "directions": [
+          "down",
+          "left",
+          "right",
+          "up"
+        ],
+        "frameWidth": 48,
+        "frameHeight": 48,
+        "objectAligned": true
+      }
+    },
+    {
+      "id": "rpg-maker-mz-door2",
+      "name": "Door2",
+      "type": "character-sprite",
+      "tags": [
+        "rpg-maker-mz",
+        "animated",
+        "character-sheet",
+        "fantasy",
+        "object",
+        "prop"
+      ],
+      "image": "sprites/rpg-maker-mz/!Door2.png",
+      "layout": {
+        "format": "rpg-maker-mz-character",
+        "characterColumns": 4,
+        "characterRows": 2,
+        "characterCount": 8,
+        "patterns": 3,
+        "directions": [
+          "down",
+          "left",
+          "right",
+          "up"
+        ],
+        "frameWidth": 48,
+        "frameHeight": 48,
+        "objectAligned": true
+      }
+    },
+    {
+      "id": "rpg-maker-mz-flame",
+      "name": "Flame",
+      "type": "character-sprite",
+      "tags": [
+        "rpg-maker-mz",
+        "animated",
+        "character-sheet",
+        "fantasy",
+        "object",
+        "prop"
+      ],
+      "image": "sprites/rpg-maker-mz/!Flame.png",
+      "layout": {
+        "format": "rpg-maker-mz-character",
+        "characterColumns": 4,
+        "characterRows": 2,
+        "characterCount": 8,
+        "patterns": 3,
+        "directions": [
+          "down",
+          "left",
+          "right",
+          "up"
+        ],
+        "frameWidth": 48,
+        "frameHeight": 48,
+        "objectAligned": true
+      }
+    },
+    {
+      "id": "rpg-maker-mz-other1",
+      "name": "Other1",
+      "type": "character-sprite",
+      "tags": [
+        "rpg-maker-mz",
+        "animated",
+        "character-sheet",
+        "fantasy",
+        "object",
+        "prop"
+      ],
+      "image": "sprites/rpg-maker-mz/!Other1.png",
+      "layout": {
+        "format": "rpg-maker-mz-character",
+        "characterColumns": 4,
+        "characterRows": 2,
+        "characterCount": 8,
+        "patterns": 3,
+        "directions": [
+          "down",
+          "left",
+          "right",
+          "up"
+        ],
+        "frameWidth": 48,
+        "frameHeight": 48,
+        "objectAligned": true
+      }
+    },
+    {
+      "id": "rpg-maker-mz-other2",
+      "name": "Other2",
+      "type": "character-sprite",
+      "tags": [
+        "rpg-maker-mz",
+        "animated",
+        "character-sheet",
+        "fantasy",
+        "object",
+        "prop"
+      ],
+      "image": "sprites/rpg-maker-mz/!Other2.png",
+      "layout": {
+        "format": "rpg-maker-mz-character",
+        "characterColumns": 4,
+        "characterRows": 2,
+        "characterCount": 8,
+        "patterns": 3,
+        "directions": [
+          "down",
+          "left",
+          "right",
+          "up"
+        ],
+        "frameWidth": 48,
+        "frameHeight": 96,
+        "objectAligned": true
+      }
+    },
+    {
+      "id": "rpg-maker-mz-sf-chest",
+      "name": "Science Fiction Chest",
+      "type": "character-sprite",
+      "tags": [
+        "rpg-maker-mz",
+        "animated",
+        "character-sheet",
+        "sci-fi",
+        "object",
+        "prop"
+      ],
+      "image": "sprites/rpg-maker-mz/!SF_Chest.png",
+      "layout": {
+        "format": "rpg-maker-mz-character",
+        "characterColumns": 4,
+        "characterRows": 2,
+        "characterCount": 8,
+        "patterns": 3,
+        "directions": [
+          "down",
+          "left",
+          "right",
+          "up"
+        ],
+        "frameWidth": 48,
+        "frameHeight": 48,
+        "objectAligned": true
+      }
+    },
+    {
+      "id": "rpg-maker-mz-sf-door1",
+      "name": "Science Fiction Door1",
+      "type": "character-sprite",
+      "tags": [
+        "rpg-maker-mz",
+        "animated",
+        "character-sheet",
+        "sci-fi",
+        "object",
+        "prop"
+      ],
+      "image": "sprites/rpg-maker-mz/!SF_Door1.png",
+      "layout": {
+        "format": "rpg-maker-mz-character",
+        "characterColumns": 4,
+        "characterRows": 2,
+        "characterCount": 8,
+        "patterns": 3,
+        "directions": [
+          "down",
+          "left",
+          "right",
+          "up"
+        ],
+        "frameWidth": 48,
+        "frameHeight": 48,
+        "objectAligned": true
+      }
+    },
+    {
+      "id": "rpg-maker-mz-sf-door2",
+      "name": "Science Fiction Door2",
+      "type": "character-sprite",
+      "tags": [
+        "rpg-maker-mz",
+        "animated",
+        "character-sheet",
+        "sci-fi",
+        "object",
+        "prop"
+      ],
+      "image": "sprites/rpg-maker-mz/!SF_Door2.png",
+      "layout": {
+        "format": "rpg-maker-mz-character",
+        "characterColumns": 4,
+        "characterRows": 2,
+        "characterCount": 8,
+        "patterns": 3,
+        "directions": [
+          "down",
+          "left",
+          "right",
+          "up"
+        ],
+        "frameWidth": 48,
+        "frameHeight": 48,
+        "objectAligned": true
+      }
+    },
+    {
+      "id": "rpg-maker-mz-sf-switch1",
+      "name": "Science Fiction Switch1",
+      "type": "character-sprite",
+      "tags": [
+        "rpg-maker-mz",
+        "animated",
+        "character-sheet",
+        "sci-fi",
+        "object",
+        "prop"
+      ],
+      "image": "sprites/rpg-maker-mz/!SF_Switch1.png",
+      "layout": {
+        "format": "rpg-maker-mz-character",
+        "characterColumns": 4,
+        "characterRows": 2,
+        "characterCount": 8,
+        "patterns": 3,
+        "directions": [
+          "down",
+          "left",
+          "right",
+          "up"
+        ],
+        "frameWidth": 48,
+        "frameHeight": 48,
+        "objectAligned": true
+      }
+    },
+    {
+      "id": "rpg-maker-mz-switch1",
+      "name": "Switch1",
+      "type": "character-sprite",
+      "tags": [
+        "rpg-maker-mz",
+        "animated",
+        "character-sheet",
+        "fantasy",
+        "object",
+        "prop"
+      ],
+      "image": "sprites/rpg-maker-mz/!Switch1.png",
+      "layout": {
+        "format": "rpg-maker-mz-character",
+        "characterColumns": 4,
+        "characterRows": 2,
+        "characterCount": 8,
+        "patterns": 3,
+        "directions": [
+          "down",
+          "left",
+          "right",
+          "up"
+        ],
+        "frameWidth": 48,
+        "frameHeight": 48,
+        "objectAligned": true
+      }
+    },
+    {
+      "id": "rpg-maker-mz-switch2",
+      "name": "Switch2",
+      "type": "character-sprite",
+      "tags": [
+        "rpg-maker-mz",
+        "animated",
+        "character-sheet",
+        "fantasy",
+        "object",
+        "prop"
+      ],
+      "image": "sprites/rpg-maker-mz/!Switch2.png",
+      "layout": {
+        "format": "rpg-maker-mz-character",
+        "characterColumns": 4,
+        "characterRows": 2,
+        "characterCount": 8,
+        "patterns": 3,
+        "directions": [
+          "down",
+          "left",
+          "right",
+          "up"
+        ],
+        "frameWidth": 48,
+        "frameHeight": 48,
+        "objectAligned": true
+      }
+    },
+    {
+      "id": "rpg-maker-mz-weapon",
+      "name": "Weapon",
+      "type": "character-sprite",
+      "tags": [
+        "rpg-maker-mz",
+        "animated",
+        "character-sheet",
+        "fantasy",
+        "object",
+        "prop"
+      ],
+      "image": "sprites/rpg-maker-mz/!Weapon.png",
+      "layout": {
+        "format": "rpg-maker-mz-character",
+        "characterColumns": 4,
+        "characterRows": 2,
+        "characterCount": 8,
+        "patterns": 3,
+        "directions": [
+          "down",
+          "left",
+          "right",
+          "up"
+        ],
+        "frameWidth": 48,
+        "frameHeight": 48,
+        "objectAligned": true
+      }
+    },
+    {
+      "id": "rpg-maker-mz-bigmonster1",
+      "name": "BigMonster1",
+      "type": "character-sprite",
+      "tags": [
+        "rpg-maker-mz",
+        "animated",
+        "single-character",
+        "fantasy",
+        "monster"
+      ],
+      "image": "sprites/rpg-maker-mz/$BigMonster1.png",
+      "layout": {
+        "format": "rpg-maker-mz-character",
+        "characterColumns": 1,
+        "characterRows": 1,
+        "characterCount": 1,
+        "patterns": 3,
+        "directions": [
+          "down",
+          "left",
+          "right",
+          "up"
+        ],
+        "frameWidth": 96,
+        "frameHeight": 96,
+        "objectAligned": false
+      }
+    },
+    {
+      "id": "rpg-maker-mz-bigmonster2",
+      "name": "BigMonster2",
+      "type": "character-sprite",
+      "tags": [
+        "rpg-maker-mz",
+        "animated",
+        "single-character",
+        "fantasy",
+        "monster"
+      ],
+      "image": "sprites/rpg-maker-mz/$BigMonster2.png",
+      "layout": {
+        "format": "rpg-maker-mz-character",
+        "characterColumns": 1,
+        "characterRows": 1,
+        "characterCount": 1,
+        "patterns": 3,
+        "directions": [
+          "down",
+          "left",
+          "right",
+          "up"
+        ],
+        "frameWidth": 120,
+        "frameHeight": 120,
+        "objectAligned": false
+      }
+    },
+    {
+      "id": "rpg-maker-mz-actor1",
+      "name": "Actor1",
+      "type": "character-sprite",
+      "tags": [
+        "rpg-maker-mz",
+        "animated",
+        "character-sheet",
+        "fantasy",
+        "character"
+      ],
+      "image": "sprites/rpg-maker-mz/Actor1.png",
+      "layout": {
+        "format": "rpg-maker-mz-character",
+        "characterColumns": 4,
+        "characterRows": 2,
+        "characterCount": 8,
+        "patterns": 3,
+        "directions": [
+          "down",
+          "left",
+          "right",
+          "up"
+        ],
+        "frameWidth": 48,
+        "frameHeight": 48,
+        "objectAligned": false
+      }
+    },
+    {
+      "id": "rpg-maker-mz-actor2",
+      "name": "Actor2",
+      "type": "character-sprite",
+      "tags": [
+        "rpg-maker-mz",
+        "animated",
+        "character-sheet",
+        "fantasy",
+        "character"
+      ],
+      "image": "sprites/rpg-maker-mz/Actor2.png",
+      "layout": {
+        "format": "rpg-maker-mz-character",
+        "characterColumns": 4,
+        "characterRows": 2,
+        "characterCount": 8,
+        "patterns": 3,
+        "directions": [
+          "down",
+          "left",
+          "right",
+          "up"
+        ],
+        "frameWidth": 48,
+        "frameHeight": 48,
+        "objectAligned": false
+      }
+    },
+    {
+      "id": "rpg-maker-mz-actor3",
+      "name": "Actor3",
+      "type": "character-sprite",
+      "tags": [
+        "rpg-maker-mz",
+        "animated",
+        "character-sheet",
+        "fantasy",
+        "character"
+      ],
+      "image": "sprites/rpg-maker-mz/Actor3.png",
+      "layout": {
+        "format": "rpg-maker-mz-character",
+        "characterColumns": 4,
+        "characterRows": 2,
+        "characterCount": 8,
+        "patterns": 3,
+        "directions": [
+          "down",
+          "left",
+          "right",
+          "up"
+        ],
+        "frameWidth": 48,
+        "frameHeight": 48,
+        "objectAligned": false
+      }
+    },
+    {
+      "id": "rpg-maker-mz-damage1",
+      "name": "Damage1",
+      "type": "character-sprite",
+      "tags": [
+        "rpg-maker-mz",
+        "animated",
+        "character-sheet",
+        "fantasy",
+        "damage"
+      ],
+      "image": "sprites/rpg-maker-mz/Damage1.png",
+      "layout": {
+        "format": "rpg-maker-mz-character",
+        "characterColumns": 4,
+        "characterRows": 2,
+        "characterCount": 8,
+        "patterns": 3,
+        "directions": [
+          "down",
+          "left",
+          "right",
+          "up"
+        ],
+        "frameWidth": 48,
+        "frameHeight": 48,
+        "objectAligned": false
+      }
+    },
+    {
+      "id": "rpg-maker-mz-damage2",
+      "name": "Damage2",
+      "type": "character-sprite",
+      "tags": [
+        "rpg-maker-mz",
+        "animated",
+        "character-sheet",
+        "fantasy",
+        "damage"
+      ],
+      "image": "sprites/rpg-maker-mz/Damage2.png",
+      "layout": {
+        "format": "rpg-maker-mz-character",
+        "characterColumns": 4,
+        "characterRows": 2,
+        "characterCount": 8,
+        "patterns": 3,
+        "directions": [
+          "down",
+          "left",
+          "right",
+          "up"
+        ],
+        "frameWidth": 48,
+        "frameHeight": 48,
+        "objectAligned": false
+      }
+    },
+    {
+      "id": "rpg-maker-mz-damage3",
+      "name": "Damage3",
+      "type": "character-sprite",
+      "tags": [
+        "rpg-maker-mz",
+        "animated",
+        "character-sheet",
+        "fantasy",
+        "damage"
+      ],
+      "image": "sprites/rpg-maker-mz/Damage3.png",
+      "layout": {
+        "format": "rpg-maker-mz-character",
+        "characterColumns": 4,
+        "characterRows": 2,
+        "characterCount": 8,
+        "patterns": 3,
+        "directions": [
+          "down",
+          "left",
+          "right",
+          "up"
+        ],
+        "frameWidth": 48,
+        "frameHeight": 48,
+        "objectAligned": false
+      }
+    },
+    {
+      "id": "rpg-maker-mz-evil",
+      "name": "Evil",
+      "type": "character-sprite",
+      "tags": [
+        "rpg-maker-mz",
+        "animated",
+        "character-sheet",
+        "fantasy",
+        "character"
+      ],
+      "image": "sprites/rpg-maker-mz/Evil.png",
+      "layout": {
+        "format": "rpg-maker-mz-character",
+        "characterColumns": 4,
+        "characterRows": 2,
+        "characterCount": 8,
+        "patterns": 3,
+        "directions": [
+          "down",
+          "left",
+          "right",
+          "up"
+        ],
+        "frameWidth": 48,
+        "frameHeight": 48,
+        "objectAligned": false
+      }
+    },
+    {
+      "id": "rpg-maker-mz-monster",
+      "name": "Monster",
+      "type": "character-sprite",
+      "tags": [
+        "rpg-maker-mz",
+        "animated",
+        "character-sheet",
+        "fantasy",
+        "monster"
+      ],
+      "image": "sprites/rpg-maker-mz/Monster.png",
+      "layout": {
+        "format": "rpg-maker-mz-character",
+        "characterColumns": 4,
+        "characterRows": 2,
+        "characterCount": 8,
+        "patterns": 3,
+        "directions": [
+          "down",
+          "left",
+          "right",
+          "up"
+        ],
+        "frameWidth": 48,
+        "frameHeight": 48,
+        "objectAligned": false
+      }
+    },
+    {
+      "id": "rpg-maker-mz-nature",
+      "name": "Nature",
+      "type": "character-sprite",
+      "tags": [
+        "rpg-maker-mz",
+        "animated",
+        "character-sheet",
+        "fantasy",
+        "character"
+      ],
+      "image": "sprites/rpg-maker-mz/Nature.png",
+      "layout": {
+        "format": "rpg-maker-mz-character",
+        "characterColumns": 4,
+        "characterRows": 2,
+        "characterCount": 8,
+        "patterns": 3,
+        "directions": [
+          "down",
+          "left",
+          "right",
+          "up"
+        ],
+        "frameWidth": 48,
+        "frameHeight": 48,
+        "objectAligned": false
+      }
+    },
+    {
+      "id": "rpg-maker-mz-people1",
+      "name": "People1",
+      "type": "character-sprite",
+      "tags": [
+        "rpg-maker-mz",
+        "animated",
+        "character-sheet",
+        "fantasy",
+        "character"
+      ],
+      "image": "sprites/rpg-maker-mz/People1.png",
+      "layout": {
+        "format": "rpg-maker-mz-character",
+        "characterColumns": 4,
+        "characterRows": 2,
+        "characterCount": 8,
+        "patterns": 3,
+        "directions": [
+          "down",
+          "left",
+          "right",
+          "up"
+        ],
+        "frameWidth": 48,
+        "frameHeight": 48,
+        "objectAligned": false
+      }
+    },
+    {
+      "id": "rpg-maker-mz-people2",
+      "name": "People2",
+      "type": "character-sprite",
+      "tags": [
+        "rpg-maker-mz",
+        "animated",
+        "character-sheet",
+        "fantasy",
+        "character"
+      ],
+      "image": "sprites/rpg-maker-mz/People2.png",
+      "layout": {
+        "format": "rpg-maker-mz-character",
+        "characterColumns": 4,
+        "characterRows": 2,
+        "characterCount": 8,
+        "patterns": 3,
+        "directions": [
+          "down",
+          "left",
+          "right",
+          "up"
+        ],
+        "frameWidth": 48,
+        "frameHeight": 48,
+        "objectAligned": false
+      }
+    },
+    {
+      "id": "rpg-maker-mz-people3",
+      "name": "People3",
+      "type": "character-sprite",
+      "tags": [
+        "rpg-maker-mz",
+        "animated",
+        "character-sheet",
+        "fantasy",
+        "character"
+      ],
+      "image": "sprites/rpg-maker-mz/People3.png",
+      "layout": {
+        "format": "rpg-maker-mz-character",
+        "characterColumns": 4,
+        "characterRows": 2,
+        "characterCount": 8,
+        "patterns": 3,
+        "directions": [
+          "down",
+          "left",
+          "right",
+          "up"
+        ],
+        "frameWidth": 48,
+        "frameHeight": 48,
+        "objectAligned": false
+      }
+    },
+    {
+      "id": "rpg-maker-mz-people4",
+      "name": "People4",
+      "type": "character-sprite",
+      "tags": [
+        "rpg-maker-mz",
+        "animated",
+        "character-sheet",
+        "fantasy",
+        "character"
+      ],
+      "image": "sprites/rpg-maker-mz/People4.png",
+      "layout": {
+        "format": "rpg-maker-mz-character",
+        "characterColumns": 4,
+        "characterRows": 2,
+        "characterCount": 8,
+        "patterns": 3,
+        "directions": [
+          "down",
+          "left",
+          "right",
+          "up"
+        ],
+        "frameWidth": 48,
+        "frameHeight": 48,
+        "objectAligned": false
+      }
+    },
+    {
+      "id": "rpg-maker-mz-sf-actor1",
+      "name": "Science Fiction Actor1",
+      "type": "character-sprite",
+      "tags": [
+        "rpg-maker-mz",
+        "animated",
+        "character-sheet",
+        "sci-fi",
+        "character"
+      ],
+      "image": "sprites/rpg-maker-mz/SF_Actor1.png",
+      "layout": {
+        "format": "rpg-maker-mz-character",
+        "characterColumns": 4,
+        "characterRows": 2,
+        "characterCount": 8,
+        "patterns": 3,
+        "directions": [
+          "down",
+          "left",
+          "right",
+          "up"
+        ],
+        "frameWidth": 48,
+        "frameHeight": 48,
+        "objectAligned": false
+      }
+    },
+    {
+      "id": "rpg-maker-mz-sf-actor2",
+      "name": "Science Fiction Actor2",
+      "type": "character-sprite",
+      "tags": [
+        "rpg-maker-mz",
+        "animated",
+        "character-sheet",
+        "sci-fi",
+        "character"
+      ],
+      "image": "sprites/rpg-maker-mz/SF_Actor2.png",
+      "layout": {
+        "format": "rpg-maker-mz-character",
+        "characterColumns": 4,
+        "characterRows": 2,
+        "characterCount": 8,
+        "patterns": 3,
+        "directions": [
+          "down",
+          "left",
+          "right",
+          "up"
+        ],
+        "frameWidth": 48,
+        "frameHeight": 48,
+        "objectAligned": false
+      }
+    },
+    {
+      "id": "rpg-maker-mz-sf-actor3",
+      "name": "Science Fiction Actor3",
+      "type": "character-sprite",
+      "tags": [
+        "rpg-maker-mz",
+        "animated",
+        "character-sheet",
+        "sci-fi",
+        "character"
+      ],
+      "image": "sprites/rpg-maker-mz/SF_Actor3.png",
+      "layout": {
+        "format": "rpg-maker-mz-character",
+        "characterColumns": 4,
+        "characterRows": 2,
+        "characterCount": 8,
+        "patterns": 3,
+        "directions": [
+          "down",
+          "left",
+          "right",
+          "up"
+        ],
+        "frameWidth": 48,
+        "frameHeight": 48,
+        "objectAligned": false
+      }
+    },
+    {
+      "id": "rpg-maker-mz-sf-damage1",
+      "name": "Science Fiction Damage1",
+      "type": "character-sprite",
+      "tags": [
+        "rpg-maker-mz",
+        "animated",
+        "character-sheet",
+        "sci-fi",
+        "damage"
+      ],
+      "image": "sprites/rpg-maker-mz/SF_Damage1.png",
+      "layout": {
+        "format": "rpg-maker-mz-character",
+        "characterColumns": 4,
+        "characterRows": 2,
+        "characterCount": 8,
+        "patterns": 3,
+        "directions": [
+          "down",
+          "left",
+          "right",
+          "up"
+        ],
+        "frameWidth": 48,
+        "frameHeight": 48,
+        "objectAligned": false
+      }
+    },
+    {
+      "id": "rpg-maker-mz-sf-damage2",
+      "name": "Science Fiction Damage2",
+      "type": "character-sprite",
+      "tags": [
+        "rpg-maker-mz",
+        "animated",
+        "character-sheet",
+        "sci-fi",
+        "damage"
+      ],
+      "image": "sprites/rpg-maker-mz/SF_Damage2.png",
+      "layout": {
+        "format": "rpg-maker-mz-character",
+        "characterColumns": 4,
+        "characterRows": 2,
+        "characterCount": 8,
+        "patterns": 3,
+        "directions": [
+          "down",
+          "left",
+          "right",
+          "up"
+        ],
+        "frameWidth": 48,
+        "frameHeight": 48,
+        "objectAligned": false
+      }
+    },
+    {
+      "id": "rpg-maker-mz-sf-monster",
+      "name": "Science Fiction Monster",
+      "type": "character-sprite",
+      "tags": [
+        "rpg-maker-mz",
+        "animated",
+        "character-sheet",
+        "sci-fi",
+        "monster"
+      ],
+      "image": "sprites/rpg-maker-mz/SF_Monster.png",
+      "layout": {
+        "format": "rpg-maker-mz-character",
+        "characterColumns": 4,
+        "characterRows": 2,
+        "characterCount": 8,
+        "patterns": 3,
+        "directions": [
+          "down",
+          "left",
+          "right",
+          "up"
+        ],
+        "frameWidth": 48,
+        "frameHeight": 48,
+        "objectAligned": false
+      }
+    },
+    {
+      "id": "rpg-maker-mz-sf-people1",
+      "name": "Science Fiction People1",
+      "type": "character-sprite",
+      "tags": [
+        "rpg-maker-mz",
+        "animated",
+        "character-sheet",
+        "sci-fi",
+        "character"
+      ],
+      "image": "sprites/rpg-maker-mz/SF_People1.png",
+      "layout": {
+        "format": "rpg-maker-mz-character",
+        "characterColumns": 4,
+        "characterRows": 2,
+        "characterCount": 8,
+        "patterns": 3,
+        "directions": [
+          "down",
+          "left",
+          "right",
+          "up"
+        ],
+        "frameWidth": 48,
+        "frameHeight": 48,
+        "objectAligned": false
+      }
+    },
+    {
+      "id": "rpg-maker-mz-sf-people2",
+      "name": "Science Fiction People2",
+      "type": "character-sprite",
+      "tags": [
+        "rpg-maker-mz",
+        "animated",
+        "character-sheet",
+        "sci-fi",
+        "character"
+      ],
+      "image": "sprites/rpg-maker-mz/SF_People2.png",
+      "layout": {
+        "format": "rpg-maker-mz-character",
+        "characterColumns": 4,
+        "characterRows": 2,
+        "characterCount": 8,
+        "patterns": 3,
+        "directions": [
+          "down",
+          "left",
+          "right",
+          "up"
+        ],
+        "frameWidth": 48,
+        "frameHeight": 48,
+        "objectAligned": false
+      }
+    },
+    {
+      "id": "rpg-maker-mz-sf-people3",
+      "name": "Science Fiction People3",
+      "type": "character-sprite",
+      "tags": [
+        "rpg-maker-mz",
+        "animated",
+        "character-sheet",
+        "sci-fi",
+        "character"
+      ],
+      "image": "sprites/rpg-maker-mz/SF_People3.png",
+      "layout": {
+        "format": "rpg-maker-mz-character",
+        "characterColumns": 4,
+        "characterRows": 2,
+        "characterCount": 8,
+        "patterns": 3,
+        "directions": [
+          "down",
+          "left",
+          "right",
+          "up"
+        ],
+        "frameWidth": 48,
+        "frameHeight": 48,
+        "objectAligned": false
+      }
+    },
+    {
+      "id": "rpg-maker-mz-sf-vehicle",
+      "name": "Science Fiction Vehicle",
+      "type": "character-sprite",
+      "tags": [
+        "rpg-maker-mz",
+        "animated",
+        "character-sheet",
+        "sci-fi",
+        "vehicle"
+      ],
+      "image": "sprites/rpg-maker-mz/SF_Vehicle.png",
+      "layout": {
+        "format": "rpg-maker-mz-character",
+        "characterColumns": 4,
+        "characterRows": 2,
+        "characterCount": 8,
+        "patterns": 3,
+        "directions": [
+          "down",
+          "left",
+          "right",
+          "up"
+        ],
+        "frameWidth": 48,
+        "frameHeight": 48,
+        "objectAligned": false
+      }
+    },
+    {
+      "id": "rpg-maker-mz-vehicle",
+      "name": "Vehicle",
+      "type": "character-sprite",
+      "tags": [
+        "rpg-maker-mz",
+        "animated",
+        "character-sheet",
+        "fantasy",
+        "vehicle"
+      ],
+      "image": "sprites/rpg-maker-mz/Vehicle.png",
+      "layout": {
+        "format": "rpg-maker-mz-character",
+        "characterColumns": 4,
+        "characterRows": 2,
+        "characterCount": 8,
+        "patterns": 3,
+        "directions": [
+          "down",
+          "left",
+          "right",
+          "up"
+        ],
+        "frameWidth": 48,
+        "frameHeight": 48,
+        "objectAligned": false
+      }
+    }
+  ]
+}

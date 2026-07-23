@@ -1,0 +1,1579 @@
+{
+  "id": "rpg-maker-mz-inside-a4",
+  "name": "Inside A4",
+  "category": "RPG Maker MZ / Inside",
+  "kind": "a4",
+  "image": "tilesets/rpg-maker-mz/Inside_A4.png",
+  "tileSize": 48,
+  "columns": 16,
+  "rows": 15,
+  "terrains": [
+    {
+      "id": "wall-a-stone",
+      "name": "Wall A (Stone)",
+      "origin": {
+        "column": 0,
+        "row": 0
+      },
+      "collision": {
+        "kind": "none"
+      },
+      "previewMask": 0,
+      "autotile": "floor"
+    },
+    {
+      "id": "wall-b-castle",
+      "name": "Wall B (Castle)",
+      "origin": {
+        "column": 2,
+        "row": 0
+      },
+      "collision": {
+        "kind": "none"
+      },
+      "previewMask": 0,
+      "autotile": "floor"
+    },
+    {
+      "id": "wall-c-fort",
+      "name": "Wall C (Fort)",
+      "origin": {
+        "column": 4,
+        "row": 0
+      },
+      "collision": {
+        "kind": "none"
+      },
+      "previewMask": 0,
+      "autotile": "floor"
+    },
+    {
+      "id": "wall-d-stone",
+      "name": "Wall D (Stone)",
+      "origin": {
+        "column": 6,
+        "row": 0
+      },
+      "collision": {
+        "kind": "none"
+      },
+      "previewMask": 0,
+      "autotile": "floor"
+    },
+    {
+      "id": "wall-e-stone",
+      "name": "Wall E (Stone)",
+      "origin": {
+        "column": 8,
+        "row": 0
+      },
+      "collision": {
+        "kind": "none"
+      },
+      "previewMask": 0,
+      "autotile": "floor"
+    },
+    {
+      "id": "wall-f-brick",
+      "name": "Wall F (Brick)",
+      "origin": {
+        "column": 10,
+        "row": 0
+      },
+      "collision": {
+        "kind": "none"
+      },
+      "previewMask": 0,
+      "autotile": "floor"
+    },
+    {
+      "id": "wall-g-stone",
+      "name": "Wall G (Stone)",
+      "origin": {
+        "column": 12,
+        "row": 0
+      },
+      "collision": {
+        "kind": "none"
+      },
+      "previewMask": 0,
+      "autotile": "floor"
+    },
+    {
+      "id": "interior-wall-a-stone",
+      "name": "Interior Wall A (Stone)",
+      "origin": {
+        "column": 14,
+        "row": 0
+      },
+      "collision": {
+        "kind": "none"
+      },
+      "previewMask": 0,
+      "autotile": "floor"
+    },
+    {
+      "id": "wall-a-stone-2",
+      "name": "Wall A (Stone)",
+      "origin": {
+        "column": 0,
+        "row": 3
+      },
+      "collision": {
+        "kind": "none"
+      },
+      "previewMask": 0,
+      "autotile": "wall"
+    },
+    {
+      "id": "wall-b-castle-2",
+      "name": "Wall B (Castle)",
+      "origin": {
+        "column": 2,
+        "row": 3
+      },
+      "collision": {
+        "kind": "none"
+      },
+      "previewMask": 0,
+      "autotile": "wall"
+    },
+    {
+      "id": "wall-c-fort-2",
+      "name": "Wall C (Fort)",
+      "origin": {
+        "column": 4,
+        "row": 3
+      },
+      "collision": {
+        "kind": "none"
+      },
+      "previewMask": 0,
+      "autotile": "wall"
+    },
+    {
+      "id": "wall-d-stone-2",
+      "name": "Wall D (Stone)",
+      "origin": {
+        "column": 6,
+        "row": 3
+      },
+      "collision": {
+        "kind": "none"
+      },
+      "previewMask": 0,
+      "autotile": "wall"
+    },
+    {
+      "id": "wall-e-stone-2",
+      "name": "Wall E (Stone)",
+      "origin": {
+        "column": 8,
+        "row": 3
+      },
+      "collision": {
+        "kind": "none"
+      },
+      "previewMask": 0,
+      "autotile": "wall"
+    },
+    {
+      "id": "wall-f-brick-2",
+      "name": "Wall F (Brick)",
+      "origin": {
+        "column": 10,
+        "row": 3
+      },
+      "collision": {
+        "kind": "none"
+      },
+      "previewMask": 0,
+      "autotile": "wall"
+    },
+    {
+      "id": "wall-g-stone-2",
+      "name": "Wall G (Stone)",
+      "origin": {
+        "column": 12,
+        "row": 3
+      },
+      "collision": {
+        "kind": "none"
+      },
+      "previewMask": 0,
+      "autotile": "wall"
+    },
+    {
+      "id": "interior-wall-a-stone-2",
+      "name": "Interior Wall A (Stone)",
+      "origin": {
+        "column": 14,
+        "row": 3
+      },
+      "collision": {
+        "kind": "none"
+      },
+      "previewMask": 0,
+      "autotile": "wall"
+    },
+    {
+      "id": "wall-h-wood",
+      "name": "Wall H (Wood)",
+      "origin": {
+        "column": 0,
+        "row": 5
+      },
+      "collision": {
+        "kind": "none"
+      },
+      "previewMask": 0,
+      "autotile": "floor"
+    },
+    {
+      "id": "wall-i-log",
+      "name": "Wall I (Log)",
+      "origin": {
+        "column": 2,
+        "row": 5
+      },
+      "collision": {
+        "kind": "none"
+      },
+      "previewMask": 0,
+      "autotile": "floor"
+    },
+    {
+      "id": "wall-j-wood",
+      "name": "Wall J (Wood)",
+      "origin": {
+        "column": 4,
+        "row": 5
+      },
+      "collision": {
+        "kind": "none"
+      },
+      "previewMask": 0,
+      "autotile": "floor"
+    },
+    {
+      "id": "interior-wall-b-plaster",
+      "name": "Interior Wall B (Plaster)",
+      "origin": {
+        "column": 6,
+        "row": 5
+      },
+      "collision": {
+        "kind": "none"
+      },
+      "previewMask": 0,
+      "autotile": "floor"
+    },
+    {
+      "id": "interior-wall-c-plaster",
+      "name": "Interior Wall C (Plaster)",
+      "origin": {
+        "column": 8,
+        "row": 5
+      },
+      "collision": {
+        "kind": "none"
+      },
+      "previewMask": 0,
+      "autotile": "floor"
+    },
+    {
+      "id": "wall-k-stone",
+      "name": "Wall K (Stone)",
+      "origin": {
+        "column": 10,
+        "row": 5
+      },
+      "collision": {
+        "kind": "none"
+      },
+      "previewMask": 0,
+      "autotile": "floor"
+    },
+    {
+      "id": "wall-l-marble",
+      "name": "Wall L (Marble)",
+      "origin": {
+        "column": 12,
+        "row": 5
+      },
+      "collision": {
+        "kind": "none"
+      },
+      "previewMask": 0,
+      "autotile": "floor"
+    },
+    {
+      "id": "wall-m-marble",
+      "name": "Wall M (Marble)",
+      "origin": {
+        "column": 14,
+        "row": 5
+      },
+      "collision": {
+        "kind": "none"
+      },
+      "previewMask": 0,
+      "autotile": "floor"
+    },
+    {
+      "id": "wall-h-wood-2",
+      "name": "Wall H (Wood)",
+      "origin": {
+        "column": 0,
+        "row": 8
+      },
+      "collision": {
+        "kind": "none"
+      },
+      "previewMask": 0,
+      "autotile": "wall"
+    },
+    {
+      "id": "wall-i-log-2",
+      "name": "Wall I (Log)",
+      "origin": {
+        "column": 2,
+        "row": 8
+      },
+      "collision": {
+        "kind": "none"
+      },
+      "previewMask": 0,
+      "autotile": "wall"
+    },
+    {
+      "id": "wall-j-wood-2",
+      "name": "Wall J (Wood)",
+      "origin": {
+        "column": 4,
+        "row": 8
+      },
+      "collision": {
+        "kind": "none"
+      },
+      "previewMask": 0,
+      "autotile": "wall"
+    },
+    {
+      "id": "interior-wall-b-plaster-2",
+      "name": "Interior Wall B (Plaster)",
+      "origin": {
+        "column": 6,
+        "row": 8
+      },
+      "collision": {
+        "kind": "none"
+      },
+      "previewMask": 0,
+      "autotile": "wall"
+    },
+    {
+      "id": "interior-wall-c-plaster-2",
+      "name": "Interior Wall C (Plaster)",
+      "origin": {
+        "column": 8,
+        "row": 8
+      },
+      "collision": {
+        "kind": "none"
+      },
+      "previewMask": 0,
+      "autotile": "wall"
+    },
+    {
+      "id": "wall-k-stone-2",
+      "name": "Wall K (Stone)",
+      "origin": {
+        "column": 10,
+        "row": 8
+      },
+      "collision": {
+        "kind": "none"
+      },
+      "previewMask": 0,
+      "autotile": "wall"
+    },
+    {
+      "id": "wall-l-marble-2",
+      "name": "Wall L (Marble)",
+      "origin": {
+        "column": 12,
+        "row": 8
+      },
+      "collision": {
+        "kind": "none"
+      },
+      "previewMask": 0,
+      "autotile": "wall"
+    },
+    {
+      "id": "wall-m-marble-2",
+      "name": "Wall M (Marble)",
+      "origin": {
+        "column": 14,
+        "row": 8
+      },
+      "collision": {
+        "kind": "none"
+      },
+      "previewMask": 0,
+      "autotile": "wall"
+    },
+    {
+      "id": "interior-wall-d-desert",
+      "name": "Interior Wall D (Desert)",
+      "origin": {
+        "column": 0,
+        "row": 10
+      },
+      "collision": {
+        "kind": "none"
+      },
+      "previewMask": 0,
+      "autotile": "floor"
+    },
+    {
+      "id": "interior-wall-e-desert",
+      "name": "Interior Wall E (Desert)",
+      "origin": {
+        "column": 2,
+        "row": 10
+      },
+      "collision": {
+        "kind": "none"
+      },
+      "previewMask": 0,
+      "autotile": "floor"
+    },
+    {
+      "id": "interior-wall-f-mansion",
+      "name": "Interior Wall F (Mansion)",
+      "origin": {
+        "column": 4,
+        "row": 10
+      },
+      "collision": {
+        "kind": "none"
+      },
+      "previewMask": 0,
+      "autotile": "floor"
+    },
+    {
+      "id": "interior-wall-g-mansion",
+      "name": "Interior Wall G (Mansion)",
+      "origin": {
+        "column": 6,
+        "row": 10
+      },
+      "collision": {
+        "kind": "none"
+      },
+      "previewMask": 0,
+      "autotile": "floor"
+    },
+    {
+      "id": "wall-n-tent",
+      "name": "Wall N (Tent)",
+      "origin": {
+        "column": 8,
+        "row": 10
+      },
+      "collision": {
+        "kind": "none"
+      },
+      "previewMask": 0,
+      "autotile": "floor"
+    },
+    {
+      "id": "wall-o-demon-castle",
+      "name": "Wall O (Demon Castle)",
+      "origin": {
+        "column": 10,
+        "row": 10
+      },
+      "collision": {
+        "kind": "none"
+      },
+      "previewMask": 0,
+      "autotile": "floor"
+    },
+    {
+      "id": "wall-p-gold",
+      "name": "Wall P (Gold)",
+      "origin": {
+        "column": 12,
+        "row": 10
+      },
+      "collision": {
+        "kind": "none"
+      },
+      "previewMask": 0,
+      "autotile": "floor"
+    },
+    {
+      "id": "wall-q-ice",
+      "name": "Wall Q (Ice)",
+      "origin": {
+        "column": 14,
+        "row": 10
+      },
+      "collision": {
+        "kind": "none"
+      },
+      "previewMask": 0,
+      "autotile": "floor"
+    },
+    {
+      "id": "interior-wall-d-desert-2",
+      "name": "Interior Wall D (Desert)",
+      "origin": {
+        "column": 0,
+        "row": 13
+      },
+      "collision": {
+        "kind": "none"
+      },
+      "previewMask": 0,
+      "autotile": "wall"
+    },
+    {
+      "id": "interior-wall-e-desert-2",
+      "name": "Interior Wall E (Desert)",
+      "origin": {
+        "column": 2,
+        "row": 13
+      },
+      "collision": {
+        "kind": "none"
+      },
+      "previewMask": 0,
+      "autotile": "wall"
+    },
+    {
+      "id": "interior-wall-f-mansion-2",
+      "name": "Interior Wall F (Mansion)",
+      "origin": {
+        "column": 4,
+        "row": 13
+      },
+      "collision": {
+        "kind": "none"
+      },
+      "previewMask": 0,
+      "autotile": "wall"
+    },
+    {
+      "id": "interior-wall-g-mansion-2",
+      "name": "Interior Wall G (Mansion)",
+      "origin": {
+        "column": 6,
+        "row": 13
+      },
+      "collision": {
+        "kind": "none"
+      },
+      "previewMask": 0,
+      "autotile": "wall"
+    },
+    {
+      "id": "wall-n-tent-2",
+      "name": "Wall N (Tent)",
+      "origin": {
+        "column": 8,
+        "row": 13
+      },
+      "collision": {
+        "kind": "none"
+      },
+      "previewMask": 0,
+      "autotile": "wall"
+    },
+    {
+      "id": "wall-o-demon-castle-2",
+      "name": "Wall O (Demon Castle)",
+      "origin": {
+        "column": 10,
+        "row": 13
+      },
+      "collision": {
+        "kind": "none"
+      },
+      "previewMask": 0,
+      "autotile": "wall"
+    },
+    {
+      "id": "wall-p-gold-2",
+      "name": "Wall P (Gold)",
+      "origin": {
+        "column": 12,
+        "row": 13
+      },
+      "collision": {
+        "kind": "none"
+      },
+      "previewMask": 0,
+      "autotile": "wall"
+    },
+    {
+      "id": "wall-q-ice-2",
+      "name": "Wall Q (Ice)",
+      "origin": {
+        "column": 14,
+        "row": 13
+      },
+      "collision": {
+        "kind": "none"
+      },
+      "previewMask": 0,
+      "autotile": "wall"
+    }
+  ],
+  "quarterSize": 24,
+  "variants": {
+    "0": {
+      "quarters": [
+        [
+          0,
+          0
+        ],
+        [
+          1,
+          0
+        ],
+        [
+          0,
+          1
+        ],
+        [
+          1,
+          1
+        ]
+      ]
+    },
+    "1": {
+      "quarters": [
+        [
+          0,
+          4
+        ],
+        [
+          3,
+          4
+        ],
+        [
+          0,
+          1
+        ],
+        [
+          1,
+          1
+        ]
+      ]
+    },
+    "2": {
+      "quarters": [
+        [
+          0,
+          0
+        ],
+        [
+          1,
+          2
+        ],
+        [
+          0,
+          1
+        ],
+        [
+          1,
+          5
+        ]
+      ]
+    },
+    "3": {
+      "quarters": [
+        [
+          0,
+          4
+        ],
+        [
+          3,
+          0
+        ],
+        [
+          0,
+          1
+        ],
+        [
+          1,
+          5
+        ]
+      ]
+    },
+    "4": {
+      "quarters": [
+        [
+          0,
+          0
+        ],
+        [
+          1,
+          0
+        ],
+        [
+          0,
+          3
+        ],
+        [
+          3,
+          3
+        ]
+      ]
+    },
+    "5": {
+      "quarters": [
+        [
+          0,
+          4
+        ],
+        [
+          3,
+          4
+        ],
+        [
+          0,
+          3
+        ],
+        [
+          3,
+          3
+        ]
+      ]
+    },
+    "6": {
+      "quarters": [
+        [
+          0,
+          0
+        ],
+        [
+          1,
+          2
+        ],
+        [
+          0,
+          3
+        ],
+        [
+          3,
+          1
+        ]
+      ]
+    },
+    "7": {
+      "quarters": [
+        [
+          0,
+          4
+        ],
+        [
+          3,
+          0
+        ],
+        [
+          0,
+          3
+        ],
+        [
+          3,
+          1
+        ]
+      ]
+    },
+    "8": {
+      "quarters": [
+        [
+          2,
+          2
+        ],
+        [
+          1,
+          0
+        ],
+        [
+          2,
+          5
+        ],
+        [
+          1,
+          1
+        ]
+      ]
+    },
+    "9": {
+      "quarters": [
+        [
+          2,
+          0
+        ],
+        [
+          3,
+          4
+        ],
+        [
+          2,
+          5
+        ],
+        [
+          1,
+          1
+        ]
+      ]
+    },
+    "10": {
+      "quarters": [
+        [
+          2,
+          2
+        ],
+        [
+          1,
+          2
+        ],
+        [
+          2,
+          5
+        ],
+        [
+          1,
+          5
+        ]
+      ]
+    },
+    "11": {
+      "quarters": [
+        [
+          2,
+          0
+        ],
+        [
+          3,
+          0
+        ],
+        [
+          2,
+          5
+        ],
+        [
+          1,
+          5
+        ]
+      ]
+    },
+    "12": {
+      "quarters": [
+        [
+          2,
+          2
+        ],
+        [
+          1,
+          0
+        ],
+        [
+          2,
+          1
+        ],
+        [
+          3,
+          3
+        ]
+      ]
+    },
+    "13": {
+      "quarters": [
+        [
+          2,
+          0
+        ],
+        [
+          3,
+          4
+        ],
+        [
+          2,
+          1
+        ],
+        [
+          3,
+          3
+        ]
+      ]
+    },
+    "14": {
+      "quarters": [
+        [
+          2,
+          2
+        ],
+        [
+          1,
+          2
+        ],
+        [
+          2,
+          1
+        ],
+        [
+          3,
+          1
+        ]
+      ]
+    },
+    "15": {
+      "quarters": [
+        [
+          2,
+          0
+        ],
+        [
+          3,
+          0
+        ],
+        [
+          2,
+          1
+        ],
+        [
+          3,
+          1
+        ]
+      ]
+    },
+    "19": {
+      "quarters": [
+        [
+          0,
+          4
+        ],
+        [
+          1,
+          4
+        ],
+        [
+          0,
+          1
+        ],
+        [
+          1,
+          5
+        ]
+      ]
+    },
+    "23": {
+      "quarters": [
+        [
+          0,
+          4
+        ],
+        [
+          1,
+          4
+        ],
+        [
+          0,
+          3
+        ],
+        [
+          3,
+          1
+        ]
+      ]
+    },
+    "27": {
+      "quarters": [
+        [
+          2,
+          0
+        ],
+        [
+          1,
+          4
+        ],
+        [
+          2,
+          5
+        ],
+        [
+          1,
+          5
+        ]
+      ]
+    },
+    "31": {
+      "quarters": [
+        [
+          2,
+          0
+        ],
+        [
+          1,
+          4
+        ],
+        [
+          2,
+          1
+        ],
+        [
+          3,
+          1
+        ]
+      ]
+    },
+    "38": {
+      "quarters": [
+        [
+          0,
+          0
+        ],
+        [
+          1,
+          2
+        ],
+        [
+          0,
+          3
+        ],
+        [
+          1,
+          3
+        ]
+      ]
+    },
+    "39": {
+      "quarters": [
+        [
+          0,
+          4
+        ],
+        [
+          3,
+          0
+        ],
+        [
+          0,
+          3
+        ],
+        [
+          1,
+          3
+        ]
+      ]
+    },
+    "46": {
+      "quarters": [
+        [
+          2,
+          2
+        ],
+        [
+          1,
+          2
+        ],
+        [
+          2,
+          1
+        ],
+        [
+          1,
+          3
+        ]
+      ]
+    },
+    "47": {
+      "quarters": [
+        [
+          2,
+          0
+        ],
+        [
+          3,
+          0
+        ],
+        [
+          2,
+          1
+        ],
+        [
+          1,
+          3
+        ]
+      ]
+    },
+    "55": {
+      "quarters": [
+        [
+          0,
+          4
+        ],
+        [
+          1,
+          4
+        ],
+        [
+          0,
+          3
+        ],
+        [
+          1,
+          3
+        ]
+      ]
+    },
+    "63": {
+      "quarters": [
+        [
+          2,
+          0
+        ],
+        [
+          1,
+          4
+        ],
+        [
+          2,
+          1
+        ],
+        [
+          1,
+          3
+        ]
+      ]
+    },
+    "76": {
+      "quarters": [
+        [
+          2,
+          2
+        ],
+        [
+          1,
+          0
+        ],
+        [
+          2,
+          3
+        ],
+        [
+          3,
+          3
+        ]
+      ]
+    },
+    "77": {
+      "quarters": [
+        [
+          2,
+          0
+        ],
+        [
+          3,
+          4
+        ],
+        [
+          2,
+          3
+        ],
+        [
+          3,
+          3
+        ]
+      ]
+    },
+    "78": {
+      "quarters": [
+        [
+          2,
+          2
+        ],
+        [
+          1,
+          2
+        ],
+        [
+          2,
+          3
+        ],
+        [
+          3,
+          1
+        ]
+      ]
+    },
+    "79": {
+      "quarters": [
+        [
+          2,
+          0
+        ],
+        [
+          3,
+          0
+        ],
+        [
+          2,
+          3
+        ],
+        [
+          3,
+          1
+        ]
+      ]
+    },
+    "95": {
+      "quarters": [
+        [
+          2,
+          0
+        ],
+        [
+          1,
+          4
+        ],
+        [
+          2,
+          3
+        ],
+        [
+          3,
+          1
+        ]
+      ]
+    },
+    "110": {
+      "quarters": [
+        [
+          2,
+          2
+        ],
+        [
+          1,
+          2
+        ],
+        [
+          2,
+          3
+        ],
+        [
+          1,
+          3
+        ]
+      ]
+    },
+    "111": {
+      "quarters": [
+        [
+          2,
+          0
+        ],
+        [
+          3,
+          0
+        ],
+        [
+          2,
+          3
+        ],
+        [
+          1,
+          3
+        ]
+      ]
+    },
+    "127": {
+      "quarters": [
+        [
+          2,
+          0
+        ],
+        [
+          1,
+          4
+        ],
+        [
+          2,
+          3
+        ],
+        [
+          1,
+          3
+        ]
+      ]
+    },
+    "137": {
+      "quarters": [
+        [
+          2,
+          4
+        ],
+        [
+          3,
+          4
+        ],
+        [
+          2,
+          5
+        ],
+        [
+          1,
+          1
+        ]
+      ]
+    },
+    "139": {
+      "quarters": [
+        [
+          2,
+          4
+        ],
+        [
+          3,
+          0
+        ],
+        [
+          2,
+          5
+        ],
+        [
+          1,
+          5
+        ]
+      ]
+    },
+    "141": {
+      "quarters": [
+        [
+          2,
+          4
+        ],
+        [
+          3,
+          4
+        ],
+        [
+          2,
+          1
+        ],
+        [
+          3,
+          3
+        ]
+      ]
+    },
+    "143": {
+      "quarters": [
+        [
+          2,
+          4
+        ],
+        [
+          3,
+          0
+        ],
+        [
+          2,
+          1
+        ],
+        [
+          3,
+          1
+        ]
+      ]
+    },
+    "155": {
+      "quarters": [
+        [
+          2,
+          4
+        ],
+        [
+          1,
+          4
+        ],
+        [
+          2,
+          5
+        ],
+        [
+          1,
+          5
+        ]
+      ]
+    },
+    "159": {
+      "quarters": [
+        [
+          2,
+          4
+        ],
+        [
+          1,
+          4
+        ],
+        [
+          2,
+          1
+        ],
+        [
+          3,
+          1
+        ]
+      ]
+    },
+    "175": {
+      "quarters": [
+        [
+          2,
+          4
+        ],
+        [
+          3,
+          0
+        ],
+        [
+          2,
+          1
+        ],
+        [
+          1,
+          3
+        ]
+      ]
+    },
+    "191": {
+      "quarters": [
+        [
+          2,
+          4
+        ],
+        [
+          1,
+          4
+        ],
+        [
+          2,
+          1
+        ],
+        [
+          1,
+          3
+        ]
+      ]
+    },
+    "205": {
+      "quarters": [
+        [
+          2,
+          4
+        ],
+        [
+          3,
+          4
+        ],
+        [
+          2,
+          3
+        ],
+        [
+          3,
+          3
+        ]
+      ]
+    },
+    "207": {
+      "quarters": [
+        [
+          2,
+          4
+        ],
+        [
+          3,
+          0
+        ],
+        [
+          2,
+          3
+        ],
+        [
+          3,
+          1
+        ]
+      ]
+    },
+    "223": {
+      "quarters": [
+        [
+          2,
+          4
+        ],
+        [
+          1,
+          4
+        ],
+        [
+          2,
+          3
+        ],
+        [
+          3,
+          1
+        ]
+      ]
+    },
+    "239": {
+      "quarters": [
+        [
+          2,
+          4
+        ],
+        [
+          3,
+          0
+        ],
+        [
+          2,
+          3
+        ],
+        [
+          1,
+          3
+        ]
+      ]
+    },
+    "255": {
+      "quarters": [
+        [
+          2,
+          4
+        ],
+        [
+          1,
+          4
+        ],
+        [
+          2,
+          3
+        ],
+        [
+          1,
+          3
+        ]
+      ]
+    }
+  }
+}

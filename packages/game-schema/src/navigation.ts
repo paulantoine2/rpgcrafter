@@ -44,7 +44,7 @@ export function buildNavigationGraph(map: GameMap, tilesets: Record<string, Tile
       const collision = tileset?.terrains.find(terrain => terrain.id === tile.terrainId)?.collision;
       if (collision?.kind === 'blockCell') graph.blockedCells.add(navigationCellKey(layer.planeId, tile.x, tile.y));
       if (collision?.kind === 'edges' && collision.edges.length) {
-        if (tileset.kind === 'a2') {
+        if (tileset.kind === 'a1' || tileset.kind === 'a2' || tileset.kind === 'a3' || tileset.kind === 'a4') {
           const terrainKey = `${tile.tilesetId}:${tile.terrainId}`;
           for (const [edge, offset] of Object.entries(DIRECTION_OFFSETS) as Array<[Direction, (typeof DIRECTION_OFFSETS)[Direction]]>) {
             if (terrainByCell.get(`${tile.x + offset.x}:${tile.y + offset.y}`) !== terrainKey) graph.blockedEdges.add(navigationEdgeKey(layer.planeId, tile.x, tile.y, edge));

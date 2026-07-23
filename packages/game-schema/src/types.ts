@@ -50,6 +50,9 @@ export type AutotileTerrain = {
   previewMask: number;
   collision: TerrainCollision;
 };
+export type A1AnimationLayout = 'horizontal' | 'vertical' | 'none';
+export type A1AutotileTerrain = AutotileTerrain & { animation: A1AnimationLayout };
+export type A4AutotileTerrain = AutotileTerrain & { autotile: 'floor' | 'wall' };
 export type GridTerrain = {
   id: string;
   name: string;
@@ -75,12 +78,35 @@ export type A2TilesetDefinition = TilesetBase & {
   terrains: AutotileTerrain[];
   variants: Record<string, AutotileVariant>;
 };
+export type A3TilesetDefinition = TilesetBase & {
+  kind: 'a3';
+  quarterSize: number;
+  terrains: AutotileTerrain[];
+  variants: Record<string, AutotileVariant>;
+};
+export type A1TilesetDefinition = TilesetBase & {
+  kind: 'a1';
+  quarterSize: number;
+  terrains: A1AutotileTerrain[];
+  variants: Record<string, AutotileVariant>;
+};
+export type A4TilesetDefinition = TilesetBase & {
+  kind: 'a4';
+  quarterSize: number;
+  terrains: A4AutotileTerrain[];
+  variants: Record<string, AutotileVariant>;
+};
+export type AutotileTilesetDefinition = A1TilesetDefinition | A2TilesetDefinition | A3TilesetDefinition | A4TilesetDefinition;
 export type GridTilesetDefinition = TilesetBase & {
   kind: 'grid';
   terrains: GridTerrain[];
 };
-export type TilesetDefinition = A2TilesetDefinition | GridTilesetDefinition;
-export type TilesetTerrain = AutotileTerrain | GridTerrain;
+export type A5TilesetDefinition = TilesetBase & {
+  kind: 'a5';
+  terrains: GridTerrain[];
+};
+export type TilesetDefinition = AutotileTilesetDefinition | A5TilesetDefinition | GridTilesetDefinition;
+export type TilesetTerrain = A1AutotileTerrain | A4AutotileTerrain | AutotileTerrain | GridTerrain;
 export type TerrainPlacement = Vec2 & { tilesetId: string; terrainId: string };
 export type RenderPhase = 'belowActors' | 'aboveActors';
 export type SurfaceCoverage = 'bounds' | 'painted';

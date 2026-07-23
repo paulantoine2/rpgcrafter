@@ -10,6 +10,15 @@ const game = {
   events: { objectives: [], events: { 'event.test': { id: 'event.test', pages: [{ actions: [] }] } } },
 } as unknown as SourceGame;
 
+function blobText(blob: Blob) {
+  return new Promise<string>((resolve, reject) => {
+    const reader = new FileReader();
+    reader.addEventListener('load', () => resolve(reader.result as string), { once: true });
+    reader.addEventListener('error', () => reject(reader.error), { once: true });
+    reader.readAsText(blob);
+  });
+}
+
 describe('Studio persistence and export', () => {
   it('creates a valid project with no assets', () => {
     const project = createEmptyProject('Empty World');
@@ -29,11 +38,15 @@ describe('Studio persistence and export', () => {
       terrains: [{ id: 'cliff', name: 'Cliff', origin: { column: 0, row: 0 }, collision: { kind: 'edges', edges: ['north', 'east'] } }],
     };
     project.assets['tilesets/decor.png'] = new Blob(['png'], { type: 'image/png' });
+    project.assets['tilesets/decor.json'] = new Blob([JSON.stringify(project.game.tilesets.decor)], { type: 'application/json' });
+    project.assets['sprites/rpg-maker-mz/Actor1.png'] = new Blob(['sprite'], { type: 'image/png' });
     const archive = await createExportArchive(project.game, project.assets);
     const reopened = await openProjectArchive(new Blob([archive.slice().buffer], { type: 'application/zip' }));
     expect(reopened.game).toEqual(project.game);
     expect(reopened.game.tilesets.decor.terrains[0].collision).toEqual({ kind: 'edges', edges: ['north', 'east'] });
     expect(reopened.assets['tilesets/decor.png']).toBeInstanceOf(Blob);
+    expect(JSON.parse(await blobText(reopened.assets['tilesets/decor.json']))).toEqual(project.game.tilesets.decor);
+    expect(await blobText(reopened.assets['sprites/rpg-maker-mz/Actor1.png'])).toBe('sprite');
   });
 
   it('exports a complete, self-contained project package', async () => {

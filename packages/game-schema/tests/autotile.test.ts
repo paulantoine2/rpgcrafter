@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { AUTOTILE_BITS, CANONICAL_AUTOTILE_MASKS, canonicalizeAutotileMask, resolveTerrainPlacements, type TerrainPlacement } from '../src/index.js';
+import { AUTOTILE_BITS, CANONICAL_AUTOTILE_MASKS, autotileAnimationFrame, autotileVariant, canonicalizeAutotileMask, resolveTerrainPlacements, type AutotileTilesetDefinition, type TerrainPlacement } from '../src/index.js';
 
 const neighbors = [
   [AUTOTILE_BITS.north, 0, -1], [AUTOTILE_BITS.east, 1, 0],
@@ -41,5 +41,28 @@ describe('A2 autotile topology', () => {
     expect(resolveTerrainPlacements(tiles, 48)[0].mask).toBe(0);
     tiles[1].terrainId = 'dirt';
     expect(resolveTerrainPlacements(tiles, 48)[0].mask).toBe(AUTOTILE_BITS.east);
+  });
+});
+
+describe('A1 autotile animation', () => {
+  it('uses the RPG Maker 500ms horizontal and vertical sequences', () => {
+    expect([0, 499, 500, 999, 1000, 1499, 1500, 1999, 2000].map(value => autotileAnimationFrame(value, 'horizontal'))).toEqual([0, 0, 1, 1, 2, 2, 1, 1, 0]);
+    expect([0, 500, 1000, 1500].map(value => autotileAnimationFrame(value, 'vertical'))).toEqual([0, 1, 2, 0]);
+    expect(autotileAnimationFrame(1000, 'none')).toBe(0);
+  });
+
+  it('uses the four waterfall joins based only on horizontal neighbors', () => {
+    const tileset = { id: 'waterfall' } as AutotileTilesetDefinition;
+    expect(autotileVariant(tileset, AUTOTILE_BITS.west | AUTOTILE_BITS.east, 'waterfall').quarters).toEqual([[2, 0], [1, 0], [2, 1], [1, 1]]);
+    expect(autotileVariant(tileset, AUTOTILE_BITS.east, 'waterfall').quarters).toEqual([[0, 0], [1, 0], [0, 1], [1, 1]]);
+    expect(autotileVariant(tileset, AUTOTILE_BITS.west, 'waterfall').quarters).toEqual([[2, 0], [3, 0], [2, 1], [3, 1]]);
+    expect(autotileVariant(tileset, AUTOTILE_BITS.north, 'waterfall').quarters).toEqual([[0, 0], [3, 0], [0, 1], [3, 1]]);
+  });
+
+  it('maps cardinal A4 wall neighbors to the 16 wall shapes', () => {
+    const tileset = { id: 'wall' } as AutotileTilesetDefinition;
+    expect(autotileVariant(tileset, 0, 'wall').quarters).toEqual([[0, 0], [3, 0], [0, 3], [3, 3]]);
+    expect(autotileVariant(tileset, AUTOTILE_BITS.north | AUTOTILE_BITS.east | AUTOTILE_BITS.south | AUTOTILE_BITS.west, 'wall').quarters).toEqual([[2, 2], [1, 2], [2, 1], [1, 1]]);
+    expect(autotileVariant(tileset, 255, 'wall')).toEqual(autotileVariant(tileset, 15, 'wall'));
   });
 });

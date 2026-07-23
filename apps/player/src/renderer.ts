@@ -18,6 +18,8 @@ export type RenderState = {
   camera: Vec2;
   showTileGrid: boolean;
   player: PlanePosition & { radius: number; hp: number; maxHp: number; level: number; xp: number; invuln: number };
+  playerMoving: boolean;
+  playerAnimationTime: number;
   facing: Vec2;
   hud: { panel: string; text: string; health: string; slots: string[] };
 };

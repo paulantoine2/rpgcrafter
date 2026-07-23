@@ -1,0 +1,1420 @@
+{
+  "id": "rpg-maker-mz-dungeon-a5",
+  "name": "Dungeon A5",
+  "category": "RPG Maker MZ / Dungeon",
+  "kind": "a5",
+  "image": "tilesets/rpg-maker-mz/Dungeon_A5.png",
+  "tileSize": 48,
+  "columns": 8,
+  "rows": 16,
+  "terrains": [
+    {
+      "id": "darkness",
+      "name": "Darkness",
+      "origin": {
+        "column": 0,
+        "row": 0
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "floating-floor-a-dirt",
+      "name": "Floating Floor A (Dirt)",
+      "origin": {
+        "column": 1,
+        "row": 0
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "floating-floor-b-rock",
+      "name": "Floating Floor B (Rock)",
+      "origin": {
+        "column": 2,
+        "row": 0
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "translucent-floor-a",
+      "name": "Translucent Floor A",
+      "origin": {
+        "column": 3,
+        "row": 0
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "translucent-floor-b",
+      "name": "Translucent Floor B",
+      "origin": {
+        "column": 4,
+        "row": 0
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "stairs-a-dirt",
+      "name": "Stairs A (Dirt)",
+      "origin": {
+        "column": 5,
+        "row": 0
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "stairs-b-translucent",
+      "name": "Stairs B (Translucent)",
+      "origin": {
+        "column": 6,
+        "row": 0
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "wire-mesh",
+      "name": "Wire Mesh",
+      "origin": {
+        "column": 7,
+        "row": 0
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "transparent",
+      "name": "Transparent",
+      "origin": {
+        "column": 0,
+        "row": 1
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "floating-floor-a-dirt-2",
+      "name": "Floating Floor A (Dirt)",
+      "origin": {
+        "column": 1,
+        "row": 1
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "floating-floor-b-rock-2",
+      "name": "Floating Floor B (Rock)",
+      "origin": {
+        "column": 2,
+        "row": 1
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "translucent-floor-a-2",
+      "name": "Translucent Floor A",
+      "origin": {
+        "column": 3,
+        "row": 1
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "translucent-floor-b-2",
+      "name": "Translucent Floor B",
+      "origin": {
+        "column": 4,
+        "row": 1
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "stairs-a-rock",
+      "name": "Stairs A (Rock)",
+      "origin": {
+        "column": 5,
+        "row": 1
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "stairs-b-translucent-2",
+      "name": "Stairs B (Translucent)",
+      "origin": {
+        "column": 6,
+        "row": 1
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "wire-mesh-2",
+      "name": "Wire Mesh",
+      "origin": {
+        "column": 7,
+        "row": 1
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "ground-a-wood",
+      "name": "Ground A (Wood)",
+      "origin": {
+        "column": 0,
+        "row": 2
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "ground-b-wood",
+      "name": "Ground B (Wood)",
+      "origin": {
+        "column": 1,
+        "row": 2
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "ground-wood-ruins",
+      "name": "Ground (Wood, Ruins)",
+      "origin": {
+        "column": 2,
+        "row": 2
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "ground-wood-ruins-2",
+      "name": "Ground (Wood, Ruins)",
+      "origin": {
+        "column": 3,
+        "row": 2
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "cobblestones-a",
+      "name": "Cobblestones A",
+      "origin": {
+        "column": 4,
+        "row": 2
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "cobblestones-b",
+      "name": "Cobblestones B",
+      "origin": {
+        "column": 5,
+        "row": 2
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "cobblestones-c",
+      "name": "Cobblestones C",
+      "origin": {
+        "column": 6,
+        "row": 2
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "cobblestones-d",
+      "name": "Cobblestones D",
+      "origin": {
+        "column": 7,
+        "row": 2
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "cobblestones-e",
+      "name": "Cobblestones E",
+      "origin": {
+        "column": 0,
+        "row": 3
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "decorative-tile-a",
+      "name": "Decorative Tile A",
+      "origin": {
+        "column": 1,
+        "row": 3
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "decorative-tile-b",
+      "name": "Decorative Tile B",
+      "origin": {
+        "column": 2,
+        "row": 3
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "interior-floor-a",
+      "name": "Interior Floor A",
+      "origin": {
+        "column": 3,
+        "row": 3
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "interior-floor-b-light",
+      "name": "Interior Floor B (Light)",
+      "origin": {
+        "column": 4,
+        "row": 3
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "tile-floor-a",
+      "name": "Tile Floor A",
+      "origin": {
+        "column": 5,
+        "row": 3
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "tile-floor-b",
+      "name": "Tile Floor B",
+      "origin": {
+        "column": 6,
+        "row": 3
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "tile-floor-c",
+      "name": "Tile Floor C",
+      "origin": {
+        "column": 7,
+        "row": 3
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "cobblestones-f",
+      "name": "Cobblestones F",
+      "origin": {
+        "column": 0,
+        "row": 4
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "ground-c-rock-cave-red-crystal",
+      "name": "Ground C (Rock Cave, Red Crystal)",
+      "origin": {
+        "column": 1,
+        "row": 4
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "ground-d-rock-cave-blue-crystal",
+      "name": "Ground D (Rock Cave, Blue Crystal)",
+      "origin": {
+        "column": 2,
+        "row": 4
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "ground-e-rock-cave-green-crystal",
+      "name": "Ground E (Rock Cave, Green Crystal)",
+      "origin": {
+        "column": 3,
+        "row": 4
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "ground-f-dirt",
+      "name": "Ground F (Dirt)",
+      "origin": {
+        "column": 4,
+        "row": 4
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "ground-g-demon-castle",
+      "name": "Ground G (Demon Castle)",
+      "origin": {
+        "column": 5,
+        "row": 4
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "ground-h-gold",
+      "name": "Ground H (Gold)",
+      "origin": {
+        "column": 6,
+        "row": 4
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "ground-i-ice",
+      "name": "Ground I (Ice)",
+      "origin": {
+        "column": 7,
+        "row": 4
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "stairs-a-dirt-cave-left",
+      "name": "Stairs A (Dirt Cave, Left)",
+      "origin": {
+        "column": 0,
+        "row": 5
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "stairs-a-dirt-cave-center",
+      "name": "Stairs A (Dirt Cave, Center)",
+      "origin": {
+        "column": 1,
+        "row": 5
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "stairs-a-dirt-cave-right",
+      "name": "Stairs A (Dirt Cave, Right)",
+      "origin": {
+        "column": 2,
+        "row": 5
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "stairs-a-dirt-cave",
+      "name": "Stairs A (Dirt Cave)",
+      "origin": {
+        "column": 3,
+        "row": 5
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "stairs-b-rock-cave-left",
+      "name": "Stairs B (Rock Cave, Left)",
+      "origin": {
+        "column": 4,
+        "row": 5
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "stairs-b-rock-cave-center",
+      "name": "Stairs B (Rock Cave, Center)",
+      "origin": {
+        "column": 5,
+        "row": 5
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "stairs-b-rock-cave-right",
+      "name": "Stairs B (Rock Cave, Right)",
+      "origin": {
+        "column": 6,
+        "row": 5
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "stairs-b-rock-cave",
+      "name": "Stairs B (Rock Cave)",
+      "origin": {
+        "column": 7,
+        "row": 5
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "stairs-c-lava-cave-left",
+      "name": "Stairs C (Lava Cave, Left)",
+      "origin": {
+        "column": 0,
+        "row": 6
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "stairs-c-lava-cave-center",
+      "name": "Stairs C (Lava Cave, Center)",
+      "origin": {
+        "column": 1,
+        "row": 6
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "stairs-c-lava-cave-right",
+      "name": "Stairs C (Lava Cave, Right)",
+      "origin": {
+        "column": 2,
+        "row": 6
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "stairs-c-lava-cave",
+      "name": "Stairs C (Lava Cave)",
+      "origin": {
+        "column": 3,
+        "row": 6
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "stairs-d-ice-cave-left",
+      "name": "Stairs D (Ice Cave, Left)",
+      "origin": {
+        "column": 4,
+        "row": 6
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "stairs-d-ice-cave-center",
+      "name": "Stairs D (Ice Cave, Center)",
+      "origin": {
+        "column": 5,
+        "row": 6
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "stairs-d-ice-cave-right",
+      "name": "Stairs D (Ice Cave, Right)",
+      "origin": {
+        "column": 6,
+        "row": 6
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "stairs-d-ice-cave",
+      "name": "Stairs D (Ice Cave)",
+      "origin": {
+        "column": 7,
+        "row": 6
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "stairs-e-grass-maze-left",
+      "name": "Stairs E (Grass Maze, Left)",
+      "origin": {
+        "column": 0,
+        "row": 7
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "stairs-e-grass-maze-center",
+      "name": "Stairs E (Grass Maze, Center)",
+      "origin": {
+        "column": 1,
+        "row": 7
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "stairs-e-grass-maze-right",
+      "name": "Stairs E (Grass Maze, Right)",
+      "origin": {
+        "column": 2,
+        "row": 7
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "stairs-e-grass-maze",
+      "name": "Stairs E (Grass Maze)",
+      "origin": {
+        "column": 3,
+        "row": 7
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "stairs-f-crystal-left",
+      "name": "Stairs F (Crystal, Left)",
+      "origin": {
+        "column": 4,
+        "row": 7
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "stairs-f-crystal-center",
+      "name": "Stairs F (Crystal, Center)",
+      "origin": {
+        "column": 5,
+        "row": 7
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "stairs-f-crystal-right",
+      "name": "Stairs F (Crystal, Right)",
+      "origin": {
+        "column": 6,
+        "row": 7
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "stairs-f-crystal",
+      "name": "Stairs F (Crystal)",
+      "origin": {
+        "column": 7,
+        "row": 7
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "stairs-g-in-body-left",
+      "name": "Stairs G (In Body, Left)",
+      "origin": {
+        "column": 0,
+        "row": 8
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "stairs-g-in-body-center",
+      "name": "Stairs G (In Body, Center)",
+      "origin": {
+        "column": 1,
+        "row": 8
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "stairs-g-in-body-right",
+      "name": "Stairs G (In Body, Right)",
+      "origin": {
+        "column": 2,
+        "row": 8
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "stairs-g-in-body",
+      "name": "Stairs G (In Body)",
+      "origin": {
+        "column": 3,
+        "row": 8
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "stairs-h-demonic-world-left",
+      "name": "Stairs H (Demonic World, Left)",
+      "origin": {
+        "column": 4,
+        "row": 8
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "stairs-h-demonic-world-center",
+      "name": "Stairs H (Demonic World, Center)",
+      "origin": {
+        "column": 5,
+        "row": 8
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "stairs-h-demonic-world-right",
+      "name": "Stairs H (Demonic World, Right)",
+      "origin": {
+        "column": 6,
+        "row": 8
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "stairs-h-demonic-world",
+      "name": "Stairs H (Demonic World)",
+      "origin": {
+        "column": 7,
+        "row": 8
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "stairs-i-stone-left",
+      "name": "Stairs I (Stone, Left)",
+      "origin": {
+        "column": 0,
+        "row": 9
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "stairs-i-stone-center",
+      "name": "Stairs I (Stone, Center)",
+      "origin": {
+        "column": 1,
+        "row": 9
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "stairs-i-stone-right",
+      "name": "Stairs I (Stone, Right)",
+      "origin": {
+        "column": 2,
+        "row": 9
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "stairs-i-stone",
+      "name": "Stairs I (Stone)",
+      "origin": {
+        "column": 3,
+        "row": 9
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "stairs-j-ruins-left",
+      "name": "Stairs J (Ruins, Left)",
+      "origin": {
+        "column": 4,
+        "row": 9
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "stairs-j-ruins-center",
+      "name": "Stairs J (Ruins, Center)",
+      "origin": {
+        "column": 5,
+        "row": 9
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "stairs-j-ruins-right",
+      "name": "Stairs J (Ruins, Right)",
+      "origin": {
+        "column": 6,
+        "row": 9
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "stairs-j-ruins",
+      "name": "Stairs J (Ruins)",
+      "origin": {
+        "column": 7,
+        "row": 9
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "stairs-k-stone-left",
+      "name": "Stairs K (Stone, Left)",
+      "origin": {
+        "column": 0,
+        "row": 10
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "stairs-k-stone-center",
+      "name": "Stairs K (Stone, Center)",
+      "origin": {
+        "column": 1,
+        "row": 10
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "stairs-k-stone-right",
+      "name": "Stairs K (Stone, Right)",
+      "origin": {
+        "column": 2,
+        "row": 10
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "stairs-k-stone",
+      "name": "Stairs K (Stone)",
+      "origin": {
+        "column": 3,
+        "row": 10
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "stairs-l-ruins-left",
+      "name": "Stairs L (Ruins, Left)",
+      "origin": {
+        "column": 4,
+        "row": 10
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "stairs-l-ruins-center",
+      "name": "Stairs L (Ruins, Center)",
+      "origin": {
+        "column": 5,
+        "row": 10
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "stairs-l-ruins-right",
+      "name": "Stairs L (Ruins, Right)",
+      "origin": {
+        "column": 6,
+        "row": 10
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "stairs-l-ruins",
+      "name": "Stairs L (Ruins)",
+      "origin": {
+        "column": 7,
+        "row": 10
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "ground-dirt-cave-ruins",
+      "name": "Ground (Dirt Cave, Ruins)",
+      "origin": {
+        "column": 0,
+        "row": 11
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "ground-rock-cave-ruins",
+      "name": "Ground (Rock Cave, Ruins)",
+      "origin": {
+        "column": 1,
+        "row": 11
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "ground-lava-cave-ruins",
+      "name": "Ground (Lava Cave, Ruins)",
+      "origin": {
+        "column": 2,
+        "row": 11
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "ground-ice-cave-ruins",
+      "name": "Ground (Ice Cave, Ruins)",
+      "origin": {
+        "column": 3,
+        "row": 11
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "ground-grass-maze-ruins",
+      "name": "Ground (Grass Maze, Ruins)",
+      "origin": {
+        "column": 4,
+        "row": 11
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "ground-crystal-ruins",
+      "name": "Ground (Crystal, Ruins)",
+      "origin": {
+        "column": 5,
+        "row": 11
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "ground-in-body-ruins",
+      "name": "Ground (In Body, Ruins)",
+      "origin": {
+        "column": 6,
+        "row": 11
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "ground-demonic-world-ruins",
+      "name": "Ground (Demonic World, Ruins)",
+      "origin": {
+        "column": 7,
+        "row": 11
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "cobblestones-a-ruins",
+      "name": "Cobblestones A (Ruins)",
+      "origin": {
+        "column": 0,
+        "row": 12
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "cobblestones-b-ruins",
+      "name": "Cobblestones B (Ruins)",
+      "origin": {
+        "column": 1,
+        "row": 12
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "cobblestones-c-ruins",
+      "name": "Cobblestones C (Ruins)",
+      "origin": {
+        "column": 2,
+        "row": 12
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "cobblestones-d-ruins",
+      "name": "Cobblestones D (Ruins)",
+      "origin": {
+        "column": 3,
+        "row": 12
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "cobblestones-e-ruins",
+      "name": "Cobblestones E (Ruins)",
+      "origin": {
+        "column": 4,
+        "row": 12
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "decorative-tile-a-ruins",
+      "name": "Decorative Tile A (Ruins)",
+      "origin": {
+        "column": 5,
+        "row": 12
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "decorative-tile-b-ruins",
+      "name": "Decorative Tile B (Ruins)",
+      "origin": {
+        "column": 6,
+        "row": 12
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "interior-floor-a-ruins",
+      "name": "Interior Floor A (Ruins)",
+      "origin": {
+        "column": 7,
+        "row": 12
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "tile-floor-a-ruins",
+      "name": "Tile Floor A (Ruins)",
+      "origin": {
+        "column": 0,
+        "row": 13
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "tile-floor-b-ruins",
+      "name": "Tile Floor B (Ruins)",
+      "origin": {
+        "column": 1,
+        "row": 13
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "tile-floor-c-ruins",
+      "name": "Tile Floor C (Ruins)",
+      "origin": {
+        "column": 2,
+        "row": 13
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "cobblestones-f-ruins",
+      "name": "Cobblestones F (Ruins)",
+      "origin": {
+        "column": 3,
+        "row": 13
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "ground-f-dirt-ruins",
+      "name": "Ground F (Dirt, Ruins)",
+      "origin": {
+        "column": 4,
+        "row": 13
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "ground-g-demon-castle-ruins",
+      "name": "Ground G (Demon Castle, Ruins)",
+      "origin": {
+        "column": 5,
+        "row": 13
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "ground-i-ice-ruins",
+      "name": "Ground I (Ice, Ruins)",
+      "origin": {
+        "column": 6,
+        "row": 13
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "relief-floor-tile-silver",
+      "name": "Relief Floor Tile (Silver)",
+      "origin": {
+        "column": 7,
+        "row": 13
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "large-relief-floor-tile",
+      "name": "Large Relief Floor Tile",
+      "origin": {
+        "column": 0,
+        "row": 14
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "large-relief-floor-tile-2",
+      "name": "Large Relief Floor Tile",
+      "origin": {
+        "column": 1,
+        "row": 14
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "large-relief-floor-tile-ruins",
+      "name": "Large Relief Floor Tile (Ruins)",
+      "origin": {
+        "column": 2,
+        "row": 14
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "large-relief-floor-tile-ruins-2",
+      "name": "Large Relief Floor Tile (Ruins)",
+      "origin": {
+        "column": 3,
+        "row": 14
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "directional-floor-tile-a-down",
+      "name": "Directional Floor Tile A (Down)",
+      "origin": {
+        "column": 4,
+        "row": 14
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "directional-floor-tile-b-up",
+      "name": "Directional Floor Tile B (Up)",
+      "origin": {
+        "column": 5,
+        "row": 14
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "relief-floor-tile-a-gold",
+      "name": "Relief Floor Tile A (Gold)",
+      "origin": {
+        "column": 6,
+        "row": 14
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "relief-floor-tile-b-gold",
+      "name": "Relief Floor Tile B (Gold)",
+      "origin": {
+        "column": 7,
+        "row": 14
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "large-relief-floor-tile-3",
+      "name": "Large Relief Floor Tile",
+      "origin": {
+        "column": 0,
+        "row": 15
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "large-relief-floor-tile-4",
+      "name": "Large Relief Floor Tile",
+      "origin": {
+        "column": 1,
+        "row": 15
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "large-relief-floor-tile-ruins-3",
+      "name": "Large Relief Floor Tile (Ruins)",
+      "origin": {
+        "column": 2,
+        "row": 15
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "large-relief-floor-tile-ruins-4",
+      "name": "Large Relief Floor Tile (Ruins)",
+      "origin": {
+        "column": 3,
+        "row": 15
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "directional-floor-tile-c-left",
+      "name": "Directional Floor Tile C (Left)",
+      "origin": {
+        "column": 4,
+        "row": 15
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "directional-floor-tile-d-right",
+      "name": "Directional Floor Tile D (Right)",
+      "origin": {
+        "column": 5,
+        "row": 15
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "relief-floor-tile-c-gold",
+      "name": "Relief Floor Tile C (Gold)",
+      "origin": {
+        "column": 6,
+        "row": 15
+      },
+      "collision": {
+        "kind": "none"
+      }
+    },
+    {
+      "id": "relief-floor-tile-d-gold-ruins",
+      "name": "Relief Floor Tile D (Gold, Ruins)",
+      "origin": {
+        "column": 7,
+        "row": 15
+      },
+      "collision": {
+        "kind": "none"
+      }
+    }
+  ]
+}

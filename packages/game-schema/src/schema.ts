@@ -36,6 +36,20 @@ const TilesetBaseSchema = z.object({
 });
 const TilesetSchema = z.discriminatedUnion('kind', [
   TilesetBaseSchema.extend({
+  kind: z.literal('a1'),
+  quarterSize: z.number().int().positive(),
+  terrains: z.array(z.object({
+    id: Id, name: Id,
+    origin: z.object({ column: z.number().int().nonnegative(), row: z.number().int().nonnegative() }).strict(),
+    previewMask: z.number().int().min(0).max(255),
+    animation: z.enum(['horizontal', 'vertical', 'none']),
+    collision: TerrainCollisionSchema,
+  }).strict()).min(1),
+  variants: z.record(z.string(), z.object({
+    quarters: z.tuple([QuarterCoordinateSchema, QuarterCoordinateSchema, QuarterCoordinateSchema, QuarterCoordinateSchema]),
+  }).strict()),
+  }).strict(),
+  TilesetBaseSchema.extend({
   kind: z.literal('a2'),
   quarterSize: z.number().int().positive(),
   terrains: z.array(z.object({
@@ -49,7 +63,42 @@ const TilesetSchema = z.discriminatedUnion('kind', [
   }).strict()),
   }).strict(),
   TilesetBaseSchema.extend({
+  kind: z.literal('a3'),
+  quarterSize: z.number().int().positive(),
+  terrains: z.array(z.object({
+    id: Id, name: Id,
+    origin: z.object({ column: z.number().int().nonnegative(), row: z.number().int().nonnegative() }).strict(),
+    previewMask: z.number().int().min(0).max(255),
+    collision: TerrainCollisionSchema,
+  }).strict()).min(1),
+  variants: z.record(z.string(), z.object({
+    quarters: z.tuple([QuarterCoordinateSchema, QuarterCoordinateSchema, QuarterCoordinateSchema, QuarterCoordinateSchema]),
+  }).strict()),
+  }).strict(),
+  TilesetBaseSchema.extend({
+  kind: z.literal('a4'),
+  quarterSize: z.number().int().positive(),
+  terrains: z.array(z.object({
+    id: Id, name: Id,
+    origin: z.object({ column: z.number().int().nonnegative(), row: z.number().int().nonnegative() }).strict(),
+    previewMask: z.number().int().min(0).max(255),
+    autotile: z.enum(['floor', 'wall']),
+    collision: TerrainCollisionSchema,
+  }).strict()).min(1),
+  variants: z.record(z.string(), z.object({
+    quarters: z.tuple([QuarterCoordinateSchema, QuarterCoordinateSchema, QuarterCoordinateSchema, QuarterCoordinateSchema]),
+  }).strict()),
+  }).strict(),
+  TilesetBaseSchema.extend({
     kind: z.literal('grid'),
+    terrains: z.array(z.object({
+      id: Id, name: Id,
+      origin: z.object({ column: z.number().int().nonnegative(), row: z.number().int().nonnegative() }).strict(),
+      collision: TerrainCollisionSchema,
+    }).strict()).min(1),
+  }).strict(),
+  TilesetBaseSchema.extend({
+    kind: z.literal('a5'),
     terrains: z.array(z.object({
       id: Id, name: Id,
       origin: z.object({ column: z.number().int().nonnegative(), row: z.number().int().nonnegative() }).strict(),
@@ -181,10 +230,11 @@ function validateReferences(game: SourceGame): ContentIssue[] {
     const path = `tilesets.${tilesetId}`;
     if (tileset.id !== tilesetId) issue(`${path}.id`, 'Must match its object key');
     if (tileset.tileSize !== 48) issue(`${path}.tileSize`, 'Asset Manager tilesets must use 48px tiles');
-    if (tileset.kind === 'a2' && tileset.quarterSize * 2 !== tileset.tileSize) issue(`${path}.quarterSize`, 'Must be exactly half tileSize');
+    const isAutotile = tileset.kind === 'a1' || tileset.kind === 'a2' || tileset.kind === 'a3' || tileset.kind === 'a4';
+    if (isAutotile && tileset.quarterSize * 2 !== tileset.tileSize) issue(`${path}.quarterSize`, 'Must be exactly half tileSize');
+    if (tileset.kind === 'a5' && (tileset.columns !== 8 || tileset.rows !== 16)) issue(path, 'A5 tilesets must use an 8×16 tile grid');
     const terrainIds = new Set<string>();
     const terrainOrigins = new Set<string>();
-    const isA2 = tileset.kind === 'a2';
     tileset.terrains.forEach((terrain, index) => {
       const terrainPath = `${path}.terrains[${index}]`;
       if (terrainIds.has(terrain.id)) issue(`${terrainPath}.id`, `Duplicate terrain id: ${terrain.id}`);
@@ -192,15 +242,29 @@ function validateReferences(game: SourceGame): ContentIssue[] {
       const origin = `${terrain.origin.column}:${terrain.origin.row}`;
       if (terrainOrigins.has(origin)) issue(`${terrainPath}.origin`, `Duplicate terrain origin: ${origin}`);
       terrainOrigins.add(origin);
-      if (isA2) {
-        if (terrain.origin.column % 2 !== 0 || terrain.origin.row % 3 !== 0) issue(`${terrainPath}.origin`, 'A2 origins must align to a 2×3 tile block');
-        if (terrain.origin.column + 2 > tileset.columns || terrain.origin.row + 3 > tileset.rows) issue(`${terrainPath}.origin`, 'A2 terrain block exceeds atlas bounds');
+      if (isAutotile) {
+        let blockColumns = 2, blockRows = 3, aligned = terrain.origin.column % 2 === 0;
+        if (tileset.kind === 'a1') {
+          blockColumns = 'animation' in terrain && terrain.animation === 'horizontal' ? 6 : 2;
+          aligned &&= terrain.origin.row % 3 === 0;
+        } else if (tileset.kind === 'a2') aligned &&= terrain.origin.row % 3 === 0;
+        else if (tileset.kind === 'a3') {
+          blockRows = 2;
+          aligned &&= terrain.origin.row % 2 === 0;
+        }
+        else {
+          const wall = 'autotile' in terrain && terrain.autotile === 'wall';
+          blockRows = wall ? 2 : 3;
+          aligned &&= terrain.origin.row % 5 === (wall ? 3 : 0);
+        }
+        if (!aligned) issue(`${terrainPath}.origin`, `${tileset.kind.toUpperCase()} origin is not aligned to its autotile block`);
+        if (terrain.origin.column + blockColumns > tileset.columns || terrain.origin.row + blockRows > tileset.rows) issue(`${terrainPath}.origin`, `${tileset.kind.toUpperCase()} terrain block exceeds atlas bounds`);
         const previewMask = 'previewMask' in terrain ? Number(terrain.previewMask) : -1;
         if (canonicalizeAutotileMask(previewMask) !== previewMask) issue(`${terrainPath}.previewMask`, 'Must be a canonical autotile mask');
       } else if (terrain.origin.column >= tileset.columns || terrain.origin.row >= tileset.rows) issue(`${terrainPath}.origin`, 'Grid tile origin exceeds atlas bounds');
       if (terrain.collision.kind === 'edges' && new Set(terrain.collision.edges).size !== terrain.collision.edges.length) issue(`${terrainPath}.collision.edges`, 'Duplicate collision edge');
     });
-    if (tileset.kind === 'a2') {
+    if (isAutotile) {
       const variantMasks = new Set<number>();
       for (const key of Object.keys(tileset.variants)) {
         const mask = Number(key);
