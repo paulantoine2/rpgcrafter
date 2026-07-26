@@ -18,7 +18,7 @@ export async function loadReferenceGame(): Promise<LoadedGame> {
   const source = assertSourceGame({ manifest, tilesets, maps, enemies, actors, skills, items, quests, ui, events: eventData, initialState });
   const loaded = sourceGameToLoadedGame(source);
   loaded.assetUrls = Object.fromEntries(Object.values(source.tilesets).map(tileset => [tileset.image, new URL(tileset.image, new URL('/reference-game/', window.location.origin)).href]));
-  for (const image of new Set(Object.values(source.maps).flatMap(map => map.events.flatMap(event => event.sprite ? [event.sprite.image] : [])))) {
+  for (const image of new Set(Object.values(source.maps).flatMap(map => map.events.flatMap(event => event.pages.flatMap(page => page.sprite ? [page.sprite.image] : []))))) {
     const imageEntry = Object.entries(bundledSpriteImages).find(([file]) => file.endsWith(`/assets/${image}`));
     if (!imageEntry) throw new Error(`Le sprite d’événement est introuvable (${image})`);
     loaded.assetUrls[image] = imageEntry[1];

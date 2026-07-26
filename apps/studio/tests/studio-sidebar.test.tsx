@@ -5,9 +5,15 @@ import type { GameMap, SourceGame } from '@rpgcrafter/game-schema';
 import { StudioSidebar } from '../src/components/studio-sidebar';
 
 const event = {
-  id: 'mayor', position: { x: 2, y: 3, planeId: 'p' }, scriptId: 'event.mayor',
-  trigger: { type: 'interact' as const, radius: 1 }, execution: { mode: 'repeat' as const },
-  sprite: { image: 'sprites/Actor1.png', characterIndex: 0, characterColumns: 4, frameWidth: 48, frameHeight: 48, objectAligned: false },
+  id: 'mayor', position: { x: 2, y: 3, planeId: 'p' },
+  pages: [{
+    movement: { type: 'fixed' as const, speed: 3 as const, frequency: 3 as const, route: [] },
+    options: { walkingAnimation: true, steppingAnimation: false, directionFix: false, through: false },
+    priority: 'sameAsCharacters' as const,
+    trigger: { type: 'actionButton' as const, radius: 1 },
+    sprite: { image: 'sprites/Actor1.png', characterIndex: 0, characterColumns: 4, frameWidth: 48, frameHeight: 48, objectAligned: false },
+    contents: [],
+  }],
 };
 const map: GameMap = {
   id: 'village', name: 'Village', ground: '#000000', accent: '#ffffff', tileSize: 48,
@@ -52,17 +58,64 @@ async function expandMaps() {
 
 describe('StudioSidebar', () => {
   it('shows Maps first and collapsed while keeping the editor section fixed open', () => {
-    render(<StudioSidebar {...common} mode="events" />);
+    const { container } = render(<StudioSidebar {...common} mode="events" />);
     const mapsTrigger = screen.getByRole('button', { name: 'Maps' });
-    const eventsHeader = screen.getByText('Events').closest('[data-slot="section-header"]')!;
+    const mapsHeader = mapsTrigger.closest<HTMLElement>('[data-slot="section-header"]')!;
+    const eventsHeader = screen.getByText('Events').closest<HTMLElement>('[data-slot="section-header"]')!;
+    const resizeHandle = screen.getByRole('separator');
 
     expect(mapsTrigger).toHaveAttribute('aria-expanded', 'false');
+    expect(mapsHeader).toHaveClass('border-t-0');
+    expect(eventsHeader).toHaveClass('border-t-0');
     expect(eventsHeader).toHaveClass('px-4', 'py-4', 'h-12');
-    expect(mapsTrigger.closest('[data-slot="section-header"]')).toHaveClass('px-4', 'py-4', 'h-12');
+    expect(mapsHeader).toHaveClass('px-4', 'py-4', 'h-12');
     expect(mapsTrigger.querySelector('.lucide-chevron-right')).toHaveClass('absolute', '-left-3.5');
+    expect(mapsHeader.closest('[data-panel]')).toHaveAttribute('data-disabled', 'true');
+    expect(resizeHandle).toHaveAttribute('aria-disabled', 'true');
+    expect(eventsHeader.nextElementSibling).toHaveClass('min-h-0', 'flex-1', 'overflow-hidden');
+    expect(eventsHeader.nextElementSibling?.querySelector('[data-slot="scroll-area"]')).toBeInTheDocument();
+    expect(eventsHeader.nextElementSibling).not.toContainElement(eventsHeader);
     expect(screen.queryByRole('tree', { name: 'Map hierarchy' })).not.toBeInTheDocument();
     expect(screen.queryByRole('button', { name: 'Events' })).not.toBeInTheDocument();
     expect(mapsTrigger.compareDocumentPosition(eventsHeader) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+    expect(container.querySelectorAll('[data-slot="section-header"]')).toHaveLength(2);
+  });
+
+  it('only enables resizing while the resizable section is open', async () => {
+    render(<StudioSidebar {...common} mode="events" />);
+    const mapsTrigger = screen.getByRole('button', { name: 'Maps' });
+    const resizeHandle = screen.getByRole('separator');
+    const mapsPanel = mapsTrigger.closest('[data-panel]');
+
+    expect(mapsPanel).toHaveAttribute('data-disabled', 'true');
+    expect(resizeHandle).toHaveAttribute('aria-disabled', 'true');
+
+    await userEvent.click(mapsTrigger);
+    expect(mapsPanel).not.toHaveAttribute('data-disabled');
+    expect(resizeHandle).not.toHaveAttribute('aria-disabled');
+
+    await userEvent.click(mapsTrigger);
+    expect(mapsPanel).toHaveAttribute('data-disabled', 'true');
+    expect(resizeHandle).toHaveAttribute('aria-disabled', 'true');
+  });
+
+  it('colors the fixed header border without changing its width when content scrolls', () => {
+    const { container } = render(<StudioSidebar {...common} mode="events" />);
+    const eventsHeader = screen.getByText('Events').closest('[data-slot="section-header"]')!;
+    const viewport = container.querySelector<HTMLElement>('[data-slot="section-content"] [data-slot="scroll-area-viewport"]')!;
+
+    expect(eventsHeader).toHaveClass('border-b', 'border-b-transparent');
+    expect(eventsHeader).not.toHaveClass('border-b-border');
+
+    Object.defineProperty(viewport, 'scrollTop', { configurable: true, value: 24 });
+    fireEvent.scroll(viewport);
+    expect(eventsHeader).toHaveClass('border-b', 'border-b-border');
+    expect(eventsHeader).not.toHaveClass('border-b-transparent');
+
+    Object.defineProperty(viewport, 'scrollTop', { configurable: true, value: 0 });
+    fireEvent.scroll(viewport);
+    expect(eventsHeader).toHaveClass('border-b', 'border-b-transparent');
+    expect(eventsHeader).not.toHaveClass('border-b-border');
   });
 
   it('lists map events and synchronizes selection', async () => {

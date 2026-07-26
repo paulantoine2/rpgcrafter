@@ -29,9 +29,10 @@ function EventList({ map, assetUrls, selectedEventId, onSelect, onRename }: { ma
   };
   return <ScrollArea className="min-h-0 flex-1"><div>
     {map.events.map(event => {
+      const sprite = event.pages[0]?.sprite;
       return <div key={event.id} data-event-row-id={event.id} className={cn('flex min-h-12 w-full items-center gap-2 px-2 py-1 hover:bg-sidebar-accent/60', event.id === selectedEventId && 'bg-sidebar-accent text-sidebar-accent-foreground')}>
-        {event.sprite
-          ? <span data-slot="event-sprite" className="size-10 shrink-0"><SpritePreview sprite={event.sprite} imageUrl={assetUrls[event.sprite.image]} characterRows={event.sprite.characterColumns === 1 ? 1 : 2} className="size-full" /></span>
+        {sprite
+          ? <span data-slot="event-sprite" className="size-10 shrink-0"><SpritePreview sprite={sprite} imageUrl={assetUrls[sprite.image]} characterRows={sprite.characterColumns === 1 ? 1 : 2} className="size-full" /></span>
           : <span className="grid size-10 shrink-0 place-items-center bg-muted/30"><Box className="size-4 text-primary" /></span>}
         {editingEventId === event.id
           ? <Input
@@ -182,15 +183,16 @@ export function StudioSidebar({ game, assetUrls, map, selectedMapId, selectedEve
   onChangeSurface: (id: string, layerId: string) => void;
   onDeleteConnection: (id: string) => void;
 }) {
+  const [mapsOpen, setMapsOpen] = useState(false);
   const activeLayer = map.tileLayers.find(layer => layer.id === activeLayerId) || null;
   const activePlaneId = activeLayer?.planeId || [...map.planes].sort((a, b) => a.order - b.order)[0]?.id || '';
   const editorPanel = mode === 'events'
-    ? <SidebarSection collapsible={false} title="Events" className="h-full" contentClassName="flex min-h-0 flex-1"><EventList map={map} assetUrls={assetUrls} selectedEventId={selectedEventId} onSelect={onSelectEvent} onRename={onRenameEvent} /></SidebarSection>
-    : <SidebarSection collapsible={false} title="Tiles" className="h-full" contentClassName="flex min-h-0 flex-1 flex-col overflow-hidden"><TilePalette game={game} assetUrls={assetUrls} activeLayer={activeLayer} selectedTerrain={selectedTerrain} onSelect={onSelectTerrain}/></SidebarSection>;
+    ? <SidebarSection collapsible={false} topBorder={false} title="Events" className="h-full" contentClassName="flex min-h-0 flex-1"><EventList map={map} assetUrls={assetUrls} selectedEventId={selectedEventId} onSelect={onSelectEvent} onRename={onRenameEvent} /></SidebarSection>
+    : <SidebarSection collapsible={false} topBorder={false} title="Tiles" className="h-full" contentClassName="flex min-h-0 flex-1 flex-col overflow-hidden"><TilePalette game={game} assetUrls={assetUrls} activeLayer={activeLayer} selectedTerrain={selectedTerrain} onSelect={onSelectTerrain}/></SidebarSection>;
   return <div data-slot="studio-sidebar" className="h-full min-h-0 cursor-default border-r bg-background text-foreground">
     <ResizablePanelGroup orientation="vertical">
-      <MapList game={game} selectedMapId={selectedMapId} onSelect={onSelectMap} onCreate={onCreateMap} onRename={onRenameMap} onMove={onMoveMap} onReorder={onReorderMap} onResize={onResizeMap} />
-      <ResizableHandle />
+      <MapList game={game} selectedMapId={selectedMapId} open={mapsOpen} onOpenChange={setMapsOpen} onSelect={onSelectMap} onCreate={onCreateMap} onRename={onRenameMap} onMove={onMoveMap} onReorder={onReorderMap} onResize={onResizeMap} />
+      <ResizableHandle disabled={!mapsOpen} />
       <ResizablePanel defaultSize="60%" minSize="160px" className="min-h-0">{editorPanel}</ResizablePanel>
     </ResizablePanelGroup>
   </div>;

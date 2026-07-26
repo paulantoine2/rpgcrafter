@@ -1,12 +1,12 @@
 {
-  "schemaVersion": "0.6",
-  "engineRange": ">=0.6 <0.7",
+  "schemaVersion": "0.7",
+  "engineRange": ">=0.7 <0.8",
   "gameId": "game.bell-of-mist",
-  "version": "0.6.0",
+  "version": "0.7.0",
   "entryPoint": {
     "mapId": "village",
     "spawnId": "spawn.village-start"
   },
-  "title": "La Cloche des Brumes",
+  "title": "The Bell of Mists",
   "contentRating": "all"
 }

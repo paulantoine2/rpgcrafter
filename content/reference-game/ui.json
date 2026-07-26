@@ -12,16 +12,16 @@
   "pauseMenu": {
     "title": "Menu",
     "tabs": [
-      { "id": "character", "label": "Personnage" },
-      { "id": "inventory", "label": "Inventaire" },
-      { "id": "equipment", "label": "Équipement" },
-      { "id": "quests", "label": "Quêtes" },
+      { "id": "character", "label": "Character" },
+      { "id": "inventory", "label": "Inventory" },
+      { "id": "equipment", "label": "Equipment" },
+      { "id": "quests", "label": "Quests" },
       { "id": "settings", "label": "Options" }
     ]
   },
   "equipmentSlots": [
-    { "id": "weapon", "label": "Arme" },
-    { "id": "armor", "label": "Armure" },
-    { "id": "accessory", "label": "Accessoire" }
+    { "id": "weapon", "label": "Weapon" },
+    { "id": "armor", "label": "Armor" },
+    { "id": "accessory", "label": "Accessory" }
   ]
 }

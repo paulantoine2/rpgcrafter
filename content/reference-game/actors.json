@@ -1,7 +1,7 @@
 {
   "player": {
     "id": "actor.hero",
-    "name": "Héros",
+    "name": "Hero",
     "start": {
       "x": 6,
       "y": 8,

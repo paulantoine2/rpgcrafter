@@ -17,6 +17,23 @@ function migrateActions(actions: unknown, planeId: string): unknown {
   });
 }
 
+function migrateCommands(commands: unknown): unknown {
+  if (!Array.isArray(commands)) return commands;
+  return commands.map(command => {
+    if (!command || typeof command !== 'object') return command;
+    const next = { ...(command as JsonObject) };
+    if (next.type === 'dialogue' && Array.isArray(next.choices)) {
+      next.choices = next.choices.map((choice: JsonObject) => {
+        const migrated = migrateCommands(choice.commands ?? choice.actions);
+        const result: JsonObject = { ...choice, commands: migrated };
+        delete result.actions;
+        return result;
+      });
+    }
+    return next;
+  });
+}
+
 function migrateEventVisuals(files: SourceGameFiles): SourceGameFiles {
   const maps = files.maps as Record<string, JsonObject> | null;
   if (!maps || !Object.values(maps).some(map => Array.isArray(map.events) && map.events.some((event: JsonObject) => event.visual))) return files;
@@ -108,7 +125,75 @@ function migrateV05(files: SourceGameFiles): SourceGameFiles {
   return next;
 }
 
+/** Inlines event pages into map events and adopts the V0.7 event-command model. */
+function migrateV06(files: SourceGameFiles): SourceGameFiles {
+  const manifest = files.manifest as JsonObject | null;
+  if (!manifest || manifest.schemaVersion !== '0.6') return files;
+  const next = structuredClone(files) as SourceGameFiles;
+  const nextManifest = next.manifest as JsonObject;
+  nextManifest.schemaVersion = '0.7';
+  nextManifest.engineRange = '>=0.7 <0.8';
+  const eventData = (next.events || {}) as JsonObject;
+  const scripts = (eventData.events || {}) as Record<string, JsonObject>;
+  const defaultMovement = { type: 'fixed', speed: 3, frequency: 3, route: [] };
+  const defaultOptions = { walkingAnimation: true, steppingAnimation: false, directionFix: false, through: false };
+
+  for (const map of Object.values((next.maps || {}) as Record<string, JsonObject>)) {
+    for (const event of Array.isArray(map.events) ? map.events : []) {
+      const script = scripts[event.scriptId] as JsonObject | undefined;
+      const legacyPages = Array.isArray(script?.pages) && script.pages.length ? script.pages : [{ actions: [] }];
+      const movement = event.movement && typeof event.movement === 'object' ? event.movement as JsonObject : {};
+      event.pages = legacyPages.map((legacyPage: JsonObject) => {
+        const conditions = [
+          ...(Array.isArray(event.activeWhen) ? event.activeWhen : []),
+          ...(Array.isArray(legacyPage.conditions) ? legacyPage.conditions : []),
+        ];
+        const trigger = event.trigger?.type === 'interact'
+          ? { type: 'actionButton', radius: event.trigger.radius }
+          : event.trigger?.type === 'playerEnter'
+            ? { type: 'playerTouch', size: event.trigger.size }
+            : event.trigger?.type === 'interval'
+              ? { type: 'parallel' }
+              : { type: 'autorun' };
+        let contents = migrateCommands(legacyPage.actions) as unknown[];
+        if (event.trigger?.type === 'interval') contents = [{ type: 'wait', duration: event.trigger.every }, ...contents];
+        if (event.trigger?.type === 'mapEnter' && event.trigger.delay > 0) contents = [{ type: 'wait', duration: event.trigger.delay }, ...contents];
+        return {
+          ...(conditions.length ? { conditions } : {}),
+          ...(event.sprite ? { sprite: event.sprite } : {}),
+          movement: {
+            type: movement.type ?? defaultMovement.type,
+            speed: movement.speed ?? defaultMovement.speed,
+            frequency: movement.frequency ?? defaultMovement.frequency,
+            route: Array.isArray(movement.route) ? movement.route : defaultMovement.route,
+          },
+          options: {
+            walkingAnimation: movement.walkingAnimation ?? defaultOptions.walkingAnimation,
+            steppingAnimation: movement.steppingAnimation ?? defaultOptions.steppingAnimation,
+            directionFix: movement.directionFix ?? defaultOptions.directionFix,
+            through: movement.through ?? defaultOptions.through,
+          },
+          priority: event.trigger?.type === 'playerEnter' ? 'belowCharacters' : 'sameAsCharacters',
+          trigger,
+          contents,
+        };
+      });
+      delete event.scriptId;
+      delete event.trigger;
+      delete event.execution;
+      delete event.activeWhen;
+      delete event.sprite;
+      delete event.movement;
+    }
+  }
+  for (const enemy of Object.values((next.enemies || {}) as Record<string, JsonObject>)) {
+    if (enemy.onDefeated) enemy.onDefeated = migrateCommands(enemy.onDefeated);
+  }
+  delete eventData.events;
+  return next;
+}
+
 /** Migrates every supported legacy authoring shape to the current schema. */
 export function migrateSourceGameFiles(files: SourceGameFiles): SourceGameFiles {
-  return migrateEventVisuals(migrateV05(migrateV04(files)));
+  return migrateV06(migrateEventVisuals(migrateV05(migrateV04(files))));
 }

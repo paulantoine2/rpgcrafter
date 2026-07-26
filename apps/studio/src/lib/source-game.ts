@@ -115,7 +115,7 @@ export async function loadReferenceProject(): Promise<ProjectBundle> {
     if (!response.ok) throw new Error(`Could not load tilesets.${tileset.id}.image (${response.status})`);
     assets[tileset.image] = await response.blob();
   }));
-  await Promise.all([...new Set(Object.values(game.maps).flatMap(map => map.events.flatMap(event => event.sprite ? [event.sprite.image] : [])))].map(async image => {
+  await Promise.all([...new Set(Object.values(game.maps).flatMap(map => map.events.flatMap(event => event.pages.flatMap(page => page.sprite ? [page.sprite.image] : []))))].map(async image => {
     const blob = await bundledSpriteBlob(image);
     if (!blob) throw new Error(`Could not find event sprite (${image})`);
     assets[image] = blob;
@@ -132,13 +132,13 @@ function safeId(value: string) {
 export function createEmptyProject(title: string, requestedId?: string): ProjectBundle {
   const gameId = `game.${safeId(requestedId || title)}`;
   const game = assertSourceGame({
-    manifest: { schemaVersion: '0.6', engineRange: '>=0.6 <0.7', gameId, version: '0.1.0', entryPoint: { mapId: 'map-1', spawnId: 'spawn-1' }, title, contentRating: 'all' },
+    manifest: { schemaVersion: '0.7', engineRange: '>=0.7 <0.8', gameId, version: '0.1.0', entryPoint: { mapId: 'map-1', spawnId: 'spawn-1' }, title, contentRating: 'all' },
     tilesets: {},
     maps: { 'map-1': createDefaultMap('map-1', 'Map 1', 20, 15) },
     actors: { player: { id: 'player', name: 'Player', start: { x: 1.5, y: 1.5, planeId: 'plane-1' }, stats: { maxHp: 100, level: 1, xp: 0 }, primaryAttack: 'basic-attack', skillSlots: {}, unlockedSkills: ['basic-attack'] } },
     enemies: {}, skills: { 'basic-attack': { name: 'Basic attack', type: 'melee', damage: 10, cooldown: 0.4, range: 1 } }, items: {}, quests: {},
     ui: { theme: { fontFamily: 'sans-serif', pageBackground: '#0b1020', panel: '#172033', panelBorder: '#334155', text: '#f8fafc', accent: '#6ee7b7', health: '#ef4444' }, hud: { slots: ['health', 'level'] }, pauseMenu: { title: title, tabs: [{ id: 'status', label: 'Status' }] }, equipmentSlots: [] },
-    events: { events: {}, objectives: [] }, initialState: { flags: {}, quests: {}, inventory: {}, equipment: {} },
+    events: { objectives: [] }, initialState: { flags: {}, quests: {}, inventory: {}, equipment: {} },
   });
   return { game, assets: {} };
 }
@@ -164,7 +164,7 @@ export async function openProjectArchive(file: Blob): Promise<ProjectBundle> {
   for (const tileset of Object.values(result.data.tilesets)) {
     if (!assets[tileset.image]) throw new Error(`Project package is missing ${tileset.image}.`);
   }
-  for (const sprite of Object.values(result.data.maps).flatMap(map => map.events.flatMap(event => event.sprite ? [event.sprite] : []))) {
+  for (const sprite of Object.values(result.data.maps).flatMap(map => map.events.flatMap(event => event.pages.flatMap(page => page.sprite ? [page.sprite] : [])))) {
     if (!assets[sprite.image]) {
       const bundled = await bundledSpriteBlob(sprite.image);
       if (!bundled) throw new Error(`Project package is missing ${sprite.image}.`);
@@ -182,7 +182,7 @@ export async function createExportArchive(game: SourceGame, assets: ProjectAsset
     const blob = assets[tileset.image];
     if (!blob) throw new Error(`Tileset image is unavailable: ${tileset.image}`);
   }
-  for (const sprite of Object.values(game.maps).flatMap(map => (map.events || []).flatMap(event => event.sprite ? [event.sprite] : []))) {
+  for (const sprite of Object.values(game.maps).flatMap(map => (map.events || []).flatMap(event => event.pages.flatMap(page => page.sprite ? [page.sprite] : [])))) {
     if (!assets[sprite.image]) throw new Error(`Event sprite is unavailable: ${sprite.image}`);
   }
   for (const [assetPath, blob] of Object.entries(assets)) {

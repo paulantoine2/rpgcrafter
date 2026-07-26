@@ -37,7 +37,7 @@ describe('reference multi-plane demonstration', () => {
 
   it('crosses the mist trail only through its explicit connection', () => {
     const game = referenceGame(), map = game.maps.path, graph = buildNavigationGraph(map, game.tilesets);
-    expect(map.planes.map(plane => plane.name)).toEqual(['Sentier des brumes', 'Passerelle ancienne']);
+    expect(map.planes.map(plane => plane.name)).toEqual(['Mist Trail', 'Ancient Walkway']);
     expect(navigationTarget(graph, 'lower-trail', 13, 8, 'east')).toEqual({ planeId: 'raised-bridge', x: 14, y: 8 });
     expect(navigationTarget(graph, 'raised-bridge', 14, 8, 'west')).toEqual({ planeId: 'lower-trail', x: 13, y: 8 });
     expect(navigationHasCell(graph, 'lower-trail', 8, 8)).toBe(false);

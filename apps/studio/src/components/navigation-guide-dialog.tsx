@@ -51,8 +51,6 @@ export function NavigationGuideDialog({ open, onOpenChange }: { open: boolean; o
           <h3 className="font-medium">Exemple du toit</h3>
           <p className="mt-1 text-muted-foreground">Créez le toit sur un second plan en <strong className="text-foreground">Painted cells</strong>, rendu après le plan inférieur. Sa surface reste en <strong className="text-foreground">Below actors</strong> ; un parapet peut utiliser un autre calque en <strong className="text-foreground">Above actors</strong>. Reliez les deux plans à la rampe ou à l'escalier.</p>
         </section>
-
-        <p className="border-t pt-3 text-muted-foreground">Le guide détaillé, les recettes complètes et le diagnostic des erreurs se trouvent dans <strong className="text-foreground">STUDIO_GUIDE.md</strong> à la racine du projet.</p>
       </div>
     </DialogContent>
   </Dialog>;

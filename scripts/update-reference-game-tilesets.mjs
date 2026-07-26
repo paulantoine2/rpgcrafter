@@ -56,9 +56,9 @@ for (const map of Object.values(maps)) {
 }
 
 const manifest = await readJson(path.join(referenceDirectory, 'manifest.json'));
-manifest.schemaVersion = '0.6';
-manifest.engineRange = '>=0.6 <0.7';
-manifest.version = '0.6.0';
+manifest.schemaVersion = '0.7';
+manifest.engineRange = '>=0.7 <0.8';
+manifest.version = '0.7.0';
 
 await mkdir(destinationDirectory, { recursive: true });
 await Promise.all(outsideSheets.map(sheet => copyFile(

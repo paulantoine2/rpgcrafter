@@ -1,4 +1,4 @@
-import type { A1AnimationLayout, AutotileTilesetDefinition, AutotileVariant, TerrainPlacement } from './types.js';
+import type { A1AnimationLayout, AutotileTilesetDefinition, AutotileVariant, TerrainPlacement, TilesetDefinition, TilesetTerrain } from './types.js';
 
 export const A1_ANIMATION_FRAME_COUNT = 3;
 export const A1_ANIMATION_FRAME_DURATION_MS = 500;
@@ -69,6 +69,16 @@ export function resolveTerrainPlacements(tiles: readonly TerrainPlacement[], coo
 }
 
 export type AutotileRecipe = 'floor' | 'waterfall' | 'wall';
+
+export function isAutotileTileset(tileset: TilesetDefinition): tileset is AutotileTilesetDefinition {
+  return tileset.kind === 'a1' || tileset.kind === 'a2' || tileset.kind === 'a3' || tileset.kind === 'a4';
+}
+
+export function autotileRecipe(tileset: AutotileTilesetDefinition, terrain: TilesetTerrain): AutotileRecipe {
+  if (tileset.kind === 'a1' && 'animation' in terrain && terrain.animation === 'vertical') return 'waterfall';
+  if (tileset.kind === 'a3' || tileset.kind === 'a4' && 'autotile' in terrain && terrain.autotile === 'wall') return 'wall';
+  return 'floor';
+}
 
 export function autotileVariant(tileset: AutotileTilesetDefinition, mask: number, recipe: AutotileRecipe = 'floor'): AutotileVariant {
   if (recipe === 'waterfall') {

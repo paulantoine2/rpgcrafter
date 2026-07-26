@@ -1,5 +1,5 @@
 import { Application, Assets, Container, Graphics, Rectangle, Sprite, Text, Texture } from 'pixi.js';
-import { A1_ANIMATION_FRAME_STRIDE, autotileAnimationFrame, autotileVariant, resolveTerrainPlacements, type A1AnimationLayout, type AutotileRecipe, type AutotileTerrain, type AutotileTilesetDefinition, type AutotileVariant, type MapEventSprite, type TerrainPlacement, type TilesetDefinition } from '@rpgcrafter/game-schema';
+import { A1_ANIMATION_FRAME_STRIDE, autotileAnimationFrame, autotileRecipe, autotileVariant, isAutotileTileset, resolveTerrainPlacements, type A1AnimationLayout, type AutotileTerrain, type AutotileTilesetDefinition, type AutotileVariant, type MapEventSprite, type TerrainPlacement, type TilesetDefinition } from '@rpgcrafter/game-schema';
 import { CHARACTER_DIRECTIONS, CHARACTER_FRAME_SIZE, characterDirection, characterFrame, walkFrame, type CharacterDirection } from './character-sprite.js';
 import { actorRenderZ, planeRenderBase, tileLayerRenderZ, type RenderEnemy, type RenderState, type Renderer } from './renderer.js';
 
@@ -156,7 +156,7 @@ export class PixiRenderer implements Renderer {
       }
     }));
     const eventSpriteTextures = new Map<string, Texture>();
-    const eventSprites = maps.flatMap(map => map.events.flatMap(event => event.sprite ? [event.sprite] : []));
+    const eventSprites = maps.flatMap(map => map.events.flatMap(event => event.pages.flatMap(page => page.sprite ? [page.sprite] : [])));
     await Promise.all([...new Set(eventSprites.map(sprite => sprite.image))].map(async image => {
       const url = assetUrls[image];
       if (!url) throw new Error(`Impossible de charger le sprite d’événement (${image})`);
@@ -222,8 +222,8 @@ export class PixiRenderer implements Renderer {
       graphics.moveTo(enemy.x - 4, enemy.y).lineTo(enemy.x + 4, enemy.y).moveTo(enemy.x, enemy.y - 4).lineTo(enemy.x, enemy.y + 4).stroke({ color: '#ff6b8a', width: 1 });
     }
     for (const event of state.events) {
-      if (event.trigger.type === 'playerEnter') graphics.rect(event.position.x - event.trigger.size.w / 2, event.position.y - event.trigger.size.h / 2, event.trigger.size.w, event.trigger.size.h).stroke({ color: '#ffd166', alpha: 0.8, width: 2 });
-      else if (event.trigger.type === 'interact') graphics.circle(event.position.x, event.position.y, event.trigger.radius).stroke({ color: '#ffd166', alpha: 0.65, width: 1 });
+      if (event.trigger.type === 'playerTouch' || event.trigger.type === 'eventTouch') graphics.rect(event.position.x - event.trigger.size.w / 2, event.position.y - event.trigger.size.h / 2, event.trigger.size.w, event.trigger.size.h).stroke({ color: '#ffd166', alpha: 0.8, width: 2 });
+      else if (event.trigger.type === 'actionButton') graphics.circle(event.position.x, event.position.y, event.trigger.radius).stroke({ color: '#ffd166', alpha: 0.65, width: 1 });
     }
   }
 
@@ -234,7 +234,7 @@ export class PixiRenderer implements Renderer {
     const atlas = this.eventSpriteTextures.get(authoredSprite.image);
     if (!atlas) return;
     const direction = event.movementDirection === 'north' ? 'up' : event.movementDirection === 'east' ? 'right' : event.movementDirection === 'west' ? 'left' : 'down';
-    const pattern = walkFrame(event.movementAnimationTime, event.movementMoving || Boolean(event.movement?.steppingAnimation));
+    const pattern = walkFrame(event.movementAnimationTime, event.movementMoving || event.options.steppingAnimation);
     const frameKey = `${authoredSprite.image}:${authoredSprite.characterIndex}:${direction}:${pattern}`;
     let texture = this.eventFrames.get(frameKey);
     if (!texture) {
@@ -243,6 +243,13 @@ export class PixiRenderer implements Renderer {
     }
     const rendered = this.placeTexturedSprite(`event:${event.id}`, texture, x, y - event.jumpHeight, event.position.planeId, authoredSprite.frameWidth, authoredSprite.frameHeight, activeSprites);
     rendered.anchor.set(0.5, authoredSprite.objectAligned ? 1 : 0.5);
+    if (this.activeMap) {
+      rendered.zIndex = event.priority === 'belowCharacters'
+        ? planeRenderBase(this.activeMap, event.position.planeId) + 10_000 + y
+        : event.priority === 'aboveCharacters'
+          ? planeRenderBase(this.activeMap, event.position.planeId) + 800_000 + y
+          : actorRenderZ(this.activeMap, event.position.planeId, y);
+    }
     if (event.nearby) this.addLabel(event.id, x, y - authoredSprite.frameHeight / 2 - 24, '#e2f0ff');
   }
 
@@ -315,9 +322,9 @@ export class PixiRenderer implements Renderer {
         if (!tileset || !atlas || !terrain) continue;
         const key = `${mapId}:${layer.id}:${authored.x}:${authored.y}`;
         const animation: A1AnimationLayout = tileset.kind === 'a1' && 'animation' in terrain ? terrain.animation as A1AnimationLayout : 'none';
-        const recipe: AutotileRecipe = animation === 'vertical' ? 'waterfall' : tileset.kind === 'a3' || tileset.kind === 'a4' && 'autotile' in terrain && terrain.autotile === 'wall' ? 'wall' : 'floor';
+        const recipe = isAutotileTileset(tileset) ? autotileRecipe(tileset, terrain) : 'floor';
         const animationFrame = tileset.kind === 'a1' ? autotileAnimationFrame(animationElapsed, animation) : 0;
-        const isAutotile = tileset.kind === 'a1' || tileset.kind === 'a2' || tileset.kind === 'a3' || tileset.kind === 'a4';
+        const isAutotile = isAutotileTileset(tileset);
         const textureKey = `${tileset.id}:${terrain.id}:${isAutotile ? `${authored.mask}:${animationFrame}` : 'grid'}`;
         let texture = this.authoredTileTextures.get(textureKey);
         if (!texture) {

@@ -1,25 +1,25 @@
-# Sprites du jeu de référence
+# Reference Game Sprites
 
-Les fichiers `*-source.png` conservent la planche générée sur fond chroma magenta. Les fichiers sans suffixe sont les versions PNG avec alpha, à utiliser dans le renderer.
+Files named `*-source.png` preserve the generated sprite sheet with a chroma magenta background. Files without that suffix are alpha-enabled PNG versions intended for use by the renderer.
 
-| Fichier | Disposition | Contenu |
+| File | Layout | Contents |
 | --- | --- | --- |
-| `rpg-maker-mz/Actor1.png` | 4 groupes × 2 groupes ; 3 frames × 4 directions par personnage | 8 personnages RPG Maker. Le Player utilise actuellement le premier personnage. |
-| `reference-characters.png` | 4 colonnes × 3 rangées | Héros, maire Elian, Gardien noyé, esprit des sources ; repos, déplacement, action. |
-| `reference-creatures.png` | 3 colonnes × 2 rangées | Slime des brumes, scarabée épineux, marchande ; repos et action/déplacement. |
-| `reference-props.png` | 4 colonnes × 3 rangées | Mur, coffre, porte runique, cœur de cristal, décor de brume, lanterne, colonne, source, arbre et rune. |
+| `rpg-maker-mz/Actor1.png` | 4 × 2 character groups; 3 frames × 4 directions per character | 8 RPG Maker characters. The Player currently uses the first character. |
+| `reference-characters.png` | 4 columns × 3 rows | Hero, Mayor Elian, Drowned Warden, and spring spirit; idle, movement, and action poses. |
+| `reference-creatures.png` | 3 columns × 2 rows | Mist slime, thorn beetle, and merchant; idle and action/movement poses. |
+| `reference-props.png` | 4 columns × 3 rows | Wall, chest, rune door, crystal heart, mist decoration, lantern, column, spring, tree, and rune. |
 
-Les planches sont destinées à une découpe en atlas par le futur pipeline d’assets. Elles sont volontairement séparées du package de contenu JSON : celui-ci décrit les entités, le renderer choisit leurs textures.
+These sheets are intended to be sliced into atlases by the future asset pipeline. They are deliberately kept separate from the JSON content package: the package describes entities, while the renderer selects their textures.
 
-## Bundle RPG Maker MZ
+## RPG Maker MZ Bundle
 
-`rpg-maker-mz/` contient les planches de personnages, créatures, véhicules et objets animés de RPG Maker MZ. Son `library.json` conserve pour chaque PNG le nombre de personnages, la taille exacte d’une frame, les quatre directions et les conventions de nommage MZ :
+`rpg-maker-mz/` contains RPG Maker MZ character, creature, vehicle, and animated-object sheets. Its `library.json` records the character count, exact frame size, four directions, and MZ naming conventions for each PNG:
 
-- `$` indique une planche à personnage unique ;
-- `!` indique un objet aligné sur la grille, sans décalage vertical.
+- `$` identifies a single-character sheet;
+- `!` identifies a grid-aligned object with no vertical offset.
 
-Le bundle peut être régénéré depuis un dossier Characters MZ :
+The bundle can be regenerated from an MZ Characters directory:
 
 ```sh
-node scripts/generate-rpg-maker-mz-character-assets.mjs /chemin/vers/characters
+node scripts/generate-rpg-maker-mz-character-assets.mjs /path/to/characters
 ```

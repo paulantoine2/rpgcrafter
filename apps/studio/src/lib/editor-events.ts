@@ -1,57 +1,50 @@
-import type { Action, GameEvent, MapEvent, PlanePosition, SourceGame } from '@rpgcrafter/game-schema';
+import type { EventCommand, MapEvent, PlanePosition, SourceGame } from '@rpgcrafter/game-schema';
 
-export function createMapEventAt(game: SourceGame, mapId: string, position: PlanePosition): { event: MapEvent; script: GameEvent } {
+export function createMapEventAt(game: SourceGame, mapId: string, position: PlanePosition): MapEvent {
   const map = game.maps[mapId];
   if (!map) throw new Error(`Unknown map: ${mapId}`);
   const eventIds = new Set(map.events.map(event => event.id));
-  const scriptIds = new Set(Object.keys(game.events.events));
   let number = 1;
   let id = `event-${number}`;
-  let scriptId = `event.${mapId}.${id}`;
-  while (eventIds.has(id) || scriptIds.has(scriptId)) {
+  while (eventIds.has(id)) {
     number += 1;
     id = `event-${number}`;
-    scriptId = `event.${mapId}.${id}`;
   }
   return {
-    event: {
-      id,
-      position,
-      scriptId,
-      trigger: { type: 'interact', radius: 1 },
-      execution: { mode: 'repeat' },
-      movement: {
-        type: 'fixed', speed: 3, frequency: 3, route: [],
-        walkingAnimation: true, steppingAnimation: false, directionFix: false, through: false,
-      },
-    },
-    script: { id: scriptId, pages: [{ actions: [] }] },
+    id,
+    position,
+    pages: [{
+      movement: { type: 'fixed', speed: 3, frequency: 3, route: [] },
+      options: { walkingAnimation: true, steppingAnimation: false, directionFix: false, through: false },
+      priority: 'sameAsCharacters',
+      trigger: { type: 'actionButton', radius: 1 },
+      contents: [],
+    }],
   };
 }
 
-function renameEventTargets(actions: Action[], previousId: string, nextId: string): { actions: Action[]; changed: boolean } {
+function renameEventTargets(commands: EventCommand[], previousId: string, nextId: string): { commands: EventCommand[]; changed: boolean } {
   let changed = false;
-  const renamed = actions.map(action => {
-    if (action.type === 'movementRoute' && action.target.kind === 'event' && action.target.eventId === previousId) {
+  const renamed = commands.map(command => {
+    if (command.type === 'movementRoute' && command.target.kind === 'event' && command.target.eventId === previousId) {
       changed = true;
-      return { ...action, target: { ...action.target, eventId: nextId } };
+      return { ...command, target: { ...command.target, eventId: nextId } };
     }
-    if (action.type === 'dialogue' && action.choices) {
-      const choices = action.choices.map(choice => {
-        const result = renameEventTargets(choice.actions, previousId, nextId);
+    if (command.type === 'dialogue' && command.choices) {
+      const choices = command.choices.map(choice => {
+        const result = renameEventTargets(choice.commands, previousId, nextId);
         if (result.changed) changed = true;
-        return result.changed ? { ...choice, actions: result.actions } : choice;
+        return result.changed ? { ...choice, commands: result.commands } : choice;
       });
-      return choices.some((choice, index) => choice !== action.choices![index]) ? { ...action, choices } : action;
+      return choices.some((choice, index) => choice !== command.choices![index]) ? { ...command, choices } : command;
     }
-    return action;
+    return command;
   });
-  return { actions: renamed, changed };
+  return { commands: renamed, changed };
 }
 
 export function renameMapEvent(game: SourceGame, mapId: string, previousId: string, requestedId: string): {
   game: SourceGame;
-  scriptsChanged: boolean;
   enemiesChanged: boolean;
 } | null {
   const nextId = requestedId.trim();
@@ -63,16 +56,10 @@ export function renameMapEvent(game: SourceGame, mapId: string, previousId: stri
   const next = structuredClone(game);
   const nextMap = next.maps[mapId];
   nextMap.events[eventIndex].id = nextId;
-
-  let scriptsChanged = false;
-  const scriptIds = new Set(nextMap.events.map(event => event.scriptId));
-  for (const scriptId of scriptIds) {
-    const script = next.events.events[scriptId];
-    if (!script) continue;
-    script.pages = script.pages.map(page => {
-      const result = renameEventTargets(page.actions, previousId, nextId);
-      if (result.changed) scriptsChanged = true;
-      return result.changed ? { ...page, actions: result.actions } : page;
+  for (const event of nextMap.events) {
+    event.pages = event.pages.map(page => {
+      const result = renameEventTargets(page.contents, previousId, nextId);
+      return result.changed ? { ...page, contents: result.commands } : page;
     });
   }
 
@@ -83,9 +70,9 @@ export function renameMapEvent(game: SourceGame, mapId: string, previousId: stri
     if (!enemy?.onDefeated) continue;
     const result = renameEventTargets(enemy.onDefeated, previousId, nextId);
     if (!result.changed) continue;
-    enemy.onDefeated = result.actions;
+    enemy.onDefeated = result.commands;
     enemiesChanged = true;
   }
 
-  return { game: next, scriptsChanged, enemiesChanged };
+  return { game: next, enemiesChanged };
 }

@@ -2,9 +2,14 @@
 
 **A modern, web-based RPG Maker clone for building and playing 2D action RPGs.**
 
+![RPG Crafter Studio editing a village map](docs/images/rpg-crafter-studio.png)
+
 RPG Crafter reimagines the familiar RPG Maker workflow for the web. It combines a visual game editor, a browser-based runtime, and a portable JSON game format in a single open-source project. The goal is to make creating, testing, and sharing an RPG feel immediate: edit a project in the Studio, click **Play**, and run it directly in the browser.
 
 The project takes inspiration from RPG Maker's approachable, data-driven authoring experience while modernizing the technology and workflow. RPG Crafter is independently developed and does not use RPG Maker source code or proprietary assets.
+
+> [!WARNING]
+> RPG Crafter is a work in progress. Features, file formats, and editor behavior may change without notice.
 
 > [!IMPORTANT]
 > RPG Crafter is an independent project. It is not affiliated with, endorsed by, or sponsored by Gotcha Gotcha Games, KADOKAWA, or the owners of the RPG Maker trademark. “RPG Maker” is used only to describe the type of product and the project's inspiration.
@@ -92,26 +97,32 @@ pnpm build   # Build every application and package
 
 ## How game projects work
 
-A game is a collection of JSON documents and image assets. The runtime validates every document before starting, so broken references and incompatible data fail early with a useful error instead of causing unpredictable gameplay behavior.
+A game project is a portable package of JSON documents and assets. The Studio can open or export the package as a ZIP archive, while the bundled reference game uses the same structure directly from `content/reference-game/`.
 
 ```text
 my-game/
 ├── manifest.json
+├── tilesets.json
 ├── maps.json
 ├── actors.json
 ├── enemies.json
 ├── skills.json
 ├── items.json
 ├── quests.json
+├── ui.json
 ├── events.json
 ├── initial-state.json
-├── tilesets.json
-└── ui.json
+├── tilesets/
+│   └── ...             # Tileset images and per-project configurations
+└── sprites/
+    └── ...             # Event character sheets
 ```
 
-The engine contains no scenario-specific logic. Game behavior is described with event triggers, conditional pages, and generic actions. This keeps authored games portable and allows the Studio, Player, and future renderers to share the same content.
+All 11 JSON documents are required at the root of an imported archive. `manifest.json` identifies the game, declares its schema and compatible engine versions, and selects the starting map. The remaining documents define tilesets, maps, the player, enemies, skills, items, quests, UI, objectives, and initial state.
 
-For the complete format reference, see [DOCUMENTATION.md](DOCUMENTATION.md). For a practical guide to map planes, layers, collisions, and navigation, see [STUDIO_GUIDE.md](STUDIO_GUIDE.md).
+Maps contain planes, tile layers, navigation, events, and enemy spawns. Event pages combine triggers, conditions, movement settings, and reusable commands such as dialogue, inventory changes, quest updates, teleports, and movement routes. The engine contains no scenario-specific logic, so the Studio and Player consume the same data-driven project format.
+
+Asset paths are relative to the project root. Imported and exported packages include referenced tileset PNG files, tileset configuration JSON files, and event sprite sheets alongside the core documents. Before a project is opened or played, RPG Crafter migrates supported older data and validates document structure, engine compatibility, cross-document references, map navigation, and required assets.
 
 ## Controls
 
@@ -131,12 +142,6 @@ For the complete format reference, see [DOCUMENTATION.md](DOCUMENTATION.md). For
 RPG Crafter is under active development and is not yet a drop-in replacement for RPG Maker. The current version focuses on the core workflow: editing maps and events, managing assets, previewing a project, and running a complete action-RPG reference game in the browser.
 
 File formats and editor behavior may still change between releases. If you build a project with the current version, keep the source package under version control.
-
-## Contributing
-
-Issues, design discussions, documentation improvements, tests, and pull requests are welcome. Before contributing a feature, please open an issue describing the use case and how it fits the data-driven architecture.
-
-Only contribute code and assets that you created or have permission to redistribute. Do not submit RPG Maker code, graphics, audio, sample projects, or other proprietary material.
 
 ## Trademark notice
 

@@ -1,10 +1,77 @@
 {
-  "slime": { "name": "Slime des brumes", "color": "#8fc97a", "hp": 42, "speed": 62, "damage": 8, "radius": 17, "xp": 7, "behavior": "chase" },
-  "beetle": { "name": "Scarabée épineux", "color": "#c99055", "hp": 58, "speed": 48, "damage": 12, "radius": 19, "xp": 11, "behavior": "charge" },
-  "wisp": { "name": "Esprit des sources", "color": "#86c7ed", "hp": 36, "speed": 50, "damage": 9, "radius": 15, "xp": 10, "behavior": "ranged" },
+  "slime": {
+    "name": "Mist Slime",
+    "color": "#8fc97a",
+    "hp": 42,
+    "speed": 62,
+    "damage": 8,
+    "radius": 17,
+    "xp": 7,
+    "behavior": "chase"
+  },
+  "beetle": {
+    "name": "Thorn Beetle",
+    "color": "#c99055",
+    "hp": 58,
+    "speed": 48,
+    "damage": 12,
+    "radius": 19,
+    "xp": 11,
+    "behavior": "charge"
+  },
+  "wisp": {
+    "name": "Spring Spirit",
+    "color": "#86c7ed",
+    "hp": 36,
+    "speed": 50,
+    "damage": 9,
+    "radius": 15,
+    "xp": 10,
+    "behavior": "ranged"
+  },
   "guardian": {
-    "name": "Gardien noyé", "color": "#b68cec", "hp": 100, "speed": 42, "damage": 5, "radius": 34, "xp": 60, "behavior": "boss",
-    "phases": [{ "atHpRatio": 0.5, "speedMultiplier": 1.28, "projectile": { "cooldown": 1.05, "speed": 285, "damage": 17, "color": "#ffb2d6" } }],
-    "onDefeated": [{ "type": "setFlag", "id": "bossDefeated", "value": true }, { "type": "giveItem", "id": "item.crystal-heart" }, { "type": "setQuestState", "id": "quest.bell-of-mist", "state": "return_to_mayor" }, { "type": "toast", "text": "Gardien vaincu — Cœur de cristal obtenu" }, { "type": "save" }]
+    "name": "Drowned Guardian",
+    "color": "#b68cec",
+    "hp": 100,
+    "speed": 42,
+    "damage": 5,
+    "radius": 34,
+    "xp": 60,
+    "behavior": "boss",
+    "phases": [
+      {
+        "atHpRatio": 0.5,
+        "speedMultiplier": 1.28,
+        "projectile": {
+          "cooldown": 1.05,
+          "speed": 285,
+          "damage": 17,
+          "color": "#ffb2d6"
+        }
+      }
+    ],
+    "onDefeated": [
+      {
+        "type": "setFlag",
+        "id": "bossDefeated",
+        "value": true
+      },
+      {
+        "type": "giveItem",
+        "id": "item.crystal-heart"
+      },
+      {
+        "type": "setQuestState",
+        "id": "quest.bell-of-mist",
+        "state": "return_to_mayor"
+      },
+      {
+        "type": "toast",
+        "text": "Guardian defeated — Crystal Heart obtained"
+      },
+      {
+        "type": "save"
+      }
+    ]
   }
 }

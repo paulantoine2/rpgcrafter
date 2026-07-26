@@ -1,7 +1,7 @@
 {
   "village": {
     "id": "village",
-    "name": "Aubeval",
+    "name": "Dawnvale",
     "ground": "#497a4f",
     "accent": "#d6b56f",
     "tileSize": 48,
@@ -14,7 +14,7 @@
     "planes": [
       {
         "id": "aubeval",
-        "name": "Ruelles d’Aubeval",
+        "name": "Dawnvale Streets",
         "order": 0,
         "surfaceLayerId": "surface",
         "surfaceCoverage": "bounds"
@@ -23,7 +23,7 @@
     "tileLayers": [
       {
         "id": "surface",
-        "name": "Terrain naturel",
+        "name": "Natural Terrain",
         "planeId": "aubeval",
         "renderPhase": "belowActors",
         "tiles": [
@@ -7321,7 +7321,7 @@
       },
       {
         "id": "layer-2",
-        "name": "Routes et places",
+        "name": "Roads and Squares",
         "planeId": "aubeval",
         "renderPhase": "belowActors",
         "tiles": [
@@ -8787,7 +8787,7 @@
       },
       {
         "id": "layer-3",
-        "name": "Maisons et murs",
+        "name": "Houses and Walls",
         "planeId": "aubeval",
         "renderPhase": "aboveActors",
         "tiles": [
@@ -9431,7 +9431,7 @@
       },
       {
         "id": "layer-4",
-        "name": "Mobilier et végétation",
+        "name": "Furniture and Vegetation",
         "planeId": "aubeval",
         "renderPhase": "aboveActors",
         "tiles": [
@@ -9550,17 +9550,77 @@
           "y": 14,
           "planeId": "aubeval"
         },
-        "scriptId": "event.exit-village-east",
-        "trigger": {
-          "type": "playerEnter",
-          "size": {
-            "w": 1,
-            "h": 4
+        "pages": [
+          {
+            "conditions": [
+              {
+                "kind": "quest",
+                "id": "quest.bell-of-mist",
+                "state": "reach_sanctuary"
+              }
+            ],
+            "movement": {
+              "type": "fixed",
+              "speed": 3,
+              "frequency": 3,
+              "route": []
+            },
+            "options": {
+              "walkingAnimation": true,
+              "steppingAnimation": false,
+              "directionFix": false,
+              "through": false
+            },
+            "priority": "belowCharacters",
+            "trigger": {
+              "type": "playerTouch",
+              "size": {
+                "w": 1,
+                "h": 4
+              }
+            },
+            "contents": [
+              {
+                "type": "teleport",
+                "mapId": "path",
+                "position": {
+                  "x": 2,
+                  "y": 8,
+                  "planeId": "lower-trail"
+                },
+                "resetMap": true
+              }
+            ]
+          },
+          {
+            "movement": {
+              "type": "fixed",
+              "speed": 3,
+              "frequency": 3,
+              "route": []
+            },
+            "options": {
+              "walkingAnimation": true,
+              "steppingAnimation": false,
+              "directionFix": false,
+              "through": false
+            },
+            "priority": "belowCharacters",
+            "trigger": {
+              "type": "playerTouch",
+              "size": {
+                "w": 1,
+                "h": 4
+              }
+            },
+            "contents": [
+              {
+                "type": "toast",
+                "text": "Speak to the mayor first."
+              }
+            ]
           }
-        },
-        "execution": {
-          "mode": "repeat"
-        }
+        ]
       },
       {
         "id": "mayor",
@@ -9569,22 +9629,222 @@
           "y": 7,
           "planeId": "aubeval"
         },
-        "scriptId": "event.mayor",
-        "trigger": {
-          "type": "interact",
-          "radius": 1.25
-        },
-        "execution": {
-          "mode": "repeat"
-        },
-        "sprite": {
-          "image": "sprites/rpg-maker-mz/Actor1.png",
-          "characterIndex": 0,
-          "characterColumns": 4,
-          "frameWidth": 48,
-          "frameHeight": 48,
-          "objectAligned": false
-        }
+        "pages": [
+          {
+            "conditions": [
+              {
+                "kind": "quest",
+                "id": "quest.bell-of-mist",
+                "state": "inactive"
+              }
+            ],
+            "sprite": {
+              "image": "sprites/rpg-maker-mz/Actor1.png",
+              "characterIndex": 0,
+              "characterColumns": 4,
+              "frameWidth": 48,
+              "frameHeight": 48,
+              "objectAligned": false
+            },
+            "movement": {
+              "type": "fixed",
+              "speed": 3,
+              "frequency": 3,
+              "route": []
+            },
+            "options": {
+              "walkingAnimation": true,
+              "steppingAnimation": false,
+              "directionFix": false,
+              "through": false
+            },
+            "priority": "sameAsCharacters",
+            "trigger": {
+              "type": "actionButton",
+              "radius": 1.25
+            },
+            "contents": [
+              {
+                "type": "dialogue",
+                "speaker": "Mayor Elian",
+                "text": "The protective Bell has lost its Crystal Heart. Without it, the mist will swallow Dawnvale. Will you seek the Guardian?",
+                "choices": [
+                  {
+                    "label": "I accept",
+                    "commands": [
+                      {
+                        "type": "setQuestState",
+                        "id": "quest.bell-of-mist",
+                        "state": "reach_sanctuary"
+                      },
+                      {
+                        "type": "toast",
+                        "text": "Quest started: The Bell of Mists"
+                      },
+                      {
+                        "type": "save"
+                      }
+                    ]
+                  },
+                  {
+                    "label": "Not yet",
+                    "commands": [
+                      {
+                        "type": "dialogue",
+                        "speaker": "Mayor Elian",
+                        "text": "I understand. Come back when you are ready."
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "conditions": [
+              {
+                "kind": "quest",
+                "id": "quest.bell-of-mist",
+                "state": "return_to_mayor"
+              },
+              {
+                "kind": "item",
+                "id": "item.crystal-heart"
+              }
+            ],
+            "sprite": {
+              "image": "sprites/rpg-maker-mz/Actor1.png",
+              "characterIndex": 0,
+              "characterColumns": 4,
+              "frameWidth": 48,
+              "frameHeight": 48,
+              "objectAligned": false
+            },
+            "movement": {
+              "type": "fixed",
+              "speed": 3,
+              "frequency": 3,
+              "route": []
+            },
+            "options": {
+              "walkingAnimation": true,
+              "steppingAnimation": false,
+              "directionFix": false,
+              "through": false
+            },
+            "priority": "sameAsCharacters",
+            "trigger": {
+              "type": "actionButton",
+              "radius": 1.25
+            },
+            "contents": [
+              {
+                "type": "dialogue",
+                "speaker": "Mayor Elian",
+                "text": "The Crystal Heart! Dawnvale owes you a great debt.",
+                "choices": [
+                  {
+                    "label": "Hand over the crystal",
+                    "commands": [
+                      {
+                        "type": "removeItem",
+                        "id": "item.crystal-heart"
+                      },
+                      {
+                        "type": "setQuestState",
+                        "id": "quest.bell-of-mist",
+                        "state": "completed"
+                      },
+                      {
+                        "type": "save"
+                      },
+                      {
+                        "type": "dialogue",
+                        "speaker": "Mayor Elian",
+                        "text": "The bell rings once more. The mist is retreating. End of the V0 demo!"
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "conditions": [
+              {
+                "kind": "quest",
+                "id": "quest.bell-of-mist",
+                "state": "completed"
+              }
+            ],
+            "sprite": {
+              "image": "sprites/rpg-maker-mz/Actor1.png",
+              "characterIndex": 0,
+              "characterColumns": 4,
+              "frameWidth": 48,
+              "frameHeight": 48,
+              "objectAligned": false
+            },
+            "movement": {
+              "type": "fixed",
+              "speed": 3,
+              "frequency": 3,
+              "route": []
+            },
+            "options": {
+              "walkingAnimation": true,
+              "steppingAnimation": false,
+              "directionFix": false,
+              "through": false
+            },
+            "priority": "sameAsCharacters",
+            "trigger": {
+              "type": "actionButton",
+              "radius": 1.25
+            },
+            "contents": [
+              {
+                "type": "dialogue",
+                "speaker": "Mayor Elian",
+                "text": "The bell protects our village once more. Thank you, hero."
+              }
+            ]
+          },
+          {
+            "sprite": {
+              "image": "sprites/rpg-maker-mz/Actor1.png",
+              "characterIndex": 0,
+              "characterColumns": 4,
+              "frameWidth": 48,
+              "frameHeight": 48,
+              "objectAligned": false
+            },
+            "movement": {
+              "type": "fixed",
+              "speed": 3,
+              "frequency": 3,
+              "route": []
+            },
+            "options": {
+              "walkingAnimation": true,
+              "steppingAnimation": false,
+              "directionFix": false,
+              "through": false
+            },
+            "priority": "sameAsCharacters",
+            "trigger": {
+              "type": "actionButton",
+              "radius": 1.25
+            },
+            "contents": [
+              {
+                "type": "dialogue",
+                "speaker": "Mayor Elian",
+                "text": "The path to the east leads to the Sanctuary. Stay alert."
+              }
+            ]
+          }
+        ]
       },
       {
         "id": "merchant",
@@ -9593,22 +9853,57 @@
           "y": 5,
           "planeId": "aubeval"
         },
-        "scriptId": "event.merchant",
-        "trigger": {
-          "type": "interact",
-          "radius": 1.25
-        },
-        "execution": {
-          "mode": "repeat"
-        },
-        "sprite": {
-          "image": "sprites/rpg-maker-mz/Actor1.png",
-          "characterIndex": 1,
-          "characterColumns": 4,
-          "frameWidth": 48,
-          "frameHeight": 48,
-          "objectAligned": false
-        }
+        "pages": [
+          {
+            "sprite": {
+              "image": "sprites/rpg-maker-mz/Actor1.png",
+              "characterIndex": 1,
+              "characterColumns": 4,
+              "frameWidth": 48,
+              "frameHeight": 48,
+              "objectAligned": false
+            },
+            "movement": {
+              "type": "fixed",
+              "speed": 3,
+              "frequency": 3,
+              "route": []
+            },
+            "options": {
+              "walkingAnimation": true,
+              "steppingAnimation": false,
+              "directionFix": false,
+              "through": false
+            },
+            "priority": "sameAsCharacters",
+            "trigger": {
+              "type": "actionButton",
+              "radius": 1.25
+            },
+            "contents": [
+              {
+                "type": "dialogue",
+                "speaker": "Merchant",
+                "text": "The springs are dangerous. A potion restores 30 HP — today, I will give you one.",
+                "choices": [
+                  {
+                    "label": "Take the potion",
+                    "commands": [
+                      {
+                        "type": "healPlayer",
+                        "amount": 30
+                      },
+                      {
+                        "type": "toast",
+                        "text": "+30 PV"
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
       }
     ],
     "blockedRegions": [
@@ -9659,7 +9954,7 @@
   },
   "path": {
     "id": "path",
-    "name": "Sentier brumeux",
+    "name": "Misty Path",
     "ground": "#263f37",
     "accent": "#8bb8a3",
     "tileSize": 48,
@@ -9672,14 +9967,14 @@
     "planes": [
       {
         "id": "lower-trail",
-        "name": "Sentier des brumes",
+        "name": "Mist Trail",
         "order": 0,
         "surfaceLayerId": "lower-surface",
         "surfaceCoverage": "painted"
       },
       {
         "id": "raised-bridge",
-        "name": "Passerelle ancienne",
+        "name": "Ancient Walkway",
         "order": 1,
         "surfaceLayerId": "bridge-surface",
         "surfaceCoverage": "painted"
@@ -9688,7 +9983,7 @@
     "tileLayers": [
       {
         "id": "lower-surface",
-        "name": "Sentier de terre",
+        "name": "Dirt Path",
         "planeId": "lower-trail",
         "renderPhase": "belowActors",
         "tiles": [
@@ -9942,7 +10237,7 @@
       },
       {
         "id": "lower-fences",
-        "name": "Lisière et obstacles",
+        "name": "Forest Edge and Obstacles",
         "planeId": "lower-trail",
         "renderPhase": "aboveActors",
         "tiles": [
@@ -9980,7 +10275,7 @@
       },
       {
         "id": "bridge-surface",
-        "name": "Passerelle en bois",
+        "name": "Wooden Walkway",
         "planeId": "raised-bridge",
         "renderPhase": "belowActors",
         "tiles": [
@@ -10222,7 +10517,7 @@
       },
       {
         "id": "bridge-fences",
-        "name": "Garde-corps de la passerelle",
+        "name": "Walkway Railings",
         "planeId": "raised-bridge",
         "renderPhase": "aboveActors",
         "tiles": [
@@ -10369,17 +10664,42 @@
           "y": 8,
           "planeId": "lower-trail"
         },
-        "scriptId": "event.exit-path-west",
-        "trigger": {
-          "type": "playerEnter",
-          "size": {
-            "w": 1,
-            "h": 4
+        "pages": [
+          {
+            "movement": {
+              "type": "fixed",
+              "speed": 3,
+              "frequency": 3,
+              "route": []
+            },
+            "options": {
+              "walkingAnimation": true,
+              "steppingAnimation": false,
+              "directionFix": false,
+              "through": false
+            },
+            "priority": "belowCharacters",
+            "trigger": {
+              "type": "playerTouch",
+              "size": {
+                "w": 1,
+                "h": 4
+              }
+            },
+            "contents": [
+              {
+                "type": "teleport",
+                "mapId": "village",
+                "position": {
+                  "x": 42,
+                  "y": 8,
+                  "planeId": "aubeval"
+                },
+                "resetMap": true
+              }
+            ]
           }
-        },
-        "execution": {
-          "mode": "repeat"
-        }
+        ]
       },
       {
         "id": "exit-east",
@@ -10388,17 +10708,72 @@
           "y": 8,
           "planeId": "raised-bridge"
         },
-        "scriptId": "event.exit-path-east",
-        "trigger": {
-          "type": "playerEnter",
-          "size": {
-            "w": 1,
-            "h": 4
+        "pages": [
+          {
+            "conditions": [
+              {
+                "kind": "quest",
+                "id": "quest.bell-of-mist",
+                "state": "reach_sanctuary"
+              }
+            ],
+            "movement": {
+              "type": "fixed",
+              "speed": 3,
+              "frequency": 3,
+              "route": []
+            },
+            "options": {
+              "walkingAnimation": true,
+              "steppingAnimation": false,
+              "directionFix": false,
+              "through": false
+            },
+            "priority": "belowCharacters",
+            "trigger": {
+              "type": "playerTouch",
+              "size": {
+                "w": 1,
+                "h": 4
+              }
+            },
+            "contents": [
+              {
+                "type": "teleport",
+                "mapId": "sanctuary",
+                "position": {
+                  "x": 2,
+                  "y": 8,
+                  "planeId": "gallery"
+                },
+                "resetMap": true
+              }
+            ]
+          },
+          {
+            "movement": {
+              "type": "fixed",
+              "speed": 3,
+              "frequency": 3,
+              "route": []
+            },
+            "options": {
+              "walkingAnimation": true,
+              "steppingAnimation": false,
+              "directionFix": false,
+              "through": false
+            },
+            "priority": "belowCharacters",
+            "trigger": {
+              "type": "playerTouch",
+              "size": {
+                "w": 1,
+                "h": 4
+              }
+            },
+            "contents": []
           }
-        },
-        "execution": {
-          "mode": "repeat"
-        }
+        ]
       },
       {
         "id": "wayfinder",
@@ -10407,22 +10782,42 @@
           "y": 7,
           "planeId": "lower-trail"
         },
-        "scriptId": "event.demo-path",
-        "trigger": {
-          "type": "interact",
-          "radius": 1.25
-        },
-        "execution": {
-          "mode": "repeat"
-        },
-        "sprite": {
-          "image": "sprites/rpg-maker-mz/Actor1.png",
-          "characterIndex": 0,
-          "characterColumns": 4,
-          "frameWidth": 48,
-          "frameHeight": 48,
-          "objectAligned": false
-        }
+        "pages": [
+          {
+            "sprite": {
+              "image": "sprites/rpg-maker-mz/Actor1.png",
+              "characterIndex": 0,
+              "characterColumns": 4,
+              "frameWidth": 48,
+              "frameHeight": 48,
+              "objectAligned": false
+            },
+            "movement": {
+              "type": "fixed",
+              "speed": 3,
+              "frequency": 3,
+              "route": []
+            },
+            "options": {
+              "walkingAnimation": true,
+              "steppingAnimation": false,
+              "directionFix": false,
+              "through": false
+            },
+            "priority": "sameAsCharacters",
+            "trigger": {
+              "type": "actionButton",
+              "radius": 1.25
+            },
+            "contents": [
+              {
+                "type": "dialogue",
+                "speaker": "Cartographer",
+                "text": "The path and walkway are two independent planes. Cross their junction in the center: only this explicit connection lets you change planes. Pits block an entire cell, while fences block only specific edges."
+              }
+            ]
+          }
+        ]
       }
     ],
     "blockedRegions": [
@@ -10463,7 +10858,7 @@
   },
   "sanctuary": {
     "id": "sanctuary",
-    "name": "Sanctuaire des Sources",
+    "name": "Sanctuary of Springs",
     "ground": "#354b52",
     "accent": "#9bbfd0",
     "tileSize": 48,
@@ -10476,14 +10871,14 @@
     "planes": [
       {
         "id": "gallery",
-        "name": "Galerie noyée",
+        "name": "Flooded Gallery",
         "order": 0,
         "surfaceLayerId": "surface",
         "surfaceCoverage": "bounds"
       },
       {
         "id": "bell-terrace",
-        "name": "Terrasse des cloches",
+        "name": "Bell Terrace",
         "order": 1,
         "surfaceLayerId": "terrace-surface",
         "surfaceCoverage": "painted"
@@ -10492,7 +10887,7 @@
     "tileLayers": [
       {
         "id": "surface",
-        "name": "Dallage de la galerie",
+        "name": "Gallery Floor",
         "planeId": "gallery",
         "renderPhase": "belowActors",
         "tiles": [
@@ -12930,7 +13325,7 @@
       },
       {
         "id": "layer-4",
-        "name": "Eaux et ruines",
+        "name": "Waters and Ruins",
         "planeId": "gallery",
         "renderPhase": "aboveActors",
         "tiles": [
@@ -13004,7 +13399,7 @@
       },
       {
         "id": "terrace-surface",
-        "name": "Sol de la terrasse",
+        "name": "Terrace Floor",
         "planeId": "bell-terrace",
         "renderPhase": "belowActors",
         "tiles": [
@@ -13330,7 +13725,7 @@
       },
       {
         "id": "terrace-parapet",
-        "name": "Parapets et ornements",
+        "name": "Parapets and Ornaments",
         "planeId": "bell-terrace",
         "renderPhase": "aboveActors",
         "tiles": [
@@ -13461,17 +13856,42 @@
           "y": 8,
           "planeId": "gallery"
         },
-        "scriptId": "event.exit-sanctuary-west",
-        "trigger": {
-          "type": "playerEnter",
-          "size": {
-            "w": 1,
-            "h": 4
+        "pages": [
+          {
+            "movement": {
+              "type": "fixed",
+              "speed": 3,
+              "frequency": 3,
+              "route": []
+            },
+            "options": {
+              "walkingAnimation": true,
+              "steppingAnimation": false,
+              "directionFix": false,
+              "through": false
+            },
+            "priority": "belowCharacters",
+            "trigger": {
+              "type": "playerTouch",
+              "size": {
+                "w": 1,
+                "h": 4
+              }
+            },
+            "contents": [
+              {
+                "type": "teleport",
+                "mapId": "path",
+                "position": {
+                  "x": 24,
+                  "y": 8,
+                  "planeId": "raised-bridge"
+                },
+                "resetMap": true
+              }
+            ]
           }
-        },
-        "execution": {
-          "mode": "repeat"
-        }
+        ]
       },
       {
         "id": "keyChest",
@@ -13480,29 +13900,127 @@
           "y": 5,
           "planeId": "bell-terrace"
         },
-        "scriptId": "event.key-chest",
-        "trigger": {
-          "type": "interact",
-          "radius": 1.25
-        },
-        "execution": {
-          "mode": "repeat"
-        },
-        "activeWhen": [
+        "pages": [
           {
-            "kind": "flag",
-            "id": "keyChestOpened",
-            "equals": false
+            "conditions": [
+              {
+                "kind": "flag",
+                "id": "keyChestOpened",
+                "equals": false
+              },
+              {
+                "kind": "flag",
+                "id": "keyChestOpened",
+                "equals": false
+              }
+            ],
+            "sprite": {
+              "image": "sprites/rpg-maker-mz/!Chest.png",
+              "characterIndex": 0,
+              "characterColumns": 4,
+              "frameWidth": 48,
+              "frameHeight": 48,
+              "objectAligned": true
+            },
+            "movement": {
+              "type": "fixed",
+              "speed": 3,
+              "frequency": 3,
+              "route": []
+            },
+            "options": {
+              "walkingAnimation": true,
+              "steppingAnimation": false,
+              "directionFix": false,
+              "through": false
+            },
+            "priority": "sameAsCharacters",
+            "trigger": {
+              "type": "actionButton",
+              "radius": 1.25
+            },
+            "contents": [
+              {
+                "type": "setFlag",
+                "id": "keyChestOpened",
+                "value": true
+              },
+              {
+                "type": "giveItem",
+                "id": "item.sanctuary-key"
+              },
+              {
+                "type": "unlockSkill",
+                "id": "skill.wave"
+              },
+              {
+                "type": "setQuestState",
+                "id": "quest.bell-of-mist",
+                "state": "open_door"
+              },
+              {
+                "type": "save"
+              },
+              {
+                "type": "dialogue",
+                "speaker": "Ancient Chest",
+                "text": "You obtain the Sanctuary Key and learn Spring Wave.",
+                "choices": [
+                  {
+                    "label": "Continue",
+                    "commands": [
+                      {
+                        "type": "toast",
+                        "text": "Spring Wave unlocked"
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "conditions": [
+              {
+                "kind": "flag",
+                "id": "keyChestOpened",
+                "equals": false
+              }
+            ],
+            "sprite": {
+              "image": "sprites/rpg-maker-mz/!Chest.png",
+              "characterIndex": 0,
+              "characterColumns": 4,
+              "frameWidth": 48,
+              "frameHeight": 48,
+              "objectAligned": true
+            },
+            "movement": {
+              "type": "fixed",
+              "speed": 3,
+              "frequency": 3,
+              "route": []
+            },
+            "options": {
+              "walkingAnimation": true,
+              "steppingAnimation": false,
+              "directionFix": false,
+              "through": false
+            },
+            "priority": "sameAsCharacters",
+            "trigger": {
+              "type": "actionButton",
+              "radius": 1.25
+            },
+            "contents": [
+              {
+                "type": "dialogue",
+                "speaker": "Ancient Chest",
+                "text": "It is empty."
+              }
+            ]
           }
-        ],
-        "sprite": {
-          "image": "sprites/rpg-maker-mz/!Chest.png",
-          "characterIndex": 0,
-          "characterColumns": 4,
-          "frameWidth": 48,
-          "frameHeight": 48,
-          "objectAligned": true
-        }
+        ]
       },
       {
         "id": "door",
@@ -13511,29 +14029,120 @@
           "y": 8,
           "planeId": "gallery"
         },
-        "scriptId": "event.guardian-door",
-        "trigger": {
-          "type": "interact",
-          "radius": 1.4
-        },
-        "execution": {
-          "mode": "repeat"
-        },
-        "activeWhen": [
+        "pages": [
           {
-            "kind": "flag",
-            "id": "guardianDoorOpen",
-            "equals": false
+            "conditions": [
+              {
+                "kind": "flag",
+                "id": "guardianDoorOpen",
+                "equals": false
+              },
+              {
+                "kind": "item",
+                "id": "item.sanctuary-key"
+              }
+            ],
+            "sprite": {
+              "image": "sprites/rpg-maker-mz/!Door1.png",
+              "characterIndex": 0,
+              "characterColumns": 4,
+              "frameWidth": 48,
+              "frameHeight": 48,
+              "objectAligned": true
+            },
+            "movement": {
+              "type": "fixed",
+              "speed": 3,
+              "frequency": 3,
+              "route": []
+            },
+            "options": {
+              "walkingAnimation": true,
+              "steppingAnimation": false,
+              "directionFix": false,
+              "through": false
+            },
+            "priority": "sameAsCharacters",
+            "trigger": {
+              "type": "actionButton",
+              "radius": 1.4
+            },
+            "contents": [
+              {
+                "type": "removeItem",
+                "id": "item.sanctuary-key"
+              },
+              {
+                "type": "setFlag",
+                "id": "guardianDoorOpen",
+                "value": true
+              },
+              {
+                "type": "setQuestState",
+                "id": "quest.bell-of-mist",
+                "state": "defeat_guardian"
+              },
+              {
+                "type": "toast",
+                "text": "The Guardian's door opens"
+              },
+              {
+                "type": "save"
+              },
+              {
+                "type": "teleport",
+                "mapId": "arena",
+                "position": {
+                  "x": 3,
+                  "y": 8,
+                  "planeId": "guardian-ring"
+                },
+                "resetMap": true
+              }
+            ]
+          },
+          {
+            "conditions": [
+              {
+                "kind": "flag",
+                "id": "guardianDoorOpen",
+                "equals": false
+              }
+            ],
+            "sprite": {
+              "image": "sprites/rpg-maker-mz/!Door1.png",
+              "characterIndex": 0,
+              "characterColumns": 4,
+              "frameWidth": 48,
+              "frameHeight": 48,
+              "objectAligned": true
+            },
+            "movement": {
+              "type": "fixed",
+              "speed": 3,
+              "frequency": 3,
+              "route": []
+            },
+            "options": {
+              "walkingAnimation": true,
+              "steppingAnimation": false,
+              "directionFix": false,
+              "through": false
+            },
+            "priority": "sameAsCharacters",
+            "trigger": {
+              "type": "actionButton",
+              "radius": 1.4
+            },
+            "contents": [
+              {
+                "type": "dialogue",
+                "speaker": "Guardian's Door",
+                "text": "It is locked. The key must be somewhere in the Sanctuary."
+              }
+            ]
           }
-        ],
-        "sprite": {
-          "image": "sprites/rpg-maker-mz/!Door1.png",
-          "characterIndex": 0,
-          "characterColumns": 4,
-          "frameWidth": 48,
-          "frameHeight": 48,
-          "objectAligned": true
-        }
+        ]
       },
       {
         "id": "gallery-guide",
@@ -13542,22 +14151,42 @@
           "y": 8,
           "planeId": "gallery"
         },
-        "scriptId": "event.demo-gallery",
-        "trigger": {
-          "type": "interact",
-          "radius": 1.25
-        },
-        "execution": {
-          "mode": "repeat"
-        },
-        "sprite": {
-          "image": "sprites/rpg-maker-mz/Actor1.png",
-          "characterIndex": 0,
-          "characterColumns": 4,
-          "frameWidth": 48,
-          "frameHeight": 48,
-          "objectAligned": false
-        }
+        "pages": [
+          {
+            "sprite": {
+              "image": "sprites/rpg-maker-mz/Actor1.png",
+              "characterIndex": 0,
+              "characterColumns": 4,
+              "frameWidth": 48,
+              "frameHeight": 48,
+              "objectAligned": false
+            },
+            "movement": {
+              "type": "fixed",
+              "speed": 3,
+              "frequency": 3,
+              "route": []
+            },
+            "options": {
+              "walkingAnimation": true,
+              "steppingAnimation": false,
+              "directionFix": false,
+              "through": false
+            },
+            "priority": "sameAsCharacters",
+            "trigger": {
+              "type": "actionButton",
+              "radius": 1.25
+            },
+            "contents": [
+              {
+                "type": "dialogue",
+                "speaker": "Gallery Watcher",
+                "text": "The terrace also exists above these same coordinates. While you remain in the gallery, you pass behind its surface, and the creatures there can neither see nor touch you. The ramp begins just to the east."
+              }
+            ]
+          }
+        ]
       },
       {
         "id": "terrace-guide",
@@ -13566,22 +14195,42 @@
           "y": 5,
           "planeId": "bell-terrace"
         },
-        "scriptId": "event.demo-terrace",
-        "trigger": {
-          "type": "interact",
-          "radius": 1.25
-        },
-        "execution": {
-          "mode": "repeat"
-        },
-        "sprite": {
-          "image": "sprites/rpg-maker-mz/Actor1.png",
-          "characterIndex": 0,
-          "characterColumns": 4,
-          "frameWidth": 48,
-          "frameHeight": 48,
-          "objectAligned": false
-        }
+        "pages": [
+          {
+            "sprite": {
+              "image": "sprites/rpg-maker-mz/Actor1.png",
+              "characterIndex": 0,
+              "characterColumns": 4,
+              "frameWidth": 48,
+              "frameHeight": 48,
+              "objectAligned": false
+            },
+            "movement": {
+              "type": "fixed",
+              "speed": 3,
+              "frequency": 3,
+              "route": []
+            },
+            "options": {
+              "walkingAnimation": true,
+              "steppingAnimation": false,
+              "directionFix": false,
+              "through": false
+            },
+            "priority": "sameAsCharacters",
+            "trigger": {
+              "type": "actionButton",
+              "radius": 1.25
+            },
+            "contents": [
+              {
+                "type": "dialogue",
+                "speaker": "Bell Ringer",
+                "text": "You are now on the terrace plane: its floor is rendered beneath your feet, then your character appears in front. The parapet is an aboveActors layer, while the gallery elements remain on their own plane."
+              }
+            ]
+          }
+        ]
       }
     ],
     "blockedRegions": [
@@ -13630,7 +14279,7 @@
   },
   "arena": {
     "id": "arena",
-    "name": "Arène du Gardien",
+    "name": "Guardian's Arena",
     "ground": "#263d31",
     "accent": "#d4b36a",
     "tileSize": 48,
@@ -13643,7 +14292,7 @@
     "planes": [
       {
         "id": "guardian-ring",
-        "name": "Cercle du Gardien",
+        "name": "Guardian's Circle",
         "order": 0,
         "surfaceLayerId": "surface",
         "surfaceCoverage": "bounds"
@@ -13652,7 +14301,7 @@
     "tileLayers": [
       {
         "id": "surface",
-        "name": "Terrain du sanctuaire",
+        "name": "Sanctuary Grounds",
         "planeId": "guardian-ring",
         "renderPhase": "belowActors",
         "tiles": [
@@ -16090,7 +16739,7 @@
       },
       {
         "id": "layer-2",
-        "name": "Cercle de combat",
+        "name": "Combat Circle",
         "planeId": "guardian-ring",
         "renderPhase": "belowActors",
         "tiles": [
@@ -16752,7 +17401,7 @@
       },
       {
         "id": "layer-3",
-        "name": "Enceinte végétale",
+        "name": "Overgrown Enclosure",
         "planeId": "guardian-ring",
         "renderPhase": "aboveActors",
         "tiles": [
@@ -17204,7 +17853,7 @@
       },
       {
         "id": "layer-4",
-        "name": "Monuments du Gardien",
+        "name": "Guardian Monuments",
         "planeId": "guardian-ring",
         "renderPhase": "aboveActors",
         "tiles": [
@@ -17257,17 +17906,71 @@
           "y": 8,
           "planeId": "guardian-ring"
         },
-        "scriptId": "event.exit-arena-west",
-        "trigger": {
-          "type": "playerEnter",
-          "size": {
-            "w": 1,
-            "h": 4
+        "pages": [
+          {
+            "conditions": [
+              {
+                "kind": "flag",
+                "id": "bossDefeated"
+              }
+            ],
+            "movement": {
+              "type": "fixed",
+              "speed": 3,
+              "frequency": 3,
+              "route": []
+            },
+            "options": {
+              "walkingAnimation": true,
+              "steppingAnimation": false,
+              "directionFix": false,
+              "through": false
+            },
+            "priority": "belowCharacters",
+            "trigger": {
+              "type": "playerTouch",
+              "size": {
+                "w": 1,
+                "h": 4
+              }
+            },
+            "contents": [
+              {
+                "type": "teleport",
+                "mapId": "sanctuary",
+                "position": {
+                  "x": 23,
+                  "y": 8,
+                  "planeId": "gallery"
+                },
+                "resetMap": true
+              }
+            ]
+          },
+          {
+            "movement": {
+              "type": "fixed",
+              "speed": 3,
+              "frequency": 3,
+              "route": []
+            },
+            "options": {
+              "walkingAnimation": true,
+              "steppingAnimation": false,
+              "directionFix": false,
+              "through": false
+            },
+            "priority": "belowCharacters",
+            "trigger": {
+              "type": "playerTouch",
+              "size": {
+                "w": 1,
+                "h": 4
+              }
+            },
+            "contents": []
           }
-        },
-        "execution": {
-          "mode": "repeat"
-        }
+        ]
       },
       {
         "id": "exit-east",
@@ -17276,17 +17979,71 @@
           "y": 8,
           "planeId": "guardian-ring"
         },
-        "scriptId": "event.exit-arena-east",
-        "trigger": {
-          "type": "playerEnter",
-          "size": {
-            "w": 1,
-            "h": 4
+        "pages": [
+          {
+            "conditions": [
+              {
+                "kind": "item",
+                "id": "item.crystal-heart"
+              }
+            ],
+            "movement": {
+              "type": "fixed",
+              "speed": 3,
+              "frequency": 3,
+              "route": []
+            },
+            "options": {
+              "walkingAnimation": true,
+              "steppingAnimation": false,
+              "directionFix": false,
+              "through": false
+            },
+            "priority": "belowCharacters",
+            "trigger": {
+              "type": "playerTouch",
+              "size": {
+                "w": 1,
+                "h": 4
+              }
+            },
+            "contents": [
+              {
+                "type": "teleport",
+                "mapId": "village",
+                "position": {
+                  "x": 42,
+                  "y": 8,
+                  "planeId": "aubeval"
+                },
+                "resetMap": true
+              }
+            ]
+          },
+          {
+            "movement": {
+              "type": "fixed",
+              "speed": 3,
+              "frequency": 3,
+              "route": []
+            },
+            "options": {
+              "walkingAnimation": true,
+              "steppingAnimation": false,
+              "directionFix": false,
+              "through": false
+            },
+            "priority": "belowCharacters",
+            "trigger": {
+              "type": "playerTouch",
+              "size": {
+                "w": 1,
+                "h": 4
+              }
+            },
+            "contents": []
           }
-        },
-        "execution": {
-          "mode": "repeat"
-        }
+        ]
       }
     ],
     "blockedRegions": [],
@@ -17309,7 +18066,7 @@
   },
   "empty-map": {
     "id": "empty-map",
-    "name": "Carte vide",
+    "name": "Empty Map",
     "ground": "#172033",
     "accent": "#6ee7b7",
     "tileSize": 48,
@@ -17322,7 +18079,7 @@
     "planes": [
       {
         "id": "empty-plane",
-        "name": "Plan 1",
+        "name": "Plane 1",
         "order": 0,
         "surfaceLayerId": "surface",
         "surfaceCoverage": "bounds"
@@ -17338,7 +18095,7 @@
       },
       {
         "id": "layer-2",
-        "name": "Sol et chemins",
+        "name": "Ground and Paths",
         "planeId": "empty-plane",
         "renderPhase": "belowActors",
         "tiles": []
@@ -17352,7 +18109,7 @@
       },
       {
         "id": "layer-4",
-        "name": "Décor au premier plan",
+        "name": "Foreground Scenery",
         "planeId": "empty-plane",
         "renderPhase": "aboveActors",
         "tiles": []

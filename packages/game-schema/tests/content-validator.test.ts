@@ -21,35 +21,33 @@ describe('SourceGame validation', () => {
     if (!result.success) return;
     const mayor = result.data.maps.village.events.find(event => event.id === 'mayor')!;
     expect(mayor.position).toEqual({ x: 11, y: 7, planeId: 'aubeval' });
-    expect(mayor.trigger).toMatchObject({ type: 'interact', radius: 1.25 });
-    const exitAction = result.data.events.events['event.exit-village-east'].pages[0].actions[0];
-    expect(exitAction).toMatchObject({ type: 'teleport', mapId: 'path', position: { x: 2, y: 8, planeId: 'lower-trail' } });
+    expect(mayor.pages[0].trigger).toMatchObject({ type: 'actionButton', radius: 1.25 });
+    const exitCommand = result.data.maps.village.events.find(event => event.id === 'exit-east')!.pages[0].contents[0];
+    expect(exitCommand).toMatchObject({ type: 'teleport', mapId: 'path', position: { x: 2, y: 8, planeId: 'lower-trail' } });
   });
 
-  it('returns structured duplicate and unknown-script issues', () => {
+  it('returns structured duplicate and invalid-page issues', () => {
     const duplicate = sourceFiles();
     const maps = duplicate.maps as any;
     maps.village.events[1].id = maps.village.events[0].id;
-    maps.village.events[2].scriptId = 'event.unknown';
+    maps.village.events[2].pages = [];
     const result = parseSourceGame(duplicate);
     expect(result.success).toBe(false);
     if (result.success) return;
     expect(result.issues).toEqual(expect.arrayContaining([
       expect.objectContaining({ path: expect.stringContaining('maps.village.events') }),
-      expect.objectContaining({ path: 'maps.village.events[2].scriptId' }),
+      expect.objectContaining({ path: 'maps.village.events.2.pages' }),
     ]));
   });
 
   it('validates autonomous settings and structured movement routes', () => {
     const files = sourceFiles();
     const maps = files.maps as any;
-    const events = files.events as any;
-    maps.village.events[0].movement = {
+    maps.village.events[0].pages[0].movement = {
       type: 'custom', speed: 4, frequency: 3,
       route: [{ type: 'move', direction: 'forward' }, { type: 'wait', duration: 0.25 }],
-      walkingAnimation: true, steppingAnimation: false, directionFix: false, through: false,
     };
-    events.events[maps.village.events[0].scriptId].pages[0].actions.push({
+    maps.village.events[0].pages[0].contents.push({
       type: 'movementRoute',
       target: { kind: 'event', eventId: 'exit-east' },
       route: {
@@ -62,8 +60,7 @@ describe('SourceGame validation', () => {
 
     const invalid = sourceFiles();
     const invalidMaps = invalid.maps as any;
-    const invalidEvents = invalid.events as any;
-    invalidEvents.events[invalidMaps.village.events[0].scriptId].pages[0].actions.push({
+    invalidMaps.village.events[0].pages[0].contents.push({
       type: 'movementRoute',
       target: { kind: 'event', eventId: 'missing' },
       route: { commands: [{ type: 'move', direction: 'north' }], repeat: true, skippable: false, wait: true },
@@ -97,12 +94,12 @@ describe('SourceGame validation', () => {
 
   it('rejects invalid geometry and cross-map local teleports', () => {
     const files = sourceFiles();
-    (files.maps as any).village.events[1].trigger.radius = 0;
+    (files.maps as any).village.events[1].pages[0].trigger.radius = 0;
     const geometry = parseSourceGame(files);
     expect(geometry.success).toBe(false);
 
     const teleportFiles = sourceFiles();
-    (teleportFiles.events as any).events['event.exit-village-east'].pages[0].actions[0].resetMap = false;
+    (teleportFiles.maps as any).village.events[0].pages[0].contents[0].resetMap = false;
     const teleport = parseSourceGame(teleportFiles);
     expect(teleport.success).toBe(false);
     if (!teleport.success) expect(teleport.issues.some(issue => issue.message.includes('current map'))).toBe(true);

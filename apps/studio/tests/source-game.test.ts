@@ -7,7 +7,7 @@ const game = {
   manifest: { gameId: 'game.test', version: '0.2.0' },
   tilesets: { test: { id: 'test', image: 'tilesets/test.png' } },
   maps: { village: { id: 'village' } },
-  events: { objectives: [], events: { 'event.test': { id: 'event.test', pages: [{ actions: [] }] } } },
+  events: { objectives: [] },
 } as unknown as SourceGame;
 
 function blobText(blob: Blob) {
@@ -22,7 +22,7 @@ function blobText(blob: Blob) {
 describe('Studio persistence and export', () => {
   it('creates a valid project with no assets', () => {
     const project = createEmptyProject('Empty World');
-    expect(project.game.manifest.schemaVersion).toBe('0.6');
+    expect(project.game.manifest.schemaVersion).toBe('0.7');
     expect(project.game.tilesets).toEqual({});
     expect(project.assets).toEqual({});
     expect(project.game.maps['map-1'].planes).toHaveLength(1);

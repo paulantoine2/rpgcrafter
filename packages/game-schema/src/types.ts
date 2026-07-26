@@ -8,8 +8,8 @@ export type Condition =
   | { kind: 'item'; id: string; amount?: number }
   | { kind: 'quest'; id: string; state: string };
 
-export type Action =
-  | { type: 'dialogue'; speaker: string; text: string; choices?: Array<{ label: string; actions: Action[] }> }
+export type EventCommand =
+  | { type: 'dialogue'; speaker: string; text: string; choices?: Array<{ label: string; commands: EventCommand[] }> }
   | { type: 'setFlag'; id: string; value: boolean }
   | { type: 'setQuestState'; id: string; state: string }
   | { type: 'giveItem' | 'removeItem'; id: string; amount?: number }
@@ -18,15 +18,16 @@ export type Action =
   | { type: 'toast'; text: string }
   | { type: 'teleport'; mapId: string; position: PlanePosition; resetMap: boolean }
   | { type: 'movementRoute'; target: MovementTarget; route: MovementRoute }
+  | { type: 'wait'; duration: number }
   | { type: 'save' };
 
 export type MapEventTrigger =
-  | { type: 'playerEnter'; size: { w: number; h: number } }
-  | { type: 'interact'; radius: number }
-  | { type: 'interval'; every: number; initialDelay?: number }
-  | { type: 'mapEnter'; delay: number };
+  | { type: 'actionButton'; radius: number }
+  | { type: 'playerTouch'; size: { w: number; h: number } }
+  | { type: 'eventTouch'; size: { w: number; h: number } }
+  | { type: 'autorun' }
+  | { type: 'parallel' };
 
-export type MapEventExecution = { mode: 'repeat' | 'oncePerVisit' | 'oncePerGame'; cooldown?: number };
 export type MoveSpeed = 1 | 2 | 3 | 4 | 5 | 6;
 export type MoveFrequency = 1 | 2 | 3 | 4 | 5;
 export type MovementCommand =
@@ -46,12 +47,14 @@ export type AutonomousMovement = {
   frequency: MoveFrequency;
   route: MovementCommand[];
 };
-export type EventMovement = AutonomousMovement & {
+export type EventOptions = {
   walkingAnimation: boolean;
   steppingAnimation: boolean;
   directionFix: boolean;
   through: boolean;
 };
+export type EventMovement = AutonomousMovement & EventOptions;
+export type MapEventPriority = 'belowCharacters' | 'sameAsCharacters' | 'aboveCharacters';
 export type MovementTarget = { kind: 'player' } | { kind: 'thisEvent' } | { kind: 'event'; eventId: string };
 export type MapEventSprite = {
   image: string;
@@ -65,12 +68,17 @@ export type MapEventSprite = {
 export type MapEvent = {
   id: string;
   position: PlanePosition;
-  scriptId: string;
-  trigger: MapEventTrigger;
-  execution: MapEventExecution;
-  activeWhen?: Condition[];
+  pages: MapEventPage[];
+};
+
+export type MapEventPage = {
+  conditions?: Condition[];
   sprite?: MapEventSprite;
-  movement?: EventMovement;
+  movement: AutonomousMovement;
+  options: EventOptions;
+  priority: MapEventPriority;
+  trigger: MapEventTrigger;
+  contents: EventCommand[];
 };
 
 export type EnemySpawn = PlanePosition & { enemyId: string };
@@ -185,7 +193,7 @@ export type EnemyTemplate = {
     speedMultiplier?: number;
     projectile?: { cooldown: number; speed: number; damage: number; color: string };
   }>;
-  onDefeated?: Action[];
+  onDefeated?: EventCommand[];
 };
 
 export type Skill = { name: string; type: 'melee' | 'projectile' | 'area'; damage: number; cooldown: number; range?: number; projectileSpeed?: number; color?: string };
@@ -199,11 +207,9 @@ export type UiDefinition = {
 };
 export type Manifest = { schemaVersion: string; engineRange: string; gameId: string; version: string; entryPoint: { mapId: string; spawnId: string }; title: string; contentRating: string };
 export type PlayerDefinition = { id: string; name: string; start: PlanePosition; stats: { maxHp: number; level: number; xp: number }; primaryAttack: string; skillSlots: Record<string, string>; unlockedSkills: string[] };
-export type EventPage = { conditions?: Condition[]; actions: Action[] };
-export type GameEvent = { id: string; pages: EventPage[] };
 export type Objective = { conditions?: Condition[]; text: string };
 export type InitialState = { flags: Record<string, boolean>; quests: Record<string, string>; inventory?: Record<string, number>; equipment?: Record<string, string | null> };
-export type EventData = { events: Record<string, GameEvent>; objectives: Objective[] };
+export type EventData = { objectives: Objective[] };
 
 /** The exact authoring representation. Every coordinate remains in tile units. */
 export type SourceGame = {

@@ -1,15 +1,15 @@
 import { z } from 'zod';
 import type {
-  Action, Condition, ContentIssue, EnemyTemplate, GameEvent, GameMap, InitialState, Item, Manifest,
-  MapEventExecution, MapEventTrigger, MapEventSprite, Objective, PlayerDefinition, QuestDefinition,
+  AutonomousMovement, Condition, ContentIssue, EnemyTemplate, EventCommand, EventOptions, GameMap, InitialState, Item, Manifest,
+  MapEventPage, MapEventTrigger, MapEventSprite, Objective, PlayerDefinition, QuestDefinition,
   Skill, SourceGame, SourceGameFiles, SourceGameResult, TilesetDefinition, UiDefinition, MovementCommand,
-  MovementTarget, MovementRoute, EventMovement,
+  MovementTarget, MovementRoute,
   MoveSpeed, MoveFrequency,
 } from './types.js';
 import { CANONICAL_AUTOTILE_MASKS, canonicalizeAutotileMask } from './autotile.js';
 import { migrateSourceGameFiles } from './migration.js';
 
-export const ENGINE_VERSION = '0.6.0';
+export const ENGINE_VERSION = '0.7.0';
 
 const Id = z.string().min(1);
 const FiniteNumber = z.number().finite();
@@ -142,19 +142,21 @@ const MovementRouteSchema: z.ZodType<MovementRoute> = z.object({
 }).strict();
 const MoveSpeedSchema: z.ZodType<MoveSpeed> = z.custom<MoveSpeed>(value => Number.isInteger(value) && Number(value) >= 1 && Number(value) <= 6, 'Must be an integer from 1 to 6');
 const MoveFrequencySchema: z.ZodType<MoveFrequency> = z.custom<MoveFrequency>(value => Number.isInteger(value) && Number(value) >= 1 && Number(value) <= 5, 'Must be an integer from 1 to 5');
-const EventMovementSchema: z.ZodType<EventMovement> = z.object({
+const AutonomousMovementSchema: z.ZodType<AutonomousMovement> = z.object({
   type: z.enum(['fixed', 'random', 'approach', 'custom']),
   speed: MoveSpeedSchema,
   frequency: MoveFrequencySchema,
   route: z.array(MovementCommandSchema),
+}).strict();
+const EventOptionsSchema: z.ZodType<EventOptions> = z.object({
   walkingAnimation: z.boolean(),
   steppingAnimation: z.boolean(),
   directionFix: z.boolean(),
   through: z.boolean(),
 }).strict();
 
-const ActionSchema: z.ZodType<Action> = z.lazy(() => z.discriminatedUnion('type', [
-  z.object({ type: z.literal('dialogue'), speaker: Id, text: Id, choices: z.array(z.object({ label: Id, actions: z.array(ActionSchema) }).strict()).optional() }).strict(),
+const EventCommandSchema: z.ZodType<EventCommand> = z.lazy(() => z.discriminatedUnion('type', [
+  z.object({ type: z.literal('dialogue'), speaker: Id, text: Id, choices: z.array(z.object({ label: Id, commands: z.array(EventCommandSchema) }).strict()).optional() }).strict(),
   z.object({ type: z.literal('setFlag'), id: Id, value: z.boolean() }).strict(),
   z.object({ type: z.literal('setQuestState'), id: Id, state: Id }).strict(),
   z.object({ type: z.literal('giveItem'), id: Id, amount: FiniteNumber.optional() }).strict(),
@@ -164,16 +166,17 @@ const ActionSchema: z.ZodType<Action> = z.lazy(() => z.discriminatedUnion('type'
   z.object({ type: z.literal('toast'), text: Id }).strict(),
   z.object({ type: z.literal('teleport'), mapId: Id, position: PlanePositionSchema, resetMap: z.boolean() }).strict(),
   z.object({ type: z.literal('movementRoute'), target: MovementTargetSchema, route: MovementRouteSchema }).strict(),
+  z.object({ type: z.literal('wait'), duration: NonNegativeNumber }).strict(),
   z.object({ type: z.literal('save') }).strict(),
 ]));
 
 const MapEventTriggerSchema: z.ZodType<MapEventTrigger> = z.discriminatedUnion('type', [
-  z.object({ type: z.literal('playerEnter'), size: z.object({ w: PositiveNumber, h: PositiveNumber }).strict() }).strict(),
-  z.object({ type: z.literal('interact'), radius: PositiveNumber }).strict(),
-  z.object({ type: z.literal('interval'), every: PositiveNumber, initialDelay: NonNegativeNumber.optional() }).strict(),
-  z.object({ type: z.literal('mapEnter'), delay: NonNegativeNumber }).strict(),
+  z.object({ type: z.literal('actionButton'), radius: PositiveNumber }).strict(),
+  z.object({ type: z.literal('playerTouch'), size: z.object({ w: PositiveNumber, h: PositiveNumber }).strict() }).strict(),
+  z.object({ type: z.literal('eventTouch'), size: z.object({ w: PositiveNumber, h: PositiveNumber }).strict() }).strict(),
+  z.object({ type: z.literal('autorun') }).strict(),
+  z.object({ type: z.literal('parallel') }).strict(),
 ]);
-const MapEventExecutionSchema: z.ZodType<MapEventExecution> = z.object({ mode: z.enum(['repeat', 'oncePerVisit', 'oncePerGame']), cooldown: NonNegativeNumber.optional() }).strict();
 const MapEventSpriteSchema: z.ZodType<MapEventSprite> = z.object({
   image: Id,
   characterIndex: z.number().int().nonnegative(),
@@ -181,6 +184,15 @@ const MapEventSpriteSchema: z.ZodType<MapEventSprite> = z.object({
   frameWidth: PositiveNumber,
   frameHeight: PositiveNumber,
   objectAligned: z.boolean(),
+}).strict();
+const MapEventPageSchema: z.ZodType<MapEventPage> = z.object({
+  conditions: z.array(ConditionSchema).optional(),
+  sprite: MapEventSpriteSchema.optional(),
+  movement: AutonomousMovementSchema,
+  options: EventOptionsSchema,
+  priority: z.enum(['belowCharacters', 'sameAsCharacters', 'aboveCharacters']),
+  trigger: MapEventTriggerSchema,
+  contents: z.array(EventCommandSchema),
 }).strict();
 
 const ManifestSchema: z.ZodType<Manifest> = z.object({
@@ -204,7 +216,7 @@ const MapSchema: z.ZodType<GameMap> = z.object({
     edges: z.object({ north: z.enum(['open', 'blocked']).optional(), east: z.enum(['open', 'blocked']).optional(), south: z.enum(['open', 'blocked']).optional(), west: z.enum(['open', 'blocked']).optional() }).strict().optional(),
   }).strict()),
   blockedRegions: z.array(GridRectSchema),
-  events: z.array(z.object({ id: Id, position: PlanePositionSchema, scriptId: Id, trigger: MapEventTriggerSchema, execution: MapEventExecutionSchema, activeWhen: z.array(ConditionSchema).optional(), sprite: MapEventSpriteSchema.optional(), movement: EventMovementSchema.optional() }).strict()),
+  events: z.array(z.object({ id: Id, position: PlanePositionSchema, pages: z.array(MapEventPageSchema).min(1) }).strict()),
   enemySpawns: z.array(PlanePositionSchema.extend({ enemyId: Id }).strict()),
   deathDestination: z.object({ mapId: Id, spawn: PlanePositionSchema }).strict().optional(),
 }).strict();
@@ -212,7 +224,7 @@ const EnemySchema: z.ZodType<EnemyTemplate> = z.object({
   name: Id, color: Id, hp: FiniteNumber, speed: FiniteNumber, damage: FiniteNumber, radius: FiniteNumber, xp: FiniteNumber,
   behavior: z.enum(['chase', 'charge', 'ranged', 'boss']),
   phases: z.array(z.object({ atHpRatio: FiniteNumber, speedMultiplier: FiniteNumber.optional(), projectile: z.object({ cooldown: FiniteNumber, speed: FiniteNumber, damage: FiniteNumber, color: Id }).strict().optional() }).strict()).optional(),
-  onDefeated: z.array(ActionSchema).optional(),
+  onDefeated: z.array(EventCommandSchema).optional(),
 }).strict();
 const PlayerSchema: z.ZodType<PlayerDefinition> = z.object({
   id: Id, name: Id, start: PlanePositionSchema, stats: z.object({ maxHp: FiniteNumber, level: FiniteNumber, xp: FiniteNumber }).strict(),
@@ -227,11 +239,10 @@ const UiSchema: z.ZodType<UiDefinition> = z.object({
   pauseMenu: z.object({ title: Id, tabs: z.array(z.object({ id: Id, label: Id }).strict()).min(1) }).strict(),
   equipmentSlots: z.array(z.object({ id: Id, label: Id }).strict()),
 }).strict();
-const EventSchema: z.ZodType<GameEvent> = z.object({ id: Id, pages: z.array(z.object({ conditions: z.array(ConditionSchema).optional(), actions: z.array(ActionSchema) }).strict()).min(1) }).strict();
 const ObjectiveSchema: z.ZodType<Objective> = z.object({ conditions: z.array(ConditionSchema).optional(), text: Id }).strict();
 const InitialStateSchema: z.ZodType<InitialState> = z.object({ flags: z.record(Id, z.boolean()), quests: z.record(Id, Id), inventory: z.record(Id, FiniteNumber).optional(), equipment: z.record(Id, Id.nullable()).optional() }).strict();
 const ActorsSchema = z.object({ player: PlayerSchema }).strict();
-const EventsSchema = z.object({ events: z.record(Id, EventSchema), objectives: z.array(ObjectiveSchema) }).strict();
+const EventsSchema = z.object({ objectives: z.array(ObjectiveSchema) }).strict();
 
 function compareVersions(left: string, right: string) {
   const parse = (value: string) => value.split('.').map(part => Number(part || 0));
@@ -324,25 +335,25 @@ function validateReferences(game: SourceGame): ContentIssue[] {
     if (condition.kind === 'item' && !items[condition.id]) issue(target, `Unknown item: ${condition.id}`);
     if (condition.kind === 'quest' && !quests[condition.id]?.states.includes(condition.state)) issue(target, `Unknown quest or state: ${condition.id}`);
   });
-  const validateActions = (values: Action[], path: string, sourceMapId?: string) => values.forEach((action, index) => {
+  const validateCommands = (values: EventCommand[], path: string, sourceMapId?: string) => values.forEach((command, index) => {
     const target = `${path}[${index}]`;
-    if ((action.type === 'giveItem' || action.type === 'removeItem') && !items[action.id]) issue(target, `Unknown item: ${action.id}`);
-    if (action.type === 'unlockSkill' && !skills[action.id]) issue(target, `Unknown skill: ${action.id}`);
-    if (action.type === 'setFlag' && !(action.id in initialState.flags)) issue(target, `Unknown flag: ${action.id}`);
-    if (action.type === 'setQuestState' && !quests[action.id]?.states.includes(action.state)) issue(target, `Unknown quest or state: ${action.id}`);
-    if (action.type === 'teleport') {
-      if (!maps[action.mapId]) issue(target, `Unknown map: ${action.mapId}`);
-      else if (!maps[action.mapId].planes.some(plane => plane.id === action.position.planeId)) issue(`${target}.position.planeId`, 'Unknown destination plane');
-      if (sourceMapId && !action.resetMap && action.mapId !== sourceMapId) issue(target, 'resetMap=false requires the current map');
+    if ((command.type === 'giveItem' || command.type === 'removeItem') && !items[command.id]) issue(target, `Unknown item: ${command.id}`);
+    if (command.type === 'unlockSkill' && !skills[command.id]) issue(target, `Unknown skill: ${command.id}`);
+    if (command.type === 'setFlag' && !(command.id in initialState.flags)) issue(target, `Unknown flag: ${command.id}`);
+    if (command.type === 'setQuestState' && !quests[command.id]?.states.includes(command.state)) issue(target, `Unknown quest or state: ${command.id}`);
+    if (command.type === 'teleport') {
+      if (!maps[command.mapId]) issue(target, `Unknown map: ${command.mapId}`);
+      else if (!maps[command.mapId].planes.some(plane => plane.id === command.position.planeId)) issue(`${target}.position.planeId`, 'Unknown destination plane');
+      if (sourceMapId && !command.resetMap && command.mapId !== sourceMapId) issue(target, 'resetMap=false requires the current map');
     }
-    if (action.type === 'movementRoute') {
-      if (sourceMapId && action.target.kind === 'event') {
-        const targetEventId = action.target.eventId;
+    if (command.type === 'movementRoute') {
+      if (sourceMapId && command.target.kind === 'event') {
+        const targetEventId = command.target.eventId;
         if (!maps[sourceMapId]?.events.some(event => event.id === targetEventId)) issue(`${target}.target.eventId`, 'Unknown event on the current map');
       }
-      if (action.route.repeat && action.route.wait) issue(`${target}.route`, 'A repeating movement route cannot wait for completion');
+      if (command.route.repeat && command.route.wait) issue(`${target}.route`, 'A repeating movement route cannot wait for completion');
     }
-    if (action.type === 'dialogue') action.choices?.forEach((choice, choiceIndex) => validateActions(choice.actions, `${target}.choices[${choiceIndex}].actions`, sourceMapId));
+    if (command.type === 'dialogue') command.choices?.forEach((choice, choiceIndex) => validateCommands(choice.commands, `${target}.choices[${choiceIndex}].commands`, sourceMapId));
   });
 
   for (const [mapId, map] of Object.entries(maps)) {
@@ -435,24 +446,18 @@ function validateReferences(game: SourceGame): ContentIssue[] {
       if (eventIds.has(event.id)) issue(`${path}.id`, `Duplicate event id: ${event.id}`);
       eventIds.add(event.id);
       if (!planeIds.has(event.position.planeId)) issue(`${path}.position.planeId`, `Unknown plane: ${event.position.planeId}`);
-      if (!events.events[event.scriptId]) issue(`${path}.scriptId`, 'Unknown script');
-      validateConditions(event.activeWhen || [], `${path}.activeWhen`);
-      events.events[event.scriptId]?.pages.forEach((page, pageIndex) => validateActions(page.actions, `events.events.${event.scriptId}.pages[${pageIndex}].actions`, mapId));
+      event.pages.forEach((page, pageIndex) => {
+        validateConditions(page.conditions || [], `${path}.pages[${pageIndex}].conditions`);
+        validateCommands(page.contents, `${path}.pages[${pageIndex}].contents`, mapId);
+      });
     });
     map.enemySpawns.forEach((spawn, index) => {
       if (!enemies[spawn.enemyId]) issue(`maps.${mapId}.enemySpawns[${index}].enemyId`, 'Unknown enemy');
       if (!planeIds.has(spawn.planeId)) issue(`maps.${mapId}.enemySpawns[${index}].planeId`, `Unknown plane: ${spawn.planeId}`);
-      if (enemies[spawn.enemyId]?.onDefeated) validateActions(enemies[spawn.enemyId].onDefeated!, `enemies.${spawn.enemyId}.onDefeated`, mapId);
+      if (enemies[spawn.enemyId]?.onDefeated) validateCommands(enemies[spawn.enemyId].onDefeated!, `enemies.${spawn.enemyId}.onDefeated`, mapId);
     });
     if (map.deathDestination && !maps[map.deathDestination.mapId]) issue(`maps.${mapId}.deathDestination.mapId`, 'Unknown map');
     else if (map.deathDestination && !maps[map.deathDestination.mapId].planes.some(plane => plane.id === map.deathDestination!.spawn.planeId)) issue(`maps.${mapId}.deathDestination.spawn.planeId`, 'Unknown destination plane');
-  }
-  for (const [eventId, event] of Object.entries(events.events)) {
-    if (event.id !== eventId) issue(`events.events.${eventId}.id`, 'Must match its object key');
-    event.pages.forEach((page, index) => {
-      validateConditions(page.conditions || [], `events.events.${eventId}.pages[${index}].conditions`);
-      validateActions(page.actions, `events.events.${eventId}.pages[${index}].actions`);
-    });
   }
   events.objectives.forEach((objective, index) => validateConditions(objective.conditions || [], `events.objectives[${index}].conditions`));
   if (ui.equipmentSlots.some(slot => !slot.id)) issue('ui.equipmentSlots', 'Empty slot id');
@@ -477,7 +482,7 @@ export function parseSourceGame(files: SourceGameFiles): SourceGameResult {
   }
   if (issues.length) return { success: false, issues };
   const game = parsed as SourceGame;
-  if (game.manifest.schemaVersion !== '0.6') issues.push({ path: 'manifest.schemaVersion', message: `Unsupported schema version: ${game.manifest.schemaVersion}` });
+  if (game.manifest.schemaVersion !== '0.7') issues.push({ path: 'manifest.schemaVersion', message: `Unsupported schema version: ${game.manifest.schemaVersion}` });
   if (!engineSupports(game.manifest.engineRange)) issues.push({ path: 'manifest.engineRange', message: `Player ${ENGINE_VERSION} is incompatible with ${game.manifest.engineRange}` });
   issues.push(...validateReferences(game));
   return issues.length ? { success: false, issues } : { success: true, data: game, issues: [] };

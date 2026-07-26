@@ -2,7 +2,7 @@ import { forwardRef, useEffect, useImperativeHandle, useRef, useState } from 're
 import { AnimatedSprite, Application, Assets, Container, Graphics, Rectangle, Sprite, Text, Texture } from 'pixi.js';
 import { Hand, HandGrab } from 'lucide-react';
 import 'pixi.js/advanced-blend-modes';
-import { A1_ANIMATION_FRAME_COUNT, A1_ANIMATION_FRAME_DURATION_MS, A1_ANIMATION_FRAME_STRIDE, A1_HORIZONTAL_ANIMATION_SEQUENCE, autotileVariant, buildNavigationGraph, navigationCellKey, navigationEdgeKey, resolveTerrainPlacements, type A1AnimationLayout, type AutotileRecipe, type AutotileTerrain, type AutotileTilesetDefinition, type AutotileVariant, type Direction, type GameMap, type PlanePosition, type TilesetDefinition, type Vec2 } from '@rpgcrafter/game-schema';
+import { A1_ANIMATION_FRAME_COUNT, A1_ANIMATION_FRAME_DURATION_MS, A1_ANIMATION_FRAME_STRIDE, A1_HORIZONTAL_ANIMATION_SEQUENCE, autotileRecipe, autotileVariant, buildNavigationGraph, isAutotileTileset, navigationCellKey, navigationEdgeKey, resolveTerrainPlacements, type A1AnimationLayout, type AutotileTerrain, type AutotileTilesetDefinition, type AutotileVariant, type Direction, type GameMap, type PlanePosition, type TilesetDefinition, type Vec2 } from '@rpgcrafter/game-schema';
 import { ellipseCells, floodFillCells, navigationTargetAtWorldPosition, rectangleCells, snapAndClampEventPosition, terrainBrushPlacements, tileAtWorldPosition } from '@/lib/editor-geometry';
 import { mapCanvasCursor } from '@/lib/editor-cursor';
 import { terrainSelectionAt } from '@/lib/tile-palette';
@@ -34,6 +34,7 @@ type Props = {
   dimInactiveLayers: boolean;
   navigationPaintMode: NavigationPaintMode;
   selectedEventId: string | null;
+  selectedEventPageIndex: number;
   onSelectEvent: (id: string) => void;
   onCreateEvent: (x: number, y: number) => void;
   onMoveEvent: (id: string, x: number, y: number) => void;
@@ -211,7 +212,7 @@ export const MapCanvas = forwardRef<MapCanvasHandle, Props>(function MapCanvas(p
   const draw = () => {
     const runtime = runtimeRef.current;
     if (!runtime) return;
-    const { map, tilesets, selectedEventId, onSelectEvent, activeLayerId, eventTool, playerStartMapId, playerStart } = propsRef.current;
+    const { map, tilesets, selectedEventId, selectedEventPageIndex, onSelectEvent, activeLayerId, eventTool, playerStartMapId, playerStart } = propsRef.current;
     const brushHover = runtime.brushHover;
     for (const child of runtime.world.removeChildren()) {
       if (child !== brushHover) child.destroy({ children: true });
@@ -232,8 +233,8 @@ export const MapCanvas = forwardRef<MapCanvasHandle, Props>(function MapCanvas(p
         const terrain = authoredTileset?.terrains.find(item => item.id === tile.terrainId);
         if (!authoredTileset || !authoredAtlas || !terrain) continue;
         const animation: A1AnimationLayout = authoredTileset.kind === 'a1' && 'animation' in terrain ? terrain.animation as A1AnimationLayout : 'none';
-        const recipe: AutotileRecipe = animation === 'vertical' ? 'waterfall' : authoredTileset.kind === 'a4' && 'autotile' in terrain && terrain.autotile === 'wall' ? 'wall' : 'floor';
-        const isAutotile = authoredTileset.kind === 'a1' || authoredTileset.kind === 'a2' || authoredTileset.kind === 'a4';
+        const isAutotile = isAutotileTileset(authoredTileset);
+        const recipe = isAutotile ? autotileRecipe(authoredTileset, terrain) : 'floor';
         const textureKey = `${authoredTileset.id}:${terrain.id}:${isAutotile ? `${tile.mask}:0` : 'grid'}`;
         let texture = runtime.autotileTextures.get(textureKey);
         if (!texture) {
@@ -305,29 +306,30 @@ export const MapCanvas = forwardRef<MapCanvasHandle, Props>(function MapCanvas(p
     runtime.world.addChild(enemyLayer);
 
     for (const event of map.events) {
+      const page = event.pages[event.id === selectedEventId ? selectedEventPageIndex : 0] || event.pages[0];
       const x = event.position.x * tileSize;
       const y = event.position.y * tileSize;
       const selected = event.id === selectedEventId;
       const marker = new Graphics();
-      if (selected && event.trigger.type === 'playerEnter') {
-        marker.rect(x - event.trigger.size.w * tileSize / 2, y - event.trigger.size.h * tileSize / 2, event.trigger.size.w * tileSize, event.trigger.size.h * tileSize).fill({ color: '#22d3ee', alpha: 0.12 }).stroke({ color: '#67e8f9', width: 2 });
+      if (selected && (page.trigger.type === 'playerTouch' || page.trigger.type === 'eventTouch')) {
+        marker.rect(x - page.trigger.size.w * tileSize / 2, y - page.trigger.size.h * tileSize / 2, page.trigger.size.w * tileSize, page.trigger.size.h * tileSize).fill({ color: '#22d3ee', alpha: 0.12 }).stroke({ color: '#67e8f9', width: 2 });
       }
-      if (selected && event.trigger.type === 'interact') marker.circle(x, y, event.trigger.radius * tileSize).fill({ color: '#22d3ee', alpha: 0.08 }).stroke({ color: '#67e8f9', width: 2 });
-      if (event.sprite) {
-        const atlas = runtime.spriteAtlases.get(event.sprite.image);
+      if (selected && page.trigger.type === 'actionButton') marker.circle(x, y, page.trigger.radius * tileSize).fill({ color: '#22d3ee', alpha: 0.08 }).stroke({ color: '#67e8f9', width: 2 });
+      if (page.sprite) {
+        const atlas = runtime.spriteAtlases.get(page.sprite.image);
         if (atlas) {
-          const characterColumn = event.sprite.characterIndex % event.sprite.characterColumns;
-          const characterRow = Math.floor(event.sprite.characterIndex / event.sprite.characterColumns);
-          const texture = new Texture({ source: atlas.source, frame: new Rectangle((characterColumn * 3 + 1) * event.sprite.frameWidth, characterRow * 4 * event.sprite.frameHeight, event.sprite.frameWidth, event.sprite.frameHeight) });
+          const characterColumn = page.sprite.characterIndex % page.sprite.characterColumns;
+          const characterRow = Math.floor(page.sprite.characterIndex / page.sprite.characterColumns);
+          const texture = new Texture({ source: atlas.source, frame: new Rectangle((characterColumn * 3 + 1) * page.sprite.frameWidth, characterRow * 4 * page.sprite.frameHeight, page.sprite.frameWidth, page.sprite.frameHeight) });
           const eventSprite = new Sprite(texture);
-          const scale = Math.min(1, tileSize / Math.max(event.sprite.frameWidth, event.sprite.frameHeight));
-          eventSprite.anchor.set(0.5, event.sprite.objectAligned ? 1 : 0.5);
-          eventSprite.position.set(x, event.sprite.objectAligned ? y + tileSize / 2 : y);
+          const scale = Math.min(1, tileSize / Math.max(page.sprite.frameWidth, page.sprite.frameHeight));
+          eventSprite.anchor.set(0.5, page.sprite.objectAligned ? 1 : 0.5);
+          eventSprite.position.set(x, page.sprite.objectAligned ? y + tileSize / 2 : y);
           eventSprite.scale.set(scale);
           runtime.world.addChild(eventSprite);
         }
       }
-      marker.circle(x, y, selected ? 14 : 11).fill({ color: event.sprite ? '#0891b2' : '#a78bfa', alpha: event.sprite ? 0.35 : 0.95 }).stroke({ color: selected ? '#ffffff' : '#111827', width: selected ? 4 : 2 });
+      marker.circle(x, y, selected ? 14 : 11).fill({ color: page.sprite ? '#0891b2' : '#a78bfa', alpha: page.sprite ? 0.35 : 0.95 }).stroke({ color: selected ? '#ffffff' : '#111827', width: selected ? 4 : 2 });
       marker.moveTo(x, y - 5).lineTo(x + 5, y).lineTo(x, y + 5).lineTo(x - 5, y).closePath().fill('#ffffff');
       if (propsRef.current.mode === 'events' && eventTool === 'cursor') {
         marker.eventMode = 'static';
@@ -449,7 +451,7 @@ export const MapCanvas = forwardRef<MapCanvasHandle, Props>(function MapCanvas(p
         atlases.set(tileset.id, atlas);
       }));
       const spriteAtlases = new Map<string, Texture>();
-      await Promise.all([...new Set(propsRef.current.map.events.flatMap(event => event.sprite ? [event.sprite.image] : []))].map(async image => {
+      await Promise.all([...new Set(propsRef.current.map.events.flatMap(event => event.pages.flatMap(page => page.sprite ? [page.sprite.image] : [])))].map(async image => {
         const url = propsRef.current.assetUrls[image];
         if (!url) return;
         const textureUrl = new URL(url, window.location.href);
@@ -740,9 +742,9 @@ export const MapCanvas = forwardRef<MapCanvasHandle, Props>(function MapCanvas(p
       runtimeRef.current = null;
       runtime?.app.destroy(true, { children: true });
     };
-  }, [Object.values(props.assetUrls).join('|'), props.map.id, props.map.events.map(event => event.sprite?.image || '').join('|')]);
+  }, [Object.values(props.assetUrls).join('|'), props.map.id, props.map.events.flatMap(event => event.pages.map(page => page.sprite?.image || '')).join('|')]);
 
-  useEffect(() => { draw(); }, [props.map, props.tilesets, props.selectedEventId, props.mode, props.eventTool, props.playerStartMapId, props.playerStart, props.activePlaneId, props.activeLayerId, props.showGrid, props.dimInactiveLayers]);
+  useEffect(() => { draw(); }, [props.map, props.tilesets, props.selectedEventId, props.selectedEventPageIndex, props.mode, props.eventTool, props.playerStartMapId, props.playerStart, props.activePlaneId, props.activeLayerId, props.showGrid, props.dimInactiveLayers]);
   useEffect(() => { requestAnimationFrame(fit); }, [props.map.id]);
   useEffect(() => {
     const runtime = runtimeRef.current;

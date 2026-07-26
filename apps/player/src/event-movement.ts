@@ -1,5 +1,5 @@
 import type {
-  Direction, EventMovement, GameMap, MapEvent, MovementCommand, MovementRoute, MovementTarget, PlanePosition,
+  Direction, EventMovement, GameMap, MapEvent, MapEventPriority, MovementCommand, MovementRoute, MovementTarget, PlanePosition,
 } from './types.js';
 
 const DIRECTIONS: Direction[] = ['north', 'east', 'south', 'west'];
@@ -31,9 +31,12 @@ export type MovementActor = {
   animationTime: number;
   jumpHeight: number;
   settings: EventMovement;
+  priority: MapEventPriority;
+  pageIndex: number;
 };
+export type ActiveMovementEvent = Pick<MapEvent, 'id' | 'position'> & { movement: EventMovement; priority: MapEventPriority; pageIndex: number };
 type InternalActor = MovementActor & {
-  event?: MapEvent;
+  event?: ActiveMovementEvent;
   motion?: Motion;
   waitRemaining: number;
   stopRemaining: number;
@@ -51,11 +54,35 @@ export class EventMovementRuntime {
   private map: GameMap | null = null;
   private actors = new Map<string, InternalActor>();
 
-  beginVisit(map: GameMap, player: PlanePosition) {
+  beginVisit(map: GameMap, player: PlanePosition, events: ActiveMovementEvent[]) {
     for (const actor of this.actors.values()) actor.forced?.resolve();
     this.map = map;
-    this.actors = new Map(map.events.map(event => [event.id, this.makeEventActor(event)]));
+    this.actors = new Map(events.map(event => [event.id, this.makeEventActor(event)]));
     this.actors.set('player', this.makePlayerActor(player));
+  }
+
+  syncEvents(events: ActiveMovementEvent[]) {
+    const activeIds = new Set(events.map(event => event.id));
+    for (const [id, actor] of this.actors) {
+      if (id === 'player' || activeIds.has(id)) continue;
+      actor.forced?.resolve();
+      this.actors.delete(id);
+    }
+    for (const event of events) {
+      const actor = this.actors.get(event.id);
+      if (!actor) {
+        this.actors.set(event.id, this.makeEventActor(event));
+        continue;
+      }
+      if (actor.pageIndex !== event.pageIndex) {
+        actor.pageIndex = event.pageIndex;
+        actor.customIndex = 0;
+        actor.stopRemaining = 0;
+      }
+      actor.event = event;
+      actor.priority = event.priority;
+      actor.settings = { ...event.movement, route: [...event.movement.route] };
+    }
   }
 
   syncPlayer(player: PlanePosition) {
@@ -105,7 +132,7 @@ export class EventMovementRuntime {
     }
   }
 
-  private makeEventActor(event: MapEvent): InternalActor {
+  private makeEventActor(event: ActiveMovementEvent): InternalActor {
     return {
       id: event.id,
       event,
@@ -114,7 +141,9 @@ export class EventMovementRuntime {
       moving: false,
       animationTime: 0,
       jumpHeight: 0,
-      settings: { ...DEFAULT_EVENT_MOVEMENT, ...event.movement, route: [...(event.movement?.route || [])] },
+      settings: { ...event.movement, route: [...event.movement.route] },
+      priority: event.priority,
+      pageIndex: event.pageIndex,
       waitRemaining: 0,
       stopRemaining: 0,
       customIndex: 0,
@@ -130,6 +159,8 @@ export class EventMovementRuntime {
       animationTime: 0,
       jumpHeight: 0,
       settings: { ...DEFAULT_EVENT_MOVEMENT, speed: 4 },
+      priority: 'sameAsCharacters',
+      pageIndex: 0,
       waitRemaining: 0,
       stopRemaining: 0,
       customIndex: 0,

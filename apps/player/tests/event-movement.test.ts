@@ -1,25 +1,24 @@
 import { describe, expect, it, vi } from 'vitest';
-import { DEFAULT_EVENT_MOVEMENT, EventMovementRuntime } from '../src/event-movement.js';
-import type { GameMap, MapEvent, MovementRoute } from '../src/types.js';
+import { DEFAULT_EVENT_MOVEMENT, EventMovementRuntime, type ActiveMovementEvent } from '../src/event-movement.js';
+import type { GameMap, MovementRoute } from '../src/types.js';
 
-function placed(id: string, movement: Partial<typeof DEFAULT_EVENT_MOVEMENT> = {}): MapEvent {
+function placed(id: string, movement: Partial<typeof DEFAULT_EVENT_MOVEMENT> = {}): ActiveMovementEvent {
   return {
     id,
     position: { x: 48, y: 48, planeId: 'p' },
-    scriptId: `script.${id}`,
-    trigger: { type: 'interact', radius: 48 },
-    execution: { mode: 'repeat' },
     movement: { ...DEFAULT_EVENT_MOVEMENT, ...movement },
+    priority: 'sameAsCharacters',
+    pageIndex: 0,
   };
 }
 
-function mapWith(events: MapEvent[]): GameMap {
+function mapWith(_events: ActiveMovementEvent[]): GameMap {
   return {
     id: 'map', name: 'Map', ground: '#000', accent: '#000', tileSize: 48,
     bounds: { x: 0, y: 0, w: 480, h: 480 },
     planes: [{ id: 'p', name: 'P', order: 0, surfaceLayerId: 'surface', surfaceCoverage: 'bounds' }],
     tileLayers: [{ id: 'surface', name: 'Surface', planeId: 'p', renderPhase: 'belowActors', tiles: [] }],
-    planeConnections: [], navigationOverrides: [], blockedRegions: [], events, enemySpawns: [],
+    planeConnections: [], navigationOverrides: [], blockedRegions: [], events: [], enemySpawns: [],
   };
 }
 
@@ -30,7 +29,7 @@ describe('EventMovementRuntime', () => {
   it('loops a custom autonomous route using RPG Maker tile speed', () => {
     const event = placed('walker', { type: 'custom', speed: 4, frequency: 5, route: [{ type: 'move', direction: 'east' }] });
     const runtime = new EventMovementRuntime();
-    runtime.beginVisit(mapWith([event]), player);
+    runtime.beginVisit(mapWith([event]), player, [event]);
     runtime.update(0.01, player, pass);
     expect(runtime.actor('walker')?.moving).toBe(true);
     runtime.update(0.3, player, pass);
@@ -42,7 +41,8 @@ describe('EventMovementRuntime', () => {
 
   it('always approaches and faces the player without falling back to random movement', () => {
     const runtime = new EventMovementRuntime();
-    runtime.beginVisit(mapWith([placed('chaser', { type: 'approach', frequency: 5 })]), player);
+    const chaser = placed('chaser', { type: 'approach', frequency: 5 });
+    runtime.beginVisit(mapWith([chaser]), player, [chaser]);
     runtime.update(0.01, player, pass, () => 0);
     expect(runtime.actor('chaser')?.direction).toBe('east');
     expect(runtime.actor('chaser')?.moving).toBe(true);
@@ -52,7 +52,7 @@ describe('EventMovementRuntime', () => {
     const event = placed('edge-walker', { type: 'random', frequency: 5, through: true });
     event.position.x = 432;
     const runtime = new EventMovementRuntime();
-    runtime.beginVisit(mapWith([event]), player);
+    runtime.beginVisit(mapWith([event]), player, [event]);
     const rolls = [0, 0.49];
     runtime.update(0.01, player, pass, () => rolls.shift() ?? 0);
     expect(runtime.actor('edge-walker')?.position.x).toBe(432);
@@ -61,7 +61,8 @@ describe('EventMovementRuntime', () => {
 
   it('honors direction fix while allowing sideways movement', () => {
     const runtime = new EventMovementRuntime();
-    runtime.beginVisit(mapWith([placed('block', { type: 'custom', frequency: 5, directionFix: true, route: [{ type: 'move', direction: 'east' }] })]), player);
+    const block = placed('block', { type: 'custom', frequency: 5, directionFix: true, route: [{ type: 'move', direction: 'east' }] });
+    runtime.beginVisit(mapWith([block]), player, [block]);
     runtime.update(0.01, player, pass);
     expect(runtime.actor('block')?.direction).toBe('south');
     expect(runtime.actor('block')?.moving).toBe(true);
@@ -69,7 +70,8 @@ describe('EventMovementRuntime', () => {
 
   it('skips a blocked forced step and resolves only after the whole route', async () => {
     const runtime = new EventMovementRuntime();
-    runtime.beginVisit(mapWith([placed('npc')]), player);
+    const npc = placed('npc');
+    runtime.beginVisit(mapWith([npc]), player, [npc]);
     const route: MovementRoute = {
       commands: [{ type: 'move', direction: 'east' }, { type: 'turn', direction: 'north' }, { type: 'wait', duration: 0.2 }],
       repeat: false, skippable: true, wait: true,
@@ -88,7 +90,8 @@ describe('EventMovementRuntime', () => {
 
   it('retries a blocked non-skippable command and Through bypasses the collision callback', () => {
     const runtime = new EventMovementRuntime();
-    runtime.beginVisit(mapWith([placed('npc')]), player);
+    const npc = placed('npc');
+    runtime.beginVisit(mapWith([npc]), player, [npc]);
     void runtime.forceRoute({ kind: 'event', eventId: 'npc' }, {
       commands: [{ type: 'move', direction: 'east' }], repeat: false, skippable: false, wait: true,
     });
@@ -97,7 +100,8 @@ describe('EventMovementRuntime', () => {
     expect(runtime.isRouteRunning('npc')).toBe(true);
 
     const throughRuntime = new EventMovementRuntime();
-    throughRuntime.beginVisit(mapWith([placed('ghost', { through: true })]), player);
+    const ghost = placed('ghost', { through: true });
+    throughRuntime.beginVisit(mapWith([ghost]), player, [ghost]);
     void throughRuntime.forceRoute({ kind: 'event', eventId: 'ghost' }, {
       commands: [{ type: 'move', direction: 'east' }], repeat: false, skippable: false, wait: false,
     });
@@ -107,7 +111,7 @@ describe('EventMovementRuntime', () => {
 
   it('runs a forced player jump and exposes its completion promise', async () => {
     const runtime = new EventMovementRuntime();
-    runtime.beginVisit(mapWith([]), player);
+    runtime.beginVisit(mapWith([]), player, []);
     const completion = runtime.forceRoute({ kind: 'player' }, {
       commands: [{ type: 'jump', x: 1, y: -1 }], repeat: false, skippable: false, wait: true,
     });

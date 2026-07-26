@@ -21,7 +21,7 @@ describe('sourceGameToLoadedGame', () => {
     const loaded = sourceGameToLoadedGame(source);
     expect(source.maps.village.events[1].position).toEqual({ x: 11, y: 7, planeId: 'aubeval' });
     expect(loaded.maps.village.events[1].position).toEqual({ x: 528, y: 336, planeId: 'aubeval' });
-    expect(loaded.maps.village.events[1].trigger).toMatchObject({ type: 'interact', radius: 60 });
+    expect(loaded.maps.village.events[1].pages[0].trigger).toMatchObject({ type: 'actionButton', radius: 60 });
     expect(loaded.maps.village.tileLayers.map(layer => layer.tiles[0])).toEqual([
       { x: 96, y: 144, tilesetId: 'outside-a2', terrainId: 'dirt-on-grass' },
       { x: 96, y: 144, tilesetId: 'outside-a2', terrainId: 'grass' },

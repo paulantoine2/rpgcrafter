@@ -31,6 +31,8 @@ Target one workspace during iteration, for example `pnpm --filter @rpgcrafter/st
 
 Write strict TypeScript using two-space indentation, single quotes, and semicolons, matching the existing files. Use `kebab-case` filenames (`event-inspector.tsx`), `PascalCase` React components, and `camelCase` functions and variables. Keep shared data contracts in `game-schema`; avoid duplicating schema logic in either app. The Studio supports the `@/` alias for `src/`. No repository-wide formatter or linter is configured, so preserve local style and rely on `pnpm check`.
 
+Write all README files and code comments in English. Do not use French or any other language for README content or comments.
+
 ## Testing Guidelines
 
 Vitest is the test runner. Studio component tests use Testing Library, `jsdom`, and setup from `apps/studio/tests/setup.ts`; runtime and schema tests run in Node. Name tests `*.test.ts` or `*.test.tsx`. Add regression tests for behavioral fixes and cover schema migrations or validation changes with representative content. Run the affected workspace test first, then `pnpm test` and `pnpm check` before submitting.

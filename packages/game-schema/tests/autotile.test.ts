@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { AUTOTILE_BITS, CANONICAL_AUTOTILE_MASKS, autotileAnimationFrame, autotileVariant, canonicalizeAutotileMask, resolveTerrainPlacements, type AutotileTilesetDefinition, type TerrainPlacement } from '../src/index.js';
+import { AUTOTILE_BITS, CANONICAL_AUTOTILE_MASKS, autotileAnimationFrame, autotileRecipe, autotileVariant, canonicalizeAutotileMask, isAutotileTileset, resolveTerrainPlacements, type AutotileTilesetDefinition, type TerrainPlacement } from '../src/index.js';
 
 const neighbors = [
   [AUTOTILE_BITS.north, 0, -1], [AUTOTILE_BITS.east, 1, 0],
@@ -64,5 +64,34 @@ describe('A1 autotile animation', () => {
     expect(autotileVariant(tileset, 0, 'wall').quarters).toEqual([[0, 0], [3, 0], [0, 3], [3, 3]]);
     expect(autotileVariant(tileset, AUTOTILE_BITS.north | AUTOTILE_BITS.east | AUTOTILE_BITS.south | AUTOTILE_BITS.west, 'wall').quarters).toEqual([[2, 2], [1, 2], [2, 1], [1, 1]]);
     expect(autotileVariant(tileset, 255, 'wall')).toEqual(autotileVariant(tileset, 15, 'wall'));
+  });
+});
+
+describe('autotile tileset classification', () => {
+  it('renders A3 roof and wall terrains with the wall recipe', () => {
+    const tileset = {
+      id: 'outside-a3',
+      name: 'Outside A3',
+      category: 'Outside',
+      image: 'Outside_A3.png',
+      tileSize: 48,
+      columns: 16,
+      rows: 8,
+      kind: 'a3',
+      quarterSize: 24,
+      variants: {},
+      terrains: [{
+        id: 'roof',
+        name: 'Roof',
+        origin: { column: 0, row: 0 },
+        collision: { kind: 'none' },
+        previewMask: 0,
+      }],
+    } satisfies AutotileTilesetDefinition;
+
+    expect(isAutotileTileset(tileset)).toBe(true);
+    expect(autotileRecipe(tileset, tileset.terrains[0])).toBe('wall');
+    expect(autotileVariant(tileset, AUTOTILE_BITS.east, autotileRecipe(tileset, tileset.terrains[0])).quarters)
+      .toEqual([[0, 0], [1, 0], [0, 3], [1, 3]]);
   });
 });

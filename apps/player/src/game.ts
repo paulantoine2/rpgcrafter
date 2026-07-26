@@ -1,11 +1,11 @@
 import { isStudioPreview, loadGameContent } from './content-loader.js';
 import { circleIntersectsBlockedDiagonal } from './circle-collision.js';
-import { MapEventRuntime, teleportDisposition } from './event-runtime.js';
+import { MapEventRuntime, teleportDisposition, type RuntimeEvent } from './event-runtime.js';
 import { EventMovementRuntime } from './event-movement.js';
 import { PixiRenderer } from './pixi-renderer.js';
 import type { Renderer, RenderState } from './renderer.js';
-import { DIRECTION_OFFSETS, navigationHasCell, navigationTarget } from './types.js';
-import type { Action, Condition, Direction, EnemyTemplate, GameMap, LoadedGame, MapEvent, PlanePosition, Skill, Vec2 } from './types.js';
+import { DIRECTION_OFFSETS, eventPageMovement, navigationHasCell, navigationTarget, resolveEventPage } from './types.js';
+import type { Condition, Direction, EnemyTemplate, EventCommand, GameMap, LoadedGame, MapEvent, MapEventPage, PlanePosition, Skill, Vec2 } from './types.js';
 
 void (async () => {
   const canvas = document.querySelector<HTMLCanvasElement>('#game');
@@ -17,11 +17,25 @@ void (async () => {
   };
   const keys = new Set<string>();
   const studioPreview = isStudioPreview();
-  const SAVE_SCHEMA = '0.6';
+  const SAVE_SCHEMA = '0.7';
   const VIEW_WIDTH = 960, VIEW_HEIGHT = 540;
   // Keep a small clearance inside one-tile-wide (48 px) passages.
   const PLAYER_RADIUS = 20;
-  let content: LoadedGame, game: any, renderer: Renderer, eventRuntime: MapEventRuntime, movementRuntime: EventMovementRuntime, completedMapEvents = new Set<string>(), visitRevision = 0, dialogue: { choices: Array<{ label: string; actions: Action[] }>; choiceIndex: number; currentEventId?: string } | null = null, paused = false, pauseTabIndex = 0, inventorySelection = 0, lastTime = performance.now(), toastTimer = 0, showTileGrid = false, playerMoving = false, playerAnimationTime = 0, cutsceneRouteWaits = 0;
+  type ActiveEvent = Pick<MapEvent, 'id' | 'position'> & MapEventPage & { pageIndex: number };
+  type CommandProcess = {
+    key: string;
+    eventId?: string;
+    pageIndex?: number;
+    commands: EventCommand[];
+    index: number;
+    waitRemaining: number;
+    blocked: boolean;
+    parallel: boolean;
+    autorun: boolean;
+    revision: number;
+  };
+  let content: LoadedGame, game: any, renderer: Renderer, eventRuntime: MapEventRuntime, movementRuntime: EventMovementRuntime, visitRevision = 0, dialogue: { choices: Array<{ label: string; commands: EventCommand[] }>; choiceIndex: number; process?: CommandProcess } | null = null, paused = false, pauseTabIndex = 0, inventorySelection = 0, lastTime = performance.now(), toastTimer = 0, showTileGrid = false, playerMoving = false, playerAnimationTime = 0;
+  const eventProcesses = new Map<string, CommandProcess>();
   let facing = { x: 0, y: 1 };
   const cooldowns: Record<string, number> = {};
 
@@ -44,7 +58,7 @@ void (async () => {
     return {
       schema: SAVE_SCHEMA, mapId, player: { x: start.x, y: start.y, planeId: start.planeId, hp: content.player.stats.maxHp, maxHp: content.player.stats.maxHp, xp: content.player.stats.xp, level: content.player.stats.level, invuln: 0, dash: 0 },
       flags: structuredClone(content.initialState.flags), quests: structuredClone(content.initialState.quests), inventory: structuredClone(content.initialState.inventory || {}), equipment: structuredClone(content.initialState.equipment || {}), unlockedSkills: [...content.player.unlockedSkills],
-      enemies: Object.fromEntries(Object.values(content.maps).map(map => [map.id, map.enemySpawns.map((spawn, index) => makeEnemy(spawn.enemyId, spawn.x, spawn.y, spawn.planeId, index))])), projectiles: [], particles: [], completedMapEvents: [], checkpoint: { mapId, spawn: structuredClone(start) }
+      enemies: Object.fromEntries(Object.values(content.maps).map(map => [map.id, map.enemySpawns.map((spawn, index) => makeEnemy(spawn.enemyId, spawn.x, spawn.y, spawn.planeId, index))])), projectiles: [], particles: [], checkpoint: { mapId, spawn: structuredClone(start) }
     };
   }
   function makeEnemy(enemyId: string, x: number, y: number, planeId: string, index = 0) {
@@ -57,8 +71,7 @@ void (async () => {
     if (!isRecord(saved) || saved.schema !== SAVE_SCHEMA || typeof saved.mapId !== 'string' || !content.maps[saved.mapId]) return false;
     const player = saved.player;
     if (!isRecord(player) || typeof player.planeId !== 'string' || !currentMapPlaneExists(saved.mapId, player.planeId) || !['x', 'y', 'hp', 'maxHp', 'xp', 'level', 'invuln', 'dash'].every(key => typeof player[key] === 'number' && Number.isFinite(player[key]))) return false;
-    const knownMapEvents = new Set(Object.values(content.maps).flatMap(map => map.events.map(event => `${map.id}:${event.id}`)));
-    if (!isRecord(saved.flags) || !isRecord(saved.quests) || !isRecord(saved.inventory) || !isRecord(saved.equipment) || !isRecord(saved.enemies) || !Array.isArray(saved.projectiles) || !Array.isArray(saved.particles) || !Array.isArray(saved.unlockedSkills) || !Array.isArray(saved.completedMapEvents) || !saved.completedMapEvents.every(key => typeof key === 'string' && knownMapEvents.has(key)) || !isRecord(saved.checkpoint)) return false;
+    if (!isRecord(saved.flags) || !isRecord(saved.quests) || !isRecord(saved.inventory) || !isRecord(saved.equipment) || !isRecord(saved.enemies) || !Array.isArray(saved.projectiles) || !Array.isArray(saved.particles) || !Array.isArray(saved.unlockedSkills) || !isRecord(saved.checkpoint)) return false;
     const checkpoint = saved.checkpoint; const spawn = checkpoint.spawn;
     if (typeof checkpoint.mapId !== 'string' || !content.maps[checkpoint.mapId] || !isRecord(spawn) || typeof spawn.planeId !== 'string' || !currentMapPlaneExists(checkpoint.mapId, spawn.planeId) || !['x', 'y'].every(key => typeof spawn[key] === 'number' && Number.isFinite(spawn[key]))) return false;
     if (!Object.values(saved.enemies).every(Array.isArray) || !Object.entries(saved.inventory).every(([itemId, amount]) => Boolean(content.items[itemId]) && typeof amount === 'number' && amount >= 0)) return false;
@@ -70,63 +83,130 @@ void (async () => {
     try { const saved = JSON.parse(localStorage.getItem(saveKey()) || 'null'); if (isValidSave(saved)) return saved; } catch { /* invalid or unavailable storage */ }
     return freshGame();
   }
-  function runtimeMap(): GameMap {
-    const map = currentMap();
-    return { ...map, events: map.events.map(event => {
-      const actor = movementRuntime?.actor(event.id);
-      return actor ? { ...event, position: { ...actor.position } } : event;
-    }) };
+  function activeEvents(useRuntimePosition = true): ActiveEvent[] {
+    return currentMap().events.flatMap(event => {
+      const resolved = resolveEventPage(event, conditionsMet);
+      if (!resolved) return [];
+      const actor = useRuntimePosition ? movementRuntime?.actor(event.id) : undefined;
+      return [{
+        id: event.id,
+        position: actor ? { ...actor.position } : { ...event.position },
+        ...resolved.page,
+        pageIndex: resolved.index,
+      }];
+    });
+  }
+  function movementEvents(events = activeEvents()) {
+    return events.map(event => ({ id: event.id, position: event.position, movement: eventPageMovement(event), priority: event.priority, pageIndex: event.pageIndex }));
+  }
+  function runtimeEvents(events = activeEvents()): RuntimeEvent[] {
+    return events.map(event => ({ id: event.id, position: event.position, pageIndex: event.pageIndex, trigger: event.trigger }));
   }
   function initializeEventRuntime() {
-    completedMapEvents = new Set(game.completedMapEvents);
-    eventRuntime = new MapEventRuntime(completedMapEvents);
+    eventProcesses.clear();
+    eventRuntime = new MapEventRuntime();
     movementRuntime = new EventMovementRuntime();
-    movementRuntime.beginVisit(currentMap(), game.player);
-    eventRuntime.beginVisit(runtimeMap());
+    const events = activeEvents(false);
+    movementRuntime.beginVisit(currentMap(), game.player, movementEvents(events));
+    eventRuntime.beginVisit(currentMap().id, runtimeEvents(events));
     visitRevision += 1;
   }
-  function saveSilently() { if (studioPreview) return true; try { game.completedMapEvents = [...completedMapEvents]; localStorage.setItem(saveKey(), JSON.stringify(game)); return true; } catch { return false; } }
+  function saveSilently() { if (studioPreview) return true; try { localStorage.setItem(saveKey(), JSON.stringify(game)); return true; } catch { return false; } }
   function saveGame() { showToast(saveSilently() ? 'Sauvegarde effectuée' : 'Sauvegarde indisponible'); }
   function resetGame() { try { localStorage.removeItem(saveKey()); } catch { /* the in-memory reset is still safe */ } game = freshGame(); initializeEventRuntime(); closeDialogue(); closePause(); refreshHud(); showToast('Nouvelle partie commencée'); }
   function toggleTileGrid() { showTileGrid = !showTileGrid; ui.devGrid.setAttribute('aria-pressed', String(showTileGrid)); ui.devGrid.textContent = `Grille dev : ${showTileGrid ? 'on' : 'off'}`; }
 
   function showToast(text: string) { ui.toast.textContent = text; ui.toast.classList.remove('hidden'); toastTimer = 2.5; }
-  function openDialogue(speaker: string, text: string, choices: Array<{ label: string; actions: Action[] }> = [], currentEventId?: string) {
-    dialogue = { choices, choiceIndex: 0, currentEventId }; ui.speaker.textContent = speaker; ui.text.textContent = text; ui.choices.innerHTML = '';
+  function openDialogue(speaker: string, text: string, choices: Array<{ label: string; commands: EventCommand[] }> = [], process?: CommandProcess) {
+    dialogue = { choices, choiceIndex: 0, process }; ui.speaker.textContent = speaker; ui.text.textContent = text; ui.choices.innerHTML = '';
     choices.forEach((choice, index) => { const button = document.createElement('button'); button.textContent = choice.label; button.addEventListener('click', () => chooseDialogueChoice(index)); ui.choices.append(button); });
     document.querySelector<HTMLElement>('.continue-hint')!.style.display = choices.length ? 'none' : 'block'; ui.dialogue.classList.remove('hidden');
     if (choices.length) queueMicrotask(() => (ui.choices.querySelector('button') as HTMLButtonElement | null)?.focus());
   }
-  function closeDialogue() { dialogue = null; ui.dialogue.classList.add('hidden'); }
-  function chooseDialogueChoice(index = dialogue?.choiceIndex || 0) { const choice = dialogue?.choices[index]; const currentEventId = dialogue?.currentEventId; if (!choice) return; closeDialogue(); executeActions(choice.actions, currentEventId); }
+  function closeDialogue() {
+    const process = dialogue?.process;
+    dialogue = null;
+    ui.dialogue.classList.add('hidden');
+    if (process && eventProcesses.get(process.key) === process) process.blocked = false;
+  }
+  function chooseDialogueChoice(index = dialogue?.choiceIndex || 0) {
+    const choice = dialogue?.choices[index];
+    const process = dialogue?.process;
+    if (!choice) return;
+    if (process && eventProcesses.get(process.key) === process) process.commands.splice(process.index, 0, ...choice.commands);
+    closeDialogue();
+  }
   function moveDialogueChoice(delta: number) { if (!dialogue?.choices.length) return; dialogue.choiceIndex = (dialogue.choiceIndex + delta + dialogue.choices.length) % dialogue.choices.length; (ui.choices.children[dialogue.choiceIndex] as HTMLButtonElement | undefined)?.focus(); }
-  function executeActions(actions: Action[], currentEventId?: string) {
-    for (let index = 0; index < actions.length; index += 1) {
-      const action = actions[index];
-      if (action.type === 'dialogue') openDialogue(action.speaker, action.text, action.choices || [], currentEventId);
-      if (action.type === 'setFlag') game.flags[action.id] = action.value;
-      if (action.type === 'setQuestState') game.quests[action.id] = action.state;
-      if (action.type === 'giveItem') game.inventory[action.id] = (game.inventory[action.id] || 0) + (action.amount || 1);
-      if (action.type === 'removeItem') game.inventory[action.id] = Math.max(0, (game.inventory[action.id] || 0) - (action.amount || 1));
-      if (action.type === 'unlockSkill' && !game.unlockedSkills.includes(action.id)) game.unlockedSkills.push(action.id);
-      if (action.type === 'healPlayer') game.player.hp = Math.min(game.player.maxHp, game.player.hp + action.amount);
-      if (action.type === 'toast') showToast(action.text);
-      if (action.type === 'teleport') teleport(action.mapId, action.position, action.resetMap);
-      if (action.type === 'movementRoute') {
-        const completion = movementRuntime.forceRoute(action.target, action.route, currentEventId);
-        if (action.route.wait) {
-          cutsceneRouteWaits += 1;
+  function startProcess(key: string, commands: EventCommand[], options: { eventId?: string; pageIndex?: number; parallel?: boolean; autorun?: boolean } = {}) {
+    if (eventProcesses.has(key)) return false;
+    const process: CommandProcess = {
+      key,
+      eventId: options.eventId,
+      pageIndex: options.pageIndex,
+      commands: [...commands],
+      index: 0,
+      waitRemaining: 0,
+      blocked: false,
+      parallel: options.parallel ?? false,
+      autorun: options.autorun ?? false,
+      revision: visitRevision,
+    };
+    eventProcesses.set(key, process);
+    advanceProcess(process, 0);
+    return true;
+  }
+  function finishProcess(process: CommandProcess) {
+    if (eventProcesses.get(process.key) === process) eventProcesses.delete(process.key);
+    refreshHud();
+  }
+  function advanceProcess(process: CommandProcess, dt: number) {
+    if (process.revision !== visitRevision || eventProcesses.get(process.key) !== process) return finishProcess(process);
+    if (process.waitRemaining > 0) {
+      process.waitRemaining = Math.max(0, process.waitRemaining - dt);
+      if (process.waitRemaining > 0) return;
+    }
+    if (process.blocked) return;
+    let steps = 0;
+    while (process.index < process.commands.length && steps < 100) {
+      steps += 1;
+      const command = process.commands[process.index++];
+      if (command.type === 'dialogue') {
+        process.blocked = true;
+        openDialogue(command.speaker, command.text, command.choices || [], process);
+        return refreshHud();
+      }
+      if (command.type === 'setFlag') game.flags[command.id] = command.value;
+      if (command.type === 'setQuestState') game.quests[command.id] = command.state;
+      if (command.type === 'giveItem') game.inventory[command.id] = (game.inventory[command.id] || 0) + (command.amount || 1);
+      if (command.type === 'removeItem') game.inventory[command.id] = Math.max(0, (game.inventory[command.id] || 0) - (command.amount || 1));
+      if (command.type === 'unlockSkill' && !game.unlockedSkills.includes(command.id)) game.unlockedSkills.push(command.id);
+      if (command.type === 'healPlayer') game.player.hp = Math.min(game.player.maxHp, game.player.hp + command.amount);
+      if (command.type === 'toast') showToast(command.text);
+      if (command.type === 'wait') {
+        process.waitRemaining = command.duration;
+        if (command.duration > 0) return refreshHud();
+      }
+      if (command.type === 'teleport' && teleport(command.mapId, command.position, command.resetMap)) return;
+      if (command.type === 'movementRoute') {
+        const completion = movementRuntime.forceRoute(command.target, command.route, process.eventId);
+        if (command.route.wait) {
+          process.blocked = true;
           void completion.then(() => {
-            cutsceneRouteWaits = Math.max(0, cutsceneRouteWaits - 1);
-            executeActions(actions.slice(index + 1), currentEventId);
+            if (eventProcesses.get(process.key) === process) process.blocked = false;
           });
-          refreshHud();
-          return;
+          return refreshHud();
         }
       }
-      if (action.type === 'save') saveSilently();
+      if (command.type === 'save') saveSilently();
     }
-    refreshHud();
+    if (process.index >= process.commands.length) finishProcess(process);
+    else refreshHud();
+  }
+  function updateProcesses(dt: number) {
+    for (const process of [...eventProcesses.values()]) advanceProcess(process, dt);
+  }
+  function executeCommands(commands: EventCommand[], currentEventId?: string) {
+    startProcess(`manual:${crypto.randomUUID()}`, commands, { eventId: currentEventId });
   }
   function objective() { return content.objectives.find(item => conditionsMet(item.conditions))?.text || ''; }
   function refreshHud() {
@@ -158,16 +238,33 @@ void (async () => {
   function activateSelectedItem() { const [id] = inventoryEntries()[inventorySelection] || []; if (content.items[id]?.type === 'equipment') equipSelectedItem(); else useSelectedItem(); }
   function handlePauseKey(event: KeyboardEvent) { const tabs = content.ui.pauseMenu.tabs; if (event.code === 'Escape') return closePause(); if (event.code === 'ArrowLeft' || event.code === 'ArrowRight') { pauseTabIndex = (pauseTabIndex + (event.code === 'ArrowRight' ? 1 : -1) + tabs.length) % tabs.length; inventorySelection = 0; return renderPause(); } if (tabs[pauseTabIndex].id === 'inventory' && (event.code === 'ArrowUp' || event.code === 'ArrowDown')) { const count = inventoryEntries().length || 1; inventorySelection = (inventorySelection + (event.code === 'ArrowDown' ? 1 : -1) + count) % count; return renderPause(); } if (tabs[pauseTabIndex].id === 'inventory' && (event.code === 'Enter' || event.code === 'Space')) activateSelectedItem(); }
 
-  function eventActive(event: MapEvent) { return conditionsMet(event.activeWhen); }
-  function eventPage(event: MapEvent) { return content.events[event.scriptId]?.pages.find(candidate => conditionsMet(candidate.conditions)); }
-  function eventCallbacks() {
+  function eventCallbacks(events: ActiveEvent[]) {
+    const byId = new Map(events.map(event => [event.id, event]));
     return {
-      isActive: eventActive,
-      canExecute: (event: MapEvent) => Boolean(eventPage(event)),
-      execute: (event: MapEvent) => { const revision = visitRevision; movementRuntime.faceToward(event.id, game.player); executeActions(eventPage(event)!.actions, event.id); return { stop: revision !== visitRevision }; }
+      canExecute: (event: RuntimeEvent) => {
+        const active = byId.get(event.id);
+        if (!active || active.pageIndex !== event.pageIndex || eventProcesses.has(event.id)) return false;
+        return active.trigger.type === 'parallel' || ![...eventProcesses.values()].some(process => !process.parallel);
+      },
+      execute: (event: RuntimeEvent) => {
+        const active = byId.get(event.id);
+        if (!active) return;
+        const revision = visitRevision;
+        if (active.trigger.type === 'actionButton' || active.trigger.type === 'playerTouch' || active.trigger.type === 'eventTouch') movementRuntime.faceToward(event.id, game.player);
+        startProcess(event.id, active.contents, {
+          eventId: event.id,
+          pageIndex: event.pageIndex,
+          parallel: active.trigger.type === 'parallel',
+          autorun: active.trigger.type === 'autorun',
+        });
+        return { stop: revision !== visitRevision };
+      }
     };
   }
-  function interact() { eventRuntime.interact(runtimeMap(), game.player, eventCallbacks()); }
+  function interact() {
+    const events = activeEvents();
+    eventRuntime.interact(currentMap().id, runtimeEvents(events), game.player, eventCallbacks(events));
+  }
 
   function gridCell(position: Vec2) { const size = currentMap().tileSize; return { x: Math.floor(position.x / size), y: Math.floor(position.y / size) }; }
   function circleBlocked(position: PlanePosition, radius: number, ignoredEdge?: Direction) {
@@ -216,9 +313,10 @@ void (async () => {
       to.planeId = target.planeId;
     }
     if (circleBlocked(to, 18)) return false;
-    if (actorId !== 'player' && to.planeId === game.player.planeId && distance(to, game.player) < PLAYER_RADIUS + 18) return false;
+    const movingActor = movementRuntime.actor(actorId);
+    if (actorId !== 'player' && movingActor?.priority === 'sameAsCharacters' && to.planeId === game.player.planeId && distance(to, game.player) < PLAYER_RADIUS + 18) return false;
     for (const other of movementRuntime.eventActors()) {
-      if (other.id === actorId || other.settings.through || other.position.planeId !== to.planeId) continue;
+      if (other.id === actorId || other.settings.through || other.priority !== 'sameAsCharacters' || other.position.planeId !== to.planeId) continue;
       if (distance(to, other.position) < 36) return false;
     }
     return true;
@@ -229,7 +327,7 @@ void (async () => {
     dx /= length; dy /= length; facing = { x: dx, y: dy };
     const previous = { x: game.player.x, y: game.player.y, planeId: game.player.planeId };
     moveWithCollisions(game.player, dx * (game.player.dash > 0 ? 420 : 185) * dt, dy * (game.player.dash > 0 ? 420 : 185) * dt, PLAYER_RADIUS);
-    const eventCollision = movementRuntime.eventActors().some(actor => !actor.settings.through && actor.position.planeId === game.player.planeId && distance(actor.position, game.player) < PLAYER_RADIUS + 18);
+    const eventCollision = movementRuntime.eventActors().some(actor => !actor.settings.through && actor.priority === 'sameAsCharacters' && actor.position.planeId === game.player.planeId && distance(actor.position, game.player) < PLAYER_RADIUS + 18);
     if (eventCollision) Object.assign(game.player, previous);
     return previous.x !== game.player.x || previous.y !== game.player.y || previous.planeId !== game.player.planeId;
   }
@@ -250,11 +348,11 @@ void (async () => {
   }
   function dash() { if ((cooldowns.dash || 0) > 0 || game.player.dash > 0) return; game.player.dash = .17; cooldowns.dash = .85; }
   function hurtEnemy(enemy: any, damage: number) { enemy.hp -= damage; game.particles.push({ type: 'hit', x: enemy.x, y: enemy.y, planeId: enemy.planeId, t: .25, text: `-${damage}` }); if (enemy.hp <= 0) killEnemy(enemy); }
-  function killEnemy(enemy: any) { enemy.alive = false; game.player.xp += enemy.xp; if (game.player.xp >= game.player.level * 35) { game.player.level += 1; game.player.maxHp += 15; game.player.hp = game.player.maxHp; showToast(`Niveau ${game.player.level} ! PV restaurés`); } game.particles.push({ type: 'burst', x: enemy.x, y: enemy.y, planeId: enemy.planeId, t: .5 }); executeActions(enemy.onDefeated || []); }
+  function killEnemy(enemy: any) { enemy.alive = false; game.player.xp += enemy.xp; if (game.player.xp >= game.player.level * 35) { game.player.level += 1; game.player.maxHp += 15; game.player.hp = game.player.maxHp; showToast(`Niveau ${game.player.level} ! PV restaurés`); } game.particles.push({ type: 'burst', x: enemy.x, y: enemy.y, planeId: enemy.planeId, t: .5 }); executeCommands(enemy.onDefeated || []); }
   function hurtPlayer(amount: number) { if (game.player.invuln > 0 || game.player.dash > 0) return; game.player.hp -= Math.max(1, amount - equippedStat('defense')); game.player.invuln = .55; if (game.player.hp <= 0) { game.player.hp = game.player.maxHp; const destination = currentMap().deathDestination || game.checkpoint; teleport(destination.mapId, destination.spawn, true); showToast('Vous reprenez conscience au dernier passage.'); } }
   function teleport(mapId: string, position: PlanePosition, resetMap: boolean) {
-    const action = { type: 'teleport' as const, mapId, position, resetMap };
-    const disposition = teleportDisposition(game.mapId, action);
+    const command = { type: 'teleport' as const, mapId, position, resetMap };
+    const disposition = teleportDisposition(game.mapId, command);
     if (!content.maps[mapId] || disposition === 'invalid') return false;
     game.mapId = mapId;
     Object.assign(game.player, position);
@@ -263,8 +361,11 @@ void (async () => {
     game.particles = [];
     game.player.hp = Math.max(game.player.hp, Math.ceil(game.player.maxHp * .6));
     game.checkpoint = { mapId, spawn: structuredClone(position) };
-    movementRuntime.beginVisit(currentMap(), game.player);
-    eventRuntime.beginVisit(runtimeMap());
+    eventProcesses.clear();
+    closeDialogue();
+    const events = activeEvents(false);
+    movementRuntime.beginVisit(currentMap(), game.player, movementEvents(events));
+    eventRuntime.beginVisit(currentMap().id, runtimeEvents(events));
     visitRevision += 1;
     saveSilently();
     refreshHud();
@@ -276,6 +377,16 @@ void (async () => {
     playerMoving = false;
     if (toastTimer > 0 && (toastTimer -= dt) <= 0) ui.toast.classList.add('hidden');
     if (paused || document.hidden) { playerAnimationTime = 0; return; }
+    updateProcesses(dt);
+    let events = activeEvents();
+    const activePages = new Map(events.map(event => [event.id, event.pageIndex]));
+    for (const process of [...eventProcesses.values()]) {
+      if (process.eventId && process.pageIndex !== undefined && activePages.get(process.eventId) !== process.pageIndex) {
+        if (dialogue?.process === process) closeDialogue();
+        eventProcesses.delete(process.key);
+      }
+    }
+    movementRuntime.syncEvents(movementEvents(events));
     const playerWasForced = movementRuntime.isPlayerForced();
     movementRuntime.update(dt, game.player, eventCanMove);
     const forcedPlayer = movementRuntime.actor('player');
@@ -285,11 +396,13 @@ void (async () => {
       playerMoving = forcedPlayer.moving;
       playerAnimationTime = forcedPlayer.animationTime;
     }
-    if (dialogue || cutsceneRouteWaits > 0) { if (!playerMoving) playerAnimationTime = 0; return; }
+    events = activeEvents();
+    eventRuntime.update(currentMap().id, runtimeEvents(events), game.player, eventCallbacks(events), PLAYER_RADIUS);
+    if (dialogue || events.some(event => event.trigger.type === 'autorun') || [...eventProcesses.values()].some(process => !process.parallel)) { if (!playerMoving) playerAnimationTime = 0; return; }
     Object.keys(cooldowns).forEach(key => cooldowns[key] = Math.max(0, cooldowns[key] - dt)); game.player.invuln = Math.max(0, game.player.invuln - dt); game.player.dash = Math.max(0, game.player.dash - dt);
     playerMoving = movementRuntime.isPlayerForced() ? playerMoving : movePlayer((keys.has('ArrowRight') || keys.has('KeyD') ? 1 : 0) - (keys.has('ArrowLeft') || keys.has('KeyA') ? 1 : 0), (keys.has('ArrowDown') || keys.has('KeyS') ? 1 : 0) - (keys.has('ArrowUp') || keys.has('KeyW') ? 1 : 0), dt);
     playerAnimationTime = playerMoving ? playerAnimationTime + dt : 0;
-    updateProjectiles(dt); updateEnemies(dt); game.particles.forEach((particle: any) => particle.t -= dt); game.particles = game.particles.filter((particle: any) => particle.t > 0); eventRuntime.update(runtimeMap(), game.player, dt, eventCallbacks());
+    updateProjectiles(dt); updateEnemies(dt); game.particles.forEach((particle: any) => particle.t -= dt); game.particles = game.particles.filter((particle: any) => particle.t > 0);
   }
   function projectileCanContinue(projectile: any, previous: Vec2) {
     const graph = content.navigation[game.mapId], from = gridCell(previous), to = gridCell(projectile);
@@ -320,13 +433,13 @@ void (async () => {
     };
     return {
       map,
-      events: map.events.filter(eventActive).map(event => {
+      events: activeEvents().map(event => {
         const actor = movementRuntime.actor(event.id);
         const position = actor?.position || event.position;
         return {
           ...event,
           position,
-          nearby: position.planeId === game.player.planeId && event.trigger.type === 'interact' && distance(game.player, position) <= event.trigger.radius,
+          nearby: position.planeId === game.player.planeId && event.trigger.type === 'actionButton' && distance(game.player, position) <= event.trigger.radius,
           movementDirection: actor?.direction || 'south',
           movementMoving: actor?.moving || false,
           movementAnimationTime: actor?.animationTime || 0,

@@ -1,5 +1,5 @@
 import { buildNavigationGraph } from '@rpgcrafter/game-schema';
-import type { Action, GameMap, LoadedGame, SourceGame, Vec2 } from './types.js';
+import type { EventCommand, GameMap, LoadedGame, SourceGame, Vec2 } from './types.js';
 
 function toPixels<T extends Vec2>(position: T, tileSize: number): T {
   return { ...position, x: position.x * tileSize, y: position.y * tileSize };
@@ -23,11 +23,15 @@ function normalizeMaps(sourceMaps: SourceGame['maps']): Record<string, GameMap> 
       events: map.events.map(event => ({
         ...event,
         position: toPixels(event.position, map.tileSize),
-        trigger: event.trigger.type === 'playerEnter'
-          ? { ...event.trigger, size: { w: event.trigger.size.w * map.tileSize, h: event.trigger.size.h * map.tileSize } }
-          : event.trigger.type === 'interact'
-            ? { ...event.trigger, radius: event.trigger.radius * map.tileSize }
-            : event.trigger,
+        pages: event.pages.map(page => ({
+          ...page,
+          trigger: page.trigger.type === 'playerTouch' || page.trigger.type === 'eventTouch'
+            ? { ...page.trigger, size: { w: page.trigger.size.w * map.tileSize, h: page.trigger.size.h * map.tileSize } }
+            : page.trigger.type === 'actionButton'
+              ? { ...page.trigger, radius: page.trigger.radius * map.tileSize }
+              : page.trigger,
+          contents: normalizeCommands(page.contents, sourceMaps),
+        })),
       })),
       enemySpawns: map.enemySpawns.map(spawn => ({ ...spawn, ...toPixels(spawn, map.tileSize) })),
       deathDestination: map.deathDestination && {
@@ -38,14 +42,14 @@ function normalizeMaps(sourceMaps: SourceGame['maps']): Record<string, GameMap> 
   }));
 }
 
-function normalizeActions(actions: Action[], sourceMaps: SourceGame['maps']): Action[] {
-  return actions.map(action => {
-    if (action.type === 'teleport') return { ...action, position: toPixels(action.position, sourceMaps[action.mapId].tileSize) };
-    if (action.type === 'dialogue') return {
-      ...action,
-      choices: action.choices?.map(choice => ({ ...choice, actions: normalizeActions(choice.actions, sourceMaps) })),
+function normalizeCommands(commands: EventCommand[], sourceMaps: SourceGame['maps']): EventCommand[] {
+  return commands.map(command => {
+    if (command.type === 'teleport') return { ...command, position: toPixels(command.position, sourceMaps[command.mapId].tileSize) };
+    if (command.type === 'dialogue') return {
+      ...command,
+      choices: command.choices?.map(choice => ({ ...choice, commands: normalizeCommands(choice.commands, sourceMaps) })),
     };
-    return action;
+    return command;
   });
 }
 
@@ -54,13 +58,9 @@ export function sourceGameToLoadedGame(source: SourceGame): LoadedGame {
   const maps = normalizeMaps(source.maps);
   const entryTileSize = source.maps[source.manifest.entryPoint.mapId].tileSize;
   const player = { ...source.actors.player, start: toPixels(source.actors.player.start, entryTileSize) };
-  const events = Object.fromEntries(Object.entries(source.events.events).map(([id, event]) => [id, {
-    ...event,
-    pages: event.pages.map(page => ({ ...page, actions: normalizeActions(page.actions, source.maps) })),
-  }]));
   const enemies = Object.fromEntries(Object.entries(source.enemies).map(([id, enemy]) => [id, {
     ...enemy,
-    onDefeated: enemy.onDefeated && normalizeActions(enemy.onDefeated, source.maps),
+    onDefeated: enemy.onDefeated && normalizeCommands(enemy.onDefeated, source.maps),
   }]));
   return {
     manifest: source.manifest,
@@ -73,7 +73,6 @@ export function sourceGameToLoadedGame(source: SourceGame): LoadedGame {
     quests: source.quests,
     ui: source.ui,
     player,
-    events,
     objectives: source.events.objectives,
     initialState: source.initialState,
     navigation,

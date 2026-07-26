@@ -1,27 +1,27 @@
-# Tileset du jeu de référence
+# Reference Game Tilesets
 
-`outside-a2.png` est la planche extérieure A2 source fournie par le projet (768 × 576 px), organisée en 32 blocs de terrain 2 × 3. Chaque bloc produit les 47 formes d’autotile à partir de quarts de 24 × 24 px.
+`outside-a2.png` is the source A2 outdoor sheet provided by the project (768 × 576 px), arranged as 32 terrain blocks of 2 × 3 tiles. Each block produces the 47 autotile shapes from 24 × 24 px quarters.
 
-Les planches RPG Maker MZ A1 utilisent leur découpage natif de 16 terrains : surfaces animées horizontalement, deux surfaces statiques aux colonnes 7–8, et cascades animées verticalement. Les surfaces suivent la séquence `0 → 1 → 2 → 1`; les cascades suivent `0 → 1 → 2` et utilisent leurs quatre raccords horizontaux dédiés.
+RPG Maker MZ A1 sheets use their native 16-terrain layout: horizontally animated surfaces, two static surfaces in columns 7–8, and vertically animated waterfalls. Surfaces follow the `0 → 1 → 2 → 1` sequence; waterfalls follow `0 → 1 → 2` and use their four dedicated horizontal connections.
 
-Les planches A4 de 768 × 720 px contiennent trois bandes de 5 tiles. Chacune expose huit autotiles de surface 2 × 3 utilisant les 47 formes de sol, puis huit autotiles de mur 2 × 2 utilisant les 16 raccords cardinaux RPG Maker.
+The 768 × 720 px A4 sheets contain three bands of 5 tiles. Each band exposes eight 2 × 3 surface autotiles using the 47 floor shapes, followed by eight 2 × 2 wall autotiles using RPG Maker's 16 cardinal connections.
 
-Les planches A3 de 768 × 384 px exposent 32 autotiles de toiture et de mur 2 × 2. Elles utilisent les 16 raccords cardinaux natifs de RPG Maker, sans être aplaties en grille de tiles indépendants.
+The 768 × 384 px A3 sheets expose 32 roof and wall autotiles of 2 × 2 tiles. They use RPG Maker's native 16 cardinal connections without being flattened into a grid of independent tiles.
 
-Les planches A5 de 384 × 768 px sont de simples grilles de 8 × 16 tiles indépendants. Elles n'utilisent ni autotiling ni animation et conservent donc les collisions cellule et arête du format `grid`.
+The 384 × 768 px A5 sheets are simple 8 × 16 grids of independent tiles. They use neither autotiling nor animation, so they retain the cell and edge collisions of the `grid` format.
 
-La copie utilisée par le jeu se trouve dans `content/reference-game/tilesets/`. Son association, ses terrains exposés et les recettes de transition sont déclarés dans `content/reference-game/tilesets.json`, afin que le Studio et le Player consomment exactement les mêmes données.
+The copy used by the game is located in `content/reference-game/tilesets/`. Its mapping, exposed terrains, and transition recipes are declared in `content/reference-game/tilesets.json` so that the Studio and Player consume exactly the same data.
 
-Les données de map conservent uniquement `{ x, y, terrainId }`. La forme graphique n’est jamais persistée : elle est résolue depuis les huit voisins au rendu.
+Map data stores only `{ x, y, terrainId }`. The rendered shape is never persisted; it is resolved from the eight neighboring cells at render time.
 
 ## Package RPG Maker MZ
 
-`rpg-maker-mz/` contient les 31 planches MZ avec un fichier JSON de même nom pour chacune. Chaque configuration conserve uniquement les noms anglais issus des TXT sources et déclare la collision initiale de chaque terrain. `library.json` est le manifeste consommé par l’Assets Library : il déclare le type et les tags de recherche de chaque asset. Les planches restent importables individuellement dans l’onglet **Tilesets**, tandis que le manifeste complet est proposé dans l’onglet **Bundles**.
+`rpg-maker-mz/` contains the 31 MZ sheets, each with a same-named JSON file. Each configuration preserves only the English names from the source TXT files and declares the initial collision settings for every terrain. `library.json` is the manifest consumed by the Assets Library; it declares each asset's type and search tags. Sheets remain individually importable from the **Tilesets** tab, while the complete manifest is available from the **Bundles** tab.
 
-Lors d’un import depuis la librairie, le Studio copie le PNG et son JSON dans le projet sous `tilesets/rpg-maker-mz/`. Le JSON local est ensuite maintenu à jour lorsque le nom, la catégorie ou les collisions sont modifiés, et les deux fichiers sont inclus dans l’archive exportée.
+When an asset is imported from the library, the Studio copies its PNG and JSON files into the project under `tilesets/rpg-maker-mz/`. The local JSON file is then kept up to date when its name, category, or collision settings change, and both files are included in the exported archive.
 
-Le package peut être régénéré avec :
+The package can be regenerated with:
 
 ```sh
-node scripts/generate-rpg-maker-mz-assets.mjs /chemin/vers/les/tilesets
+node scripts/generate-rpg-maker-mz-assets.mjs /path/to/tilesets
 ```

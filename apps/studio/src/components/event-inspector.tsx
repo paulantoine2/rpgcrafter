@@ -1,7 +1,6 @@
-import { useState, type ReactNode } from 'react';
-import type { Action, Condition, ContentIssue, EventMovement, EventPage, GameEvent, MapEvent, MovementCommand, MovementRoute, SourceGame } from '@rpgcrafter/game-schema';
+import { useEffect, useState, type ReactNode } from 'react';
+import type { Condition, ContentIssue, EventCommand, MapEvent, MapEventPage, MovementCommand, MovementRoute, SourceGame } from '@rpgcrafter/game-schema';
 import { ArrowDown, ArrowUp, Plus, Trash2 } from 'lucide-react';
-import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
@@ -22,16 +21,16 @@ type Props = {
   assetUrls: Record<string, string>;
   sprites: LibrarySprite[];
   onChangeEvent: (event: MapEvent) => void;
-  onChangeScript: (scriptId: string, script: GameEvent) => void;
+  onSelectPage?: (index: number) => void;
   onImportSprite: (sprite: LibrarySprite) => Promise<void>;
 };
 
-const actionTypes: Action['type'][] = ['dialogue', 'movementRoute', 'setFlag', 'setQuestState', 'giveItem', 'removeItem', 'unlockSkill', 'healPlayer', 'toast', 'teleport', 'save'];
+const commandTypes: EventCommand['type'][] = ['dialogue', 'movementRoute', 'wait', 'setFlag', 'setQuestState', 'giveItem', 'removeItem', 'unlockSkill', 'healPlayer', 'toast', 'teleport', 'save'];
 const conditionKinds: Condition['kind'][] = ['flag', 'item', 'quest'];
 
-function Section({ title, children }: { title: string; children: ReactNode }) {
+function Section({ title, children, first = false }: { title: string; children: ReactNode; first?: boolean }) {
   return <section>
-    <SectionHeader>{title}</SectionHeader>
+    <SectionHeader className={first ? 'border-t-0' : undefined}>{title}</SectionHeader>
     <div className="space-y-3 px-4 pb-4">{children}</div>
   </section>;
 }
@@ -101,7 +100,7 @@ function ConditionsEditor({ game, value, onChange }: { game: SourceGame; value: 
   </div>;
 }
 
-function defaultAction(type: Action['type'], game: SourceGame): Action {
+function defaultCommand(type: EventCommand['type'], game: SourceGame): EventCommand {
   const flag = Object.keys(game.initialState.flags)[0] || '';
   const item = Object.keys(game.items)[0] || '';
   const quest = Object.keys(game.quests)[0] || '';
@@ -116,6 +115,7 @@ function defaultAction(type: Action['type'], game: SourceGame): Action {
   if (type === 'toast') return { type, text: 'Notification' };
   if (type === 'teleport') return { type, mapId, position: { x: 0, y: 0, planeId: [...(game.maps[mapId]?.planes || [])].sort((a, b) => a.order - b.order)[0]?.id || '' }, resetMap: true };
   if (type === 'movementRoute') return { type, target: { kind: 'thisEvent' }, route: { commands: [], repeat: false, skippable: false, wait: true } };
+  if (type === 'wait') return { type, duration: 0.5 };
   return { type: 'save' };
 }
 
@@ -151,16 +151,17 @@ function MovementRouteEditor({ value, onChange, showWait = true }: { value: Move
   </div>;
 }
 
-function ActionFields({ game, mapId, action, onChange, depth }: { game: SourceGame; mapId: string; action: Action; onChange: (action: Action) => void; depth: number }) {
+function CommandFields({ game, mapId, command, onChange, depth }: { game: SourceGame; mapId: string; command: EventCommand; onChange: (command: EventCommand) => void; depth: number }) {
+  const action = command;
   if (action.type === 'dialogue') return <div className="space-y-2">
     <Input value={action.speaker} placeholder="Speaker" onChange={event => onChange({ ...action, speaker: event.target.value })} />
     <Textarea value={action.text} placeholder="Dialogue text" onChange={event => onChange({ ...action, text: event.target.value })} />
     <div className="space-y-2 border-l-2 border-primary/25 pl-2">
       {(action.choices || []).map((choice, index) => <div key={index} className="space-y-2 border bg-background p-2">
         <div className="flex gap-2"><Input value={choice.label} placeholder="Choice label" onChange={event => onChange({ ...action, choices: action.choices!.map((item, itemIndex) => itemIndex === index ? { ...item, label: event.target.value } : item) })} /><Button variant="ghost" size="icon-sm" onClick={() => onChange({ ...action, choices: action.choices!.filter((_, itemIndex) => itemIndex !== index) })}><Trash2 /></Button></div>
-        <ActionsEditor game={game} mapId={mapId} value={choice.actions} depth={depth + 1} onChange={actions => onChange({ ...action, choices: action.choices!.map((item, itemIndex) => itemIndex === index ? { ...item, actions } : item) })} />
+        <CommandsEditor game={game} mapId={mapId} value={choice.commands} depth={depth + 1} onChange={commands => onChange({ ...action, choices: action.choices!.map((item, itemIndex) => itemIndex === index ? { ...item, commands } : item) })} />
       </div>)}
-      <Button variant="outline" size="sm" className="w-full" onClick={() => onChange({ ...action, choices: [...(action.choices || []), { label: 'Choice', actions: [] }] })}><Plus /> Add choice</Button>
+      <Button variant="outline" size="sm" className="w-full" onClick={() => onChange({ ...action, choices: [...(action.choices || []), { label: 'Choice', commands: [] }] })}><Plus /> Add choice</Button>
     </div>
   </div>;
   if (action.type === 'setFlag') return <div className="grid gap-2"><EnumSelect value={action.id} values={Object.keys(game.initialState.flags)} onChange={id => onChange({ ...action, id })} /><label className="flex items-center gap-2 text-xs"><Checkbox checked={action.value} onCheckedChange={value => onChange({ ...action, value })} />Set true</label></div>;
@@ -175,82 +176,123 @@ function ActionFields({ game, mapId, action, onChange, depth }: { game: SourceGa
     const targetValues = ['player', 'thisEvent', ...game.maps[mapId].events.map(event => `event:${event.id}`)] as string[];
     return <div className="space-y-3"><Field label="Target"><EnumSelect value={targetValue} values={targetValues} labels={{ player: 'Player', thisEvent: 'This event' }} onChange={value => onChange({ ...action, target: value === 'player' ? { kind: 'player' } : value === 'thisEvent' ? { kind: 'thisEvent' } : { kind: 'event', eventId: value.slice(6) } })} /></Field><MovementRouteEditor value={action.route} onChange={route => onChange({ ...action, route })} /></div>;
   }
+  if (action.type === 'wait') return <Field label="Seconds"><NumberInput value={action.duration} min={0} step={0.1} onChange={duration => onChange({ ...action, duration })} /></Field>;
   return <p className="text-xs text-muted-foreground">No parameters.</p>;
 }
 
-function ActionsEditor({ game, mapId, value, onChange, depth = 0 }: { game: SourceGame; mapId: string; value: Action[]; onChange: (value: Action[]) => void; depth?: number }) {
-  const update = (index: number, action: Action) => onChange(value.map((item, itemIndex) => itemIndex === index ? action : item));
+function CommandsEditor({ game, mapId, value, onChange, depth = 0 }: { game: SourceGame; mapId: string; value: EventCommand[]; onChange: (value: EventCommand[]) => void; depth?: number }) {
+  const update = (index: number, command: EventCommand) => onChange(value.map((item, itemIndex) => itemIndex === index ? command : item));
   return <div className="space-y-2">
-    {value.map((action, index) => <div key={index} className="space-y-2 border bg-muted/15 p-2">
-      <div className="flex items-center justify-between gap-2"><EnumSelect value={action.type} values={actionTypes} onChange={type => update(index, defaultAction(type, game))} /><RowActions index={index} count={value.length} onMove={delta => onChange(move(value, index, delta))} onRemove={() => onChange(value.filter((_, itemIndex) => itemIndex !== index))} /></div>
-      <ActionFields game={game} mapId={mapId} action={action} depth={depth} onChange={next => update(index, next)} />
+    {value.map((command, index) => <div key={index} className="space-y-2 border bg-muted/15 p-2">
+      <div className="flex items-center justify-between gap-2"><EnumSelect value={command.type} values={commandTypes} onChange={type => update(index, defaultCommand(type, game))} /><RowActions index={index} count={value.length} onMove={delta => onChange(move(value, index, delta))} onRemove={() => onChange(value.filter((_, itemIndex) => itemIndex !== index))} /></div>
+      <CommandFields game={game} mapId={mapId} command={command} depth={depth} onChange={next => update(index, next)} />
     </div>)}
-    <Button variant="outline" size="sm" className="w-full" onClick={() => onChange([...value, defaultAction('dialogue', game)])}><Plus /> Add action</Button>
+    <Button variant="outline" size="sm" className="w-full" onClick={() => onChange([...value, defaultCommand('dialogue', game)])}><Plus /> Add command</Button>
   </div>;
 }
 
-function PagesEditor({ game, mapId, script, onChange }: { game: SourceGame; mapId: string; script: GameEvent; onChange: (script: GameEvent) => void }) {
-  const update = (index: number, page: EventPage) => onChange({ ...script, pages: script.pages.map((item, itemIndex) => itemIndex === index ? page : item) });
-  return <div className="space-y-3">
-    {script.pages.map((page, index) => <div key={index} className="space-y-3 border bg-muted/10 p-3">
-      <div className="flex items-center justify-between"><Badge variant="outline">Page {index + 1}</Badge><RowActions index={index} count={script.pages.length} removeDisabled={script.pages.length === 1} onMove={delta => onChange({ ...script, pages: move(script.pages, index, delta) })} onRemove={() => onChange({ ...script, pages: script.pages.filter((_, itemIndex) => itemIndex !== index) })} /></div>
-      <Field label="Conditions"><ConditionsEditor game={game} value={page.conditions || []} onChange={conditions => update(index, { ...page, conditions: conditions.length ? conditions : undefined })} /></Field>
-      <Field label="Actions"><ActionsEditor game={game} mapId={mapId} value={page.actions} onChange={actions => update(index, { ...page, actions })} /></Field>
-    </div>)}
-    <Button variant="outline" size="sm" className="w-full" onClick={() => onChange({ ...script, pages: [...script.pages, { actions: [] }] })}><Plus /> Add page</Button>
-  </div>;
+function defaultPage(): MapEventPage {
+  return {
+    movement: { type: 'fixed', speed: 3, frequency: 3, route: [] },
+    options: { walkingAnimation: true, steppingAnimation: false, directionFix: false, through: false },
+    priority: 'sameAsCharacters',
+    trigger: { type: 'actionButton', radius: 1 },
+    contents: [],
+  };
 }
 
-export function EventInspector({ game, mapId, event, issues, assetUrls, sprites, onChangeEvent, onChangeScript, onImportSprite }: Props) {
+export function EventInspector({ game, mapId, event, issues, assetUrls, sprites, onChangeEvent, onSelectPage, onImportSprite }: Props) {
   const [spritePickerOpen, setSpritePickerOpen] = useState(false);
+  const [pageIndex, setPageIndex] = useState(0);
+  useEffect(() => {
+    setPageIndex(0);
+    onSelectPage?.(0);
+  }, [event?.id, onSelectPage]);
   if (!event) return <div className="flex h-full flex-col"><div className="border-b px-4 py-3"><h2 className="text-sm font-semibold">Inspector</h2></div><div className="flex flex-1 items-center justify-center p-6 text-center text-xs text-muted-foreground">Select an event on the map or double-click a tile to create one.</div></div>;
-  const script = game.events.events[event.scriptId];
-  const movement: EventMovement = event.movement || { type: 'fixed', speed: 3, frequency: 3, route: [], walkingAnimation: true, steppingAnimation: false, directionFix: false, through: false };
-  const updateMovement = (next: EventMovement) => onChangeEvent({ ...event, movement: next });
-  const updateTriggerType = (type: MapEvent['trigger']['type']) => onChangeEvent({ ...event, trigger: type === 'playerEnter' ? { type, size: { w: 1, h: 1 } } : type === 'interact' ? { type, radius: 1 } : type === 'interval' ? { type, every: 1 } : { type, delay: 0 } });
+  const selectedPageIndex = Math.min(pageIndex, event.pages.length - 1);
+  const selectPage = (index: number) => {
+    setPageIndex(index);
+    onSelectPage?.(index);
+  };
+  const page = event.pages[selectedPageIndex];
+  const updatePage = (nextPage: MapEventPage) => onChangeEvent({ ...event, pages: event.pages.map((item, index) => index === selectedPageIndex ? nextPage : item) });
+  const addPage = () => {
+    const pages = [...event.pages];
+    pages.splice(selectedPageIndex + 1, 0, defaultPage());
+    onChangeEvent({ ...event, pages });
+    selectPage(selectedPageIndex + 1);
+  };
+  const deletePage = () => {
+    if (event.pages.length === 1) return;
+    onChangeEvent({ ...event, pages: event.pages.filter((_, index) => index !== selectedPageIndex) });
+    selectPage(Math.max(0, selectedPageIndex - 1));
+  };
+  const movePage = (delta: number) => {
+    const target = selectedPageIndex + delta;
+    if (target < 0 || target >= event.pages.length) return;
+    onChangeEvent({ ...event, pages: move(event.pages, selectedPageIndex, delta) });
+    selectPage(target);
+  };
+  const updateTriggerType = (type: MapEventPage['trigger']['type']) => updatePage({
+    ...page,
+    trigger: type === 'actionButton'
+      ? { type, radius: 1 }
+      : type === 'playerTouch' || type === 'eventTouch'
+        ? { type, size: { w: 1, h: 1 } }
+        : { type },
+  });
+  const touchTrigger = page.trigger.type === 'playerTouch' || page.trigger.type === 'eventTouch' ? page.trigger : null;
   return <div className="flex h-full min-h-0 flex-col">
+    <div className="shrink-0 border-b bg-background px-3 py-2">
+      <div className="mb-2 flex items-center gap-2"><span className="min-w-0 flex-1 truncate text-xs font-semibold">{event.id}</span><span className="text-[10px] text-muted-foreground">Page 1 has highest priority</span></div>
+      <div className="flex items-center gap-1">
+        <div className="flex min-w-0 flex-1 gap-1 overflow-x-auto" role="tablist" aria-label="Event pages">
+          {event.pages.map((_, index) => <Button key={index} type="button" role="tab" aria-selected={index === selectedPageIndex} variant={index === selectedPageIndex ? 'secondary' : 'ghost'} size="xs" onClick={() => selectPage(index)}>{index + 1}</Button>)}
+        </div>
+        <Button type="button" variant="ghost" size="icon-xs" disabled={selectedPageIndex === 0} onClick={() => movePage(-1)} aria-label="Move page earlier"><ArrowUp /></Button>
+        <Button type="button" variant="ghost" size="icon-xs" disabled={selectedPageIndex === event.pages.length - 1} onClick={() => movePage(1)} aria-label="Move page later"><ArrowDown /></Button>
+        <Button type="button" variant="ghost" size="icon-xs" onClick={addPage} aria-label="Add event page"><Plus /></Button>
+        <Button type="button" variant="ghost" size="icon-xs" disabled={event.pages.length === 1} onClick={deletePage} aria-label="Delete event page"><Trash2 /></Button>
+      </div>
+    </div>
     <ScrollArea className="min-h-0 flex-1"><div className="pb-8">
       {issues.length > 0 && <div className="mx-4 mt-4 border border-destructive/40 bg-destructive/5 p-3 text-xs text-destructive">{issues.slice(0, 5).map(issue => <p key={`${issue.path}:${issue.message}`}>{issue.path}: {issue.message}</p>)}</div>}
-      <Section title="General"><Field label="Linked script"><EnumSelect value={event.scriptId} values={Object.keys(game.events.events)} onChange={scriptId => onChangeEvent({ ...event, scriptId })} /></Field></Section>
+      <Section first title="Conditions"><ConditionsEditor game={game} value={page.conditions || []} onChange={conditions => updatePage({ ...page, conditions: conditions.length ? conditions : undefined })} /></Section>
       <Section title="Autonomous Movement">
-        <Field label="Type"><EnumSelect value={movement.type} values={['fixed', 'random', 'approach', 'custom'] as const} labels={{ fixed: 'Fixed', random: 'Random', approach: 'Approach player', custom: 'Custom route' }} onChange={type => updateMovement({ ...movement, type })} /></Field>
+        <Field label="Type"><EnumSelect value={page.movement.type} values={['fixed', 'random', 'approach', 'custom'] as const} labels={{ fixed: 'Fixed', random: 'Random', approach: 'Approach player', custom: 'Custom route' }} onChange={type => updatePage({ ...page, movement: { ...page.movement, type } })} /></Field>
         <div className="grid grid-cols-2 gap-3">
-          <Field label={`Speed · ${movement.speed}`}><Slider aria-label="Movement speed" value={movement.speed} min={1} max={6} step={1} onValueChange={speed => updateMovement({ ...movement, speed: speed as EventMovement['speed'] })} /></Field>
-          <Field label={`Frequency · ${movement.frequency}`}><Slider aria-label="Movement frequency" value={movement.frequency} min={1} max={5} step={1} onValueChange={frequency => updateMovement({ ...movement, frequency: frequency as EventMovement['frequency'] })} /></Field>
+          <Field label={`Speed · ${page.movement.speed}`}><Slider aria-label="Movement speed" value={page.movement.speed} min={1} max={6} step={1} onValueChange={speed => updatePage({ ...page, movement: { ...page.movement, speed: speed as MapEventPage['movement']['speed'] } })} /></Field>
+          <Field label={`Frequency · ${page.movement.frequency}`}><Slider aria-label="Movement frequency" value={page.movement.frequency} min={1} max={5} step={1} onValueChange={frequency => updatePage({ ...page, movement: { ...page.movement, frequency: frequency as MapEventPage['movement']['frequency'] } })} /></Field>
         </div>
-        {movement.type === 'custom' && <Field label="Looping route"><MovementCommandsEditor value={movement.route} onChange={route => updateMovement({ ...movement, route })} /></Field>}
+        {page.movement.type === 'custom' && <Field label="Looping route"><MovementCommandsEditor value={page.movement.route} onChange={route => updatePage({ ...page, movement: { ...page.movement, route } })} /></Field>}
       </Section>
-      <Section title="Visual & Collision">
+      <Section title="Options">
         <div className="grid gap-2">
-          <label className="flex items-center gap-2 text-xs"><Checkbox checked={movement.walkingAnimation} onCheckedChange={walkingAnimation => updateMovement({ ...movement, walkingAnimation })} />Walking animation</label>
-          <label className="flex items-center gap-2 text-xs"><Checkbox checked={movement.steppingAnimation} onCheckedChange={steppingAnimation => updateMovement({ ...movement, steppingAnimation })} />Stepping animation</label>
-          <label className="flex items-center gap-2 text-xs"><Checkbox checked={movement.directionFix} onCheckedChange={directionFix => updateMovement({ ...movement, directionFix })} />Direction fix</label>
-          <label className="flex items-center gap-2 text-xs"><Checkbox checked={movement.through} onCheckedChange={through => updateMovement({ ...movement, through })} />Through</label>
+          <label className="flex items-center gap-2 text-xs"><Checkbox checked={page.options.walkingAnimation} onCheckedChange={walkingAnimation => updatePage({ ...page, options: { ...page.options, walkingAnimation } })} />Walking animation</label>
+          <label className="flex items-center gap-2 text-xs"><Checkbox checked={page.options.steppingAnimation} onCheckedChange={steppingAnimation => updatePage({ ...page, options: { ...page.options, steppingAnimation } })} />Stepping animation</label>
+          <label className="flex items-center gap-2 text-xs"><Checkbox checked={page.options.directionFix} onCheckedChange={directionFix => updatePage({ ...page, options: { ...page.options, directionFix } })} />Direction fix</label>
+          <label className="flex items-center gap-2 text-xs"><Checkbox checked={page.options.through} onCheckedChange={through => updatePage({ ...page, options: { ...page.options, through } })} />Through</label>
         </div>
+        <Field label="Priority"><EnumSelect value={page.priority} values={['belowCharacters', 'sameAsCharacters', 'aboveCharacters'] as const} labels={{ belowCharacters: 'Below characters', sameAsCharacters: 'Same as characters', aboveCharacters: 'Above characters' }} onChange={priority => updatePage({ ...page, priority })} /></Field>
       </Section>
-      <Section title="Trigger"><EnumSelect value={event.trigger.type} values={['playerEnter', 'interact', 'interval', 'mapEnter'] as const} onChange={updateTriggerType} />
-        {event.trigger.type === 'playerEnter' && <div className="grid grid-cols-2 gap-2"><Field label="Width"><NumberInput value={event.trigger.size.w} min={0.5} step={0.5} onChange={w => onChangeEvent({ ...event, trigger: { ...event.trigger as Extract<MapEvent['trigger'], { type: 'playerEnter' }>, size: { ...(event.trigger as Extract<MapEvent['trigger'], { type: 'playerEnter' }>).size, w } } })} /></Field><Field label="Height"><NumberInput value={event.trigger.size.h} min={0.5} step={0.5} onChange={h => onChangeEvent({ ...event, trigger: { ...event.trigger as Extract<MapEvent['trigger'], { type: 'playerEnter' }>, size: { ...(event.trigger as Extract<MapEvent['trigger'], { type: 'playerEnter' }>).size, h } } })} /></Field></div>}
-        {event.trigger.type === 'interact' && <Field label="Radius"><NumberInput value={event.trigger.radius} min={0.25} step={0.25} onChange={radius => onChangeEvent({ ...event, trigger: { type: 'interact', radius } })} /></Field>}
-        {event.trigger.type === 'interval' && <div className="grid grid-cols-2 gap-2"><Field label="Every (seconds)"><NumberInput value={event.trigger.every} min={0.1} step={0.1} onChange={every => onChangeEvent({ ...event, trigger: { ...event.trigger as Extract<MapEvent['trigger'], { type: 'interval' }>, every } })} /></Field><Field label="Initial delay"><NumberInput value={event.trigger.initialDelay ?? 0} min={0} step={0.1} onChange={initialDelay => onChangeEvent({ ...event, trigger: { ...event.trigger as Extract<MapEvent['trigger'], { type: 'interval' }>, initialDelay } })} /></Field></div>}
-        {event.trigger.type === 'mapEnter' && <Field label="Delay (seconds)"><NumberInput value={event.trigger.delay} min={0} step={0.1} onChange={delay => onChangeEvent({ ...event, trigger: { type: 'mapEnter', delay } })} /></Field>}
+      <Section title="Trigger"><EnumSelect value={page.trigger.type} values={['actionButton', 'playerTouch', 'eventTouch', 'autorun', 'parallel'] as const} labels={{ actionButton: 'Action Button', playerTouch: 'Player Touch', eventTouch: 'Event Touch', autorun: 'Autorun', parallel: 'Parallel' }} onChange={updateTriggerType} />
+        {page.trigger.type === 'actionButton' && <Field label="Radius"><NumberInput value={page.trigger.radius} min={0.25} step={0.25} onChange={radius => updatePage({ ...page, trigger: { type: 'actionButton', radius } })} /></Field>}
+        {touchTrigger && <div className="grid grid-cols-2 gap-2"><Field label="Width"><NumberInput value={touchTrigger.size.w} min={0.5} step={0.5} onChange={w => updatePage({ ...page, trigger: { ...touchTrigger, size: { ...touchTrigger.size, w } } })} /></Field><Field label="Height"><NumberInput value={touchTrigger.size.h} min={0.5} step={0.5} onChange={h => updatePage({ ...page, trigger: { ...touchTrigger, size: { ...touchTrigger.size, h } } })} /></Field></div>}
       </Section>
-      <Section title="Execution"><Field label="Mode"><EnumSelect value={event.execution.mode} values={['repeat', 'oncePerVisit', 'oncePerGame'] as const} onChange={mode => onChangeEvent({ ...event, execution: { ...event.execution, mode } })} /></Field><Field label="Cooldown (seconds)"><NumberInput value={event.execution.cooldown ?? 0} min={0} step={0.1} onChange={cooldown => onChangeEvent({ ...event, execution: { ...event.execution, cooldown } })} /></Field></Section>
-      <Section title="Activation Conditions"><ConditionsEditor game={game} value={event.activeWhen || []} onChange={activeWhen => onChangeEvent({ ...event, activeWhen: activeWhen.length ? activeWhen : undefined })} /></Section>
       <Section title="Sprite">
         <button type="button" className="flex w-full items-center gap-3 border bg-muted/10 p-3 text-left hover:border-primary/60 hover:bg-muted/30 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring" onClick={() => setSpritePickerOpen(true)}>
-          {event.sprite
-            ? <SpritePreview sprite={event.sprite} imageUrl={assetUrls[event.sprite.image] || sprites.find(sprite => sprite.imagePath === event.sprite?.image)?.url} characterRows={sprites.find(sprite => sprite.imagePath === event.sprite?.image)?.layout.characterRows} className="size-20 shrink-0 border bg-background" />
+          {page.sprite
+            ? <SpritePreview sprite={page.sprite} imageUrl={assetUrls[page.sprite.image] || sprites.find(sprite => sprite.imagePath === page.sprite?.image)?.url} characterRows={sprites.find(sprite => sprite.imagePath === page.sprite?.image)?.layout.characterRows} className="size-20 shrink-0 border bg-background" />
             : <span className="grid size-20 shrink-0 place-items-center border bg-background text-xs text-muted-foreground">No sprite</span>}
-          <span className="min-w-0 flex-1"><span className="block truncate text-sm font-medium">{event.sprite ? sprites.find(sprite => sprite.imagePath === event.sprite?.image)?.name || event.sprite.image : 'Choose a sprite'}</span><span className="mt-1 block text-xs text-muted-foreground">Click to browse the sprite library.</span></span>
+          <span className="min-w-0 flex-1"><span className="block truncate text-sm font-medium">{page.sprite ? sprites.find(sprite => sprite.imagePath === page.sprite?.image)?.name || page.sprite.image : 'Choose a sprite'}</span><span className="mt-1 block text-xs text-muted-foreground">Click to browse the sprite library.</span></span>
         </button>
-        {event.sprite && <Button type="button" variant="outline" size="sm" className="w-full" onClick={() => onChangeEvent({ ...event, sprite: undefined })}>Remove sprite</Button>}
-        <EventSpritePicker open={spritePickerOpen} onOpenChange={setSpritePickerOpen} sprites={sprites} selected={event.sprite} onSelect={async (asset, characterIndex) => {
+        {page.sprite && <Button type="button" variant="outline" size="sm" className="w-full" onClick={() => updatePage({ ...page, sprite: undefined })}>Remove sprite</Button>}
+        <EventSpritePicker open={spritePickerOpen} onOpenChange={setSpritePickerOpen} sprites={sprites} selected={page.sprite} onSelect={async (asset, characterIndex) => {
           await onImportSprite(asset);
-          onChangeEvent({ ...event, sprite: spriteReference(asset, characterIndex) });
+          updatePage({ ...page, sprite: spriteReference(asset, characterIndex) });
         }} />
       </Section>
-      <Section title="Linked Script"><div className="text-xs"><code>{event.scriptId}</code></div></Section>
-      <Section title="Script Pages, Conditions & Actions">{script ? <PagesEditor game={game} mapId={mapId} script={script} onChange={next => onChangeScript(event.scriptId, next)} /> : <p className="text-xs text-destructive">The linked script does not exist.</p>}</Section>
+      <Section title="Contents"><CommandsEditor game={game} mapId={mapId} value={page.contents} onChange={contents => updatePage({ ...page, contents })} /></Section>
     </div></ScrollArea>
   </div>;
 }
