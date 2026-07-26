@@ -11,7 +11,7 @@ import { COLLISION_DIRECTIONS, nearestCollisionEdge, toggleA2BoundaryCollision, 
 import type { TilesetImportFormat } from '@/lib/tileset-import';
 
 export type LibraryTileset = { kind: 'tileset'; definition: TilesetDefinition; blob: Blob; configurationPath: string; configurationBlob: Blob; url: string; assetType: string; bundleId?: string; bundleName?: string; tags: string[] };
-export type LibrarySprite = { kind: 'sprite'; id: string; name: string; blob: Blob; imagePath: string; url: string; assetType: string; bundleId?: string; bundleName?: string; tags: string[]; layout: { characterCount: number; frameWidth: number; frameHeight: number; objectAligned: boolean } };
+export type LibrarySprite = { kind: 'sprite'; id: string; name: string; blob: Blob; imagePath: string; url: string; assetType: string; bundleId?: string; bundleName?: string; tags: string[]; layout: { characterColumns: number; characterRows: number; characterCount: number; patterns: number; directions: string[]; frameWidth: number; frameHeight: number; objectAligned: boolean } };
 export type LibraryAsset = LibraryTileset | LibrarySprite;
 export type LibraryBundle = { id: string; name: string; version: number; assets: LibraryAsset[] };
 type ObstacleTool = 'cell' | 'edge';

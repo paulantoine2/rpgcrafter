@@ -89,6 +89,14 @@ async function readJson(file: string): Promise<unknown> {
   return response.json();
 }
 
+async function bundledSpriteBlob(image: string) {
+  const imageEntry = Object.entries(bundledSpriteImages).find(([file]) => file.endsWith(`/assets/${image}`));
+  if (!imageEntry) return null;
+  const response = await fetch(imageEntry[1]);
+  if (!response.ok) throw new Error(`Could not load event sprite (${image})`);
+  return response.blob();
+}
+
 export function sourceGameFiles(game: SourceGame): SourceGameFiles {
   return {
     manifest: game.manifest, tilesets: game.tilesets, maps: game.maps, actors: game.actors, enemies: game.enemies,
@@ -106,6 +114,11 @@ export async function loadReferenceProject(): Promise<ProjectBundle> {
     const response = await fetch(new URL(tileset.image, referenceRoot));
     if (!response.ok) throw new Error(`Could not load tilesets.${tileset.id}.image (${response.status})`);
     assets[tileset.image] = await response.blob();
+  }));
+  await Promise.all([...new Set(Object.values(game.maps).flatMap(map => map.events.flatMap(event => event.sprite ? [event.sprite.image] : [])))].map(async image => {
+    const blob = await bundledSpriteBlob(image);
+    if (!blob) throw new Error(`Could not find event sprite (${image})`);
+    assets[image] = blob;
   }));
   return { game, assets };
 }
@@ -151,6 +164,13 @@ export async function openProjectArchive(file: Blob): Promise<ProjectBundle> {
   for (const tileset of Object.values(result.data.tilesets)) {
     if (!assets[tileset.image]) throw new Error(`Project package is missing ${tileset.image}.`);
   }
+  for (const sprite of Object.values(result.data.maps).flatMap(map => map.events.flatMap(event => event.sprite ? [event.sprite] : []))) {
+    if (!assets[sprite.image]) {
+      const bundled = await bundledSpriteBlob(sprite.image);
+      if (!bundled) throw new Error(`Project package is missing ${sprite.image}.`);
+      assets[sprite.image] = bundled;
+    }
+  }
   return { game: result.data, assets };
 }
 
@@ -161,6 +181,9 @@ export async function createExportArchive(game: SourceGame, assets: ProjectAsset
   for (const tileset of Object.values(game.tilesets)) {
     const blob = assets[tileset.image];
     if (!blob) throw new Error(`Tileset image is unavailable: ${tileset.image}`);
+  }
+  for (const sprite of Object.values(game.maps).flatMap(map => (map.events || []).flatMap(event => event.sprite ? [event.sprite] : []))) {
+    if (!assets[sprite.image]) throw new Error(`Event sprite is unavailable: ${sprite.image}`);
   }
   for (const [assetPath, blob] of Object.entries(assets)) {
     if (assetPath.startsWith('/') || assetPath.includes('\\') || assetPath.split('/').includes('..') || assetPath in documentFiles) throw new Error(`Invalid project asset path: ${assetPath}`);

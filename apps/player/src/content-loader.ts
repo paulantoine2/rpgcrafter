@@ -2,6 +2,8 @@ import { assertSourceGame, type SourceGameFiles } from '@rpgcrafter/game-schema'
 import { sourceGameToLoadedGame } from './runtime-content.js';
 import type { LoadedGame } from './types.js';
 
+const bundledSpriteImages = import.meta.glob<string>('../../../assets/sprites/*/*.png', { eager: true, query: '?url', import: 'default' });
+
 async function readJson(file: string): Promise<unknown> {
   const response = await fetch(new URL(file, new URL('/reference-game/', window.location.origin)));
   if (!response.ok) throw new Error(`Impossible de charger ${file} (${response.status})`);
@@ -16,6 +18,11 @@ export async function loadReferenceGame(): Promise<LoadedGame> {
   const source = assertSourceGame({ manifest, tilesets, maps, enemies, actors, skills, items, quests, ui, events: eventData, initialState });
   const loaded = sourceGameToLoadedGame(source);
   loaded.assetUrls = Object.fromEntries(Object.values(source.tilesets).map(tileset => [tileset.image, new URL(tileset.image, new URL('/reference-game/', window.location.origin)).href]));
+  for (const image of new Set(Object.values(source.maps).flatMap(map => map.events.flatMap(event => event.sprite ? [event.sprite.image] : [])))) {
+    const imageEntry = Object.entries(bundledSpriteImages).find(([file]) => file.endsWith(`/assets/${image}`));
+    if (!imageEntry) throw new Error(`Le sprite d’événement est introuvable (${image})`);
+    loaded.assetUrls[image] = imageEntry[1];
+  }
   return loaded;
 }
 

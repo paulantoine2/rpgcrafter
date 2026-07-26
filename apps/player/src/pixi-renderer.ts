@@ -1,5 +1,5 @@
 import { Application, Assets, Container, Graphics, Rectangle, Sprite, Text, Texture } from 'pixi.js';
-import { A1_ANIMATION_FRAME_STRIDE, autotileAnimationFrame, autotileVariant, resolveTerrainPlacements, type A1AnimationLayout, type AutotileRecipe, type AutotileTerrain, type AutotileTilesetDefinition, type AutotileVariant, type TerrainPlacement, type TilesetDefinition } from '@rpgcrafter/game-schema';
+import { A1_ANIMATION_FRAME_STRIDE, autotileAnimationFrame, autotileVariant, resolveTerrainPlacements, type A1AnimationLayout, type AutotileRecipe, type AutotileTerrain, type AutotileTilesetDefinition, type AutotileVariant, type MapEventSprite, type TerrainPlacement, type TilesetDefinition } from '@rpgcrafter/game-schema';
 import { CHARACTER_DIRECTIONS, CHARACTER_FRAME_SIZE, characterDirection, characterFrame, walkFrame, type CharacterDirection } from './character-sprite.js';
 import { actorRenderZ, planeRenderBase, tileLayerRenderZ, type RenderEnemy, type RenderState, type Renderer } from './renderer.js';
 
@@ -16,6 +16,16 @@ function playerFrames(texture: Texture, characterIndex: number): PlayerFrames {
     const frame = characterFrame(characterIndex, direction, pattern);
     return new Texture({ source: texture.source, frame: new Rectangle(frame.x, frame.y, frame.width, frame.height) });
   })])) as PlayerFrames;
+}
+
+function eventSpriteTexture(texture: Texture, sprite: MapEventSprite, direction: CharacterDirection, pattern: number) {
+  const characterColumn = sprite.characterIndex % sprite.characterColumns;
+  const characterRow = Math.floor(sprite.characterIndex / sprite.characterColumns);
+  const directionRow = CHARACTER_DIRECTIONS.indexOf(direction);
+  return new Texture({
+    source: texture.source,
+    frame: new Rectangle((characterColumn * 3 + pattern) * sprite.frameWidth, (characterRow * 4 + directionRow) * sprite.frameHeight, sprite.frameWidth, sprite.frameHeight),
+  });
 }
 
 function fallbackFrame(name: FrameName) {
@@ -90,6 +100,7 @@ export class PixiRenderer implements Renderer {
   private readonly spriteCache = new Map<string, Sprite>();
   private readonly authoredTiles = new Map<string, Sprite>();
   private readonly authoredTileTextures = new Map<string, Texture>();
+  private readonly eventFrames = new Map<string, Texture>();
   private readonly planeActorGraphics = new Map<string, Graphics>();
   private readonly planeEffectGraphics = new Map<string, Graphics>();
   private readonly terrainTopologyCache = new WeakMap<TerrainPlacement[], ReturnType<typeof resolveTerrainPlacements>>();
@@ -100,6 +111,7 @@ export class PixiRenderer implements Renderer {
     private readonly playerFrames: PlayerFrames,
     private readonly tilesets: Record<string, TilesetDefinition>,
     private readonly tilesetTextures: Map<string, Texture>,
+    private readonly eventSpriteTextures: Map<string, Texture>,
     private readonly terrain = new Graphics(),
     private readonly world = new Graphics(),
     private readonly details = new Graphics(),
@@ -116,7 +128,7 @@ export class PixiRenderer implements Renderer {
     this.app.stage.addChild(this.worldLayer, this.hud, this.hudLabels);
   }
 
-  static async create(canvas: HTMLCanvasElement, tilesets: Record<string, TilesetDefinition>, assetUrls: Record<string, string>) {
+  static async create(canvas: HTMLCanvasElement, tilesets: Record<string, TilesetDefinition>, assetUrls: Record<string, string>, maps: RenderState['map'][] = []) {
     const app = new Application();
     await app.init({ canvas, width: WIDTH, height: HEIGHT, antialias: false, backgroundAlpha: 0, resolution: Math.min(window.devicePixelRatio || 1, 2), autoDensity: true });
     canvas.style.width = '100%';
@@ -143,8 +155,17 @@ export class PixiRenderer implements Renderer {
         throw new Error(`Impossible de charger tilesets.${tileset.id}.image (${tileset.image})`, { cause: error });
       }
     }));
+    const eventSpriteTextures = new Map<string, Texture>();
+    const eventSprites = maps.flatMap(map => map.events.flatMap(event => event.sprite ? [event.sprite] : []));
+    await Promise.all([...new Set(eventSprites.map(sprite => sprite.image))].map(async image => {
+      const url = assetUrls[image];
+      if (!url) throw new Error(`Impossible de charger le sprite d’événement (${image})`);
+      const texture = await Assets.load<Texture>({ src: url, loadParser: 'loadTextures' });
+      texture.source.scaleMode = 'nearest';
+      eventSpriteTextures.set(image, texture);
+    }));
     const characterFrames = Object.fromEntries((['hero', 'mayor', 'merchant', 'guardian', 'wisp', 'slime', 'beetle', 'chest', 'door'] as const).map(name => [name, fallbackFrame(name)])) as Record<FrameName, Texture>;
-    return new PixiRenderer(app, characterFrames, playerFrames(playerSheet, PLAYER_CHARACTER_INDEX), tilesets, tilesetTextures);
+    return new PixiRenderer(app, characterFrames, playerFrames(playerSheet, PLAYER_CHARACTER_INDEX), tilesets, tilesetTextures, eventSpriteTextures);
   }
 
   render(state: RenderState) {
@@ -172,17 +193,12 @@ export class PixiRenderer implements Renderer {
     this.details.clear();
     for (const graphics of this.planeActorGraphics.values()) { graphics.clear(); graphics.visible = false; }
     const activeSprites = new Set<string>();
-    for (const event of state.events) if (event.visual?.type === 'exit' && event.trigger.type === 'playerEnter') {
-      const { w, h } = event.trigger.size;
-      const graphics = this.graphicsForPlane(state.map, event.position.planeId, 'actors');
-      graphics.rect(event.position.x - w / 2, event.position.y - h / 2, w, h).fill({ color: '#9dd5f2', alpha: 0.18 }).rect(event.position.x - w / 2, event.position.y - h / 2, w, h).stroke({ color: '#bceaff', width: 2 });
-    }
-    const visualEvents = state.events.filter(event => event.visual && event.visual.type !== 'exit');
-    const actors = [...visualEvents.map(event => ({ kind: 'event' as const, value: event, y: event.position.y })), ...state.enemies.map(enemy => ({ kind: 'enemy' as const, value: enemy, y: enemy.y })), { kind: 'player' as const, value: state.player, y: state.player.y }].sort((a, b) => a.y - b.y);
+    const spriteEvents = state.events.filter(event => event.sprite);
+    const actors = [...spriteEvents.map(event => ({ kind: 'event' as const, value: event, y: event.position.y })), ...state.enemies.map(enemy => ({ kind: 'enemy' as const, value: enemy, y: enemy.y })), { kind: 'player' as const, value: state.player, y: state.player.y }].sort((a, b) => a.y - b.y);
     for (const actor of actors) {
       const planeId = actor.kind === 'event' ? actor.value.position.planeId : actor.value.planeId;
       const graphics = this.graphicsForPlane(state.map, planeId, 'actors');
-      if (actor.kind === 'event') this.drawEvent(graphics, actor.value, activeSprites);
+      if (actor.kind === 'event') this.drawEvent(actor.value, activeSprites);
       if (actor.kind === 'enemy') this.drawEnemy(graphics, graphics, actor.value, activeSprites);
       if (actor.kind === 'player') this.drawPlayer(graphics, state, activeSprites);
     }
@@ -211,16 +227,23 @@ export class PixiRenderer implements Renderer {
     }
   }
 
-  private drawEvent(graphics: Graphics, event: RenderState['events'][number], activeSprites: Set<string>) {
-    const visual = event.visual;
-    if (!visual || visual.type === 'exit') return;
+  private drawEvent(event: RenderState['events'][number], activeSprites: Set<string>) {
+    const authoredSprite = event.sprite;
+    if (!authoredSprite) return;
     const { x, y } = event.position;
-    const asset = visual.type === 'door' ? 'door' : visual.type === 'chest' ? 'chest' : event.id === 'mayor' ? 'mayor' : event.id === 'merchant' ? 'merchant' : null;
-    if (asset) this.placeSprite(`event:${event.id}`, asset, x, y, event.position.planeId, visual.type === 'door' ? 106 : visual.type === 'chest' ? 78 : 88, visual.type === 'door' ? 122 : visual.type === 'chest' ? 76 : 94, activeSprites);
-    else if (visual.type === 'door') graphics.roundRect(x - 18, y - 34, 36, 68, 4).fill(visual.color).stroke({ color: '#d6e6f5', alpha: 0.45, width: 2 }).circle(x + 9, y, 3).fill('#ffe18c');
-    else if (visual.type === 'chest') graphics.roundRect(x - 18, y - 12, 36, 25, 4).fill(visual.color).stroke({ color: '#ffe18c', width: 2 }).rect(x - 18, y - 2, 36, 4).fill('#ffe18c');
-    else graphics.circle(x, y - 10, visual.radius * 0.58).fill('#f2d3bc').roundRect(x - visual.radius * 0.66, y - 2, visual.radius * 1.32, visual.radius * 1.45, 5).fill(visual.color).circle(x - 4, y - 11, 1.5).fill('#172536').circle(x + 4, y - 11, 1.5).fill('#172536');
-    if (event.nearby) this.addLabel(visual.name, x, y - visual.radius - 24, '#e2f0ff');
+    const atlas = this.eventSpriteTextures.get(authoredSprite.image);
+    if (!atlas) return;
+    const direction = event.movementDirection === 'north' ? 'up' : event.movementDirection === 'east' ? 'right' : event.movementDirection === 'west' ? 'left' : 'down';
+    const pattern = walkFrame(event.movementAnimationTime, event.movementMoving || Boolean(event.movement?.steppingAnimation));
+    const frameKey = `${authoredSprite.image}:${authoredSprite.characterIndex}:${direction}:${pattern}`;
+    let texture = this.eventFrames.get(frameKey);
+    if (!texture) {
+      texture = eventSpriteTexture(atlas, authoredSprite, direction, pattern);
+      this.eventFrames.set(frameKey, texture);
+    }
+    const rendered = this.placeTexturedSprite(`event:${event.id}`, texture, x, y - event.jumpHeight, event.position.planeId, authoredSprite.frameWidth, authoredSprite.frameHeight, activeSprites);
+    rendered.anchor.set(0.5, authoredSprite.objectAligned ? 1 : 0.5);
+    if (event.nearby) this.addLabel(event.id, x, y - authoredSprite.frameHeight / 2 - 24, '#e2f0ff');
   }
 
   private drawEnemy(graphics: Graphics, details: Graphics, enemy: RenderEnemy, activeSprites: Set<string>) {

@@ -131,7 +131,7 @@ describe('AssetManagerDialog obstacle editor', () => {
   it('lists and imports character sprites from the library', async () => {
     const sprite: LibrarySprite = {
       kind: 'sprite', id: 'actor-1', name: 'Actor 1', blob: new Blob(['png'], { type: 'image/png' }), imagePath: 'sprites/rpg-maker-mz/Actor1.png', url: 'actor.png', assetType: 'character-sprite', bundleId: 'rpg-maker-mz', bundleName: 'RPG Maker MZ', tags: ['fantasy'],
-      layout: { characterCount: 8, frameWidth: 48, frameHeight: 48, objectAligned: false },
+      layout: { characterColumns: 4, characterRows: 2, characterCount: 8, patterns: 3, directions: ['down', 'left', 'right', 'up'], frameWidth: 48, frameHeight: 48, objectAligned: false },
     };
     const onImportSprite = vi.fn();
     render(<AssetManagerDialog {...props({ sprites: [sprite], onImportSprite })} />);

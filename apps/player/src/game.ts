@@ -1,6 +1,7 @@
 import { isStudioPreview, loadGameContent } from './content-loader.js';
 import { circleIntersectsBlockedDiagonal } from './circle-collision.js';
 import { MapEventRuntime, teleportDisposition } from './event-runtime.js';
+import { EventMovementRuntime } from './event-movement.js';
 import { PixiRenderer } from './pixi-renderer.js';
 import type { Renderer, RenderState } from './renderer.js';
 import { DIRECTION_OFFSETS, navigationHasCell, navigationTarget } from './types.js';
@@ -20,7 +21,7 @@ void (async () => {
   const VIEW_WIDTH = 960, VIEW_HEIGHT = 540;
   // Keep a small clearance inside one-tile-wide (48 px) passages.
   const PLAYER_RADIUS = 20;
-  let content: LoadedGame, game: any, renderer: Renderer, eventRuntime: MapEventRuntime, completedMapEvents = new Set<string>(), visitRevision = 0, dialogue: { choices: Array<{ label: string; actions: Action[] }>; choiceIndex: number } | null = null, paused = false, pauseTabIndex = 0, inventorySelection = 0, lastTime = performance.now(), toastTimer = 0, showTileGrid = false, playerMoving = false, playerAnimationTime = 0;
+  let content: LoadedGame, game: any, renderer: Renderer, eventRuntime: MapEventRuntime, movementRuntime: EventMovementRuntime, completedMapEvents = new Set<string>(), visitRevision = 0, dialogue: { choices: Array<{ label: string; actions: Action[] }>; choiceIndex: number; currentEventId?: string } | null = null, paused = false, pauseTabIndex = 0, inventorySelection = 0, lastTime = performance.now(), toastTimer = 0, showTileGrid = false, playerMoving = false, playerAnimationTime = 0, cutsceneRouteWaits = 0;
   let facing = { x: 0, y: 1 };
   const cooldowns: Record<string, number> = {};
 
@@ -69,25 +70,40 @@ void (async () => {
     try { const saved = JSON.parse(localStorage.getItem(saveKey()) || 'null'); if (isValidSave(saved)) return saved; } catch { /* invalid or unavailable storage */ }
     return freshGame();
   }
-  function initializeEventRuntime() { completedMapEvents = new Set(game.completedMapEvents); eventRuntime = new MapEventRuntime(completedMapEvents); eventRuntime.beginVisit(currentMap()); visitRevision += 1; }
+  function runtimeMap(): GameMap {
+    const map = currentMap();
+    return { ...map, events: map.events.map(event => {
+      const actor = movementRuntime?.actor(event.id);
+      return actor ? { ...event, position: { ...actor.position } } : event;
+    }) };
+  }
+  function initializeEventRuntime() {
+    completedMapEvents = new Set(game.completedMapEvents);
+    eventRuntime = new MapEventRuntime(completedMapEvents);
+    movementRuntime = new EventMovementRuntime();
+    movementRuntime.beginVisit(currentMap(), game.player);
+    eventRuntime.beginVisit(runtimeMap());
+    visitRevision += 1;
+  }
   function saveSilently() { if (studioPreview) return true; try { game.completedMapEvents = [...completedMapEvents]; localStorage.setItem(saveKey(), JSON.stringify(game)); return true; } catch { return false; } }
   function saveGame() { showToast(saveSilently() ? 'Sauvegarde effectuée' : 'Sauvegarde indisponible'); }
   function resetGame() { try { localStorage.removeItem(saveKey()); } catch { /* the in-memory reset is still safe */ } game = freshGame(); initializeEventRuntime(); closeDialogue(); closePause(); refreshHud(); showToast('Nouvelle partie commencée'); }
   function toggleTileGrid() { showTileGrid = !showTileGrid; ui.devGrid.setAttribute('aria-pressed', String(showTileGrid)); ui.devGrid.textContent = `Grille dev : ${showTileGrid ? 'on' : 'off'}`; }
 
   function showToast(text: string) { ui.toast.textContent = text; ui.toast.classList.remove('hidden'); toastTimer = 2.5; }
-  function openDialogue(speaker: string, text: string, choices: Array<{ label: string; actions: Action[] }> = []) {
-    dialogue = { choices, choiceIndex: 0 }; ui.speaker.textContent = speaker; ui.text.textContent = text; ui.choices.innerHTML = '';
+  function openDialogue(speaker: string, text: string, choices: Array<{ label: string; actions: Action[] }> = [], currentEventId?: string) {
+    dialogue = { choices, choiceIndex: 0, currentEventId }; ui.speaker.textContent = speaker; ui.text.textContent = text; ui.choices.innerHTML = '';
     choices.forEach((choice, index) => { const button = document.createElement('button'); button.textContent = choice.label; button.addEventListener('click', () => chooseDialogueChoice(index)); ui.choices.append(button); });
     document.querySelector<HTMLElement>('.continue-hint')!.style.display = choices.length ? 'none' : 'block'; ui.dialogue.classList.remove('hidden');
     if (choices.length) queueMicrotask(() => (ui.choices.querySelector('button') as HTMLButtonElement | null)?.focus());
   }
   function closeDialogue() { dialogue = null; ui.dialogue.classList.add('hidden'); }
-  function chooseDialogueChoice(index = dialogue?.choiceIndex || 0) { const choice = dialogue?.choices[index]; if (!choice) return; closeDialogue(); executeActions(choice.actions); }
+  function chooseDialogueChoice(index = dialogue?.choiceIndex || 0) { const choice = dialogue?.choices[index]; const currentEventId = dialogue?.currentEventId; if (!choice) return; closeDialogue(); executeActions(choice.actions, currentEventId); }
   function moveDialogueChoice(delta: number) { if (!dialogue?.choices.length) return; dialogue.choiceIndex = (dialogue.choiceIndex + delta + dialogue.choices.length) % dialogue.choices.length; (ui.choices.children[dialogue.choiceIndex] as HTMLButtonElement | undefined)?.focus(); }
-  function executeActions(actions: Action[]) {
-    for (const action of actions) {
-      if (action.type === 'dialogue') openDialogue(action.speaker, action.text, action.choices || []);
+  function executeActions(actions: Action[], currentEventId?: string) {
+    for (let index = 0; index < actions.length; index += 1) {
+      const action = actions[index];
+      if (action.type === 'dialogue') openDialogue(action.speaker, action.text, action.choices || [], currentEventId);
       if (action.type === 'setFlag') game.flags[action.id] = action.value;
       if (action.type === 'setQuestState') game.quests[action.id] = action.state;
       if (action.type === 'giveItem') game.inventory[action.id] = (game.inventory[action.id] || 0) + (action.amount || 1);
@@ -96,6 +112,18 @@ void (async () => {
       if (action.type === 'healPlayer') game.player.hp = Math.min(game.player.maxHp, game.player.hp + action.amount);
       if (action.type === 'toast') showToast(action.text);
       if (action.type === 'teleport') teleport(action.mapId, action.position, action.resetMap);
+      if (action.type === 'movementRoute') {
+        const completion = movementRuntime.forceRoute(action.target, action.route, currentEventId);
+        if (action.route.wait) {
+          cutsceneRouteWaits += 1;
+          void completion.then(() => {
+            cutsceneRouteWaits = Math.max(0, cutsceneRouteWaits - 1);
+            executeActions(actions.slice(index + 1), currentEventId);
+          });
+          refreshHud();
+          return;
+        }
+      }
       if (action.type === 'save') saveSilently();
     }
     refreshHud();
@@ -136,10 +164,10 @@ void (async () => {
     return {
       isActive: eventActive,
       canExecute: (event: MapEvent) => Boolean(eventPage(event)),
-      execute: (event: MapEvent) => { const revision = visitRevision; executeActions(eventPage(event)!.actions); return { stop: revision !== visitRevision }; }
+      execute: (event: MapEvent) => { const revision = visitRevision; movementRuntime.faceToward(event.id, game.player); executeActions(eventPage(event)!.actions, event.id); return { stop: revision !== visitRevision }; }
     };
   }
-  function interact() { eventRuntime.interact(currentMap(), game.player, eventCallbacks()); }
+  function interact() { eventRuntime.interact(runtimeMap(), game.player, eventCallbacks()); }
 
   function gridCell(position: Vec2) { const size = currentMap().tileSize; return { x: Math.floor(position.x / size), y: Math.floor(position.y / size) }; }
   function circleBlocked(position: PlanePosition, radius: number, ignoredEdge?: Direction) {
@@ -178,7 +206,33 @@ void (async () => {
     moveAxis(entity, 'x', dx, radius);
     moveAxis(entity, 'y', dy, radius);
   }
-  function movePlayer(dx: number, dy: number, dt: number) { const length = Math.hypot(dx, dy); if (!length) return false; dx /= length; dy /= length; facing = { x: dx, y: dy }; const previous = { x: game.player.x, y: game.player.y }; moveWithCollisions(game.player, dx * (game.player.dash > 0 ? 420 : 185) * dt, dy * (game.player.dash > 0 ? 420 : 185) * dt, PLAYER_RADIUS); return previous.x !== game.player.x || previous.y !== game.player.y; }
+  function eventCanMove(actorId: string, from: PlanePosition, to: PlanePosition, through: boolean) {
+    if (through) return true;
+    const map = currentMap(), graph = content.navigation[map.id], fromCell = gridCell(from), toCell = gridCell(to);
+    if (fromCell.x !== toCell.x || fromCell.y !== toCell.y) {
+      const edge: Direction = fromCell.x !== toCell.x ? (toCell.x > fromCell.x ? 'east' : 'west') : (toCell.y > fromCell.y ? 'south' : 'north');
+      const target = navigationTarget(graph, from.planeId, fromCell.x, fromCell.y, edge);
+      if (!target || target.x !== toCell.x || target.y !== toCell.y) return false;
+      to.planeId = target.planeId;
+    }
+    if (circleBlocked(to, 18)) return false;
+    if (actorId !== 'player' && to.planeId === game.player.planeId && distance(to, game.player) < PLAYER_RADIUS + 18) return false;
+    for (const other of movementRuntime.eventActors()) {
+      if (other.id === actorId || other.settings.through || other.position.planeId !== to.planeId) continue;
+      if (distance(to, other.position) < 36) return false;
+    }
+    return true;
+  }
+  function movePlayer(dx: number, dy: number, dt: number) {
+    const length = Math.hypot(dx, dy);
+    if (!length) return false;
+    dx /= length; dy /= length; facing = { x: dx, y: dy };
+    const previous = { x: game.player.x, y: game.player.y, planeId: game.player.planeId };
+    moveWithCollisions(game.player, dx * (game.player.dash > 0 ? 420 : 185) * dt, dy * (game.player.dash > 0 ? 420 : 185) * dt, PLAYER_RADIUS);
+    const eventCollision = movementRuntime.eventActors().some(actor => !actor.settings.through && actor.position.planeId === game.player.planeId && distance(actor.position, game.player) < PLAYER_RADIUS + 18);
+    if (eventCollision) Object.assign(game.player, previous);
+    return previous.x !== game.player.x || previous.y !== game.player.y || previous.planeId !== game.player.planeId;
+  }
   function moveEnemy(enemy: any, dx: number, dy: number) { moveWithCollisions(enemy, dx, dy, enemy.radius); }
   function equippedStat(stat: string) { return Object.values(game.equipment).reduce<number>((total, itemId) => { const id = typeof itemId === 'string' ? itemId : ''; return total + (content.items[id]?.stats?.[stat] || 0); }, 0); }
   function effectiveDamage(damage: number) { return Math.max(0, damage + equippedStat('attack')); }
@@ -209,7 +263,8 @@ void (async () => {
     game.particles = [];
     game.player.hp = Math.max(game.player.hp, Math.ceil(game.player.maxHp * .6));
     game.checkpoint = { mapId, spawn: structuredClone(position) };
-    eventRuntime.beginVisit(currentMap());
+    movementRuntime.beginVisit(currentMap(), game.player);
+    eventRuntime.beginVisit(runtimeMap());
     visitRevision += 1;
     saveSilently();
     refreshHud();
@@ -220,11 +275,21 @@ void (async () => {
   function update(dt: number) {
     playerMoving = false;
     if (toastTimer > 0 && (toastTimer -= dt) <= 0) ui.toast.classList.add('hidden');
-    if (dialogue || paused || document.hidden) { playerAnimationTime = 0; return; }
+    if (paused || document.hidden) { playerAnimationTime = 0; return; }
+    const playerWasForced = movementRuntime.isPlayerForced();
+    movementRuntime.update(dt, game.player, eventCanMove);
+    const forcedPlayer = movementRuntime.actor('player');
+    if (forcedPlayer && (playerWasForced || movementRuntime.isPlayerForced())) {
+      Object.assign(game.player, forcedPlayer.position);
+      facing = forcedPlayer.direction === 'north' ? { x: 0, y: -1 } : forcedPlayer.direction === 'east' ? { x: 1, y: 0 } : forcedPlayer.direction === 'west' ? { x: -1, y: 0 } : { x: 0, y: 1 };
+      playerMoving = forcedPlayer.moving;
+      playerAnimationTime = forcedPlayer.animationTime;
+    }
+    if (dialogue || cutsceneRouteWaits > 0) { if (!playerMoving) playerAnimationTime = 0; return; }
     Object.keys(cooldowns).forEach(key => cooldowns[key] = Math.max(0, cooldowns[key] - dt)); game.player.invuln = Math.max(0, game.player.invuln - dt); game.player.dash = Math.max(0, game.player.dash - dt);
-    playerMoving = movePlayer((keys.has('ArrowRight') || keys.has('KeyD') ? 1 : 0) - (keys.has('ArrowLeft') || keys.has('KeyA') ? 1 : 0), (keys.has('ArrowDown') || keys.has('KeyS') ? 1 : 0) - (keys.has('ArrowUp') || keys.has('KeyW') ? 1 : 0), dt);
+    playerMoving = movementRuntime.isPlayerForced() ? playerMoving : movePlayer((keys.has('ArrowRight') || keys.has('KeyD') ? 1 : 0) - (keys.has('ArrowLeft') || keys.has('KeyA') ? 1 : 0), (keys.has('ArrowDown') || keys.has('KeyS') ? 1 : 0) - (keys.has('ArrowUp') || keys.has('KeyW') ? 1 : 0), dt);
     playerAnimationTime = playerMoving ? playerAnimationTime + dt : 0;
-    updateProjectiles(dt); updateEnemies(dt); game.particles.forEach((particle: any) => particle.t -= dt); game.particles = game.particles.filter((particle: any) => particle.t > 0); eventRuntime.update(currentMap(), game.player, dt, eventCallbacks());
+    updateProjectiles(dt); updateEnemies(dt); game.particles.forEach((particle: any) => particle.t -= dt); game.particles = game.particles.filter((particle: any) => particle.t > 0); eventRuntime.update(runtimeMap(), game.player, dt, eventCallbacks());
   }
   function projectileCanContinue(projectile: any, previous: Vec2) {
     const graph = content.navigation[game.mapId], from = gridCell(previous), to = gridCell(projectile);
@@ -255,7 +320,19 @@ void (async () => {
     };
     return {
       map,
-      events: map.events.filter(eventActive).map(event => ({ ...event, nearby: event.position.planeId === game.player.planeId && event.trigger.type === 'interact' && distance(game.player, event.position) <= event.trigger.radius })),
+      events: map.events.filter(eventActive).map(event => {
+        const actor = movementRuntime.actor(event.id);
+        const position = actor?.position || event.position;
+        return {
+          ...event,
+          position,
+          nearby: position.planeId === game.player.planeId && event.trigger.type === 'interact' && distance(game.player, position) <= event.trigger.radius,
+          movementDirection: actor?.direction || 'south',
+          movementMoving: actor?.moving || false,
+          movementAnimationTime: actor?.animationTime || 0,
+          jumpHeight: actor?.jumpHeight || 0,
+        };
+      }),
       enemies: currentEnemies().filter((enemy: any) => enemy.alive),
       projectiles: game.projectiles,
       particles: game.particles,
@@ -277,5 +354,5 @@ void (async () => {
   window.addEventListener('keyup', event => keys.delete(event.code));
   window.addEventListener('blur', () => keys.clear());
   document.addEventListener('visibilitychange', () => { if (document.hidden) keys.clear(); });
-  try { content = await loadGameContent(); renderer = await PixiRenderer.create(canvas, content.tilesets, content.assetUrls); applyTheme(); document.title = `${content.manifest.title}${studioPreview ? ' — Aperçu Studio' : ''}`; document.querySelector('h1')!.textContent = content.manifest.title; game = loadGame(); initializeEventRuntime(); refreshHud(); if (studioPreview) showToast('Aperçu Studio'); requestAnimationFrame(frame); window.addEventListener('pagehide', () => renderer.destroy(), { once: true }); } catch (error) { console.error(error); ui.speaker.textContent = 'Erreur de chargement'; ui.text.textContent = error instanceof Error ? error.message : 'Le package de jeu ne peut pas être chargé.'; ui.choices.innerHTML = ''; document.querySelector<HTMLElement>('.continue-hint')!.style.display = 'none'; ui.dialogue.classList.remove('hidden'); }
+  try { content = await loadGameContent(); renderer = await PixiRenderer.create(canvas, content.tilesets, content.assetUrls, Object.values(content.maps)); applyTheme(); document.title = `${content.manifest.title}${studioPreview ? ' — Aperçu Studio' : ''}`; document.querySelector('h1')!.textContent = content.manifest.title; game = loadGame(); initializeEventRuntime(); refreshHud(); if (studioPreview) showToast('Aperçu Studio'); requestAnimationFrame(frame); window.addEventListener('pagehide', () => renderer.destroy(), { once: true }); } catch (error) { console.error(error); ui.speaker.textContent = 'Erreur de chargement'; ui.text.textContent = error instanceof Error ? error.message : 'Le package de jeu ne peut pas être chargé.'; ui.choices.innerHTML = ''; document.querySelector<HTMLElement>('.continue-hint')!.style.display = 'none'; ui.dialogue.classList.remove('hidden'); }
 })();

@@ -7,7 +7,7 @@ import { StudioSidebar } from '../src/components/studio-sidebar';
 const event = {
   id: 'mayor', position: { x: 2, y: 3, planeId: 'p' }, scriptId: 'event.mayor',
   trigger: { type: 'interact' as const, radius: 1 }, execution: { mode: 'repeat' as const },
-  visual: { type: 'npc' as const, name: 'Mayor', color: '#ffffff', radius: 18 },
+  sprite: { image: 'sprites/Actor1.png', characterIndex: 0, characterColumns: 4, frameWidth: 48, frameHeight: 48, objectAligned: false },
 };
 const map: GameMap = {
   id: 'village', name: 'Village', ground: '#000000', accent: '#ffffff', tileSize: 48,
@@ -36,19 +36,56 @@ const game = {
   },
 } as unknown as SourceGame;
 const common = {
-  game, assetUrls: { 'tilesets/outside-a2.png': 'outside.png' }, map, selectedMapId: 'village', selectedEventId: null,
-  selectedTerrain: null, activeLayerId: 'ground', onSelectMap: vi.fn(), onSelectEvent: vi.fn(), onChangeMode: vi.fn(), onSelectTerrain: vi.fn(),
+  game, assetUrls: { 'tilesets/outside-a2.png': 'outside.png', 'sprites/Actor1.png': 'actor1.png' }, map, selectedMapId: 'village', selectedEventId: null,
+  selectedTerrain: null, activeLayerId: 'ground', onSelectMap: vi.fn(), onSelectEvent: vi.fn(), onRenameEvent: vi.fn(), onChangeMode: vi.fn(), onSelectTerrain: vi.fn(),
   onCreateMap: vi.fn(), onRenameMap: vi.fn(), onMoveMap: vi.fn(), onReorderMap: vi.fn(), onResizeMap: vi.fn(),
   onSelectLayer: vi.fn(), onAddLayer: vi.fn(), onRenameLayer: vi.fn(), onDeleteLayer: vi.fn(), onMoveLayer: vi.fn(),
   onChangeLayerPlane: vi.fn(), onChangeLayerPhase: vi.fn(), onAddPlane: vi.fn(), onRenamePlane: vi.fn(), onMovePlane: vi.fn(), onDeletePlane: vi.fn(), onChangeCoverage: vi.fn(), onChangeSurface: vi.fn(), onDeleteConnection: vi.fn(),
 };
 
+async function expandMaps() {
+  const mapsTrigger = screen.getByRole('button', { name: 'Maps' });
+  expect(mapsTrigger).toHaveAttribute('aria-expanded', 'false');
+  await userEvent.click(mapsTrigger);
+  expect(mapsTrigger).toHaveAttribute('aria-expanded', 'true');
+}
+
 describe('StudioSidebar', () => {
+  it('shows Maps first and collapsed while keeping the editor section fixed open', () => {
+    render(<StudioSidebar {...common} mode="events" />);
+    const mapsTrigger = screen.getByRole('button', { name: 'Maps' });
+    const eventsHeader = screen.getByText('Events').closest('[data-slot="section-header"]')!;
+
+    expect(mapsTrigger).toHaveAttribute('aria-expanded', 'false');
+    expect(eventsHeader).toHaveClass('px-4', 'py-4', 'h-12');
+    expect(mapsTrigger.closest('[data-slot="section-header"]')).toHaveClass('px-4', 'py-4', 'h-12');
+    expect(mapsTrigger.querySelector('.lucide-chevron-right')).toHaveClass('absolute', '-left-3.5');
+    expect(screen.queryByRole('tree', { name: 'Map hierarchy' })).not.toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: 'Events' })).not.toBeInTheDocument();
+    expect(mapsTrigger.compareDocumentPosition(eventsHeader) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+  });
+
   it('lists map events and synchronizes selection', async () => {
     const onSelectEvent = vi.fn();
-    render(<StudioSidebar {...common} mode="events" onSelectEvent={onSelectEvent} />);
-    await userEvent.click(screen.getByRole('button', { name: /Mayor/ }));
+    const { container } = render(<StudioSidebar {...common} mode="events" onSelectEvent={onSelectEvent} />);
+    expect(container.querySelector('[data-slot="event-sprite"] [style*="background-image"]')).toHaveStyle({ backgroundImage: 'url("actor1.png")' });
+    expect(screen.queryByText('interact')).not.toBeInTheDocument();
+    await userEvent.click(screen.getByRole('button', { name: /mayor/ }));
     expect(onSelectEvent).toHaveBeenCalledWith('mayor');
+  });
+
+  it('renames an event inline on double click', async () => {
+    const onRenameEvent = vi.fn();
+    render(<StudioSidebar {...common} mode="events" onRenameEvent={onRenameEvent} />);
+
+    await userEvent.dblClick(screen.getByText('mayor'));
+    const input = screen.getByRole('textbox', { name: 'Rename event: mayor' });
+    expect(input).toHaveFocus();
+    fireEvent.change(input, { target: { value: 'village-mayor' } });
+    fireEvent.keyDown(input, { key: 'Enter' });
+
+    expect(onRenameEvent).toHaveBeenCalledWith('mayor', 'village-mayor');
+    expect(screen.queryByRole('textbox', { name: 'Rename event: mayor' })).not.toBeInTheDocument();
   });
 
   it('shows an empty event state', () => {
@@ -68,10 +105,11 @@ describe('StudioSidebar', () => {
   it('keeps the Tiles header outside its constrained scrollable content', () => {
     const { container } = render(<StudioSidebar {...common} mode="drawing" />);
     const sidebar = container.querySelector<HTMLElement>('[data-slot="studio-sidebar"]');
-    const tilesHeader = screen.getByText('Tiles').closest<HTMLElement>('[data-slot="collapsible-trigger"]');
-    const tilesContent = tilesHeader?.parentElement?.nextElementSibling;
+    const tilesHeader = screen.getByText('Tiles').closest<HTMLElement>('[data-slot="section-header"]');
+    const tilesContent = tilesHeader?.nextElementSibling;
 
     expect(sidebar).toHaveClass('cursor-default', 'border-r');
+    expect(screen.queryByRole('button', { name: 'Tiles' })).not.toBeInTheDocument();
     expect(tilesContent).toHaveClass('overflow-hidden');
     expect(tilesContent?.querySelector('[data-slot="scroll-area"]')).toBeInTheDocument();
     expect(tilesContent?.querySelector('[data-slot="scroll-area"]')).not.toContainElement(tilesHeader);
@@ -117,6 +155,7 @@ describe('StudioSidebar', () => {
     const onCreateMap = vi.fn();
     const onResizeMap = vi.fn();
     render(<StudioSidebar {...common} mode="drawing" onCreateMap={onCreateMap} onResizeMap={onResizeMap} />);
+    await expandMaps();
     await userEvent.click(screen.getByRole('button', { name: 'Add map' }));
     await userEvent.click(screen.getByRole('button', { name: 'Create map' }));
     expect(onCreateMap).toHaveBeenCalledWith(20, 15);
@@ -128,6 +167,7 @@ describe('StudioSidebar', () => {
   it('renames a map inline on double click', async () => {
     const onRenameMap = vi.fn();
     render(<StudioSidebar {...common} mode="drawing" onRenameMap={onRenameMap} />);
+    await expandMaps();
 
     await userEvent.dblClick(screen.getByText('Village'));
     const input = screen.getByRole('textbox', { name: 'Rename map: Village' });
@@ -145,6 +185,7 @@ describe('StudioSidebar', () => {
     const nestedGame = { ...game, maps: { village: map, house: child } } as unknown as SourceGame;
     const onMoveMap = vi.fn();
     render(<StudioSidebar {...common} game={nestedGame} mode="drawing" onMoveMap={onMoveMap} />);
+    await expandMaps();
 
     expect(screen.getByRole('tree', { name: 'Map hierarchy' })).toBeInTheDocument();
     expect(screen.getByRole('tree', { name: 'Map hierarchy' })).not.toHaveClass('p-1');
@@ -163,6 +204,7 @@ describe('StudioSidebar', () => {
     const child = { ...structuredClone(map), id: 'house', name: 'Mayor House', parentMapId: 'village' };
     const nestedGame = { ...game, maps: { village: map, house: child } } as unknown as SourceGame;
     render(<StudioSidebar {...common} game={nestedGame} mode="drawing" />);
+    await expandMaps();
 
     await userEvent.click(screen.getByRole('button', { name: 'Collapse Village' }));
     expect(screen.queryByText('Mayor House')).not.toBeInTheDocument();
@@ -170,11 +212,12 @@ describe('StudioSidebar', () => {
     expect(screen.getByText('Mayor House')).toBeInTheDocument();
   });
 
-  it('nests sibling maps by dropping on the center of a row', () => {
+  it('nests sibling maps by dropping on the center of a row', async () => {
     const town = { ...structuredClone(map), id: 'town', name: 'Town' };
     const reorderGame = { ...game, maps: { village: map, town } } as unknown as SourceGame;
     const onReorderMap = vi.fn();
     render(<StudioSidebar {...common} game={reorderGame} mode="drawing" onReorderMap={onReorderMap} />);
+    await expandMaps();
     const source = screen.getByText('Town').closest('[data-map-row-id]')!;
     const target = screen.getByText('Village').closest('[data-map-row-id]')!;
     vi.spyOn(target, 'getBoundingClientRect').mockReturnValue({ top: 100, height: 40 } as DOMRect);

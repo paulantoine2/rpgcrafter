@@ -1,6 +1,6 @@
 import { useLayoutEffect, useRef, type ReactElement } from 'react';
 import type { TileLayer } from '@rpgcrafter/game-schema';
-import { CalendarRange, Circle, Eraser, Layers3, MapPin, MousePointer2, PaintBucket, Paintbrush, Pencil, Square } from 'lucide-react';
+import { Box, Circle, Eraser, Layers3, MapPin, MousePointer2, PaintBucket, Paintbrush, Pencil, Square } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { cn } from '@/lib/utils';
@@ -18,8 +18,8 @@ function ToolTooltip({ label, description, children }: { label: string; descript
 }
 
 function ModeToggle({ mode, onChange }: { mode: EditorMode; onChange: (mode: EditorMode) => void }) {
-  const modes: { value: EditorMode; label: string; icon: typeof CalendarRange }[] = [
-    { value: 'events', label: 'Events', icon: CalendarRange },
+  const modes: { value: EditorMode; label: string; icon: typeof Box }[] = [
+    { value: 'events', label: 'Events', icon: Box },
     { value: 'drawing', label: 'Draw', icon: Paintbrush },
   ];
 
@@ -42,10 +42,10 @@ function ModeToggle({ mode, onChange }: { mode: EditorMode; onChange: (mode: Edi
 }
 
 function EventsTools({ eventTool, onChangeEventTool }: { eventTool: EventTool; onChangeEventTool: (tool: EventTool) => void }) {
-  return <div className="flex shrink-0 rounded-md border bg-background/70 p-0.5" role="toolbar" aria-label="Event tools">
-    <ToolTooltip label="Event cursor" description="Select an event or double-click a tile to create one"><Button type="button" variant={eventTool === 'cursor' ? 'default' : 'ghost'} size="icon-sm" className="rounded-sm" aria-label="Event cursor" aria-pressed={eventTool === 'cursor'} onClick={() => onChangeEventTool('cursor')}><MousePointer2 /></Button></ToolTooltip>
-    <ToolTooltip label="Player start" description="Place the project's unique player starting position"><Button type="button" variant={eventTool === 'playerStart' ? 'default' : 'ghost'} size="icon-sm" className="rounded-sm" aria-label="Player start" aria-pressed={eventTool === 'playerStart'} onClick={() => onChangeEventTool('playerStart')}><MapPin /></Button></ToolTooltip>
-  </div>;
+  return <>
+    <ToolTooltip label="Event cursor" description="Select an event or double-click a tile to create one"><Button type="button" variant={eventTool === 'cursor' ? 'default' : 'ghost'} size="icon-lg" className="rounded-md" aria-label="Event cursor" aria-pressed={eventTool === 'cursor'} onClick={() => onChangeEventTool('cursor')}><MousePointer2 /></Button></ToolTooltip>
+    <ToolTooltip label="Player start" description="Place the project's unique player starting position"><Button type="button" variant={eventTool === 'playerStart' ? 'default' : 'ghost'} size="icon-lg" className="rounded-md" aria-label="Player start" aria-pressed={eventTool === 'playerStart'} onClick={() => onChangeEventTool('playerStart')}><MapPin /></Button></ToolTooltip>
+  </>;
 }
 
 function DrawingTools({ layers, activeLayerId, drawingTool, onSelectLayer, onChangeDrawingTool }: {
@@ -116,7 +116,7 @@ export function StudioToolbar({ mode, layers, activeLayerId, drawingTool, eventT
   }, [mode]);
 
   return <div className="pointer-events-none absolute inset-x-0 bottom-4 z-20 flex justify-center px-3">
-    <div ref={toolbarRef} className="pointer-events-auto flex max-w-full items-center gap-1.5 overflow-hidden rounded-xl border bg-card/95 p-1.5 shadow-[0_12px_36px_-12px_rgb(0_0_0/0.45)] backdrop-blur-md">
+    <div ref={toolbarRef} className="pointer-events-auto flex max-w-full items-center gap-1.5 overflow-hidden rounded-xl border bg-background p-1.5 shadow-[0_12px_36px_-12px_rgb(0_0_0/0.45)] backdrop-blur-md">
       <div className="flex min-w-0 items-center gap-1.5 overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
         {mode === 'events' && <EventsTools eventTool={eventTool} onChangeEventTool={onChangeEventTool} />}
         {mode === 'drawing' && <DrawingTools layers={layers} activeLayerId={activeLayerId} drawingTool={drawingTool} onSelectLayer={onSelectLayer} onChangeDrawingTool={onChangeDrawingTool} />}

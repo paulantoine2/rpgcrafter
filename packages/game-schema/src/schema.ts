@@ -1,8 +1,10 @@
 import { z } from 'zod';
 import type {
   Action, Condition, ContentIssue, EnemyTemplate, GameEvent, GameMap, InitialState, Item, Manifest,
-  MapEventExecution, MapEventTrigger, MapEventVisual, Objective, PlayerDefinition, QuestDefinition,
-  Skill, SourceGame, SourceGameFiles, SourceGameResult, TilesetDefinition, UiDefinition,
+  MapEventExecution, MapEventTrigger, MapEventSprite, Objective, PlayerDefinition, QuestDefinition,
+  Skill, SourceGame, SourceGameFiles, SourceGameResult, TilesetDefinition, UiDefinition, MovementCommand,
+  MovementTarget, MovementRoute, EventMovement,
+  MoveSpeed, MoveFrequency,
 } from './types.js';
 import { CANONICAL_AUTOTILE_MASKS, canonicalizeAutotileMask } from './autotile.js';
 import { migrateSourceGameFiles } from './migration.js';
@@ -121,6 +123,35 @@ const ConditionSchema: z.ZodType<Condition> = z.discriminatedUnion('kind', [
   z.object({ kind: z.literal('item'), id: Id, amount: FiniteNumber.optional() }).strict(),
   z.object({ kind: z.literal('quest'), id: Id, state: Id }).strict(),
 ]);
+const MovementCommandSchema: z.ZodType<MovementCommand> = z.discriminatedUnion('type', [
+  z.object({ type: z.literal('move'), direction: z.enum(['north', 'east', 'south', 'west', 'forward', 'backward', 'random', 'towardPlayer', 'awayFromPlayer', 'left', 'right']) }).strict(),
+  z.object({ type: z.literal('turn'), direction: z.enum(['north', 'east', 'south', 'west', 'left', 'right', 'around', 'random', 'towardPlayer', 'awayFromPlayer']) }).strict(),
+  z.object({ type: z.literal('jump'), x: FiniteNumber, y: FiniteNumber }).strict(),
+  z.object({ type: z.literal('wait'), duration: NonNegativeNumber }).strict(),
+]);
+const MovementTargetSchema: z.ZodType<MovementTarget> = z.discriminatedUnion('kind', [
+  z.object({ kind: z.literal('player') }).strict(),
+  z.object({ kind: z.literal('thisEvent') }).strict(),
+  z.object({ kind: z.literal('event'), eventId: Id }).strict(),
+]);
+const MovementRouteSchema: z.ZodType<MovementRoute> = z.object({
+  commands: z.array(MovementCommandSchema),
+  repeat: z.boolean(),
+  skippable: z.boolean(),
+  wait: z.boolean(),
+}).strict();
+const MoveSpeedSchema: z.ZodType<MoveSpeed> = z.custom<MoveSpeed>(value => Number.isInteger(value) && Number(value) >= 1 && Number(value) <= 6, 'Must be an integer from 1 to 6');
+const MoveFrequencySchema: z.ZodType<MoveFrequency> = z.custom<MoveFrequency>(value => Number.isInteger(value) && Number(value) >= 1 && Number(value) <= 5, 'Must be an integer from 1 to 5');
+const EventMovementSchema: z.ZodType<EventMovement> = z.object({
+  type: z.enum(['fixed', 'random', 'approach', 'custom']),
+  speed: MoveSpeedSchema,
+  frequency: MoveFrequencySchema,
+  route: z.array(MovementCommandSchema),
+  walkingAnimation: z.boolean(),
+  steppingAnimation: z.boolean(),
+  directionFix: z.boolean(),
+  through: z.boolean(),
+}).strict();
 
 const ActionSchema: z.ZodType<Action> = z.lazy(() => z.discriminatedUnion('type', [
   z.object({ type: z.literal('dialogue'), speaker: Id, text: Id, choices: z.array(z.object({ label: Id, actions: z.array(ActionSchema) }).strict()).optional() }).strict(),
@@ -132,6 +163,7 @@ const ActionSchema: z.ZodType<Action> = z.lazy(() => z.discriminatedUnion('type'
   z.object({ type: z.literal('healPlayer'), amount: FiniteNumber }).strict(),
   z.object({ type: z.literal('toast'), text: Id }).strict(),
   z.object({ type: z.literal('teleport'), mapId: Id, position: PlanePositionSchema, resetMap: z.boolean() }).strict(),
+  z.object({ type: z.literal('movementRoute'), target: MovementTargetSchema, route: MovementRouteSchema }).strict(),
   z.object({ type: z.literal('save') }).strict(),
 ]));
 
@@ -142,10 +174,14 @@ const MapEventTriggerSchema: z.ZodType<MapEventTrigger> = z.discriminatedUnion('
   z.object({ type: z.literal('mapEnter'), delay: NonNegativeNumber }).strict(),
 ]);
 const MapEventExecutionSchema: z.ZodType<MapEventExecution> = z.object({ mode: z.enum(['repeat', 'oncePerVisit', 'oncePerGame']), cooldown: NonNegativeNumber.optional() }).strict();
-const MapEventVisualSchema: z.ZodType<MapEventVisual> = z.discriminatedUnion('type', [
-  z.object({ type: z.literal('exit') }).strict(),
-  z.object({ type: z.enum(['npc', 'chest', 'door']), name: Id, color: Id, radius: PositiveNumber }).strict(),
-]);
+const MapEventSpriteSchema: z.ZodType<MapEventSprite> = z.object({
+  image: Id,
+  characterIndex: z.number().int().nonnegative(),
+  characterColumns: z.number().int().positive(),
+  frameWidth: PositiveNumber,
+  frameHeight: PositiveNumber,
+  objectAligned: z.boolean(),
+}).strict();
 
 const ManifestSchema: z.ZodType<Manifest> = z.object({
   schemaVersion: Id, engineRange: Id, gameId: Id, version: Id,
@@ -168,7 +204,7 @@ const MapSchema: z.ZodType<GameMap> = z.object({
     edges: z.object({ north: z.enum(['open', 'blocked']).optional(), east: z.enum(['open', 'blocked']).optional(), south: z.enum(['open', 'blocked']).optional(), west: z.enum(['open', 'blocked']).optional() }).strict().optional(),
   }).strict()),
   blockedRegions: z.array(GridRectSchema),
-  events: z.array(z.object({ id: Id, position: PlanePositionSchema, scriptId: Id, trigger: MapEventTriggerSchema, execution: MapEventExecutionSchema, activeWhen: z.array(ConditionSchema).optional(), visual: MapEventVisualSchema.optional() }).strict()),
+  events: z.array(z.object({ id: Id, position: PlanePositionSchema, scriptId: Id, trigger: MapEventTriggerSchema, execution: MapEventExecutionSchema, activeWhen: z.array(ConditionSchema).optional(), sprite: MapEventSpriteSchema.optional(), movement: EventMovementSchema.optional() }).strict()),
   enemySpawns: z.array(PlanePositionSchema.extend({ enemyId: Id }).strict()),
   deathDestination: z.object({ mapId: Id, spawn: PlanePositionSchema }).strict().optional(),
 }).strict();
@@ -298,6 +334,13 @@ function validateReferences(game: SourceGame): ContentIssue[] {
       if (!maps[action.mapId]) issue(target, `Unknown map: ${action.mapId}`);
       else if (!maps[action.mapId].planes.some(plane => plane.id === action.position.planeId)) issue(`${target}.position.planeId`, 'Unknown destination plane');
       if (sourceMapId && !action.resetMap && action.mapId !== sourceMapId) issue(target, 'resetMap=false requires the current map');
+    }
+    if (action.type === 'movementRoute') {
+      if (sourceMapId && action.target.kind === 'event') {
+        const targetEventId = action.target.eventId;
+        if (!maps[sourceMapId]?.events.some(event => event.id === targetEventId)) issue(`${target}.target.eventId`, 'Unknown event on the current map');
+      }
+      if (action.route.repeat && action.route.wait) issue(`${target}.route`, 'A repeating movement route cannot wait for completion');
     }
     if (action.type === 'dialogue') action.choices?.forEach((choice, choiceIndex) => validateActions(choice.actions, `${target}.choices[${choiceIndex}].actions`, sourceMapId));
   });

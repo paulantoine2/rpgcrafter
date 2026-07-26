@@ -17,6 +17,34 @@ function migrateActions(actions: unknown, planeId: string): unknown {
   });
 }
 
+function migrateEventVisuals(files: SourceGameFiles): SourceGameFiles {
+  const maps = files.maps as Record<string, JsonObject> | null;
+  if (!maps || !Object.values(maps).some(map => Array.isArray(map.events) && map.events.some((event: JsonObject) => event.visual))) return files;
+  const next = structuredClone(files) as SourceGameFiles;
+  for (const map of Object.values((next.maps || {}) as Record<string, JsonObject>)) {
+    for (const event of Array.isArray(map.events) ? map.events : []) {
+      const visual = event.visual as JsonObject | undefined;
+      if (!event.sprite && visual?.type && visual.type !== 'exit') {
+        const image = visual.type === 'chest'
+          ? 'sprites/rpg-maker-mz/!Chest.png'
+          : visual.type === 'door'
+            ? 'sprites/rpg-maker-mz/!Door1.png'
+            : 'sprites/rpg-maker-mz/Actor1.png';
+        event.sprite = {
+          image,
+          characterIndex: visual.type === 'npc' && event.id === 'merchant' ? 1 : 0,
+          characterColumns: 4,
+          frameWidth: 48,
+          frameHeight: 48,
+          objectAligned: visual.type !== 'npc',
+        };
+      }
+      delete event.visual;
+    }
+  }
+  return next;
+}
+
 /** Converts the complete V0.4 authoring shape to V0.5 before strict validation. */
 function migrateV04(files: SourceGameFiles): SourceGameFiles {
   const manifest = files.manifest as JsonObject | null;
@@ -82,5 +110,5 @@ function migrateV05(files: SourceGameFiles): SourceGameFiles {
 
 /** Migrates every supported legacy authoring shape to the current schema. */
 export function migrateSourceGameFiles(files: SourceGameFiles): SourceGameFiles {
-  return migrateV05(migrateV04(files));
+  return migrateEventVisuals(migrateV05(migrateV04(files)));
 }

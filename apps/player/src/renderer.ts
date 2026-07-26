@@ -1,4 +1,4 @@
-import type { GameMap, MapEvent, PlanePosition, TileLayer, Vec2 } from './types.js';
+import type { Direction, GameMap, MapEvent, PlanePosition, TileLayer, Vec2 } from './types.js';
 
 const PLANE_Z_STRIDE = 1_000_000;
 export function planeRenderBase(map: GameMap, planeId: string) { return (map.planes.find(plane => plane.id === planeId)?.order ?? 0) * PLANE_Z_STRIDE; }
@@ -11,7 +11,7 @@ export type RenderParticle = { type: string; x: number; y: number; planeId: stri
 
 export type RenderState = {
   map: GameMap;
-  events: Array<MapEvent & { nearby: boolean }>;
+  events: Array<MapEvent & { nearby: boolean; movementDirection: Direction; movementMoving: boolean; movementAnimationTime: number; jumpHeight: number }>;
   enemies: RenderEnemy[];
   projectiles: RenderProjectile[];
   particles: RenderParticle[];

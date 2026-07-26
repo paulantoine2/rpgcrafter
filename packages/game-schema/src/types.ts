@@ -17,6 +17,7 @@ export type Action =
   | { type: 'healPlayer'; amount: number }
   | { type: 'toast'; text: string }
   | { type: 'teleport'; mapId: string; position: PlanePosition; resetMap: boolean }
+  | { type: 'movementRoute'; target: MovementTarget; route: MovementRoute }
   | { type: 'save' };
 
 export type MapEventTrigger =
@@ -26,9 +27,40 @@ export type MapEventTrigger =
   | { type: 'mapEnter'; delay: number };
 
 export type MapEventExecution = { mode: 'repeat' | 'oncePerVisit' | 'oncePerGame'; cooldown?: number };
-export type MapEventVisual =
-  | { type: 'exit' }
-  | { type: 'npc' | 'chest' | 'door'; name: string; color: string; radius: number };
+export type MoveSpeed = 1 | 2 | 3 | 4 | 5 | 6;
+export type MoveFrequency = 1 | 2 | 3 | 4 | 5;
+export type MovementCommand =
+  | { type: 'move'; direction: Direction | 'forward' | 'backward' | 'random' | 'towardPlayer' | 'awayFromPlayer' | 'left' | 'right' }
+  | { type: 'turn'; direction: Direction | 'left' | 'right' | 'around' | 'random' | 'towardPlayer' | 'awayFromPlayer' }
+  | { type: 'jump'; x: number; y: number }
+  | { type: 'wait'; duration: number };
+export type MovementRoute = {
+  commands: MovementCommand[];
+  repeat: boolean;
+  skippable: boolean;
+  wait: boolean;
+};
+export type AutonomousMovement = {
+  type: 'fixed' | 'random' | 'approach' | 'custom';
+  speed: MoveSpeed;
+  frequency: MoveFrequency;
+  route: MovementCommand[];
+};
+export type EventMovement = AutonomousMovement & {
+  walkingAnimation: boolean;
+  steppingAnimation: boolean;
+  directionFix: boolean;
+  through: boolean;
+};
+export type MovementTarget = { kind: 'player' } | { kind: 'thisEvent' } | { kind: 'event'; eventId: string };
+export type MapEventSprite = {
+  image: string;
+  characterIndex: number;
+  characterColumns: number;
+  frameWidth: number;
+  frameHeight: number;
+  objectAligned: boolean;
+};
 
 export type MapEvent = {
   id: string;
@@ -37,7 +69,8 @@ export type MapEvent = {
   trigger: MapEventTrigger;
   execution: MapEventExecution;
   activeWhen?: Condition[];
-  visual?: MapEventVisual;
+  sprite?: MapEventSprite;
+  movement?: EventMovement;
 };
 
 export type EnemySpawn = PlanePosition & { enemyId: string };

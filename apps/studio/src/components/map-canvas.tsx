@@ -1,8 +1,10 @@
 import { forwardRef, useEffect, useImperativeHandle, useRef, useState } from 'react';
 import { AnimatedSprite, Application, Assets, Container, Graphics, Rectangle, Sprite, Text, Texture } from 'pixi.js';
+import { Hand, HandGrab } from 'lucide-react';
 import 'pixi.js/advanced-blend-modes';
 import { A1_ANIMATION_FRAME_COUNT, A1_ANIMATION_FRAME_DURATION_MS, A1_ANIMATION_FRAME_STRIDE, A1_HORIZONTAL_ANIMATION_SEQUENCE, autotileVariant, buildNavigationGraph, navigationCellKey, navigationEdgeKey, resolveTerrainPlacements, type A1AnimationLayout, type AutotileRecipe, type AutotileTerrain, type AutotileTilesetDefinition, type AutotileVariant, type Direction, type GameMap, type PlanePosition, type TilesetDefinition, type Vec2 } from '@rpgcrafter/game-schema';
 import { ellipseCells, floodFillCells, navigationTargetAtWorldPosition, rectangleCells, snapAndClampEventPosition, terrainBrushPlacements, tileAtWorldPosition } from '@/lib/editor-geometry';
+import { mapCanvasCursor } from '@/lib/editor-cursor';
 import { terrainSelectionAt } from '@/lib/tile-palette';
 import type { DrawingTool, EditorMode, NavigationPaintMode, SelectedTerrain } from '@/components/studio-sidebar';
 import type { EventTool } from '@/components/studio-toolbar';
@@ -33,7 +35,6 @@ type Props = {
   navigationPaintMode: NavigationPaintMode;
   selectedEventId: string | null;
   onSelectEvent: (id: string) => void;
-  onActivateEvent: (id: string) => void;
   onCreateEvent: (x: number, y: number) => void;
   onMoveEvent: (id: string, x: number, y: number) => void;
   onDrawTiles: (cells: Vec2[], behavior: 'stamp' | 'fill') => void;
@@ -95,17 +96,20 @@ function transparentMapBackground(map: GameMap) {
 
 export const MapCanvas = forwardRef<MapCanvasHandle, Props>(function MapCanvas(props, ref) {
   const hostRef = useRef<HTMLDivElement>(null);
+  const cursorOverlayRef = useRef<HTMLDivElement>(null);
   const [loadError, setLoadError] = useState('');
   const runtimeRef = useRef<{
     app: Application;
     world: Container;
     grid: Graphics | null;
     atlases: Map<string, Texture>;
+    spriteAtlases: Map<string, Texture>;
     autotileTextures: Map<string, Texture>;
     scale: number;
     x: number;
     y: number;
     dragging: string | null;
+    dragPointerId: number | null;
     painting: boolean;
     lastPainted: string | null;
     shape: { tool: 'rectangle' | 'ellipse'; start: Vec2; current: Vec2 } | null;
@@ -114,11 +118,34 @@ export const MapCanvas = forwardRef<MapCanvasHandle, Props>(function MapCanvas(p
     brushHover: Graphics | null;
     navigationHover: Graphics | null;
     hoveredTileKey: string | null;
+    hoveringDraggable: boolean;
+    pointerInside: boolean;
     spacePressed: boolean;
     panning: { x: number; y: number; originX: number; originY: number } | null;
   } | null>(null);
   const propsRef = useRef(props);
   propsRef.current = props;
+
+  const updateCursor = () => {
+    const runtime = runtimeRef.current;
+    if (!runtime) return;
+    const { mode, eventTool, drawingTool, selectedTerrain } = propsRef.current;
+    runtime.app.canvas.style.cursor = mapCanvasCursor({
+      mode,
+      eventTool,
+      drawingTool,
+      hasSelectedTerrain: Boolean(selectedTerrain),
+      spacePressed: runtime.spacePressed,
+      panning: Boolean(runtime.panning),
+      dragging: Boolean(runtime.dragging),
+      hoveringDraggable: runtime.hoveringDraggable,
+    });
+    const cursorOverlay = cursorOverlayRef.current;
+    if (cursorOverlay) {
+      cursorOverlay.hidden = !runtime.spacePressed || !runtime.pointerInside;
+      cursorOverlay.dataset.panning = String(Boolean(runtime.panning));
+    }
+  };
 
   const redrawGrid = (grid: Graphics, map: GameMap, zoom: number, mode: CanvasMode, showGrid: boolean) => {
     const tileSize = map.tileSize;
@@ -184,7 +211,7 @@ export const MapCanvas = forwardRef<MapCanvasHandle, Props>(function MapCanvas(p
   const draw = () => {
     const runtime = runtimeRef.current;
     if (!runtime) return;
-    const { map, tilesets, selectedEventId, onSelectEvent, onActivateEvent, activeLayerId, eventTool, playerStartMapId, playerStart } = propsRef.current;
+    const { map, tilesets, selectedEventId, onSelectEvent, activeLayerId, eventTool, playerStartMapId, playerStart } = propsRef.current;
     const brushHover = runtime.brushHover;
     for (const child of runtime.world.removeChildren()) {
       if (child !== brushHover) child.destroy({ children: true });
@@ -286,24 +313,41 @@ export const MapCanvas = forwardRef<MapCanvasHandle, Props>(function MapCanvas(p
         marker.rect(x - event.trigger.size.w * tileSize / 2, y - event.trigger.size.h * tileSize / 2, event.trigger.size.w * tileSize, event.trigger.size.h * tileSize).fill({ color: '#22d3ee', alpha: 0.12 }).stroke({ color: '#67e8f9', width: 2 });
       }
       if (selected && event.trigger.type === 'interact') marker.circle(x, y, event.trigger.radius * tileSize).fill({ color: '#22d3ee', alpha: 0.08 }).stroke({ color: '#67e8f9', width: 2 });
-      const color = event.visual && event.visual.type !== 'exit' ? event.visual.color : event.visual?.type === 'exit' ? '#f59e0b' : '#a78bfa';
-      marker.circle(x, y, selected ? 14 : 11).fill({ color, alpha: 0.95 }).stroke({ color: selected ? '#ffffff' : '#111827', width: selected ? 4 : 2 });
+      if (event.sprite) {
+        const atlas = runtime.spriteAtlases.get(event.sprite.image);
+        if (atlas) {
+          const characterColumn = event.sprite.characterIndex % event.sprite.characterColumns;
+          const characterRow = Math.floor(event.sprite.characterIndex / event.sprite.characterColumns);
+          const texture = new Texture({ source: atlas.source, frame: new Rectangle((characterColumn * 3 + 1) * event.sprite.frameWidth, characterRow * 4 * event.sprite.frameHeight, event.sprite.frameWidth, event.sprite.frameHeight) });
+          const eventSprite = new Sprite(texture);
+          const scale = Math.min(1, tileSize / Math.max(event.sprite.frameWidth, event.sprite.frameHeight));
+          eventSprite.anchor.set(0.5, event.sprite.objectAligned ? 1 : 0.5);
+          eventSprite.position.set(x, event.sprite.objectAligned ? y + tileSize / 2 : y);
+          eventSprite.scale.set(scale);
+          runtime.world.addChild(eventSprite);
+        }
+      }
+      marker.circle(x, y, selected ? 14 : 11).fill({ color: event.sprite ? '#0891b2' : '#a78bfa', alpha: event.sprite ? 0.35 : 0.95 }).stroke({ color: selected ? '#ffffff' : '#111827', width: selected ? 4 : 2 });
       marker.moveTo(x, y - 5).lineTo(x + 5, y).lineTo(x, y + 5).lineTo(x - 5, y).closePath().fill('#ffffff');
       if (propsRef.current.mode === 'events' && eventTool === 'cursor') {
         marker.eventMode = 'static';
         marker.cursor = 'grab';
         marker.hitArea = new Rectangle(x - 18, y - 18, 36, 36);
-        marker.on('pointertap', pointer => { pointer.stopPropagation(); onActivateEvent(event.id); });
         marker.on('pointerdown', pointer => {
+          if (pointer.button !== 0) return;
+          if (runtime.spacePressed) return;
           pointer.stopPropagation();
           runtime.dragging = event.id;
+          runtime.dragPointerId = pointer.pointerId;
+          runtime.app.canvas.setPointerCapture(pointer.pointerId);
           marker.cursor = 'grabbing';
+          updateCursor();
           onSelectEvent(event.id);
         });
       }
       runtime.world.addChild(marker);
       if (selected) {
-        const label = new Text({ text: event.visual && event.visual.type !== 'exit' ? event.visual.name : event.id, style: { fill: '#f8fafc', fontFamily: 'Geist Variable, sans-serif', fontSize: 12, fontWeight: '600' } });
+        const label = new Text({ text: event.id, style: { fill: '#f8fafc', fontFamily: 'Geist Variable, sans-serif', fontSize: 12, fontWeight: '600' } });
         label.anchor.set(0.5, 1);
         label.position.set(x, y - 20);
         runtime.world.addChild(label);
@@ -329,19 +373,22 @@ export const MapCanvas = forwardRef<MapCanvasHandle, Props>(function MapCanvas(p
     let resizeObserver: ResizeObserver | undefined;
     let canvas: HTMLCanvasElement | undefined;
     let pointerLeaveHandler: (() => void) | undefined;
+    let pointerMoveHandler: ((event: PointerEvent) => void) | undefined;
+    let pointerUpHandler: ((event: PointerEvent) => void) | undefined;
     let contextMenuHandler: ((event: MouseEvent) => void) | undefined;
     const onKeyDown = (event: KeyboardEvent) => {
       const runtime = runtimeRef.current;
       if (!runtime || event.code !== 'Space' || document.activeElement !== runtime.app.canvas) return;
       event.preventDefault();
+      if (runtime.spacePressed) return;
       runtime.spacePressed = true;
-      runtime.app.canvas.style.cursor = 'grab';
+      updateCursor();
     };
     const onKeyUp = (event: KeyboardEvent) => {
       const runtime = runtimeRef.current;
       if (!runtime || event.code !== 'Space') return;
       runtime.spacePressed = false;
-      runtime.app.canvas.style.cursor = propsRef.current.mode === 'navigation' || (propsRef.current.mode === 'events' && propsRef.current.eventTool === 'playerStart') || (propsRef.current.mode === 'drawing' && (propsRef.current.drawingTool === 'eraser' || propsRef.current.selectedTerrain)) ? 'crosshair' : '';
+      updateCursor();
     };
     const stopPointer = (commitShape = false) => {
       const runtime = runtimeRef.current;
@@ -356,11 +403,13 @@ export const MapCanvas = forwardRef<MapCanvasHandle, Props>(function MapCanvas(p
       runtime.preview?.destroy();
       runtime.preview = null;
       runtime.shape = null;
+      if (runtime.dragPointerId !== null && runtime.app.canvas.hasPointerCapture(runtime.dragPointerId)) runtime.app.canvas.releasePointerCapture(runtime.dragPointerId);
       runtime.dragging = null;
+      runtime.dragPointerId = null;
       runtime.painting = false;
       runtime.lastPainted = null;
       runtime.panning = null;
-      runtime.app.canvas.style.cursor = propsRef.current.mode === 'navigation' || (propsRef.current.mode === 'events' && propsRef.current.eventTool === 'playerStart') || (propsRef.current.mode === 'drawing' && (propsRef.current.drawingTool === 'eraser' || propsRef.current.selectedTerrain)) ? 'crosshair' : '';
+      updateCursor();
     };
     const cancelPointer = () => {
       stopPointer(false);
@@ -382,7 +431,7 @@ export const MapCanvas = forwardRef<MapCanvasHandle, Props>(function MapCanvas(p
       if (!host) return;
       setLoadError('');
       const app = new Application();
-      await app.init({ resizeTo: host, antialias: false, background: '#9E9E9E', resolution: Math.min(devicePixelRatio || 1, 2), autoDensity: true });
+      await app.init({ resizeTo: host, antialias: false, backgroundAlpha: 0, resolution: Math.min(devicePixelRatio || 1, 2), autoDensity: true });
       if (cancelled) return app.destroy(true);
       host.appendChild(app.canvas);
       canvas = app.canvas;
@@ -399,9 +448,29 @@ export const MapCanvas = forwardRef<MapCanvasHandle, Props>(function MapCanvas(p
         atlas.source.scaleMode = 'nearest';
         atlases.set(tileset.id, atlas);
       }));
+      const spriteAtlases = new Map<string, Texture>();
+      await Promise.all([...new Set(propsRef.current.map.events.flatMap(event => event.sprite ? [event.sprite.image] : []))].map(async image => {
+        const url = propsRef.current.assetUrls[image];
+        if (!url) return;
+        const textureUrl = new URL(url, window.location.href);
+        textureUrl.hash = 'rpgcrafter-sprite.png';
+        const atlas = await Assets.load<Texture>({ src: textureUrl.href, format: 'png', parser: 'texture' });
+        atlas.source.scaleMode = 'nearest';
+        spriteAtlases.set(image, atlas);
+      }));
       const world = new Container();
       app.stage.addChild(world);
-      runtimeRef.current = { app, world, grid: null, atlases, autotileTextures: new Map(), scale: 1, x: 0, y: 0, dragging: null, painting: false, lastPainted: null, shape: null, preview: null, redrawShapePreview: null, brushHover: null, navigationHover: null, hoveredTileKey: null, spacePressed: false, panning: null };
+      runtimeRef.current = { app, world, grid: null, atlases, spriteAtlases, autotileTextures: new Map(), scale: 1, x: 0, y: 0, dragging: null, dragPointerId: null, painting: false, lastPainted: null, shape: null, preview: null, redrawShapePreview: null, brushHover: null, navigationHover: null, hoveredTileKey: null, hoveringDraggable: false, pointerInside: false, spacePressed: false, panning: null };
+      const applyPixiCursor = (hoveringDraggable: boolean) => {
+        const runtime = runtimeRef.current;
+        if (!runtime) return;
+        runtime.hoveringDraggable = hoveringDraggable;
+        updateCursor();
+      };
+      app.renderer.events.cursorStyles.default = () => applyPixiCursor(false);
+      app.renderer.events.cursorStyles.grab = () => applyPixiCursor(true);
+      app.renderer.events.cursorStyles.grabbing = () => applyPixiCursor(true);
+      updateCursor();
       const tileAt = (global: { x: number; y: number }) => {
         const runtime = runtimeRef.current;
         const { map } = propsRef.current;
@@ -427,6 +496,21 @@ export const MapCanvas = forwardRef<MapCanvasHandle, Props>(function MapCanvas(p
         if (runtime.lastPainted === key) return;
         runtime.lastPainted = key;
         propsRef.current.onDrawTiles([tile], 'stamp');
+      };
+      const canvasPoint = (event: PointerEvent) => {
+        const bounds = app.canvas.getBoundingClientRect();
+        return {
+          x: (event.clientX - bounds.left) * app.renderer.width / bounds.width,
+          y: (event.clientY - bounds.top) * app.renderer.height / bounds.height,
+        };
+      };
+      const moveDraggedEvent = (global: { x: number; y: number }) => {
+        const runtime = runtimeRef.current;
+        if (!runtime?.dragging) return;
+        const map = propsRef.current.map;
+        const local = runtime.world.toLocal(global);
+        const { x, y } = snapAndClampEventPosition({ x: local.x / map.tileSize, y: local.y / map.tileSize }, map.bounds);
+        propsRef.current.onMoveEvent(runtime.dragging, x, y);
       };
       const drawShapePreview = () => {
         const runtime = runtimeRef.current;
@@ -527,7 +611,7 @@ export const MapCanvas = forwardRef<MapCanvasHandle, Props>(function MapCanvas(p
         if (propsRef.current.mode === 'drawing' || propsRef.current.mode === 'navigation') {
           if (runtime.spacePressed) {
             runtime.panning = { x: pointer.global.x, y: pointer.global.y, originX: runtime.x, originY: runtime.y };
-            app.canvas.style.cursor = 'grabbing';
+            updateCursor();
           } else if (propsRef.current.mode === 'navigation') {
             const target = navigationTargetAt(pointer.global);
             if (target) propsRef.current.onNavigateTarget(target.x, target.y, target.edge);
@@ -551,6 +635,7 @@ export const MapCanvas = forwardRef<MapCanvasHandle, Props>(function MapCanvas(p
           return;
         }
         runtime.panning = { x: pointer.global.x, y: pointer.global.y, originX: runtime.x, originY: runtime.y };
+        updateCursor();
       });
       app.stage.on('click', pointer => {
         const { mode, map, activePlaneId, onCreateEvent } = propsRef.current;
@@ -565,10 +650,7 @@ export const MapCanvas = forwardRef<MapCanvasHandle, Props>(function MapCanvas(p
         if (!runtime) return;
         updateHoveredTile(pointer.global);
         if (runtime.dragging) {
-          const map = propsRef.current.map;
-          const local = runtime.world.toLocal(pointer.global);
-          const { x, y } = snapAndClampEventPosition({ x: local.x / map.tileSize, y: local.y / map.tileSize }, map.bounds);
-          propsRef.current.onMoveEvent(runtime.dragging, x, y);
+          moveDraggedEvent(pointer.global);
         } else if (runtime.painting) {
           drawAt(pointer.global);
           drawBrushHover(pointer.global);
@@ -594,10 +676,37 @@ export const MapCanvas = forwardRef<MapCanvasHandle, Props>(function MapCanvas(p
         if (restoreEraserHover) drawBrushHover(pointer.global);
       });
       app.stage.on('pointerupoutside', () => stopPointer(true));
+      pointerMoveHandler = event => {
+        const runtime = runtimeRef.current;
+        if (!runtime) return;
+        const hostBounds = hostRef.current?.getBoundingClientRect();
+        const cursorOverlay = cursorOverlayRef.current;
+        if (hostBounds && cursorOverlay) {
+          cursorOverlay.style.transform = `translate3d(${event.clientX - hostBounds.left - 12}px, ${event.clientY - hostBounds.top - 12}px, 0)`;
+        }
+        if (!runtime.pointerInside) {
+          runtime.pointerInside = true;
+          updateCursor();
+        }
+        if (!runtime.dragging || runtime.dragPointerId !== event.pointerId) return;
+        moveDraggedEvent(canvasPoint(event));
+      };
+      pointerUpHandler = event => {
+        const runtime = runtimeRef.current;
+        if (runtime?.dragPointerId === event.pointerId) stopPointer(true);
+      };
+      app.canvas.addEventListener('pointermove', pointerMoveHandler, true);
+      app.canvas.addEventListener('pointerup', pointerUpHandler, true);
+      app.canvas.addEventListener('pointercancel', pointerUpHandler, true);
       app.canvas.addEventListener('wheel', event => { event.preventDefault(); zoomBy(event.deltaY < 0 ? 1.12 : 1 / 1.12, event.offsetX, event.offsetY); }, { passive: false });
       contextMenuHandler = event => { if (propsRef.current.mode === 'drawing') event.preventDefault(); };
       app.canvas.addEventListener('contextmenu', contextMenuHandler);
-      pointerLeaveHandler = () => { updateHoveredTile(); cancelPointer(); };
+      pointerLeaveHandler = () => {
+        const runtime = runtimeRef.current;
+        if (runtime) runtime.pointerInside = false;
+        updateHoveredTile();
+        cancelPointer();
+      };
       app.canvas.addEventListener('pointerleave', pointerLeaveHandler);
       window.addEventListener('keydown', onKeyDown);
       window.addEventListener('keyup', onKeyUp);
@@ -617,6 +726,11 @@ export const MapCanvas = forwardRef<MapCanvasHandle, Props>(function MapCanvas(p
       cancelled = true;
       resizeObserver?.disconnect();
       if (pointerLeaveHandler) canvas?.removeEventListener('pointerleave', pointerLeaveHandler);
+      if (pointerMoveHandler) canvas?.removeEventListener('pointermove', pointerMoveHandler, true);
+      if (pointerUpHandler) {
+        canvas?.removeEventListener('pointerup', pointerUpHandler, true);
+        canvas?.removeEventListener('pointercancel', pointerUpHandler, true);
+      }
       if (contextMenuHandler) canvas?.removeEventListener('contextmenu', contextMenuHandler);
       propsRef.current.onHoverTile(null);
       window.removeEventListener('keydown', onKeyDown);
@@ -626,14 +740,14 @@ export const MapCanvas = forwardRef<MapCanvasHandle, Props>(function MapCanvas(p
       runtimeRef.current = null;
       runtime?.app.destroy(true, { children: true });
     };
-  }, [Object.values(props.assetUrls).join('|')]);
+  }, [Object.values(props.assetUrls).join('|'), props.map.id, props.map.events.map(event => event.sprite?.image || '').join('|')]);
 
   useEffect(() => { draw(); }, [props.map, props.tilesets, props.selectedEventId, props.mode, props.eventTool, props.playerStartMapId, props.playerStart, props.activePlaneId, props.activeLayerId, props.showGrid, props.dimInactiveLayers]);
   useEffect(() => { requestAnimationFrame(fit); }, [props.map.id]);
   useEffect(() => {
     const runtime = runtimeRef.current;
     if (runtime) {
-      runtime.app.canvas.style.cursor = props.mode === 'navigation' || (props.mode === 'events' && props.eventTool === 'playerStart') || (props.mode === 'drawing' && (props.drawingTool === 'eraser' || props.selectedTerrain)) ? 'crosshair' : '';
+      updateCursor();
       runtime.navigationHover?.removeFromParent();
       runtime.navigationHover?.destroy();
       runtime.navigationHover = null;
@@ -643,8 +757,12 @@ export const MapCanvas = forwardRef<MapCanvasHandle, Props>(function MapCanvas(p
     }
   }, [props.mode, props.eventTool, props.selectedTerrain, props.drawingTool, props.navigationPaintMode]);
 
-  return <div className="relative size-full overflow-hidden bg-[#9E9E9E]" aria-label={`${props.map.name} map editor`}>
+  return <div className="relative size-full overflow-hidden bg-card" aria-label={`${props.map.name} map editor`}>
     <div ref={hostRef} className="size-full" />
+    <div ref={cursorOverlayRef} hidden className="group pointer-events-none absolute top-0 left-0 z-20 size-6 text-white drop-shadow-[0_1px_1px_rgba(0,0,0,0.9)]" aria-hidden="true">
+      <Hand className="size-6 fill-black/45 stroke-[2.5] group-data-[panning=true]:hidden" />
+      <HandGrab className="hidden size-6 fill-black/45 stroke-[2.5] group-data-[panning=true]:block" />
+    </div>
     {loadError && <div className="absolute inset-x-4 top-4 z-10 border border-destructive/40 bg-background/95 p-3 text-xs text-destructive shadow-lg">{loadError}</div>}
   </div>;
 });

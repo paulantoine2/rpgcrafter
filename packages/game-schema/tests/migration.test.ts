@@ -42,3 +42,25 @@ describe('V0.4 migration', () => {
     expect(result.data.actors.player.start.planeId).toBe('plane-1');
   });
 });
+
+describe('legacy event visual migration', () => {
+  it('replaces visual metadata with a sprite reference', () => {
+    const files = {
+      manifest: read('manifest.json'), tilesets: read('tilesets.json'), maps: read('maps.json'), actors: read('actors.json'), enemies: read('enemies.json'),
+      skills: read('skills.json'), items: read('items.json'), quests: read('quests.json'), ui: read('ui.json'), events: read('events.json'), initialState: read('initial-state.json'),
+    } as SourceGameFiles;
+    const legacy = structuredClone(files) as any;
+    const event = legacy.maps.village.events.find((item: any) => item.id === 'mayor');
+    delete event.sprite;
+    event.visual = { type: 'npc', name: 'Mayor', color: '#fff', radius: 18 };
+
+    const result = parseSourceGame(legacy);
+
+    expect(result.success).toBe(true);
+    if (!result.success) return;
+    expect(result.data.maps.village.events.find(item => item.id === 'mayor')?.sprite).toMatchObject({
+      image: 'sprites/rpg-maker-mz/Actor1.png',
+      characterIndex: 0,
+    });
+  });
+});

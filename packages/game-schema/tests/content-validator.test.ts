@@ -40,6 +40,42 @@ describe('SourceGame validation', () => {
     ]));
   });
 
+  it('validates autonomous settings and structured movement routes', () => {
+    const files = sourceFiles();
+    const maps = files.maps as any;
+    const events = files.events as any;
+    maps.village.events[0].movement = {
+      type: 'custom', speed: 4, frequency: 3,
+      route: [{ type: 'move', direction: 'forward' }, { type: 'wait', duration: 0.25 }],
+      walkingAnimation: true, steppingAnimation: false, directionFix: false, through: false,
+    };
+    events.events[maps.village.events[0].scriptId].pages[0].actions.push({
+      type: 'movementRoute',
+      target: { kind: 'event', eventId: 'exit-east' },
+      route: {
+        commands: [{ type: 'turn', direction: 'left' }, { type: 'jump', x: 1, y: 0 }],
+        repeat: false, skippable: true, wait: true,
+      },
+    });
+    const validResult = parseSourceGame(files);
+    expect(validResult.success).toBe(true);
+
+    const invalid = sourceFiles();
+    const invalidMaps = invalid.maps as any;
+    const invalidEvents = invalid.events as any;
+    invalidEvents.events[invalidMaps.village.events[0].scriptId].pages[0].actions.push({
+      type: 'movementRoute',
+      target: { kind: 'event', eventId: 'missing' },
+      route: { commands: [{ type: 'move', direction: 'north' }], repeat: true, skippable: false, wait: true },
+    });
+    const result = parseSourceGame(invalid);
+    expect(result.success).toBe(false);
+    if (!result.success) {
+      expect(result.issues.some(issue => issue.message.includes('Unknown event'))).toBe(true);
+      expect(result.issues.some(issue => issue.message.includes('repeating movement route'))).toBe(true);
+    }
+  });
+
   it('validates map hierarchy parents and cycles', () => {
     const validFiles = sourceFiles();
     (validFiles.maps as any).path.parentMapId = 'village';

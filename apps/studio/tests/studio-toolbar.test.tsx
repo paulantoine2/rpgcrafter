@@ -28,10 +28,11 @@ describe('StudioToolbar', () => {
   it('switches between the event cursor and player-start placement', async () => {
     const onChangeEventTool = vi.fn();
     render(<StudioToolbar {...common} mode="events" onChangeEventTool={onChangeEventTool} />);
-    const toolbar = screen.getByRole('toolbar', { name: 'Event tools' });
-    expect(toolbar.querySelectorAll('button')).toHaveLength(2);
+    expect(screen.queryByRole('toolbar', { name: 'Event tools' })).not.toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Event cursor' })).toHaveAttribute('aria-pressed', 'true');
+    expect(screen.getByRole('button', { name: 'Event cursor' })).toHaveClass('size-9', 'rounded-md');
     expect(screen.getByRole('button', { name: 'Player start' })).toHaveAttribute('aria-pressed', 'false');
+    expect(screen.getByRole('button', { name: 'Player start' })).toHaveClass('size-9', 'rounded-md');
     await userEvent.click(screen.getByRole('button', { name: 'Player start' }));
     expect(onChangeEventTool).toHaveBeenCalledWith('playerStart');
   });

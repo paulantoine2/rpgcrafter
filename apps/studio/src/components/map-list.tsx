@@ -120,7 +120,7 @@ export function MapList({ game, selectedMapId, onSelect, onCreate, onRename, onM
     </div>;
   };
   const roots = childrenOf();
-  return <ResizableSidebarSection defaultSize="40%" title="Maps" icon={<MapIcon className="size-3.5" />} contentClassName="flex-1" actions={<NewMapPopover onCreate={onCreate} trigger={<Button type="button" variant="ghost" size="icon-xs" aria-label="Add map"><Plus /></Button>} />}>
+  return <ResizableSidebarSection defaultSize="40%" defaultOpen={false} title="Maps" contentClassName="flex-1" actions={<NewMapPopover onCreate={onCreate} trigger={<Button type="button" variant="ghost" size="icon-xs" aria-label="Add map"><Plus /></Button>} />}>
     <ScrollArea className="h-full min-h-0"><div role="tree" aria-label="Map hierarchy">{roots.map((map, index) => renderMap(map, index, roots))}</div></ScrollArea>
   </ResizableSidebarSection>;
 }

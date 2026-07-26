@@ -9560,9 +9560,6 @@
         },
         "execution": {
           "mode": "repeat"
-        },
-        "visual": {
-          "type": "exit"
         }
       },
       {
@@ -9580,11 +9577,13 @@
         "execution": {
           "mode": "repeat"
         },
-        "visual": {
-          "type": "npc",
-          "name": "Maire Elian",
-          "color": "#e4b677",
-          "radius": 18
+        "sprite": {
+          "image": "sprites/rpg-maker-mz/Actor1.png",
+          "characterIndex": 0,
+          "characterColumns": 4,
+          "frameWidth": 48,
+          "frameHeight": 48,
+          "objectAligned": false
         }
       },
       {
@@ -9602,11 +9601,13 @@
         "execution": {
           "mode": "repeat"
         },
-        "visual": {
-          "type": "npc",
-          "name": "Marchande",
-          "color": "#d6a8b9",
-          "radius": 18
+        "sprite": {
+          "image": "sprites/rpg-maker-mz/Actor1.png",
+          "characterIndex": 1,
+          "characterColumns": 4,
+          "frameWidth": 48,
+          "frameHeight": 48,
+          "objectAligned": false
         }
       }
     ],
@@ -10378,9 +10379,6 @@
         },
         "execution": {
           "mode": "repeat"
-        },
-        "visual": {
-          "type": "exit"
         }
       },
       {
@@ -10400,9 +10398,6 @@
         },
         "execution": {
           "mode": "repeat"
-        },
-        "visual": {
-          "type": "exit"
         }
       },
       {
@@ -10420,11 +10415,13 @@
         "execution": {
           "mode": "repeat"
         },
-        "visual": {
-          "type": "npc",
-          "name": "Cartographe",
-          "color": "#70c1b3",
-          "radius": 18
+        "sprite": {
+          "image": "sprites/rpg-maker-mz/Actor1.png",
+          "characterIndex": 0,
+          "characterColumns": 4,
+          "frameWidth": 48,
+          "frameHeight": 48,
+          "objectAligned": false
         }
       }
     ],
@@ -13474,9 +13471,6 @@
         },
         "execution": {
           "mode": "repeat"
-        },
-        "visual": {
-          "type": "exit"
         }
       },
       {
@@ -13501,11 +13495,13 @@
             "equals": false
           }
         ],
-        "visual": {
-          "type": "chest",
-          "name": "Coffre ancien",
-          "color": "#d8a74a",
-          "radius": 18
+        "sprite": {
+          "image": "sprites/rpg-maker-mz/!Chest.png",
+          "characterIndex": 0,
+          "characterColumns": 4,
+          "frameWidth": 48,
+          "frameHeight": 48,
+          "objectAligned": true
         }
       },
       {
@@ -13530,11 +13526,13 @@
             "equals": false
           }
         ],
-        "visual": {
-          "type": "door",
-          "name": "Porte du gardien",
-          "color": "#b7d5ec",
-          "radius": 25
+        "sprite": {
+          "image": "sprites/rpg-maker-mz/!Door1.png",
+          "characterIndex": 0,
+          "characterColumns": 4,
+          "frameWidth": 48,
+          "frameHeight": 48,
+          "objectAligned": true
         }
       },
       {
@@ -13552,11 +13550,13 @@
         "execution": {
           "mode": "repeat"
         },
-        "visual": {
-          "type": "npc",
-          "name": "Veilleur de la galerie",
-          "color": "#7aa2d6",
-          "radius": 18
+        "sprite": {
+          "image": "sprites/rpg-maker-mz/Actor1.png",
+          "characterIndex": 0,
+          "characterColumns": 4,
+          "frameWidth": 48,
+          "frameHeight": 48,
+          "objectAligned": false
         }
       },
       {
@@ -13574,11 +13574,13 @@
         "execution": {
           "mode": "repeat"
         },
-        "visual": {
-          "type": "npc",
-          "name": "Sonneur des cloches",
-          "color": "#d6b56f",
-          "radius": 18
+        "sprite": {
+          "image": "sprites/rpg-maker-mz/Actor1.png",
+          "characterIndex": 0,
+          "characterColumns": 4,
+          "frameWidth": 48,
+          "frameHeight": 48,
+          "objectAligned": false
         }
       }
     ],
@@ -17265,9 +17267,6 @@
         },
         "execution": {
           "mode": "repeat"
-        },
-        "visual": {
-          "type": "exit"
         }
       },
       {
@@ -17287,9 +17286,6 @@
         },
         "execution": {
           "mode": "repeat"
-        },
-        "visual": {
-          "type": "exit"
         }
       }
     ],
