@@ -10,9 +10,13 @@ type SidebarSectionProps = { title: string; icon?: ReactNode; actions?: ReactNod
 export function SectionHeader({ className, ...props }: ComponentProps<'div'>) {
   return <div
     data-slot="section-header"
-    className={cn('flex h-12 shrink-0 items-center gap-2 border-t px-4 py-4 text-[11px] font-semibold text-foreground', className)}
+    className={cn('flex h-12 shrink-0 items-center gap-2 border-t px-4 py-4 pr-3 text-[11px] font-semibold text-foreground', className)}
     {...props}
   />;
+}
+
+export function SectionHeaderActions({ className, ...props }: ComponentProps<'div'>) {
+  return <div data-slot="section-header-actions" className={cn('ml-auto flex items-center gap-0.5', className)} {...props} />;
 }
 
 export function SidebarSection({ title, icon, actions, children, collapsible = true, defaultOpen = true, open: controlledOpen, onOpenChange, topBorder = true, className, contentClassName }: SidebarSectionProps) {
@@ -32,14 +36,14 @@ export function SidebarSection({ title, icon, actions, children, collapsible = t
   if (!collapsible) return <section data-slot="sidebar-section" className={cn('flex min-h-0 flex-col', className)} onScrollCapture={handleScroll}>
     <SectionHeader className={headerClassName}>
       {icon}{title}
-      {actions && <span className="ml-auto">{actions}</span>}
+      {actions && <SectionHeaderActions>{actions}</SectionHeaderActions>}
     </SectionHeader>
     <div data-slot="section-content" className={cn('min-h-0 flex-1 overflow-hidden', contentClassName)}>{children}</div>
   </section>;
   return <Collapsible data-slot="sidebar-section" open={open} onOpenChange={setOpen} className={cn('flex min-h-0 flex-col', className)} onScrollCapture={handleScroll}>
     <SectionHeader className={cn('group', headerClassName)}>
       <CollapsibleTrigger className="relative flex min-w-0 flex-1 items-center gap-2 text-left outline-none focus-visible:ring-1 focus-visible:ring-ring"><ChevronRight className={cn('absolute -left-3.5 size-3 opacity-0 transition-transform group-hover:opacity-100 group-focus-within:opacity-100', open && 'rotate-90')} />{icon}{title}</CollapsibleTrigger>
-      {actions}
+      {actions && <SectionHeaderActions>{actions}</SectionHeaderActions>}
     </SectionHeader>
     <CollapsibleContent data-slot="section-content" className={cn('min-h-0 flex-1 overflow-hidden', contentClassName)}>{children}</CollapsibleContent>
   </Collapsible>;

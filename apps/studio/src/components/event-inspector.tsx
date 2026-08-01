@@ -17,7 +17,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { IconButtonTooltip, Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import type { LibrarySprite } from '@/components/asset-manager-dialog';
 import { EventSpritePicker, SpritePreview, spriteReference } from '@/components/event-sprite-picker';
-import { SectionHeader } from '@/components/sidebar-section';
+import { SectionHeader, SectionHeaderActions } from '@/components/sidebar-section';
 
 type Props = {
   game: SourceGame;
@@ -48,7 +48,7 @@ const triggerTypes = [
 
 function Section({ title, children, actions, first = false }: { title: string; children: ReactNode; actions?: ReactNode; first?: boolean }) {
   return <section>
-    <SectionHeader className={`${first ? 'border-t-0 ' : ''}${actions ? 'pr-3' : ''}`}>{title}{actions && <span className="ml-auto">{actions}</span>}</SectionHeader>
+    <SectionHeader className={first ? 'border-t-0' : undefined}>{title}{actions && <SectionHeaderActions>{actions}</SectionHeaderActions>}</SectionHeader>
     {children != null && children !== false && <div className="space-y-3 px-4 pb-4">{children}</div>}
   </section>;
 }
@@ -79,7 +79,7 @@ function move<T>(items: T[], index: number, delta: number) {
 }
 
 function RowActions({ index, count, onMove, onRemove, removeDisabled }: { index: number; count: number; onMove: (delta: number) => void; onRemove: () => void; removeDisabled?: boolean }) {
-  return <div className="flex items-center gap-1">
+  return <div className="flex items-center gap-0.5">
     <IconButtonTooltip label="Move up"><Button type="button" variant="ghost" size="icon-sm" disabled={index === 0} onClick={() => onMove(-1)} aria-label="Move up"><ArrowUp /></Button></IconButtonTooltip>
     <IconButtonTooltip label="Move down"><Button type="button" variant="ghost" size="icon-sm" disabled={index === count - 1} onClick={() => onMove(1)} aria-label="Move down"><ArrowDown /></Button></IconButtonTooltip>
     <IconButtonTooltip label="Remove"><Button type="button" variant="ghost" size="icon-sm" disabled={removeDisabled} onClick={onRemove} aria-label="Remove"><Trash2 /></Button></IconButtonTooltip>
@@ -152,7 +152,7 @@ function NewSwitchPopover({ anchor, onCreate }: { anchor: RefObject<HTMLDivEleme
     <Popover.Portal>
       <Popover.Positioner anchor={anchor} positionMethod="fixed" side="left" align="start" sideOffset={0} collisionAvoidance={{ side: 'none', align: 'shift', fallbackAxisSide: 'none' }} className="z-50">
         <Popover.Popup className="w-56 bg-background text-foreground shadow-md ring-1 ring-foreground/10 outline-none">
-          <SectionHeader className="h-9 border-t-0 border-b px-3 py-0 text-xs">New switch</SectionHeader>
+          <SectionHeader className="border-t-0 border-b">New switch</SectionHeader>
           <div className="space-y-3 p-3">
             <label className="grid gap-1.5 text-[10px] text-muted-foreground">Name<Input autoFocus value={name} onChange={event => setName(event.target.value)} onKeyDown={event => { if (event.key === 'Enter') create(); }} aria-label="Switch name" /></label>
             <Button type="button" size="sm" className="w-full" disabled={!name.trim()} onClick={create} aria-label="Confirm switch creation">Create switch</Button>
@@ -181,16 +181,16 @@ function SwitchPicker({ game, value, equals, onChange, onCreate, autoOpen = fals
     <Popover.Portal>
       <Popover.Positioner anchor={() => conditionPickerAnchor(triggerRef.current)} positionMethod="fixed" side="left" align="start" sideOffset={0} collisionAvoidance={{ side: 'none', align: 'shift', fallbackAxisSide: 'none' }} className="z-50">
         <Popover.Popup ref={popupRef} className="w-64 bg-background text-foreground shadow-md ring-1 ring-foreground/10 outline-none">
-          <SectionHeader className="h-9 border-t-0 border-b px-3 py-0 pr-2 text-xs">
+          <SectionHeader className="border-t-0 border-b">
             <span className="min-w-0 flex-1">Switches</span>
-            <NewSwitchPopover anchor={popupRef} onCreate={name => {
+            <SectionHeaderActions><NewSwitchPopover anchor={popupRef} onCreate={name => {
               const id = onCreate(name);
               if (id) {
                 onChange(id);
                 setOpen(false);
               }
             }} />
-            <IconButtonTooltip label="Close switch picker"><Button type="button" variant="ghost" size="icon-sm" aria-label="Close switch picker" onClick={() => setOpen(false)}><X /></Button></IconButtonTooltip>
+            <IconButtonTooltip label="Close switch picker"><Button type="button" variant="ghost" size="icon-sm" aria-label="Close switch picker" onClick={() => setOpen(false)}><X /></Button></IconButtonTooltip></SectionHeaderActions>
           </SectionHeader>
           <div className="flex h-9 items-center gap-2 border-b px-3">
             <Search className="size-3.5 shrink-0 text-muted-foreground" />
@@ -225,7 +225,7 @@ function NewVariablePopover({ anchor, onCreate }: { anchor: RefObject<HTMLDivEle
     <Popover.Portal>
       <Popover.Positioner anchor={anchor} positionMethod="fixed" side="left" align="start" sideOffset={0} collisionAvoidance={{ side: 'none', align: 'shift', fallbackAxisSide: 'none' }} className="z-50">
         <Popover.Popup className="w-56 bg-background text-foreground shadow-md ring-1 ring-foreground/10 outline-none">
-          <SectionHeader className="h-9 border-t-0 border-b px-3 py-0 text-xs">New variable</SectionHeader>
+          <SectionHeader className="border-t-0 border-b">New variable</SectionHeader>
           <div className="space-y-3 p-3">
             <label className="grid gap-1.5 text-[10px]">Name<Input autoFocus value={name} onChange={event => setName(event.target.value)} onKeyDown={event => { if (event.key === 'Enter') create(); }} aria-label="Variable name" /></label>
             <Button type="button" size="sm" className="w-full" disabled={!name.trim()} onClick={create} aria-label="Confirm variable creation">Create variable</Button>
@@ -263,16 +263,16 @@ function VariablePicker({ game, condition, onChange, onCreate, autoOpen = false,
     <Popover.Portal>
       <Popover.Positioner anchor={() => conditionPickerAnchor(triggerRef.current)} positionMethod="fixed" side="left" align="start" sideOffset={0} collisionAvoidance={{ side: 'none', align: 'shift', fallbackAxisSide: 'none' }} className="z-50">
         <Popover.Popup ref={popupRef} className="w-64 bg-background text-foreground shadow-md ring-1 ring-foreground/10 outline-none">
-          <SectionHeader className="h-9 border-t-0 border-b px-3 py-0 pr-2 text-xs">
+          <SectionHeader className="border-t-0 border-b">
             <span className="min-w-0 flex-1">Variables</span>
-            <NewVariablePopover anchor={popupRef} onCreate={name => {
+            <SectionHeaderActions><NewVariablePopover anchor={popupRef} onCreate={name => {
               const id = onCreate(name);
               if (id) {
                 onChange(id);
                 setOpen(false);
               }
             }} />
-            <IconButtonTooltip label="Close variable picker"><Button type="button" variant="ghost" size="icon-sm" aria-label="Close variable picker" onClick={() => setOpen(false)}><X /></Button></IconButtonTooltip>
+            <IconButtonTooltip label="Close variable picker"><Button type="button" variant="ghost" size="icon-sm" aria-label="Close variable picker" onClick={() => setOpen(false)}><X /></Button></IconButtonTooltip></SectionHeaderActions>
           </SectionHeader>
           <div className="flex h-9 items-center gap-2 border-b px-3">
             <Search className="size-3.5 shrink-0 text-muted-foreground" />
@@ -304,9 +304,9 @@ function ItemPicker({ game, value, amount, onChange }: { game: SourceGame; value
     <Popover.Portal>
       <Popover.Positioner anchor={() => conditionPickerAnchor(triggerRef.current)} positionMethod="fixed" side="left" align="start" sideOffset={0} collisionAvoidance={{ side: 'none', align: 'shift', fallbackAxisSide: 'none' }} className="z-50">
         <Popover.Popup className="w-64 bg-background text-foreground shadow-md ring-1 ring-foreground/10 outline-none">
-          <SectionHeader className="h-9 border-t-0 border-b px-3 py-0 pr-2 text-xs">
+          <SectionHeader className="border-t-0 border-b">
             <span className="min-w-0 flex-1">Items</span>
-            <IconButtonTooltip label="Close item picker"><Button type="button" variant="ghost" size="icon-sm" aria-label="Close item picker" onClick={() => setOpen(false)}><X /></Button></IconButtonTooltip>
+            <SectionHeaderActions><IconButtonTooltip label="Close item picker"><Button type="button" variant="ghost" size="icon-sm" aria-label="Close item picker" onClick={() => setOpen(false)}><X /></Button></IconButtonTooltip></SectionHeaderActions>
           </SectionHeader>
           <div className="flex h-9 items-center gap-2 border-b px-3">
             <Search className="size-3.5 shrink-0 text-muted-foreground" />
@@ -347,9 +347,9 @@ function ConditionSettings({ game, condition, onChange, onRenameSwitch, onRename
     <Popover.Portal>
       <Popover.Positioner anchor={() => conditionPickerAnchor(triggerRef.current)} positionMethod="fixed" side="left" align="start" sideOffset={0} collisionAvoidance={{ side: 'none', align: 'shift', fallbackAxisSide: 'none' }} className="z-50">
         <Popover.Popup className="w-72 bg-background text-foreground shadow-md ring-1 ring-foreground/10 outline-none">
-          <SectionHeader className="h-9 border-t-0 border-b px-3 py-0 pr-2 text-xs">
+          <SectionHeader className="border-t-0 border-b">
             <span className="min-w-0 flex-1">{kindLabel} condition</span>
-            <IconButtonTooltip label="Close condition settings"><Button type="button" variant="ghost" size="icon-sm" aria-label="Close condition settings" onClick={() => setOpen(false)}><X /></Button></IconButtonTooltip>
+            <SectionHeaderActions><IconButtonTooltip label="Close condition settings"><Button type="button" variant="ghost" size="icon-sm" aria-label="Close condition settings" onClick={() => setOpen(false)}><X /></Button></IconButtonTooltip></SectionHeaderActions>
           </SectionHeader>
           <div className="space-y-3 p-3">
             <label className="grid gap-1.5 text-[10px]">
@@ -381,8 +381,8 @@ function ConditionsEditor({ game, value, onChange, onCreateSwitch, onCreateVaria
       {condition.kind === 'variable' && <div className="min-w-0 flex-1">
         <VariablePicker game={game} condition={condition} onChange={id => update(index, { ...condition, id })} onCreate={onCreateVariable} autoOpen={autoOpenVariableIndex === index} onAutoOpen={onAutoOpenVariable} />
       </div>}
-      <ConditionSettings game={game} condition={condition} onChange={next => update(index, next)} onRenameSwitch={onRenameSwitch} onRenameVariable={onRenameVariable} onRenameItem={onRenameItem} />
-      <IconButtonTooltip label={`Remove ${condition.kind} condition`}><Button type="button" variant="ghost" size="icon-sm" className="-mr-1 shrink-0" onClick={() => onChange(value.filter((_, itemIndex) => itemIndex !== index))} aria-label={`Remove ${condition.kind} condition`}><Minus /></Button></IconButtonTooltip>
+      <div className="-mr-1 flex shrink-0 items-center gap-0.5"><ConditionSettings game={game} condition={condition} onChange={next => update(index, next)} onRenameSwitch={onRenameSwitch} onRenameVariable={onRenameVariable} onRenameItem={onRenameItem} />
+        <IconButtonTooltip label={`Remove ${condition.kind} condition`}><Button type="button" variant="ghost" size="icon-sm" className="shrink-0" onClick={() => onChange(value.filter((_, itemIndex) => itemIndex !== index))} aria-label={`Remove ${condition.kind} condition`}><Minus /></Button></IconButtonTooltip></div>
     </div>)}
   </div>;
 }
@@ -452,9 +452,9 @@ function AutonomousMovementSettings({ movement, onChange }: { movement: MapEvent
     <Popover.Portal>
       <Popover.Positioner anchor={() => conditionPickerAnchor(triggerRef.current)} positionMethod="fixed" side="left" align="start" sideOffset={0} collisionAvoidance={{ side: 'none', align: 'shift', fallbackAxisSide: 'none' }} className="z-50">
         <Popover.Popup className="w-80 bg-background text-foreground shadow-md ring-1 ring-foreground/10 outline-none">
-          <SectionHeader className="h-9 border-t-0 border-b px-3 py-0 pr-2 text-xs">
+          <SectionHeader className="border-t-0 border-b">
             <span className="min-w-0 flex-1">Autonomous movement</span>
-            <IconButtonTooltip label="Close autonomous movement settings"><Button type="button" variant="ghost" size="icon-sm" aria-label="Close autonomous movement settings" onClick={() => setOpen(false)}><X /></Button></IconButtonTooltip>
+            <SectionHeaderActions><IconButtonTooltip label="Close autonomous movement settings"><Button type="button" variant="ghost" size="icon-sm" aria-label="Close autonomous movement settings" onClick={() => setOpen(false)}><X /></Button></IconButtonTooltip></SectionHeaderActions>
           </SectionHeader>
           <div className="grid grid-cols-2 gap-4 p-3">
             <label className="grid gap-2 text-[10px]">Speed · {movement.speed}<Slider aria-label="Movement speed" value={movement.speed} min={1} max={6} step={1} onValueChange={speed => onChange({ ...movement, speed: speed as MapEventPage['movement']['speed'] })} /></label>

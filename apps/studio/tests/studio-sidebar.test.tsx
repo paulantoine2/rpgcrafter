@@ -70,6 +70,8 @@ describe('StudioSidebar', () => {
     expect(eventsHeader).toHaveClass('border-t-0');
     expect(eventsHeader).toHaveClass('px-4', 'py-4', 'h-12');
     expect(mapsHeader).toHaveClass('px-4', 'py-4', 'h-12');
+    expect(eventsHeader).toHaveClass('pr-3');
+    expect(mapsHeader).toHaveClass('pr-3');
     expect(mapsTrigger.querySelector('.lucide-chevron-right')).toHaveClass('absolute', '-left-3.5');
     expect(mapsHeader.closest('[data-panel]')).toHaveAttribute('data-disabled', 'true');
     expect(mapsResizeHandle).toHaveAttribute('aria-disabled', 'true');
@@ -216,11 +218,13 @@ describe('StudioSidebar', () => {
     const addMap = screen.getByRole('button', { name: 'Add map' });
     expect(addMap).toHaveAttribute('data-base-ui-tooltip-trigger');
     await userEvent.click(addMap);
+    expect(screen.getByText('New map').closest('[data-slot="section-header"]')).toHaveClass('h-12', 'px-4', 'py-4');
     await userEvent.click(screen.getByRole('button', { name: 'Create map' }));
     expect(onCreateMap).toHaveBeenCalledWith(20, 15);
     const mapSettings = screen.getByRole('button', { name: 'Map settings: Village' });
     expect(mapSettings).toHaveAttribute('data-base-ui-tooltip-trigger');
     await userEvent.click(mapSettings);
+    expect(screen.getByText('Map settings').closest('[data-slot="section-header"]')).toHaveClass('h-12', 'px-4', 'py-4');
     await userEvent.click(screen.getByRole('button', { name: 'Apply size' }));
     expect(onResizeMap).toHaveBeenCalledWith('village', 10, 8);
   });

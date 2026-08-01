@@ -144,6 +144,7 @@ describe('EventInspector pages', () => {
 
     const addCondition = screen.getByRole('button', { name: 'Add condition' });
     expect(screen.getByText('Conditions').closest('[data-slot="section-header"]')).toContainElement(addCondition);
+    expect(addCondition.closest('[data-slot="section-header-actions"]')).toHaveClass('gap-0.5');
     expect(addCondition).toHaveAttribute('data-base-ui-tooltip-trigger');
     expect(screen.queryByRole('button', { name: 'Move up' })).not.toBeInTheDocument();
     expect(screen.queryByRole('button', { name: 'Move down' })).not.toBeInTheDocument();
@@ -178,6 +179,7 @@ describe('EventInspector pages', () => {
 
     await user.click(itemPicker);
     const search = await screen.findByRole('textbox', { name: 'Search items' });
+    expect(screen.getByText('Items').closest('[data-slot="section-header"]')).toHaveClass('h-12', 'px-4', 'py-4');
     expect(screen.getByRole('option', { name: 'Potion' })).toHaveClass('bg-primary/15');
     expect(screen.getByRole('option', { name: 'Silver Sword' })).toBeInTheDocument();
 
@@ -196,6 +198,7 @@ describe('EventInspector pages', () => {
 
     const search = await screen.findByRole('textbox', { name: 'Search switches' });
     const picker = screen.getByRole('dialog');
+    expect(screen.getByText('Switches').closest('[data-slot="section-header"]')).toHaveClass('h-12', 'px-4', 'py-4');
     const selectedOption = screen.getByRole('option', { name: 'Door open' });
     expect(picker).toHaveClass('bg-background');
     expect(picker).not.toHaveClass('p-2');
@@ -204,6 +207,7 @@ describe('EventInspector pages', () => {
     expect(screen.queryByText('door-open')).not.toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Create switch' })).toHaveAttribute('data-base-ui-tooltip-trigger');
     expect(screen.getByRole('button', { name: 'Close switch picker' })).toHaveAttribute('data-base-ui-tooltip-trigger');
+    expect(screen.getByRole('button', { name: 'Create switch' }).closest('[data-slot="section-header-actions"]')).toHaveClass('gap-0.5');
     expect(screen.getByRole('option', { name: 'Boss defeated' })).toBeInTheDocument();
 
     await user.click(screen.getByRole('button', { name: 'Close switch picker' }));
@@ -237,6 +241,7 @@ describe('EventInspector pages', () => {
 
     await user.click(screen.getByRole('button', { name: 'Switch condition settings' }));
     expect(await screen.findByText('Switch condition')).toBeInTheDocument();
+    expect(screen.getByText('Switch condition').closest('[data-slot="section-header"]')).toHaveClass('h-12', 'px-4', 'py-4');
     expect(screen.getByText('Switch condition').closest('[role="dialog"]')).toHaveClass('bg-background');
     expect(screen.getByRole('button', { name: 'Close condition settings' })).toBeInTheDocument();
     const expectedValue = await screen.findByLabelText('Expected switch value');
