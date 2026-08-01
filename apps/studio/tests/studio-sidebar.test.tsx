@@ -27,6 +27,7 @@ const map: GameMap = {
 };
 const game = {
   maps: { village: map },
+  initialState: { switches: {}, variables: {}, quests: {}, inventory: {}, equipment: {} },
   tilesets: {
     'outside-a2': {
       id: 'outside-a2', name: 'Outside A2', category: 'Sol', kind: 'a2', image: 'tilesets/outside-a2.png', tileSize: 48, quarterSize: 24, columns: 16, rows: 12,
@@ -62,7 +63,7 @@ describe('StudioSidebar', () => {
     const mapsTrigger = screen.getByRole('button', { name: 'Maps' });
     const mapsHeader = mapsTrigger.closest<HTMLElement>('[data-slot="section-header"]')!;
     const eventsHeader = screen.getByText('Events').closest<HTMLElement>('[data-slot="section-header"]')!;
-    const resizeHandle = screen.getByRole('separator');
+    const mapsResizeHandle = screen.getByRole('separator');
 
     expect(mapsTrigger).toHaveAttribute('aria-expanded', 'false');
     expect(mapsHeader).toHaveClass('border-t-0');
@@ -71,7 +72,7 @@ describe('StudioSidebar', () => {
     expect(mapsHeader).toHaveClass('px-4', 'py-4', 'h-12');
     expect(mapsTrigger.querySelector('.lucide-chevron-right')).toHaveClass('absolute', '-left-3.5');
     expect(mapsHeader.closest('[data-panel]')).toHaveAttribute('data-disabled', 'true');
-    expect(resizeHandle).toHaveAttribute('aria-disabled', 'true');
+    expect(mapsResizeHandle).toHaveAttribute('aria-disabled', 'true');
     expect(eventsHeader.nextElementSibling).toHaveClass('min-h-0', 'flex-1', 'overflow-hidden');
     expect(eventsHeader.nextElementSibling?.querySelector('[data-slot="scroll-area"]')).toBeInTheDocument();
     expect(eventsHeader.nextElementSibling).not.toContainElement(eventsHeader);
@@ -84,7 +85,7 @@ describe('StudioSidebar', () => {
   it('only enables resizing while the resizable section is open', async () => {
     render(<StudioSidebar {...common} mode="events" />);
     const mapsTrigger = screen.getByRole('button', { name: 'Maps' });
-    const resizeHandle = screen.getByRole('separator');
+    const resizeHandle = screen.getAllByRole('separator')[0];
     const mapsPanel = mapsTrigger.closest('[data-panel]');
 
     expect(mapsPanel).toHaveAttribute('data-disabled', 'true');
@@ -121,9 +122,12 @@ describe('StudioSidebar', () => {
   it('lists map events and synchronizes selection', async () => {
     const onSelectEvent = vi.fn();
     const { container } = render(<StudioSidebar {...common} mode="events" onSelectEvent={onSelectEvent} />);
-    expect(container.querySelector('[data-slot="event-sprite"] [style*="background-image"]')).toHaveStyle({ backgroundImage: 'url("actor1.png")' });
+    const eventRow = container.querySelector<HTMLElement>('[data-event-row-id="mayor"]')!;
+    const eventSprite = eventRow.querySelector<HTMLElement>('[data-slot="event-sprite"]')!;
+    expect(eventRow).toHaveRole('button');
+    expect(eventSprite.querySelector('[style*="background-image"]')).toHaveStyle({ backgroundImage: 'url("actor1.png")' });
     expect(screen.queryByText('interact')).not.toBeInTheDocument();
-    await userEvent.click(screen.getByRole('button', { name: /mayor/ }));
+    await userEvent.click(eventSprite);
     expect(onSelectEvent).toHaveBeenCalledWith('mayor');
   });
 
@@ -209,10 +213,14 @@ describe('StudioSidebar', () => {
     const onResizeMap = vi.fn();
     render(<StudioSidebar {...common} mode="drawing" onCreateMap={onCreateMap} onResizeMap={onResizeMap} />);
     await expandMaps();
-    await userEvent.click(screen.getByRole('button', { name: 'Add map' }));
+    const addMap = screen.getByRole('button', { name: 'Add map' });
+    expect(addMap).toHaveAttribute('data-base-ui-tooltip-trigger');
+    await userEvent.click(addMap);
     await userEvent.click(screen.getByRole('button', { name: 'Create map' }));
     expect(onCreateMap).toHaveBeenCalledWith(20, 15);
-    await userEvent.click(screen.getByRole('button', { name: 'Map settings: Village' }));
+    const mapSettings = screen.getByRole('button', { name: 'Map settings: Village' });
+    expect(mapSettings).toHaveAttribute('data-base-ui-tooltip-trigger');
+    await userEvent.click(mapSettings);
     await userEvent.click(screen.getByRole('button', { name: 'Apply size' }));
     expect(onResizeMap).toHaveBeenCalledWith('village', 10, 8);
   });

@@ -11,6 +11,7 @@ export type DraftDocumentName = typeof DRAFT_DOCUMENTS[number];
 type ProjectRecord = {
   id: string;
   schema: 1;
+  sourceSchemaVersion?: string;
   gameId: string;
   gameVersion: string;
   revision: number;
@@ -125,13 +126,16 @@ export function createDraftRepository(options: DraftRepositoryOptions = {}) {
       const documents = transaction.objectStore('documents');
       const id = draftProjectId(snapshot);
       const existing = await requestResult(projects.get(id)) as ProjectRecord | undefined;
-      const initialize = !existing || existing.documentNames.length !== DRAFT_DOCUMENTS.length;
+      const initialize = !existing
+        || existing.documentNames.length !== DRAFT_DOCUMENTS.length
+        || existing.sourceSchemaVersion !== snapshot.manifest.schemaVersion;
       const names = initialize ? [...DRAFT_DOCUMENTS] : requestedDocuments;
       const revision = (existing?.revision || 0) + 1;
       const files = sourceFiles(snapshot) as Record<keyof SourceGameFiles, unknown>;
       for (const name of names) documents.put({ projectId: id, name, revision, value: files[DOCUMENT_KEYS[name]] } satisfies DocumentRecord);
       projects.put({
-        id, schema: 1, gameId: snapshot.manifest.gameId, gameVersion: snapshot.manifest.version,
+        id, schema: 1, sourceSchemaVersion: snapshot.manifest.schemaVersion,
+        gameId: snapshot.manifest.gameId, gameVersion: snapshot.manifest.version,
         revision, updatedAt: now(), documentNames: [...DRAFT_DOCUMENTS],
       } satisfies ProjectRecord);
       await transactionDone(transaction);

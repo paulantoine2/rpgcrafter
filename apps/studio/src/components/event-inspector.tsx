@@ -1,14 +1,20 @@
-import { useEffect, useState, type ReactNode } from 'react';
-import type { Condition, ContentIssue, EventCommand, MapEvent, MapEventPage, MovementCommand, MovementRoute, SourceGame } from '@rpgcrafter/game-schema';
-import { ArrowDown, ArrowUp, Plus, Trash2 } from 'lucide-react';
+import { useEffect, useRef, useState, type ReactNode, type RefObject } from 'react';
+import type { Condition, ContentIssue, EventCommand, MapEvent, MapEventPage, MovementCommand, MovementRoute, SourceGame, VariableComparison } from '@rpgcrafter/game-schema';
+import { ArrowDown, ArrowUp, ChevronsUpDown, Copy, Footprints, GitFork, Hand, Hash, ImageIcon, Minus, MousePointerClick, Package, Play, Plus, Search, Settings2, ToggleLeft, Trash2, X } from 'lucide-react';
+import { Popover } from '@base-ui/react/popover';
 import { Button } from '@/components/ui/button';
+import { Attachment, AttachmentAction, AttachmentActions, AttachmentContent, AttachmentDescription, AttachmentMedia, AttachmentTitle, AttachmentTrigger } from '@/components/ui/attachment';
 import { Checkbox } from '@/components/ui/checkbox';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Slider } from '@/components/ui/slider';
+import { Switch } from '@/components/ui/switch';
+import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Textarea } from '@/components/ui/textarea';
+import { IconButtonTooltip, Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import type { LibrarySprite } from '@/components/asset-manager-dialog';
 import { EventSpritePicker, SpritePreview, spriteReference } from '@/components/event-sprite-picker';
 import { SectionHeader } from '@/components/sidebar-section';
@@ -23,15 +29,27 @@ type Props = {
   onChangeEvent: (event: MapEvent) => void;
   onSelectPage?: (index: number) => void;
   onImportSprite: (sprite: LibrarySprite) => Promise<void>;
+  onCreateSwitch: (name: string) => string;
+  onCreateVariable: (name: string) => string;
+  onRenameSwitch: (id: string, name: string) => void;
+  onRenameVariable: (id: string, name: string) => void;
+  onRenameItem: (id: string, name: string) => void;
 };
 
-const commandTypes: EventCommand['type'][] = ['dialogue', 'movementRoute', 'wait', 'setFlag', 'setQuestState', 'giveItem', 'removeItem', 'unlockSkill', 'healPlayer', 'toast', 'teleport', 'save'];
-const conditionKinds: Condition['kind'][] = ['flag', 'item', 'quest'];
+const commandTypes: EventCommand['type'][] = ['dialogue', 'movementRoute', 'wait', 'setSwitch', 'setVariable', 'giveItem', 'removeItem', 'unlockSkill', 'healPlayer', 'toast', 'teleport', 'save'];
+const commandTypeLabels: Partial<Record<EventCommand['type'], string>> = { setVariable: 'Set variable' };
+const triggerTypes = [
+  { type: 'actionButton', label: 'Action Button', icon: MousePointerClick },
+  { type: 'playerTouch', label: 'Player Touch', icon: Footprints },
+  { type: 'eventTouch', label: 'Event Touch', icon: Hand },
+  { type: 'autorun', label: 'Autorun', icon: Play },
+  { type: 'parallel', label: 'Parallel', icon: GitFork },
+] as const;
 
-function Section({ title, children, first = false }: { title: string; children: ReactNode; first?: boolean }) {
+function Section({ title, children, actions, first = false }: { title: string; children: ReactNode; actions?: ReactNode; first?: boolean }) {
   return <section>
-    <SectionHeader className={first ? 'border-t-0' : undefined}>{title}</SectionHeader>
-    <div className="space-y-3 px-4 pb-4">{children}</div>
+    <SectionHeader className={`${first ? 'border-t-0 ' : ''}${actions ? 'pr-3' : ''}`}>{title}{actions && <span className="ml-auto">{actions}</span>}</SectionHeader>
+    {children != null && children !== false && <div className="space-y-3 px-4 pb-4">{children}</div>}
   </section>;
 }
 
@@ -43,10 +61,10 @@ function NumberInput({ value, onChange, min, max, step = 1 }: { value: number; o
   return <Input type="number" value={Number.isFinite(value) ? value : 0} min={min} max={max} step={step} onChange={event => onChange(Number(event.target.value))} />;
 }
 
-function EnumSelect<T extends string>({ value, values, onChange, labels }: { value: T; values: readonly T[]; onChange: (value: T) => void; labels?: Partial<Record<T, string>> }) {
+function EnumSelect<T extends string>({ value, values, onChange, labels, ariaLabel, prefix }: { value: T; values: readonly T[]; onChange: (value: T) => void; labels?: Partial<Record<T, string>>; ariaLabel?: string; prefix?: ReactNode }) {
   return (
     <Select value={value} onValueChange={next => onChange(next as T)}>
-      <SelectTrigger className="w-full"><SelectValue>{labels?.[value] || value}</SelectValue></SelectTrigger>
+      <SelectTrigger className="w-full" aria-label={ariaLabel}>{prefix && <span className="shrink-0 font-medium">{prefix}</span>}<SelectValue>{labels?.[value] || value}</SelectValue></SelectTrigger>
       <SelectContent>{values.map(item => <SelectItem key={item} value={item}>{labels?.[item] || item}</SelectItem>)}</SelectContent>
     </Select>
   );
@@ -62,53 +80,322 @@ function move<T>(items: T[], index: number, delta: number) {
 
 function RowActions({ index, count, onMove, onRemove, removeDisabled }: { index: number; count: number; onMove: (delta: number) => void; onRemove: () => void; removeDisabled?: boolean }) {
   return <div className="flex items-center gap-1">
-    <Button type="button" variant="ghost" size="icon-xs" disabled={index === 0} onClick={() => onMove(-1)} aria-label="Move up"><ArrowUp /></Button>
-    <Button type="button" variant="ghost" size="icon-xs" disabled={index === count - 1} onClick={() => onMove(1)} aria-label="Move down"><ArrowDown /></Button>
-    <Button type="button" variant="ghost" size="icon-xs" disabled={removeDisabled} onClick={onRemove} aria-label="Remove"><Trash2 /></Button>
+    <IconButtonTooltip label="Move up"><Button type="button" variant="ghost" size="icon-sm" disabled={index === 0} onClick={() => onMove(-1)} aria-label="Move up"><ArrowUp /></Button></IconButtonTooltip>
+    <IconButtonTooltip label="Move down"><Button type="button" variant="ghost" size="icon-sm" disabled={index === count - 1} onClick={() => onMove(1)} aria-label="Move down"><ArrowDown /></Button></IconButtonTooltip>
+    <IconButtonTooltip label="Remove"><Button type="button" variant="ghost" size="icon-sm" disabled={removeDisabled} onClick={onRemove} aria-label="Remove"><Trash2 /></Button></IconButtonTooltip>
   </div>;
 }
 
 function defaultCondition(kind: Condition['kind'], game: SourceGame): Condition {
-  if (kind === 'flag') return { kind, id: Object.keys(game.initialState.flags)[0] || '', equals: true };
+  if (kind === 'switch') return { kind, id: Object.keys(game.initialState.switches)[0] || '', equals: true };
   if (kind === 'item') return { kind, id: Object.keys(game.items)[0] || '', amount: 1 };
-  const id = Object.keys(game.quests)[0] || '';
-  return { kind, id, state: game.quests[id]?.states[0] || '' };
+  return { kind, id: Object.keys(game.initialState.variables)[0] || '', operator: 'equal', value: 0 };
 }
 
-function ConditionsEditor({ game, value, onChange }: { game: SourceGame; value: Condition[]; onChange: (value: Condition[]) => void }) {
+function ConditionIcon({ kind }: { kind: Condition['kind'] }) {
+  if (kind === 'switch') return <ToggleLeft aria-hidden="true" />;
+  if (kind === 'item') return <Package aria-hidden="true" />;
+  return <Hash aria-hidden="true" />;
+}
+
+function ConditionSelectIcon({ kind }: { kind: Condition['kind'] }) {
+  return <span role="img" aria-label={`${kind} condition`} className="shrink-0 text-muted-foreground [&_svg]:size-3.5"><ConditionIcon kind={kind} /></span>;
+}
+
+const normalizePickerQuery = (text: string) => text.normalize('NFKD').replace(/[\u0300-\u036f]/g, '').toLocaleLowerCase();
+
+function conditionPickerAnchor(trigger: HTMLButtonElement | null) {
+  const panel = document.querySelector<HTMLElement>('[data-event-inspector-panel]');
+  if (!trigger || !panel) return trigger;
+  return {
+    contextElement: panel,
+    getBoundingClientRect: () => {
+      const panelRect = panel.getBoundingClientRect();
+      const triggerRect = trigger.getBoundingClientRect();
+      return {
+        x: panelRect.left,
+        y: triggerRect.top,
+        top: triggerRect.top,
+        right: panelRect.left,
+        bottom: triggerRect.bottom,
+        left: panelRect.left,
+        width: 0,
+        height: triggerRect.height,
+      };
+    },
+  };
+}
+
+function AddConditionMenu({ game, onAdd }: { game: SourceGame; onAdd: (condition: Condition) => void }) {
+  return <DropdownMenu>
+    <IconButtonTooltip label="Add condition"><DropdownMenuTrigger render={<Button type="button" variant="ghost" size="icon-sm" aria-label="Add condition"><Plus /></Button>} /></IconButtonTooltip>
+    <DropdownMenuContent align="end">
+      <DropdownMenuItem onClick={() => onAdd(defaultCondition('switch', game))}><ConditionIcon kind="switch" />Switch</DropdownMenuItem>
+      <DropdownMenuItem onClick={() => onAdd(defaultCondition('item', game))}><ConditionIcon kind="item" />Item</DropdownMenuItem>
+      <DropdownMenuItem onClick={() => onAdd(defaultCondition('variable', game))}><ConditionIcon kind="variable" />Variable</DropdownMenuItem>
+    </DropdownMenuContent>
+  </DropdownMenu>;
+}
+
+function NewSwitchPopover({ anchor, onCreate }: { anchor: RefObject<HTMLDivElement | null>; onCreate: (name: string) => void }) {
+  const [open, setOpen] = useState(false);
+  const [name, setName] = useState('');
+  const create = () => {
+    const nextName = name.trim();
+    if (!nextName) return;
+    onCreate(nextName);
+    setName('');
+    setOpen(false);
+  };
+  return <Popover.Root open={open} onOpenChange={nextOpen => { setOpen(nextOpen); if (!nextOpen) setName(''); }}>
+    <IconButtonTooltip label="Create switch"><Popover.Trigger render={<Button type="button" variant="ghost" size="icon-sm" aria-label="Create switch"><Plus /></Button>} /></IconButtonTooltip>
+    <Popover.Portal>
+      <Popover.Positioner anchor={anchor} positionMethod="fixed" side="left" align="start" sideOffset={0} collisionAvoidance={{ side: 'none', align: 'shift', fallbackAxisSide: 'none' }} className="z-50">
+        <Popover.Popup className="w-56 bg-background text-foreground shadow-md ring-1 ring-foreground/10 outline-none">
+          <SectionHeader className="h-9 border-t-0 border-b px-3 py-0 text-xs">New switch</SectionHeader>
+          <div className="space-y-3 p-3">
+            <label className="grid gap-1.5 text-[10px] text-muted-foreground">Name<Input autoFocus value={name} onChange={event => setName(event.target.value)} onKeyDown={event => { if (event.key === 'Enter') create(); }} aria-label="Switch name" /></label>
+            <Button type="button" size="sm" className="w-full" disabled={!name.trim()} onClick={create} aria-label="Confirm switch creation">Create switch</Button>
+          </div>
+        </Popover.Popup>
+      </Popover.Positioner>
+    </Popover.Portal>
+  </Popover.Root>;
+}
+
+function SwitchPicker({ game, value, equals, onChange, onCreate, autoOpen = false, onAutoOpen }: { game: SourceGame; value: string; equals: boolean; onChange: (id: string) => void; onCreate: (name: string) => string; autoOpen?: boolean; onAutoOpen?: () => void }) {
+  const [open, setOpen] = useState(false);
+  const [query, setQuery] = useState('');
+  const triggerRef = useRef<HTMLButtonElement>(null);
+  const popupRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    if (!autoOpen) return;
+    setOpen(true);
+    onAutoOpen?.();
+  }, [autoOpen, onAutoOpen]);
+  const normalizedQuery = normalizePickerQuery(query.trim());
+  const switches = Object.entries(game.initialState.switches).filter(([id, definition]) => !normalizedQuery || normalizePickerQuery(`${definition.name} ${id}`).includes(normalizedQuery));
+  const selectedName = game.initialState.switches[value]?.name;
+  return <Popover.Root open={open} onOpenChange={nextOpen => { setOpen(nextOpen); if (!nextOpen) setQuery(''); }}>
+    <Popover.Trigger render={<Button ref={triggerRef} type="button" variant="outline" className="min-w-0 flex-1 justify-between font-normal" aria-label="Choose switch"><ConditionSelectIcon kind="switch" /><span className="min-w-0 flex-1 truncate text-left">{selectedName || 'Choose a switch'}</span><span className="shrink-0 text-muted-foreground">{equals ? 'True' : 'False'}</span><ChevronsUpDown className="text-muted-foreground" /></Button>} />
+    <Popover.Portal>
+      <Popover.Positioner anchor={() => conditionPickerAnchor(triggerRef.current)} positionMethod="fixed" side="left" align="start" sideOffset={0} collisionAvoidance={{ side: 'none', align: 'shift', fallbackAxisSide: 'none' }} className="z-50">
+        <Popover.Popup ref={popupRef} className="w-64 bg-background text-foreground shadow-md ring-1 ring-foreground/10 outline-none">
+          <SectionHeader className="h-9 border-t-0 border-b px-3 py-0 pr-2 text-xs">
+            <span className="min-w-0 flex-1">Switches</span>
+            <NewSwitchPopover anchor={popupRef} onCreate={name => {
+              const id = onCreate(name);
+              if (id) {
+                onChange(id);
+                setOpen(false);
+              }
+            }} />
+            <IconButtonTooltip label="Close switch picker"><Button type="button" variant="ghost" size="icon-sm" aria-label="Close switch picker" onClick={() => setOpen(false)}><X /></Button></IconButtonTooltip>
+          </SectionHeader>
+          <div className="flex h-9 items-center gap-2 border-b px-3">
+            <Search className="size-3.5 shrink-0 text-muted-foreground" />
+            <Input autoFocus value={query} onChange={event => setQuery(event.target.value)} className="h-full border-0 bg-transparent px-0 py-0 shadow-none focus-visible:border-transparent focus-visible:ring-0 dark:bg-transparent" aria-label="Search switches" placeholder="Search switches…" />
+          </div>
+          <ScrollArea className="max-h-56">
+            <div role="listbox" aria-label="Switches">
+              {switches.map(([id, definition]) => <button key={id} type="button" role="option" aria-selected={id === value} className={`flex h-9 w-full items-center px-3 text-left text-xs outline-none ${id === value ? 'bg-primary/15 text-foreground hover:bg-primary/20 focus-visible:bg-primary/20' : 'hover:bg-accent focus-visible:bg-accent'}`} onClick={() => { onChange(id); setOpen(false); setQuery(''); }}>
+                <span className="min-w-0 flex-1 truncate">{definition.name}</span>
+              </button>)}
+              {!switches.length && <p className="px-2 py-4 text-center text-[10px] text-muted-foreground">No switches found.</p>}
+            </div>
+          </ScrollArea>
+        </Popover.Popup>
+      </Popover.Positioner>
+    </Popover.Portal>
+  </Popover.Root>;
+}
+
+function NewVariablePopover({ anchor, onCreate }: { anchor: RefObject<HTMLDivElement | null>; onCreate: (name: string) => void }) {
+  const [open, setOpen] = useState(false);
+  const [name, setName] = useState('');
+  const create = () => {
+    const nextName = name.trim();
+    if (!nextName) return;
+    onCreate(nextName);
+    setName('');
+    setOpen(false);
+  };
+  return <Popover.Root open={open} onOpenChange={nextOpen => { setOpen(nextOpen); if (!nextOpen) setName(''); }}>
+    <IconButtonTooltip label="Create variable"><Popover.Trigger render={<Button type="button" variant="ghost" size="icon-sm" aria-label="Create variable"><Plus /></Button>} /></IconButtonTooltip>
+    <Popover.Portal>
+      <Popover.Positioner anchor={anchor} positionMethod="fixed" side="left" align="start" sideOffset={0} collisionAvoidance={{ side: 'none', align: 'shift', fallbackAxisSide: 'none' }} className="z-50">
+        <Popover.Popup className="w-56 bg-background text-foreground shadow-md ring-1 ring-foreground/10 outline-none">
+          <SectionHeader className="h-9 border-t-0 border-b px-3 py-0 text-xs">New variable</SectionHeader>
+          <div className="space-y-3 p-3">
+            <label className="grid gap-1.5 text-[10px]">Name<Input autoFocus value={name} onChange={event => setName(event.target.value)} onKeyDown={event => { if (event.key === 'Enter') create(); }} aria-label="Variable name" /></label>
+            <Button type="button" size="sm" className="w-full" disabled={!name.trim()} onClick={create} aria-label="Confirm variable creation">Create variable</Button>
+          </div>
+        </Popover.Popup>
+      </Popover.Positioner>
+    </Popover.Portal>
+  </Popover.Root>;
+}
+
+const variableComparisonSymbols: Record<VariableComparison, string> = {
+  equal: '=',
+  notEqual: '≠',
+  greaterThan: '>',
+  greaterThanOrEqual: '≥',
+  lessThan: '<',
+  lessThanOrEqual: '≤',
+};
+
+function VariablePicker({ game, condition, onChange, onCreate, autoOpen = false, onAutoOpen }: { game: SourceGame; condition: Extract<Condition, { kind: 'variable' }>; onChange: (id: string) => void; onCreate: (name: string) => string; autoOpen?: boolean; onAutoOpen?: () => void }) {
+  const [open, setOpen] = useState(false);
+  const [query, setQuery] = useState('');
+  const triggerRef = useRef<HTMLButtonElement>(null);
+  const popupRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    if (!autoOpen) return;
+    setOpen(true);
+    onAutoOpen?.();
+  }, [autoOpen, onAutoOpen]);
+  const normalizedQuery = normalizePickerQuery(query.trim());
+  const variables = Object.entries(game.initialState.variables).filter(([id, definition]) => !normalizedQuery || normalizePickerQuery(`${definition.name} ${id}`).includes(normalizedQuery));
+  const selectedName = game.initialState.variables[condition.id]?.name;
+  return <Popover.Root open={open} onOpenChange={nextOpen => { setOpen(nextOpen); if (!nextOpen) setQuery(''); }}>
+    <Popover.Trigger render={<Button ref={triggerRef} type="button" variant="outline" className="min-w-0 w-full justify-between font-normal" aria-label="Choose variable"><ConditionSelectIcon kind="variable" /><span className="min-w-0 flex-1 truncate text-left">{selectedName || 'Choose a variable'}</span><span className="shrink-0 text-muted-foreground">{variableComparisonSymbols[condition.operator]} {condition.value}</span><ChevronsUpDown className="text-muted-foreground" /></Button>} />
+    <Popover.Portal>
+      <Popover.Positioner anchor={() => conditionPickerAnchor(triggerRef.current)} positionMethod="fixed" side="left" align="start" sideOffset={0} collisionAvoidance={{ side: 'none', align: 'shift', fallbackAxisSide: 'none' }} className="z-50">
+        <Popover.Popup ref={popupRef} className="w-64 bg-background text-foreground shadow-md ring-1 ring-foreground/10 outline-none">
+          <SectionHeader className="h-9 border-t-0 border-b px-3 py-0 pr-2 text-xs">
+            <span className="min-w-0 flex-1">Variables</span>
+            <NewVariablePopover anchor={popupRef} onCreate={name => {
+              const id = onCreate(name);
+              if (id) {
+                onChange(id);
+                setOpen(false);
+              }
+            }} />
+            <IconButtonTooltip label="Close variable picker"><Button type="button" variant="ghost" size="icon-sm" aria-label="Close variable picker" onClick={() => setOpen(false)}><X /></Button></IconButtonTooltip>
+          </SectionHeader>
+          <div className="flex h-9 items-center gap-2 border-b px-3">
+            <Search className="size-3.5 shrink-0 text-muted-foreground" />
+            <Input autoFocus value={query} onChange={event => setQuery(event.target.value)} className="h-full border-0 bg-transparent px-0 py-0 shadow-none focus-visible:border-transparent focus-visible:ring-0 dark:bg-transparent" aria-label="Search variables" placeholder="Search variables…" />
+          </div>
+          <ScrollArea className="max-h-56">
+            <div role="listbox" aria-label="Variables">
+              {variables.map(([id, definition]) => <button key={id} type="button" role="option" aria-selected={id === condition.id} className={`flex h-9 w-full items-center px-3 text-left text-xs outline-none ${id === condition.id ? 'bg-primary/15 text-foreground hover:bg-primary/20 focus-visible:bg-primary/20' : 'hover:bg-accent focus-visible:bg-accent'}`} onClick={() => { onChange(id); setOpen(false); setQuery(''); }}>
+                <span className="min-w-0 flex-1 truncate">{definition.name}</span>
+              </button>)}
+              {!variables.length && <p className="px-2 py-4 text-center text-[10px] text-muted-foreground">No variables found.</p>}
+            </div>
+          </ScrollArea>
+        </Popover.Popup>
+      </Popover.Positioner>
+    </Popover.Portal>
+  </Popover.Root>;
+}
+
+function ItemPicker({ game, value, amount, onChange }: { game: SourceGame; value: string; amount: number; onChange: (id: string) => void }) {
+  const [open, setOpen] = useState(false);
+  const [query, setQuery] = useState('');
+  const triggerRef = useRef<HTMLButtonElement>(null);
+  const normalizedQuery = normalizePickerQuery(query.trim());
+  const items = Object.entries(game.items).filter(([id, item]) => !normalizedQuery || normalizePickerQuery(`${item.name} ${id}`).includes(normalizedQuery));
+  const selectedName = game.items[value]?.name;
+  return <Popover.Root open={open} onOpenChange={nextOpen => { setOpen(nextOpen); if (!nextOpen) setQuery(''); }}>
+    <Popover.Trigger render={<Button ref={triggerRef} type="button" variant="outline" className="min-w-0 w-full justify-between font-normal" aria-label="Choose item"><ConditionSelectIcon kind="item" /><span className="min-w-0 flex-1 truncate text-left">{selectedName || 'Choose an item'}</span><span className="shrink-0 text-muted-foreground">×{amount}</span><ChevronsUpDown className="text-muted-foreground" /></Button>} />
+    <Popover.Portal>
+      <Popover.Positioner anchor={() => conditionPickerAnchor(triggerRef.current)} positionMethod="fixed" side="left" align="start" sideOffset={0} collisionAvoidance={{ side: 'none', align: 'shift', fallbackAxisSide: 'none' }} className="z-50">
+        <Popover.Popup className="w-64 bg-background text-foreground shadow-md ring-1 ring-foreground/10 outline-none">
+          <SectionHeader className="h-9 border-t-0 border-b px-3 py-0 pr-2 text-xs">
+            <span className="min-w-0 flex-1">Items</span>
+            <IconButtonTooltip label="Close item picker"><Button type="button" variant="ghost" size="icon-sm" aria-label="Close item picker" onClick={() => setOpen(false)}><X /></Button></IconButtonTooltip>
+          </SectionHeader>
+          <div className="flex h-9 items-center gap-2 border-b px-3">
+            <Search className="size-3.5 shrink-0 text-muted-foreground" />
+            <Input autoFocus value={query} onChange={event => setQuery(event.target.value)} className="h-full border-0 bg-transparent px-0 py-0 shadow-none focus-visible:border-transparent focus-visible:ring-0 dark:bg-transparent" aria-label="Search items" placeholder="Search items…" />
+          </div>
+          <ScrollArea className="max-h-56">
+            <div role="listbox" aria-label="Items">
+              {items.map(([id, item]) => <button key={id} type="button" role="option" aria-selected={id === value} className={`flex h-9 w-full items-center px-3 text-left text-xs outline-none ${id === value ? 'bg-primary/15 text-foreground hover:bg-primary/20 focus-visible:bg-primary/20' : 'hover:bg-accent focus-visible:bg-accent'}`} onClick={() => { onChange(id); setOpen(false); setQuery(''); }}>
+                <span className="min-w-0 flex-1 truncate">{item.name}</span>
+              </button>)}
+              {!items.length && <p className="px-2 py-4 text-center text-[10px] text-muted-foreground">No items found.</p>}
+            </div>
+          </ScrollArea>
+        </Popover.Popup>
+      </Popover.Positioner>
+    </Popover.Portal>
+  </Popover.Root>;
+}
+
+function ConditionSettings({ game, condition, onChange, onRenameSwitch, onRenameVariable, onRenameItem }: { game: SourceGame; condition: Condition; onChange: (condition: Condition) => void; onRenameSwitch: (id: string, name: string) => void; onRenameVariable: (id: string, name: string) => void; onRenameItem: (id: string, name: string) => void }) {
+  const [open, setOpen] = useState(false);
+  const triggerRef = useRef<HTMLButtonElement>(null);
+  const kindLabel = condition.kind === 'switch' ? 'Switch' : condition.kind === 'item' ? 'Item' : 'Variable';
+  const definitionName = condition.kind === 'switch'
+    ? game.initialState.switches[condition.id]?.name
+    : condition.kind === 'item'
+      ? game.items[condition.id]?.name
+      : game.initialState.variables[condition.id]?.name;
+  const rename = (name: string) => {
+    const nextName = name.trim();
+    if (!nextName || nextName === definitionName) return;
+    if (condition.kind === 'switch') onRenameSwitch(condition.id, nextName);
+    else if (condition.kind === 'item') onRenameItem(condition.id, nextName);
+    else onRenameVariable(condition.id, nextName);
+  };
+  return <Popover.Root open={open} onOpenChange={setOpen}>
+    <IconButtonTooltip label={`${kindLabel} condition settings`}><Popover.Trigger render={<Button ref={triggerRef} type="button" variant="ghost" size="icon-sm" className="shrink-0" aria-label={`${kindLabel} condition settings`}><Settings2 /></Button>} /></IconButtonTooltip>
+    <Popover.Portal>
+      <Popover.Positioner anchor={() => conditionPickerAnchor(triggerRef.current)} positionMethod="fixed" side="left" align="start" sideOffset={0} collisionAvoidance={{ side: 'none', align: 'shift', fallbackAxisSide: 'none' }} className="z-50">
+        <Popover.Popup className="w-72 bg-background text-foreground shadow-md ring-1 ring-foreground/10 outline-none">
+          <SectionHeader className="h-9 border-t-0 border-b px-3 py-0 pr-2 text-xs">
+            <span className="min-w-0 flex-1">{kindLabel} condition</span>
+            <IconButtonTooltip label="Close condition settings"><Button type="button" variant="ghost" size="icon-sm" aria-label="Close condition settings" onClick={() => setOpen(false)}><X /></Button></IconButtonTooltip>
+          </SectionHeader>
+          <div className="space-y-3 p-3">
+            <label className="grid gap-1.5 text-[10px]">
+              {kindLabel} name
+              <Input key={`${condition.id}:${definitionName}`} defaultValue={definitionName || ''} disabled={!definitionName} onBlur={event => rename(event.currentTarget.value)} />
+            </label>
+            {condition.kind === 'switch'
+              ? <label className="grid gap-1.5 text-[10px]">Expected value<span className="flex items-center gap-2 text-xs"><Switch checked={condition.equals ?? true} onCheckedChange={equals => onChange({ ...condition, equals })} aria-label="Expected switch value" /><span>{(condition.equals ?? true) ? 'True' : 'False'}</span></span></label>
+              : condition.kind === 'item'
+                ? <label className="grid gap-1.5 text-[10px]">Required quantity<NumberInput value={condition.amount ?? 1} min={1} onChange={amount => onChange({ ...condition, amount })} /></label>
+                : <><label className="grid gap-1.5 text-[10px]">Comparison<EnumSelect value={condition.operator} values={Object.keys(variableComparisonSymbols) as VariableComparison[]} labels={{ equal: '= Equal', notEqual: '≠ Not equal', greaterThan: '> Greater than', greaterThanOrEqual: '≥ Greater than or equal', lessThan: '< Less than', lessThanOrEqual: '≤ Less than or equal' }} ariaLabel="Variable comparison" onChange={operator => onChange({ ...condition, operator })} /></label><label className="grid gap-1.5 text-[10px]">Value<NumberInput value={condition.value} onChange={value => onChange({ ...condition, value })} /></label></>}
+          </div>
+        </Popover.Popup>
+      </Popover.Positioner>
+    </Popover.Portal>
+  </Popover.Root>;
+}
+
+function ConditionsEditor({ game, value, onChange, onCreateSwitch, onCreateVariable, onRenameSwitch, onRenameVariable, onRenameItem, autoOpenSwitchIndex, autoOpenVariableIndex, onAutoOpenSwitch, onAutoOpenVariable }: { game: SourceGame; value: Condition[]; onChange: (value: Condition[]) => void; onCreateSwitch: (name: string) => string; onCreateVariable: (name: string) => string; onRenameSwitch: (id: string, name: string) => void; onRenameVariable: (id: string, name: string) => void; onRenameItem: (id: string, name: string) => void; autoOpenSwitchIndex: number | null; autoOpenVariableIndex: number | null; onAutoOpenSwitch: () => void; onAutoOpenVariable: () => void }) {
   const update = (index: number, condition: Condition) => onChange(value.map((item, itemIndex) => itemIndex === index ? condition : item));
   return <div className="space-y-2">
-    {value.map((condition, index) => <div key={index} className="space-y-2 border bg-muted/20 p-2">
-      <div className="flex items-center justify-between gap-2">
-        <EnumSelect value={condition.kind} values={conditionKinds} onChange={kind => update(index, defaultCondition(kind, game))} />
-        <RowActions index={index} count={value.length} onMove={delta => onChange(move(value, index, delta))} onRemove={() => onChange(value.filter((_, itemIndex) => itemIndex !== index))} />
-      </div>
-      {condition.kind === 'flag' && <>
-        <EnumSelect value={condition.id} values={Object.keys(game.initialState.flags)} onChange={id => update(index, { ...condition, id })} />
-        <label className="flex items-center gap-2 text-xs"><Checkbox checked={condition.equals ?? true} onCheckedChange={equals => update(index, { ...condition, equals })} />Expected true</label>
-      </>}
-      {condition.kind === 'item' && <div className="grid grid-cols-[1fr_88px] gap-2">
-        <EnumSelect value={condition.id} values={Object.keys(game.items)} onChange={id => update(index, { ...condition, id })} />
-        <NumberInput value={condition.amount ?? 1} min={1} onChange={amount => update(index, { ...condition, amount })} />
+    {value.map((condition, index) => <div key={index} className="flex min-w-0 items-center gap-2">
+      {condition.kind === 'switch' && <div className="flex min-w-0 flex-1">
+        <SwitchPicker game={game} value={condition.id} equals={condition.equals ?? true} onChange={id => update(index, { ...condition, id })} onCreate={onCreateSwitch} autoOpen={autoOpenSwitchIndex === index} onAutoOpen={onAutoOpenSwitch} />
       </div>}
-      {condition.kind === 'quest' && <div className="grid gap-2">
-        <EnumSelect value={condition.id} values={Object.keys(game.quests)} onChange={id => update(index, { ...condition, id, state: game.quests[id]?.states[0] || '' })} />
-        <EnumSelect value={condition.state} values={game.quests[condition.id]?.states || []} onChange={state => update(index, { ...condition, state })} />
+      {condition.kind === 'item' && <div className="min-w-0 flex-1">
+        <ItemPicker game={game} value={condition.id} amount={condition.amount ?? 1} onChange={id => update(index, { ...condition, id })} />
       </div>}
+      {condition.kind === 'variable' && <div className="min-w-0 flex-1">
+        <VariablePicker game={game} condition={condition} onChange={id => update(index, { ...condition, id })} onCreate={onCreateVariable} autoOpen={autoOpenVariableIndex === index} onAutoOpen={onAutoOpenVariable} />
+      </div>}
+      <ConditionSettings game={game} condition={condition} onChange={next => update(index, next)} onRenameSwitch={onRenameSwitch} onRenameVariable={onRenameVariable} onRenameItem={onRenameItem} />
+      <IconButtonTooltip label={`Remove ${condition.kind} condition`}><Button type="button" variant="ghost" size="icon-sm" className="-mr-1 shrink-0" onClick={() => onChange(value.filter((_, itemIndex) => itemIndex !== index))} aria-label={`Remove ${condition.kind} condition`}><Minus /></Button></IconButtonTooltip>
     </div>)}
-    <Button type="button" variant="outline" size="sm" className="w-full" onClick={() => onChange([...value, defaultCondition('flag', game)])}><Plus /> Add condition</Button>
   </div>;
 }
 
 function defaultCommand(type: EventCommand['type'], game: SourceGame): EventCommand {
-  const flag = Object.keys(game.initialState.flags)[0] || '';
+  const gameSwitch = Object.keys(game.initialState.switches)[0] || '';
+  const variable = Object.keys(game.initialState.variables)[0] || '';
   const item = Object.keys(game.items)[0] || '';
-  const quest = Object.keys(game.quests)[0] || '';
   const skill = Object.keys(game.skills)[0] || '';
   const mapId = Object.keys(game.maps)[0] || '';
   if (type === 'dialogue') return { type, speaker: 'Speaker', text: 'Dialogue text', choices: [] };
-  if (type === 'setFlag') return { type, id: flag, value: true };
-  if (type === 'setQuestState') return { type, id: quest, state: game.quests[quest]?.states[0] || '' };
+  if (type === 'setSwitch') return { type, id: gameSwitch, value: true };
+  if (type === 'setVariable') return { type, id: variable, value: 0 };
   if (type === 'giveItem' || type === 'removeItem') return { type, id: item, amount: 1 };
   if (type === 'unlockSkill') return { type, id: skill };
   if (type === 'healPlayer') return { type, amount: 10 };
@@ -127,6 +414,59 @@ function defaultMovementCommand(type: MovementCommand['type']): MovementCommand 
   if (type === 'jump') return { type, x: 0, y: -1 };
   return { type: 'wait', duration: 0.5 };
 }
+
+function AddMovementCommandMenu({ onAdd }: { onAdd: (command: MovementCommand) => void }) {
+  return <DropdownMenu>
+    <IconButtonTooltip label="Add movement command"><DropdownMenuTrigger render={<Button type="button" variant="ghost" size="icon-sm" aria-label="Add movement command"><Plus /></Button>} /></IconButtonTooltip>
+    <DropdownMenuContent align="end">
+      <DropdownMenuItem onClick={() => onAdd(defaultMovementCommand('move'))}>Move</DropdownMenuItem>
+      <DropdownMenuItem onClick={() => onAdd(defaultMovementCommand('turn'))}>Turn</DropdownMenuItem>
+      <DropdownMenuItem onClick={() => onAdd(defaultMovementCommand('jump'))}>Jump</DropdownMenuItem>
+      <DropdownMenuItem onClick={() => onAdd(defaultMovementCommand('wait'))}>Wait</DropdownMenuItem>
+    </DropdownMenuContent>
+  </DropdownMenu>;
+}
+
+function LoopingRouteEditor({ value, onChange }: { value: MovementCommand[]; onChange: (value: MovementCommand[]) => void }) {
+  const update = (index: number, command: MovementCommand) => onChange(value.map((item, itemIndex) => itemIndex === index ? command : item));
+  const remove = (index: number) => onChange(value.filter((_, itemIndex) => itemIndex !== index));
+  return <Section title="Looping route" actions={<AddMovementCommandMenu onAdd={command => onChange([...value, command])} />}>
+    <div className="space-y-2">
+      {value.map((command, index) => <div key={index} className="flex min-w-0 items-center gap-2">
+        {command.type === 'move' && <div className="min-w-0 flex-1"><EnumSelect value={command.direction} values={moveDirections} ariaLabel="Move direction" prefix="Move" onChange={direction => update(index, { ...command, direction })} /></div>}
+        {command.type === 'turn' && <div className="min-w-0 flex-1"><EnumSelect value={command.direction} values={turnDirections} ariaLabel="Turn direction" prefix="Turn" onChange={direction => update(index, { ...command, direction })} /></div>}
+        {command.type === 'jump' && <div className="flex h-8 min-w-0 flex-1 items-center border border-input focus-within:border-ring focus-within:ring-1 focus-within:ring-ring/50"><span className="shrink-0 px-2.5 text-xs font-medium">Jump</span><label className="flex min-w-0 flex-1 items-center gap-1 text-[10px]">X<Input type="number" value={command.x} className="h-7 border-0 bg-transparent px-1 focus-visible:ring-0 dark:bg-transparent" onChange={event => update(index, { ...command, x: Number(event.target.value) })} /></label><label className="flex min-w-0 flex-1 items-center gap-1 text-[10px]">Y<Input type="number" value={command.y} className="h-7 border-0 bg-transparent px-1 focus-visible:ring-0 dark:bg-transparent" onChange={event => update(index, { ...command, y: Number(event.target.value) })} /></label></div>}
+        {command.type === 'wait' && <label className="flex h-8 min-w-0 flex-1 items-center border border-input focus-within:border-ring focus-within:ring-1 focus-within:ring-ring/50"><span className="shrink-0 px-2.5 text-xs font-medium">Wait</span><Input type="number" value={command.duration} min={0} step={0.1} className="h-7 border-0 bg-transparent focus-visible:ring-0 dark:bg-transparent" onChange={event => update(index, { ...command, duration: Number(event.target.value) })} /></label>}
+        <IconButtonTooltip label={`Remove ${command.type} command`}><Button type="button" variant="ghost" size="icon-sm" className="-mr-1 shrink-0" onClick={() => remove(index)} aria-label={`Remove ${command.type} command`}><Minus /></Button></IconButtonTooltip>
+      </div>)}
+      {!value.length && <p className="py-2 text-center text-[10px] text-muted-foreground">No movement commands.</p>}
+    </div>
+  </Section>;
+}
+
+function AutonomousMovementSettings({ movement, onChange }: { movement: MapEventPage['movement']; onChange: (movement: MapEventPage['movement']) => void }) {
+  const [open, setOpen] = useState(false);
+  const triggerRef = useRef<HTMLButtonElement>(null);
+  return <Popover.Root open={open} onOpenChange={setOpen}>
+    <IconButtonTooltip label="Autonomous movement settings"><Popover.Trigger render={<Button ref={triggerRef} type="button" variant="ghost" size="icon-sm" className="-mr-1" aria-label="Autonomous movement settings"><Settings2 /></Button>} /></IconButtonTooltip>
+    <Popover.Portal>
+      <Popover.Positioner anchor={() => conditionPickerAnchor(triggerRef.current)} positionMethod="fixed" side="left" align="start" sideOffset={0} collisionAvoidance={{ side: 'none', align: 'shift', fallbackAxisSide: 'none' }} className="z-50">
+        <Popover.Popup className="w-80 bg-background text-foreground shadow-md ring-1 ring-foreground/10 outline-none">
+          <SectionHeader className="h-9 border-t-0 border-b px-3 py-0 pr-2 text-xs">
+            <span className="min-w-0 flex-1">Autonomous movement</span>
+            <IconButtonTooltip label="Close autonomous movement settings"><Button type="button" variant="ghost" size="icon-sm" aria-label="Close autonomous movement settings" onClick={() => setOpen(false)}><X /></Button></IconButtonTooltip>
+          </SectionHeader>
+          <div className="grid grid-cols-2 gap-4 p-3">
+            <label className="grid gap-2 text-[10px]">Speed · {movement.speed}<Slider aria-label="Movement speed" value={movement.speed} min={1} max={6} step={1} onValueChange={speed => onChange({ ...movement, speed: speed as MapEventPage['movement']['speed'] })} /></label>
+            <label className="grid gap-2 text-[10px]">Frequency · {movement.frequency}<Slider aria-label="Movement frequency" value={movement.frequency} min={1} max={5} step={1} onValueChange={frequency => onChange({ ...movement, frequency: frequency as MapEventPage['movement']['frequency'] })} /></label>
+          </div>
+          {movement.type === 'custom' && <LoopingRouteEditor value={movement.route} onChange={route => onChange({ ...movement, route })} />}
+        </Popover.Popup>
+      </Popover.Positioner>
+    </Popover.Portal>
+  </Popover.Root>;
+}
+
 function MovementCommandsEditor({ value, onChange }: { value: MovementCommand[]; onChange: (value: MovementCommand[]) => void }) {
   const update = (index: number, command: MovementCommand) => onChange(value.map((item, itemIndex) => itemIndex === index ? command : item));
   return <div className="space-y-2">
@@ -158,14 +498,14 @@ function CommandFields({ game, mapId, command, onChange, depth }: { game: Source
     <Textarea value={action.text} placeholder="Dialogue text" onChange={event => onChange({ ...action, text: event.target.value })} />
     <div className="space-y-2 border-l-2 border-primary/25 pl-2">
       {(action.choices || []).map((choice, index) => <div key={index} className="space-y-2 border bg-background p-2">
-        <div className="flex gap-2"><Input value={choice.label} placeholder="Choice label" onChange={event => onChange({ ...action, choices: action.choices!.map((item, itemIndex) => itemIndex === index ? { ...item, label: event.target.value } : item) })} /><Button variant="ghost" size="icon-sm" onClick={() => onChange({ ...action, choices: action.choices!.filter((_, itemIndex) => itemIndex !== index) })}><Trash2 /></Button></div>
+        <div className="flex gap-2"><Input value={choice.label} placeholder="Choice label" onChange={event => onChange({ ...action, choices: action.choices!.map((item, itemIndex) => itemIndex === index ? { ...item, label: event.target.value } : item) })} /><IconButtonTooltip label="Remove choice"><Button variant="ghost" size="icon-sm" aria-label="Remove choice" onClick={() => onChange({ ...action, choices: action.choices!.filter((_, itemIndex) => itemIndex !== index) })}><Trash2 /></Button></IconButtonTooltip></div>
         <CommandsEditor game={game} mapId={mapId} value={choice.commands} depth={depth + 1} onChange={commands => onChange({ ...action, choices: action.choices!.map((item, itemIndex) => itemIndex === index ? { ...item, commands } : item) })} />
       </div>)}
       <Button variant="outline" size="sm" className="w-full" onClick={() => onChange({ ...action, choices: [...(action.choices || []), { label: 'Choice', commands: [] }] })}><Plus /> Add choice</Button>
     </div>
   </div>;
-  if (action.type === 'setFlag') return <div className="grid gap-2"><EnumSelect value={action.id} values={Object.keys(game.initialState.flags)} onChange={id => onChange({ ...action, id })} /><label className="flex items-center gap-2 text-xs"><Checkbox checked={action.value} onCheckedChange={value => onChange({ ...action, value })} />Set true</label></div>;
-  if (action.type === 'setQuestState') return <div className="grid gap-2"><EnumSelect value={action.id} values={Object.keys(game.quests)} onChange={id => onChange({ ...action, id, state: game.quests[id]?.states[0] || '' })} /><EnumSelect value={action.state} values={game.quests[action.id]?.states || []} onChange={state => onChange({ ...action, state })} /></div>;
+  if (action.type === 'setSwitch') return <div className="grid gap-2"><EnumSelect value={action.id} values={Object.keys(game.initialState.switches)} labels={Object.fromEntries(Object.entries(game.initialState.switches).map(([id, definition]) => [id, definition.name]))} onChange={id => onChange({ ...action, id })} /><label className="flex items-center gap-2 text-xs"><Checkbox checked={action.value} onCheckedChange={value => onChange({ ...action, value })} />Set on</label></div>;
+  if (action.type === 'setVariable') return <div className="grid grid-cols-[1fr_88px] gap-2"><label className="grid gap-1.5 text-[10px]">Variable<EnumSelect value={action.id} values={Object.keys(game.initialState.variables)} labels={Object.fromEntries(Object.entries(game.initialState.variables).map(([id, definition]) => [id, definition.name]))} ariaLabel="Variable" onChange={id => onChange({ ...action, id })} /></label><label className="grid gap-1.5 text-[10px]">Value<NumberInput value={action.value} onChange={value => onChange({ ...action, value })} /></label></div>;
   if (action.type === 'giveItem' || action.type === 'removeItem') return <div className="grid grid-cols-[1fr_88px] gap-2"><EnumSelect value={action.id} values={Object.keys(game.items)} onChange={id => onChange({ ...action, id })} /><NumberInput value={action.amount ?? 1} min={1} onChange={amount => onChange({ ...action, amount })} /></div>;
   if (action.type === 'unlockSkill') return <EnumSelect value={action.id} values={Object.keys(game.skills)} onChange={id => onChange({ ...action, id })} />;
   if (action.type === 'healPlayer') return <NumberInput value={action.amount} onChange={amount => onChange({ ...action, amount })} />;
@@ -184,7 +524,7 @@ function CommandsEditor({ game, mapId, value, onChange, depth = 0 }: { game: Sou
   const update = (index: number, command: EventCommand) => onChange(value.map((item, itemIndex) => itemIndex === index ? command : item));
   return <div className="space-y-2">
     {value.map((command, index) => <div key={index} className="space-y-2 border bg-muted/15 p-2">
-      <div className="flex items-center justify-between gap-2"><EnumSelect value={command.type} values={commandTypes} onChange={type => update(index, defaultCommand(type, game))} /><RowActions index={index} count={value.length} onMove={delta => onChange(move(value, index, delta))} onRemove={() => onChange(value.filter((_, itemIndex) => itemIndex !== index))} /></div>
+      <div className="flex items-center justify-between gap-2"><EnumSelect value={command.type} values={commandTypes} labels={commandTypeLabels} ariaLabel="Command type" onChange={type => update(index, defaultCommand(type, game))} /><RowActions index={index} count={value.length} onMove={delta => onChange(move(value, index, delta))} onRemove={() => onChange(value.filter((_, itemIndex) => itemIndex !== index))} /></div>
       <CommandFields game={game} mapId={mapId} command={command} depth={depth} onChange={next => update(index, next)} />
     </div>)}
     <Button variant="outline" size="sm" className="w-full" onClick={() => onChange([...value, defaultCommand('dialogue', game)])}><Plus /> Add command</Button>
@@ -201,17 +541,27 @@ function defaultPage(): MapEventPage {
   };
 }
 
-export function EventInspector({ game, mapId, event, issues, assetUrls, sprites, onChangeEvent, onSelectPage, onImportSprite }: Props) {
+export function EventInspector({ game, mapId, event, issues, assetUrls, sprites, onChangeEvent, onSelectPage, onImportSprite, onCreateSwitch, onCreateVariable, onRenameSwitch, onRenameVariable, onRenameItem }: Props) {
   const [spritePickerOpen, setSpritePickerOpen] = useState(false);
   const [pageIndex, setPageIndex] = useState(0);
+  const [autoOpenSwitchConditionIndex, setAutoOpenSwitchConditionIndex] = useState<number | null>(null);
+  const [autoOpenVariableConditionIndex, setAutoOpenVariableConditionIndex] = useState<number | null>(null);
+  const [pendingSwitchCondition, setPendingSwitchCondition] = useState<Extract<Condition, { kind: 'switch' }> | null>(null);
+  const [pendingVariableCondition, setPendingVariableCondition] = useState<Extract<Condition, { kind: 'variable' }> | null>(null);
   useEffect(() => {
     setPageIndex(0);
+    setPendingSwitchCondition(null);
+    setPendingVariableCondition(null);
+    setAutoOpenSwitchConditionIndex(null);
+    setAutoOpenVariableConditionIndex(null);
     onSelectPage?.(0);
   }, [event?.id, onSelectPage]);
   if (!event) return <div className="flex h-full flex-col"><div className="border-b px-4 py-3"><h2 className="text-sm font-semibold">Inspector</h2></div><div className="flex flex-1 items-center justify-center p-6 text-center text-xs text-muted-foreground">Select an event on the map or double-click a tile to create one.</div></div>;
   const selectedPageIndex = Math.min(pageIndex, event.pages.length - 1);
   const selectPage = (index: number) => {
     setPageIndex(index);
+    setPendingSwitchCondition(null);
+    setAutoOpenSwitchConditionIndex(null);
     onSelectPage?.(index);
   };
   const page = event.pages[selectedPageIndex];
@@ -222,16 +572,16 @@ export function EventInspector({ game, mapId, event, issues, assetUrls, sprites,
     onChangeEvent({ ...event, pages });
     selectPage(selectedPageIndex + 1);
   };
+  const duplicatePage = () => {
+    const pages = [...event.pages];
+    pages.splice(selectedPageIndex + 1, 0, structuredClone(page));
+    onChangeEvent({ ...event, pages });
+    selectPage(selectedPageIndex + 1);
+  };
   const deletePage = () => {
     if (event.pages.length === 1) return;
     onChangeEvent({ ...event, pages: event.pages.filter((_, index) => index !== selectedPageIndex) });
     selectPage(Math.max(0, selectedPageIndex - 1));
-  };
-  const movePage = (delta: number) => {
-    const target = selectedPageIndex + delta;
-    if (target < 0 || target >= event.pages.length) return;
-    onChangeEvent({ ...event, pages: move(event.pages, selectedPageIndex, delta) });
-    selectPage(target);
   };
   const updateTriggerType = (type: MapEventPage['trigger']['type']) => updatePage({
     ...page,
@@ -242,55 +592,100 @@ export function EventInspector({ game, mapId, event, issues, assetUrls, sprites,
         : { type },
   });
   const touchTrigger = page.trigger.type === 'playerTouch' || page.trigger.type === 'eventTouch' ? page.trigger : null;
+  const conditions = page.conditions || [];
+  const editorConditions = [...conditions, ...(pendingSwitchCondition ? [pendingSwitchCondition] : []), ...(pendingVariableCondition ? [pendingVariableCondition] : [])];
+  const changeConditions = (nextConditions: Condition[]) => {
+    const nextPendingSwitch = nextConditions.find((condition): condition is Extract<Condition, { kind: 'switch' }> => condition.kind === 'switch' && !condition.id) || null;
+    const nextPendingVariable = nextConditions.find((condition): condition is Extract<Condition, { kind: 'variable' }> => condition.kind === 'variable' && !condition.id) || null;
+    const nextPersistedConditions = nextConditions.filter(condition => condition.kind === 'item' || Boolean(condition.id));
+    const persistedConditionsChanged = nextPersistedConditions.length !== conditions.length || nextPersistedConditions.some((condition, index) => condition !== conditions[index]);
+    setPendingSwitchCondition(nextPendingSwitch);
+    setPendingVariableCondition(nextPendingVariable);
+    if (persistedConditionsChanged) updatePage({ ...page, conditions: nextPersistedConditions.length ? nextPersistedConditions : undefined });
+  };
+  const autonomousMovementEnabled = page.movement.type !== 'fixed';
   return <div className="flex h-full min-h-0 flex-col">
     <div className="shrink-0 border-b bg-background px-3 py-2">
-      <div className="mb-2 flex items-center gap-2"><span className="min-w-0 flex-1 truncate text-xs font-semibold">{event.id}</span><span className="text-[10px] text-muted-foreground">Page 1 has highest priority</span></div>
+      <div className="mb-2 truncate text-xs font-semibold">{event.id}</div>
       <div className="flex items-center gap-1">
         <div className="flex min-w-0 flex-1 gap-1 overflow-x-auto" role="tablist" aria-label="Event pages">
           {event.pages.map((_, index) => <Button key={index} type="button" role="tab" aria-selected={index === selectedPageIndex} variant={index === selectedPageIndex ? 'secondary' : 'ghost'} size="xs" onClick={() => selectPage(index)}>{index + 1}</Button>)}
         </div>
-        <Button type="button" variant="ghost" size="icon-xs" disabled={selectedPageIndex === 0} onClick={() => movePage(-1)} aria-label="Move page earlier"><ArrowUp /></Button>
-        <Button type="button" variant="ghost" size="icon-xs" disabled={selectedPageIndex === event.pages.length - 1} onClick={() => movePage(1)} aria-label="Move page later"><ArrowDown /></Button>
-        <Button type="button" variant="ghost" size="icon-xs" onClick={addPage} aria-label="Add event page"><Plus /></Button>
-        <Button type="button" variant="ghost" size="icon-xs" disabled={event.pages.length === 1} onClick={deletePage} aria-label="Delete event page"><Trash2 /></Button>
+        <Tooltip>
+          <TooltipTrigger render={<Button type="button" variant="ghost" size="icon-sm" onClick={addPage} aria-label="Add event page"><Plus /></Button>} />
+          <TooltipContent>Add page</TooltipContent>
+        </Tooltip>
+        <Tooltip>
+          <TooltipTrigger render={<Button type="button" variant="ghost" size="icon-sm" onClick={duplicatePage} aria-label="Duplicate event page"><Copy /></Button>} />
+          <TooltipContent>Duplicate page</TooltipContent>
+        </Tooltip>
+        <Tooltip>
+          <TooltipTrigger render={<Button type="button" variant="ghost" size="icon-sm" disabled={event.pages.length === 1} onClick={deletePage} aria-label="Delete event page"><Trash2 /></Button>} />
+          <TooltipContent>Delete page</TooltipContent>
+        </Tooltip>
       </div>
     </div>
     <ScrollArea className="min-h-0 flex-1"><div className="pb-8">
       {issues.length > 0 && <div className="mx-4 mt-4 border border-destructive/40 bg-destructive/5 p-3 text-xs text-destructive">{issues.slice(0, 5).map(issue => <p key={`${issue.path}:${issue.message}`}>{issue.path}: {issue.message}</p>)}</div>}
-      <Section first title="Conditions"><ConditionsEditor game={game} value={page.conditions || []} onChange={conditions => updatePage({ ...page, conditions: conditions.length ? conditions : undefined })} /></Section>
-      <Section title="Autonomous Movement">
-        <Field label="Type"><EnumSelect value={page.movement.type} values={['fixed', 'random', 'approach', 'custom'] as const} labels={{ fixed: 'Fixed', random: 'Random', approach: 'Approach player', custom: 'Custom route' }} onChange={type => updatePage({ ...page, movement: { ...page.movement, type } })} /></Field>
-        <div className="grid grid-cols-2 gap-3">
-          <Field label={`Speed · ${page.movement.speed}`}><Slider aria-label="Movement speed" value={page.movement.speed} min={1} max={6} step={1} onValueChange={speed => updatePage({ ...page, movement: { ...page.movement, speed: speed as MapEventPage['movement']['speed'] } })} /></Field>
-          <Field label={`Frequency · ${page.movement.frequency}`}><Slider aria-label="Movement frequency" value={page.movement.frequency} min={1} max={5} step={1} onValueChange={frequency => updatePage({ ...page, movement: { ...page.movement, frequency: frequency as MapEventPage['movement']['frequency'] } })} /></Field>
-        </div>
-        {page.movement.type === 'custom' && <Field label="Looping route"><MovementCommandsEditor value={page.movement.route} onChange={route => updatePage({ ...page, movement: { ...page.movement, route } })} /></Field>}
+      <Section first title="Conditions" actions={<AddConditionMenu game={game} onAdd={condition => {
+        if (condition.kind === 'switch' && !Object.keys(game.initialState.switches).length) {
+          if (!pendingSwitchCondition) setPendingSwitchCondition(condition);
+          setAutoOpenSwitchConditionIndex(editorConditions.length);
+          return;
+        }
+        if (condition.kind === 'variable' && !Object.keys(game.initialState.variables).length) {
+          if (!pendingVariableCondition) setPendingVariableCondition(condition);
+          setAutoOpenVariableConditionIndex(editorConditions.length);
+          return;
+        }
+        const nextConditions = [...conditions, condition];
+        updatePage({ ...page, conditions: nextConditions });
+        setAutoOpenSwitchConditionIndex(condition.kind === 'switch' ? nextConditions.length - 1 : null);
+        setAutoOpenVariableConditionIndex(condition.kind === 'variable' ? nextConditions.length - 1 : null);
+      }} />}>
+        {editorConditions.length > 0 ? <ConditionsEditor game={game} value={editorConditions} onChange={changeConditions} onCreateSwitch={onCreateSwitch} onCreateVariable={onCreateVariable} onRenameSwitch={onRenameSwitch} onRenameVariable={onRenameVariable} onRenameItem={onRenameItem} autoOpenSwitchIndex={autoOpenSwitchConditionIndex} autoOpenVariableIndex={autoOpenVariableConditionIndex} onAutoOpenSwitch={() => setAutoOpenSwitchConditionIndex(null)} onAutoOpenVariable={() => setAutoOpenVariableConditionIndex(null)} /> : null}
       </Section>
-      <Section title="Options">
-        <div className="grid gap-2">
-          <label className="flex items-center gap-2 text-xs"><Checkbox checked={page.options.walkingAnimation} onCheckedChange={walkingAnimation => updatePage({ ...page, options: { ...page.options, walkingAnimation } })} />Walking animation</label>
-          <label className="flex items-center gap-2 text-xs"><Checkbox checked={page.options.steppingAnimation} onCheckedChange={steppingAnimation => updatePage({ ...page, options: { ...page.options, steppingAnimation } })} />Stepping animation</label>
-          <label className="flex items-center gap-2 text-xs"><Checkbox checked={page.options.directionFix} onCheckedChange={directionFix => updatePage({ ...page, options: { ...page.options, directionFix } })} />Direction fix</label>
-          <label className="flex items-center gap-2 text-xs"><Checkbox checked={page.options.through} onCheckedChange={through => updatePage({ ...page, options: { ...page.options, through } })} />Through</label>
-        </div>
-        <Field label="Priority"><EnumSelect value={page.priority} values={['belowCharacters', 'sameAsCharacters', 'aboveCharacters'] as const} labels={{ belowCharacters: 'Below characters', sameAsCharacters: 'Same as characters', aboveCharacters: 'Above characters' }} onChange={priority => updatePage({ ...page, priority })} /></Field>
-      </Section>
-      <Section title="Trigger"><EnumSelect value={page.trigger.type} values={['actionButton', 'playerTouch', 'eventTouch', 'autorun', 'parallel'] as const} labels={{ actionButton: 'Action Button', playerTouch: 'Player Touch', eventTouch: 'Event Touch', autorun: 'Autorun', parallel: 'Parallel' }} onChange={updateTriggerType} />
-        {page.trigger.type === 'actionButton' && <Field label="Radius"><NumberInput value={page.trigger.radius} min={0.25} step={0.25} onChange={radius => updatePage({ ...page, trigger: { type: 'actionButton', radius } })} /></Field>}
-        {touchTrigger && <div className="grid grid-cols-2 gap-2"><Field label="Width"><NumberInput value={touchTrigger.size.w} min={0.5} step={0.5} onChange={w => updatePage({ ...page, trigger: { ...touchTrigger, size: { ...touchTrigger.size, w } } })} /></Field><Field label="Height"><NumberInput value={touchTrigger.size.h} min={0.5} step={0.5} onChange={h => updatePage({ ...page, trigger: { ...touchTrigger, size: { ...touchTrigger.size, h } } })} /></Field></div>}
+      <Section title="Trigger"><Tabs value={page.trigger.type} onValueChange={value => updateTriggerType(value as MapEventPage['trigger']['type'])}>
+        <TabsList className="w-full" aria-label="Trigger type">
+          {triggerTypes.map(({ type, label, icon: Icon }) => <IconButtonTooltip key={type} label={label}><TabsTrigger value={type} aria-label={label}><Icon /></TabsTrigger></IconButtonTooltip>)}
+        </TabsList>
+        {page.trigger.type === 'actionButton' && <label className="grid gap-1.5 text-[10px]">Radius<NumberInput value={page.trigger.radius} min={0.25} step={0.25} onChange={radius => updatePage({ ...page, trigger: { type: 'actionButton', radius } })} /></label>}
+        {touchTrigger && <div className="grid grid-cols-2 gap-2"><label className="grid gap-1.5 text-[10px]">Width<NumberInput value={touchTrigger.size.w} min={0.5} step={0.5} onChange={w => updatePage({ ...page, trigger: { ...touchTrigger, size: { ...touchTrigger.size, w } } })} /></label><label className="grid gap-1.5 text-[10px]">Height<NumberInput value={touchTrigger.size.h} min={0.5} step={0.5} onChange={h => updatePage({ ...page, trigger: { ...touchTrigger, size: { ...touchTrigger.size, h } } })} /></label></div>}
+      </Tabs>
       </Section>
       <Section title="Sprite">
-        <button type="button" className="flex w-full items-center gap-3 border bg-muted/10 p-3 text-left hover:border-primary/60 hover:bg-muted/30 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring" onClick={() => setSpritePickerOpen(true)}>
-          {page.sprite
-            ? <SpritePreview sprite={page.sprite} imageUrl={assetUrls[page.sprite.image] || sprites.find(sprite => sprite.imagePath === page.sprite?.image)?.url} characterRows={sprites.find(sprite => sprite.imagePath === page.sprite?.image)?.layout.characterRows} className="size-20 shrink-0 border bg-background" />
-            : <span className="grid size-20 shrink-0 place-items-center border bg-background text-xs text-muted-foreground">No sprite</span>}
-          <span className="min-w-0 flex-1"><span className="block truncate text-sm font-medium">{page.sprite ? sprites.find(sprite => sprite.imagePath === page.sprite?.image)?.name || page.sprite.image : 'Choose a sprite'}</span><span className="mt-1 block text-xs text-muted-foreground">Click to browse the sprite library.</span></span>
-        </button>
-        {page.sprite && <Button type="button" variant="outline" size="sm" className="w-full" onClick={() => updatePage({ ...page, sprite: undefined })}>Remove sprite</Button>}
+        <Attachment state={page.sprite ? 'done' : 'idle'} className="w-full">
+          <AttachmentTrigger aria-label={page.sprite ? 'Change sprite' : 'Choose a sprite'} onClick={() => setSpritePickerOpen(true)} />
+          <AttachmentMedia variant={page.sprite ? 'image' : 'icon'}>
+            {page.sprite
+              ? <SpritePreview sprite={page.sprite} imageUrl={assetUrls[page.sprite.image] || sprites.find(sprite => sprite.imagePath === page.sprite?.image)?.url} characterRows={sprites.find(sprite => sprite.imagePath === page.sprite?.image)?.layout.characterRows} className="size-full" />
+              : <ImageIcon />}
+          </AttachmentMedia>
+          <AttachmentContent>
+            <AttachmentTitle>{page.sprite ? sprites.find(sprite => sprite.imagePath === page.sprite?.image)?.name || page.sprite.image : 'Choose a sprite'}</AttachmentTitle>
+            <AttachmentDescription>{page.sprite ? 'Click to choose another sprite.' : 'Browse the sprite library.'}</AttachmentDescription>
+          </AttachmentContent>
+          {page.sprite && <AttachmentActions><IconButtonTooltip label="Remove sprite"><AttachmentAction aria-label="Remove sprite" onClick={() => updatePage({ ...page, sprite: undefined })}><X /></AttachmentAction></IconButtonTooltip></AttachmentActions>}
+        </Attachment>
         <EventSpritePicker open={spritePickerOpen} onOpenChange={setSpritePickerOpen} sprites={sprites} selected={page.sprite} onSelect={async (asset, characterIndex) => {
           await onImportSprite(asset);
           updatePage({ ...page, sprite: spriteReference(asset, characterIndex) });
         }} />
+        {page.sprite && <>
+          <div className="grid gap-2">
+            <label className="flex items-center gap-2 text-xs"><Checkbox checked={page.options.walkingAnimation} onCheckedChange={walkingAnimation => updatePage({ ...page, options: { ...page.options, walkingAnimation } })} />Walking animation</label>
+            <label className="flex items-center gap-2 text-xs"><Checkbox checked={page.options.steppingAnimation} onCheckedChange={steppingAnimation => updatePage({ ...page, options: { ...page.options, steppingAnimation } })} />Stepping animation</label>
+            <label className="flex items-center gap-2 text-xs"><Checkbox checked={page.options.directionFix} onCheckedChange={directionFix => updatePage({ ...page, options: { ...page.options, directionFix } })} />Direction fix</label>
+            <label className="flex items-center gap-2 text-xs"><Checkbox checked={page.options.through} onCheckedChange={through => updatePage({ ...page, options: { ...page.options, through } })} />Through</label>
+          </div>
+          <Field label="Priority"><EnumSelect value={page.priority} values={['belowCharacters', 'sameAsCharacters', 'aboveCharacters'] as const} labels={{ belowCharacters: 'Below characters', sameAsCharacters: 'Same as characters', aboveCharacters: 'Above characters' }} onChange={priority => updatePage({ ...page, priority })} /></Field>
+        </>}
+      </Section>
+      <Section title="Autonomous Movement" actions={<Switch size="sm" checked={autonomousMovementEnabled} onCheckedChange={enabled => updatePage({ ...page, movement: { ...page.movement, type: enabled ? 'random' : 'fixed' } })} aria-label="Enable autonomous movement" />}>
+        {autonomousMovementEnabled && <div className="grid grid-cols-[minmax(0,1fr)_auto] items-end gap-2">
+          <label className="grid gap-1.5 text-[10px]">Type<EnumSelect value={page.movement.type} values={['random', 'approach', 'custom'] as const} labels={{ random: 'Random', approach: 'Approach player', custom: 'Custom route' }} ariaLabel="Autonomous movement type" onChange={type => updatePage({ ...page, movement: { ...page.movement, type } })} /></label>
+          <AutonomousMovementSettings movement={page.movement} onChange={movement => updatePage({ ...page, movement })} />
+        </div>}
       </Section>
       <Section title="Contents"><CommandsEditor game={game} mapId={mapId} value={page.contents} onChange={contents => updatePage({ ...page, contents })} /></Section>
     </div></ScrollArea>

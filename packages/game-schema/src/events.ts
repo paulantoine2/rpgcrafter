@@ -2,10 +2,13 @@ import type { Condition, EventMovement, MapEvent, MapEventPage } from './types.j
 
 export type ResolvedEventPage = { page: MapEventPage; index: number };
 
-/** Page 1 has the highest priority; the first page whose conditions pass is active. */
+/** The highest-numbered page whose conditions pass is active. */
 export function resolveEventPage(event: MapEvent, conditionsMet: (conditions: Condition[]) => boolean): ResolvedEventPage | undefined {
-  const index = event.pages.findIndex(page => conditionsMet(page.conditions || []));
-  return index < 0 ? undefined : { page: event.pages[index], index };
+  for (let index = event.pages.length - 1; index >= 0; index -= 1) {
+    const page = event.pages[index];
+    if (conditionsMet(page.conditions || [])) return { page, index };
+  }
+  return undefined;
 }
 
 export function eventPageMovement(page: MapEventPage): EventMovement {

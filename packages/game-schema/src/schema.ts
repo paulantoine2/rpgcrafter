@@ -9,7 +9,7 @@ import type {
 import { CANONICAL_AUTOTILE_MASKS, canonicalizeAutotileMask } from './autotile.js';
 import { migrateSourceGameFiles } from './migration.js';
 
-export const ENGINE_VERSION = '0.7.0';
+export const ENGINE_VERSION = '0.8.0';
 
 const Id = z.string().min(1);
 const FiniteNumber = z.number().finite();
@@ -119,9 +119,9 @@ const TileLayerSchema = z.object({
 }).strict();
 
 const ConditionSchema: z.ZodType<Condition> = z.discriminatedUnion('kind', [
-  z.object({ kind: z.literal('flag'), id: Id, equals: z.boolean().optional() }).strict(),
+  z.object({ kind: z.literal('switch'), id: Id, equals: z.boolean().optional() }).strict(),
   z.object({ kind: z.literal('item'), id: Id, amount: FiniteNumber.optional() }).strict(),
-  z.object({ kind: z.literal('quest'), id: Id, state: Id }).strict(),
+  z.object({ kind: z.literal('variable'), id: Id, operator: z.enum(['equal', 'notEqual', 'greaterThan', 'greaterThanOrEqual', 'lessThan', 'lessThanOrEqual']), value: FiniteNumber }).strict(),
 ]);
 const MovementCommandSchema: z.ZodType<MovementCommand> = z.discriminatedUnion('type', [
   z.object({ type: z.literal('move'), direction: z.enum(['north', 'east', 'south', 'west', 'forward', 'backward', 'random', 'towardPlayer', 'awayFromPlayer', 'left', 'right']) }).strict(),
@@ -157,8 +157,8 @@ const EventOptionsSchema: z.ZodType<EventOptions> = z.object({
 
 const EventCommandSchema: z.ZodType<EventCommand> = z.lazy(() => z.discriminatedUnion('type', [
   z.object({ type: z.literal('dialogue'), speaker: Id, text: Id, choices: z.array(z.object({ label: Id, commands: z.array(EventCommandSchema) }).strict()).optional() }).strict(),
-  z.object({ type: z.literal('setFlag'), id: Id, value: z.boolean() }).strict(),
-  z.object({ type: z.literal('setQuestState'), id: Id, state: Id }).strict(),
+  z.object({ type: z.literal('setSwitch'), id: Id, value: z.boolean() }).strict(),
+  z.object({ type: z.literal('setVariable'), id: Id, value: FiniteNumber }).strict(),
   z.object({ type: z.literal('giveItem'), id: Id, amount: FiniteNumber.optional() }).strict(),
   z.object({ type: z.literal('removeItem'), id: Id, amount: FiniteNumber.optional() }).strict(),
   z.object({ type: z.literal('unlockSkill'), id: Id }).strict(),
@@ -240,7 +240,13 @@ const UiSchema: z.ZodType<UiDefinition> = z.object({
   equipmentSlots: z.array(z.object({ id: Id, label: Id }).strict()),
 }).strict();
 const ObjectiveSchema: z.ZodType<Objective> = z.object({ conditions: z.array(ConditionSchema).optional(), text: Id }).strict();
-const InitialStateSchema: z.ZodType<InitialState> = z.object({ flags: z.record(Id, z.boolean()), quests: z.record(Id, Id), inventory: z.record(Id, FiniteNumber).optional(), equipment: z.record(Id, Id.nullable()).optional() }).strict();
+const InitialStateSchema: z.ZodType<InitialState> = z.object({
+  switches: z.record(Id, z.object({ name: Id, initialValue: z.boolean() }).strict()),
+  variables: z.record(Id, z.object({ name: Id, initialValue: FiniteNumber }).strict()),
+  quests: z.record(Id, Id),
+  inventory: z.record(Id, FiniteNumber).optional(),
+  equipment: z.record(Id, Id.nullable()).optional(),
+}).strict();
 const ActorsSchema = z.object({ player: PlayerSchema }).strict();
 const EventsSchema = z.object({ objectives: z.array(ObjectiveSchema) }).strict();
 
@@ -331,16 +337,16 @@ function validateReferences(game: SourceGame): ContentIssue[] {
 
   const validateConditions = (values: Condition[], path: string) => values.forEach((condition, index) => {
     const target = `${path}[${index}]`;
-    if (condition.kind === 'flag' && !(condition.id in initialState.flags)) issue(target, `Unknown flag: ${condition.id}`);
+    if (condition.kind === 'switch' && !(condition.id in initialState.switches)) issue(target, `Unknown switch: ${condition.id}`);
     if (condition.kind === 'item' && !items[condition.id]) issue(target, `Unknown item: ${condition.id}`);
-    if (condition.kind === 'quest' && !quests[condition.id]?.states.includes(condition.state)) issue(target, `Unknown quest or state: ${condition.id}`);
+    if (condition.kind === 'variable' && !(condition.id in initialState.variables)) issue(target, `Unknown variable: ${condition.id}`);
   });
   const validateCommands = (values: EventCommand[], path: string, sourceMapId?: string) => values.forEach((command, index) => {
     const target = `${path}[${index}]`;
     if ((command.type === 'giveItem' || command.type === 'removeItem') && !items[command.id]) issue(target, `Unknown item: ${command.id}`);
     if (command.type === 'unlockSkill' && !skills[command.id]) issue(target, `Unknown skill: ${command.id}`);
-    if (command.type === 'setFlag' && !(command.id in initialState.flags)) issue(target, `Unknown flag: ${command.id}`);
-    if (command.type === 'setQuestState' && !quests[command.id]?.states.includes(command.state)) issue(target, `Unknown quest or state: ${command.id}`);
+    if (command.type === 'setSwitch' && !(command.id in initialState.switches)) issue(target, `Unknown switch: ${command.id}`);
+    if (command.type === 'setVariable' && !(command.id in initialState.variables)) issue(target, `Unknown variable: ${command.id}`);
     if (command.type === 'teleport') {
       if (!maps[command.mapId]) issue(target, `Unknown map: ${command.mapId}`);
       else if (!maps[command.mapId].planes.some(plane => plane.id === command.position.planeId)) issue(`${target}.position.planeId`, 'Unknown destination plane');
@@ -482,7 +488,7 @@ export function parseSourceGame(files: SourceGameFiles): SourceGameResult {
   }
   if (issues.length) return { success: false, issues };
   const game = parsed as SourceGame;
-  if (game.manifest.schemaVersion !== '0.7') issues.push({ path: 'manifest.schemaVersion', message: `Unsupported schema version: ${game.manifest.schemaVersion}` });
+  if (game.manifest.schemaVersion !== '0.8') issues.push({ path: 'manifest.schemaVersion', message: `Unsupported schema version: ${game.manifest.schemaVersion}` });
   if (!engineSupports(game.manifest.engineRange)) issues.push({ path: 'manifest.engineRange', message: `Player ${ENGINE_VERSION} is incompatible with ${game.manifest.engineRange}` });
   issues.push(...validateReferences(game));
   return issues.length ? { success: false, issues } : { success: true, data: game, issues: [] };

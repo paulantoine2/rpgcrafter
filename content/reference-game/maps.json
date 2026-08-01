@@ -9554,9 +9554,9 @@
           {
             "conditions": [
               {
-                "kind": "quest",
-                "id": "quest.bell-of-mist",
-                "state": "reach_sanctuary"
+                "kind": "switch",
+                "id": "questAccepted",
+                "equals": true
               }
             ],
             "movement": {
@@ -9633,9 +9633,9 @@
           {
             "conditions": [
               {
-                "kind": "quest",
-                "id": "quest.bell-of-mist",
-                "state": "inactive"
+                "kind": "switch",
+                "id": "questAccepted",
+                "equals": false
               }
             ],
             "sprite": {
@@ -9673,9 +9673,9 @@
                     "label": "I accept",
                     "commands": [
                       {
-                        "type": "setQuestState",
-                        "id": "quest.bell-of-mist",
-                        "state": "reach_sanctuary"
+                        "type": "setSwitch",
+                        "id": "questAccepted",
+                        "value": true
                       },
                       {
                         "type": "toast",
@@ -9703,9 +9703,14 @@
           {
             "conditions": [
               {
-                "kind": "quest",
-                "id": "quest.bell-of-mist",
-                "state": "return_to_mayor"
+                "kind": "switch",
+                "id": "bossDefeated",
+                "equals": true
+              },
+              {
+                "kind": "switch",
+                "id": "questCompleted",
+                "equals": false
               },
               {
                 "kind": "item",
@@ -9751,9 +9756,9 @@
                         "id": "item.crystal-heart"
                       },
                       {
-                        "type": "setQuestState",
-                        "id": "quest.bell-of-mist",
-                        "state": "completed"
+                        "type": "setSwitch",
+                        "id": "questCompleted",
+                        "value": true
                       },
                       {
                         "type": "save"
@@ -9772,9 +9777,9 @@
           {
             "conditions": [
               {
-                "kind": "quest",
-                "id": "quest.bell-of-mist",
-                "state": "completed"
+                "kind": "switch",
+                "id": "questCompleted",
+                "equals": true
               }
             ],
             "sprite": {
@@ -10712,9 +10717,9 @@
           {
             "conditions": [
               {
-                "kind": "quest",
-                "id": "quest.bell-of-mist",
-                "state": "reach_sanctuary"
+                "kind": "switch",
+                "id": "questAccepted",
+                "equals": true
               }
             ],
             "movement": {
@@ -13904,12 +13909,12 @@
           {
             "conditions": [
               {
-                "kind": "flag",
+                "kind": "switch",
                 "id": "keyChestOpened",
                 "equals": false
               },
               {
-                "kind": "flag",
+                "kind": "switch",
                 "id": "keyChestOpened",
                 "equals": false
               }
@@ -13941,7 +13946,7 @@
             },
             "contents": [
               {
-                "type": "setFlag",
+                "type": "setSwitch",
                 "id": "keyChestOpened",
                 "value": true
               },
@@ -13952,11 +13957,6 @@
               {
                 "type": "unlockSkill",
                 "id": "skill.wave"
-              },
-              {
-                "type": "setQuestState",
-                "id": "quest.bell-of-mist",
-                "state": "open_door"
               },
               {
                 "type": "save"
@@ -13982,7 +13982,7 @@
           {
             "conditions": [
               {
-                "kind": "flag",
+                "kind": "switch",
                 "id": "keyChestOpened",
                 "equals": false
               }
@@ -14033,7 +14033,7 @@
           {
             "conditions": [
               {
-                "kind": "flag",
+                "kind": "switch",
                 "id": "guardianDoorOpen",
                 "equals": false
               },
@@ -14073,14 +14073,9 @@
                 "id": "item.sanctuary-key"
               },
               {
-                "type": "setFlag",
+                "type": "setSwitch",
                 "id": "guardianDoorOpen",
                 "value": true
-              },
-              {
-                "type": "setQuestState",
-                "id": "quest.bell-of-mist",
-                "state": "defeat_guardian"
               },
               {
                 "type": "toast",
@@ -14104,7 +14099,7 @@
           {
             "conditions": [
               {
-                "kind": "flag",
+                "kind": "switch",
                 "id": "guardianDoorOpen",
                 "equals": false
               }
@@ -17910,7 +17905,7 @@
           {
             "conditions": [
               {
-                "kind": "flag",
+                "kind": "switch",
                 "id": "bossDefeated"
               }
             ],

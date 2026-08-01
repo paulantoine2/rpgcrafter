@@ -61,6 +61,41 @@ describe('IndexedDB draft repository', () => {
     expect(restored?.events).toEqual(source.events);
   });
 
+  it('rewrites every document when upgrading a draft created by an older schema', async () => {
+    const factory = new IDBFactory();
+    const databaseName = 'draft-schema-upgrade';
+    const repository = createDraftRepository({ factory, databaseName });
+    const source = sourceGame();
+    await repository.save(source);
+    await repository.close();
+
+    const database = await openDatabase(factory, databaseName);
+    const transaction = database.transaction('projects', 'readwrite');
+    const store = transaction.objectStore('projects');
+    const projectId = `${source.manifest.gameId}:${source.manifest.version}`;
+    const record = await new Promise<Record<string, unknown>>((resolve, reject) => {
+      const request = store.get(projectId);
+      request.onsuccess = () => resolve(request.result);
+      request.onerror = () => reject(request.error);
+    });
+    delete record.sourceSchemaVersion;
+    store.put(record);
+    await new Promise<void>((resolve, reject) => {
+      transaction.oncomplete = () => resolve();
+      transaction.onerror = () => reject(transaction.error);
+      transaction.onabort = () => reject(transaction.error);
+    });
+    database.close();
+
+    const changed = structuredClone(source);
+    changed.maps.village.name = 'Schema-upgraded map';
+    changed.events.objectives[0].text = 'Schema-upgraded objective';
+    await repository.save(changed, ['maps.json']);
+    const restored = await repository.restore(source);
+    expect(restored?.maps.village.name).toBe('Schema-upgraded map');
+    expect(restored?.events.objectives[0].text).toBe('Schema-upgraded objective');
+  });
+
   it('serializes overlapping writes so the newest snapshot wins', async () => {
     const repository = createDraftRepository({ factory: new IDBFactory(), databaseName: 'draft-order' });
     const source = sourceGame();

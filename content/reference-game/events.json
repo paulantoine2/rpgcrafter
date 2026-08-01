@@ -3,9 +3,9 @@
     {
       "conditions": [
         {
-          "kind": "quest",
-          "id": "quest.bell-of-mist",
-          "state": "inactive"
+          "kind": "switch",
+          "id": "questAccepted",
+          "equals": false
         }
       ],
       "text": "Speak to the mayor of Dawnvale."
@@ -13,9 +13,14 @@
     {
       "conditions": [
         {
-          "kind": "quest",
-          "id": "quest.bell-of-mist",
-          "state": "reach_sanctuary"
+          "kind": "switch",
+          "id": "questAccepted",
+          "equals": true
+        },
+        {
+          "kind": "switch",
+          "id": "keyChestOpened",
+          "equals": false
         }
       ],
       "text": "Cross the Misty Path and find the Sanctuary Key."
@@ -23,9 +28,14 @@
     {
       "conditions": [
         {
-          "kind": "quest",
-          "id": "quest.bell-of-mist",
-          "state": "open_door"
+          "kind": "switch",
+          "id": "keyChestOpened",
+          "equals": true
+        },
+        {
+          "kind": "switch",
+          "id": "guardianDoorOpen",
+          "equals": false
         }
       ],
       "text": "Open the Guardian's door."
@@ -33,9 +43,14 @@
     {
       "conditions": [
         {
-          "kind": "quest",
-          "id": "quest.bell-of-mist",
-          "state": "defeat_guardian"
+          "kind": "switch",
+          "id": "guardianDoorOpen",
+          "equals": true
+        },
+        {
+          "kind": "switch",
+          "id": "bossDefeated",
+          "equals": false
         }
       ],
       "text": "Defeat the Drowned Guardian."
@@ -43,9 +58,14 @@
     {
       "conditions": [
         {
-          "kind": "quest",
-          "id": "quest.bell-of-mist",
-          "state": "return_to_mayor"
+          "kind": "switch",
+          "id": "bossDefeated",
+          "equals": true
+        },
+        {
+          "kind": "switch",
+          "id": "questCompleted",
+          "equals": false
         }
       ],
       "text": "Bring the Crystal Heart back to the mayor."
@@ -53,9 +73,9 @@
     {
       "conditions": [
         {
-          "kind": "quest",
-          "id": "quest.bell-of-mist",
-          "state": "completed"
+          "kind": "switch",
+          "id": "questCompleted",
+          "equals": true
         }
       ],
       "text": "The mist clears. Your adventure is complete."

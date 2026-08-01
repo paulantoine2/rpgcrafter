@@ -21,6 +21,9 @@ describe('StudioToolbar', () => {
     const onChangeMode = vi.fn();
     render(<StudioToolbar {...common} mode="events" onChangeMode={onChangeMode} />);
     expect(screen.queryByRole('tab', { name: 'Nav' })).not.toBeInTheDocument();
+    const modeTabs = screen.getByRole('tablist', { name: 'Editor mode' });
+    expect(modeTabs).toHaveAttribute('data-slot', 'tabs-list');
+    expect(screen.getByRole('tab', { name: 'Events' })).toHaveAttribute('aria-selected', 'true');
     await userEvent.click(screen.getByRole('tab', { name: 'Draw' }));
     expect(onChangeMode).toHaveBeenCalledWith('drawing');
   });

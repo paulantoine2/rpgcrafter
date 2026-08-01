@@ -2,8 +2,8 @@ import { useLayoutEffect, useRef, type ReactElement } from 'react';
 import type { TileLayer } from '@rpgcrafter/game-schema';
 import { Box, Circle, Eraser, Layers3, MapPin, MousePointer2, PaintBucket, Paintbrush, Pencil, Square } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
-import { cn } from '@/lib/utils';
 import type { DrawingTool, EditorMode } from '@/components/studio-sidebar';
 
 export type EventTool = 'cursor' | 'playerStart';
@@ -23,22 +23,14 @@ function ModeToggle({ mode, onChange }: { mode: EditorMode; onChange: (mode: Edi
     { value: 'drawing', label: 'Draw', icon: Paintbrush },
   ];
 
-  return <div className="flex shrink-0 gap-0.5 rounded-lg bg-muted/80 p-0.5" role="tablist" aria-label="Editor mode">
-    {modes.map(item => {
-      const Icon = item.icon;
-      return <ToolTooltip key={item.value} label={item.label}><button
-          type="button"
-          role="tab"
-          aria-label={item.label}
-          aria-selected={mode === item.value}
-          className={cn(
-            'grid size-8 place-items-center rounded-md text-muted-foreground outline-none transition-colors hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring',
-            mode === item.value && 'bg-background text-foreground shadow-sm',
-          )}
-          onClick={() => onChange(item.value)}
-        ><Icon className="size-3.5" /></button></ToolTooltip>;
-    })}
-  </div>;
+  return <Tabs value={mode} onValueChange={value => onChange(value as EditorMode)}>
+    <TabsList aria-label="Editor mode">
+      {modes.map(item => {
+        const Icon = item.icon;
+        return <ToolTooltip key={item.value} label={item.label}><TabsTrigger value={item.value} aria-label={item.label}><Icon /></TabsTrigger></ToolTooltip>;
+      })}
+    </TabsList>
+  </Tabs>;
 }
 
 function EventsTools({ eventTool, onChangeEventTool }: { eventTool: EventTool; onChangeEventTool: (tool: EventTool) => void }) {

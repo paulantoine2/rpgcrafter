@@ -1,5 +1,12 @@
 {
-  "flags": { "keyChestOpened": false, "guardianDoorOpen": false, "bossDefeated": false },
+  "switches": {
+    "questAccepted": { "name": "Bell of Mists accepted", "initialValue": false },
+    "keyChestOpened": { "name": "Key chest opened", "initialValue": false },
+    "guardianDoorOpen": { "name": "Guardian door open", "initialValue": false },
+    "bossDefeated": { "name": "Boss defeated", "initialValue": false },
+    "questCompleted": { "name": "Bell of Mists completed", "initialValue": false }
+  },
+  "variables": {},
   "quests": { "quest.bell-of-mist": "inactive" },
   "inventory": { "item.hero-sword": 1, "item.leather-cloak": 1, "item.potion": 1 },
   "equipment": { "weapon": "item.hero-sword", "armor": "item.leather-cloak", "accessory": null }

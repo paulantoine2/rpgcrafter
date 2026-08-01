@@ -11,9 +11,13 @@ function toV06(files: SourceGameFiles) {
   legacy.manifest.schemaVersion = '0.6';
   legacy.manifest.engineRange = '>=0.6 <0.7';
   legacy.events.events = {};
-  const legacyCommands = (commands: any[]): any[] => commands.map(command => command.type === 'dialogue' && command.choices
-    ? { ...command, choices: command.choices.map((choice: any) => ({ label: choice.label, actions: legacyCommands(choice.commands) })) }
-    : command);
+  legacy.initialState.flags = Object.fromEntries(Object.entries(legacy.initialState.switches as Record<string, any>).map(([id, definition]) => [id, definition.initialValue]));
+  delete legacy.initialState.switches;
+  const legacyConditions = (conditions: any[] | undefined) => conditions?.map(condition => condition.kind === 'switch' ? { ...condition, kind: 'flag' } : condition);
+  const legacyCommands = (commands: any[]): any[] => commands.map(command => {
+    if (command.type === 'dialogue' && command.choices) return { ...command, choices: command.choices.map((choice: any) => ({ label: choice.label, actions: legacyCommands(choice.commands) })) };
+    return command.type === 'setSwitch' ? { ...command, type: 'setFlag' } : command;
+  });
   for (const [mapId, map] of Object.entries(legacy.maps) as Array<[string, any]>) {
     for (const event of map.events) {
       const page = event.pages[0];
@@ -21,7 +25,7 @@ function toV06(files: SourceGameFiles) {
       legacy.events.events[scriptId] = {
         id: scriptId,
         pages: event.pages.map((item: any) => ({
-          ...(item.conditions ? { conditions: item.conditions } : {}),
+          ...(item.conditions ? { conditions: legacyConditions(item.conditions) } : {}),
           actions: legacyCommands(item.contents),
         })),
       };
@@ -36,6 +40,7 @@ function toV06(files: SourceGameFiles) {
     }
   }
   for (const enemy of Object.values(legacy.enemies) as any[]) if (enemy.onDefeated) enemy.onDefeated = legacyCommands(enemy.onDefeated);
+  legacy.events.objectives = legacy.events.objectives.map((objective: any) => ({ ...objective, conditions: legacyConditions(objective.conditions) }));
   return legacy;
 }
 
@@ -69,7 +74,7 @@ describe('V0.4 migration', () => {
     const result = parseSourceGame(legacy);
     expect(result.success).toBe(true);
     if (!result.success) return;
-    expect(result.data.manifest.schemaVersion).toBe('0.7');
+    expect(result.data.manifest.schemaVersion).toBe('0.8');
     expect(result.data.maps.village.planes).toEqual([{ id: 'plane-1', name: 'Plan 1', order: 0, surfaceLayerId: 'surface', surfaceCoverage: 'bounds' }]);
     expect(result.data.maps.village.blockedRegions[0].planeId).toBe('plane-1');
     expect(result.data.actors.player.start.planeId).toBe('plane-1');
@@ -111,8 +116,67 @@ describe('V0.6 event-page migration', () => {
     if (!result.success) return;
     const mayor = result.data.maps.village.events.find(event => event.id === 'mayor')!;
     expect(mayor.pages).toHaveLength(4);
-    expect(mayor.pages[0].conditions).toEqual([{ kind: 'quest', id: 'quest.bell-of-mist', state: 'inactive' }]);
+    expect(mayor.pages[0].conditions).toEqual([{ kind: 'switch', id: 'questAccepted', equals: false }]);
     expect(mayor.pages[0].contents[0].type).toBe('dialogue');
     expect(result.data.events).toEqual({ objectives: expect.any(Array) });
+    expect(result.data.initialState.switches.keyChestOpened).toEqual({ name: 'Key Chest Opened', initialValue: false });
+    expect(Object.values(result.data.maps).flatMap(map => map.events).flatMap(event => event.pages).flatMap(page => page.conditions || []).some(condition => condition.kind === 'switch')).toBe(true);
+  });
+});
+
+describe('V0.7 draft migration', () => {
+  it('preserves switches already saved in the V0.8 initial-state format', () => {
+    const mixedDraft = {
+      manifest: read('manifest.json'), tilesets: read('tilesets.json'), maps: read('maps.json'), actors: read('actors.json'), enemies: read('enemies.json'),
+      skills: read('skills.json'), items: read('items.json'), quests: read('quests.json'), ui: read('ui.json'), events: read('events.json'), initialState: read('initial-state.json'),
+    } as SourceGameFiles;
+    (mixedDraft.manifest as any).schemaVersion = '0.7';
+    (mixedDraft.manifest as any).engineRange = '>=0.7 <0.8';
+    (mixedDraft.initialState as any).switches.unsavedDraftSwitch = { name: 'Unsaved draft switch', initialValue: true };
+
+    const result = parseSourceGame(mixedDraft);
+
+    expect(result.success).toBe(true);
+    if (!result.success) return;
+    expect(result.data.initialState.switches.unsavedDraftSwitch).toEqual({
+      name: 'Unsaved draft switch',
+      initialValue: true,
+    });
+  });
+
+  it('adds an empty variable collection to projects that predate numeric variables', () => {
+    const files = {
+      manifest: read('manifest.json'), tilesets: read('tilesets.json'), maps: read('maps.json'), actors: read('actors.json'), enemies: read('enemies.json'),
+      skills: read('skills.json'), items: read('items.json'), quests: read('quests.json'), ui: read('ui.json'), events: read('events.json'), initialState: read('initial-state.json'),
+    } as SourceGameFiles;
+    delete (files.initialState as any).variables;
+
+    const result = parseSourceGame(files);
+
+    expect(result.success).toBe(true);
+    if (result.success) expect(result.data.initialState.variables).toEqual({});
+  });
+
+  it('removes obsolete quest-state commands from events, choices, and enemies', () => {
+    const files = {
+      manifest: read('manifest.json'), tilesets: read('tilesets.json'), maps: read('maps.json'), actors: read('actors.json'), enemies: read('enemies.json'),
+      skills: read('skills.json'), items: read('items.json'), quests: read('quests.json'), ui: read('ui.json'), events: read('events.json'), initialState: read('initial-state.json'),
+    } as SourceGameFiles;
+    const obsolete = { type: 'setQuestState', id: 'quest.bell-of-mist', state: 'completed' };
+    (files.maps as any).village.events[0].pages[0].contents.push(obsolete, {
+      type: 'dialogue', speaker: 'Mayor', text: 'Done', choices: [{ label: 'Continue', commands: [obsolete] }],
+    });
+    (files.enemies as any).slime.onDefeated = [obsolete];
+
+    const result = parseSourceGame(files);
+
+    expect(result.success).toBe(true);
+    if (!result.success) return;
+    const contents = result.data.maps.village.events[0].pages[0].contents;
+    expect(contents).not.toContainEqual(expect.objectContaining({ type: 'setQuestState' }));
+    const dialogue = contents.at(-1);
+    expect(dialogue?.type).toBe('dialogue');
+    if (dialogue?.type === 'dialogue') expect(dialogue.choices?.[0].commands).toEqual([]);
+    expect(result.data.enemies.slime.onDefeated).toEqual([]);
   });
 });

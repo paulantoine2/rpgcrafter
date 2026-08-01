@@ -193,7 +193,104 @@ function migrateV06(files: SourceGameFiles): SourceGameFiles {
   return next;
 }
 
+function switchName(id: string) {
+  const words = id.replace(/([a-z0-9])([A-Z])/g, '$1 $2').replace(/[-_]+/g, ' ').trim();
+  return words ? words.charAt(0).toUpperCase() + words.slice(1) : id;
+}
+
+function migrateSwitchConditions(conditions: unknown) {
+  if (!Array.isArray(conditions)) return conditions;
+  return conditions.map(condition => condition && typeof condition === 'object' && (condition as JsonObject).kind === 'flag'
+    ? { ...(condition as JsonObject), kind: 'switch' }
+    : condition);
+}
+
+function migrateSwitchCommands(commands: unknown): unknown {
+  if (!Array.isArray(commands)) return commands;
+  return commands.map(command => {
+    if (!command || typeof command !== 'object') return command;
+    const next = { ...(command as JsonObject) };
+    if (next.type === 'setFlag') next.type = 'setSwitch';
+    if (next.type === 'dialogue' && Array.isArray(next.choices)) {
+      next.choices = next.choices.map((choice: JsonObject) => ({ ...choice, commands: migrateSwitchCommands(choice.commands) }));
+    }
+    return next;
+  });
+}
+
+/** Renames flags to named switches and upgrades the V0.7 authoring format to V0.8. */
+function migrateV07(files: SourceGameFiles): SourceGameFiles {
+  const manifest = files.manifest as JsonObject | null;
+  if (!manifest || manifest.schemaVersion !== '0.7') return files;
+  const next = structuredClone(files) as SourceGameFiles;
+  const nextManifest = next.manifest as JsonObject;
+  nextManifest.schemaVersion = '0.8';
+  nextManifest.engineRange = '>=0.8 <0.9';
+
+  const initialState = (next.initialState || {}) as JsonObject;
+  if (!('switches' in initialState)) {
+    initialState.switches = Object.fromEntries(Object.entries((initialState.flags || {}) as Record<string, unknown>).map(([id, value]) => [
+      id,
+      { name: switchName(id), initialValue: Boolean(value) },
+    ]));
+  }
+  delete initialState.flags;
+
+  for (const map of Object.values((next.maps || {}) as Record<string, JsonObject>)) {
+    for (const event of Array.isArray(map.events) ? map.events : []) {
+      for (const page of Array.isArray(event.pages) ? event.pages : []) {
+        page.conditions = migrateSwitchConditions(page.conditions);
+        page.contents = migrateSwitchCommands(page.contents);
+      }
+    }
+  }
+  for (const enemy of Object.values((next.enemies || {}) as Record<string, JsonObject>)) {
+    if (enemy.onDefeated) enemy.onDefeated = migrateSwitchCommands(enemy.onDefeated);
+  }
+  const events = (next.events || {}) as JsonObject;
+  if (Array.isArray(events.objectives)) {
+    events.objectives = events.objectives.map((objective: JsonObject) => ({ ...objective, conditions: migrateSwitchConditions(objective.conditions) }));
+  }
+  return next;
+}
+
+function ensureVariables(files: SourceGameFiles): SourceGameFiles {
+  const initialState = files.initialState as JsonObject | null;
+  if (!initialState || 'variables' in initialState) return files;
+  const next = structuredClone(files) as SourceGameFiles;
+  (next.initialState as JsonObject).variables = {};
+  return next;
+}
+
+function withoutQuestStateCommands(commands: unknown): unknown {
+  if (!Array.isArray(commands)) return commands;
+  return commands
+    .filter(command => !command || typeof command !== 'object' || (command as JsonObject).type !== 'setQuestState')
+    .map(command => {
+      if (!command || typeof command !== 'object') return command;
+      const next = { ...(command as JsonObject) };
+      if (next.type === 'dialogue' && Array.isArray(next.choices)) {
+        next.choices = next.choices.map((choice: JsonObject) => ({ ...choice, commands: withoutQuestStateCommands(choice.commands) }));
+      }
+      return next;
+    });
+}
+
+/** Removes the obsolete quest-state command, including commands nested in dialogue choices. */
+function removeQuestStateCommands(files: SourceGameFiles): SourceGameFiles {
+  const next = structuredClone(files) as SourceGameFiles;
+  for (const map of Object.values((next.maps || {}) as Record<string, JsonObject>)) {
+    for (const event of Array.isArray(map.events) ? map.events : []) {
+      for (const page of Array.isArray(event.pages) ? event.pages : []) page.contents = withoutQuestStateCommands(page.contents);
+    }
+  }
+  for (const enemy of Object.values((next.enemies || {}) as Record<string, JsonObject>)) {
+    if (enemy.onDefeated) enemy.onDefeated = withoutQuestStateCommands(enemy.onDefeated);
+  }
+  return next;
+}
+
 /** Migrates every supported legacy authoring shape to the current schema. */
 export function migrateSourceGameFiles(files: SourceGameFiles): SourceGameFiles {
-  return migrateV06(migrateEventVisuals(migrateV05(migrateV04(files))));
+  return removeQuestStateCommands(ensureVariables(migrateV07(migrateV06(migrateEventVisuals(migrateV05(migrateV04(files)))))));
 }

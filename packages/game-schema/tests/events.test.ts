@@ -11,25 +11,28 @@ const page = (conditions?: MapEvent['pages'][number]['conditions']): MapEvent['p
 });
 
 describe('resolveEventPage', () => {
-  it('gives page 1 priority over later matching pages', () => {
+  it('gives the highest-numbered matching page priority', () => {
     const event: MapEvent = {
       id: 'event',
       position: { x: 0, y: 0, planeId: 'plane' },
-      pages: [page([{ kind: 'flag', id: 'first' }]), page([{ kind: 'flag', id: 'second' }]), page()],
+      pages: [page(), page([{ kind: 'switch', id: 'first' }]), page([{ kind: 'switch', id: 'second' }])],
     };
     const active = new Set(['first', 'second']);
-    const resolved = resolveEventPage(event, conditions => conditions.every(condition => condition.kind === 'flag' && active.has(condition.id)));
-    expect(resolved?.index).toBe(0);
+    const resolved = resolveEventPage(event, conditions => conditions.every(condition => condition.kind === 'switch' && active.has(condition.id)));
+    expect(resolved?.index).toBe(2);
   });
 
-  it('falls through in order and returns nothing when no page matches', () => {
+  it('falls back toward page 1 and returns nothing when no page matches', () => {
     const event: MapEvent = {
       id: 'event',
       position: { x: 0, y: 0, planeId: 'plane' },
-      pages: [page([{ kind: 'flag', id: 'first' }]), page([{ kind: 'flag', id: 'second' }])],
+      pages: [page(), page([{ kind: 'switch', id: 'first' }]), page([{ kind: 'switch', id: 'second' }])],
     };
-    const second = resolveEventPage(event, conditions => conditions.every(condition => condition.kind === 'flag' && condition.id === 'second'));
-    expect(second?.index).toBe(1);
-    expect(resolveEventPage(event, () => false)).toBeUndefined();
+    const firstSwitch = resolveEventPage(event, conditions => conditions.every(condition => condition.kind === 'switch' && condition.id === 'first'));
+    expect(firstSwitch?.index).toBe(1);
+    expect(resolveEventPage(event, conditions => conditions.length === 0)?.index).toBe(0);
+
+    const conditionalOnly = { ...event, pages: event.pages.slice(1) };
+    expect(resolveEventPage(conditionalOnly, () => false)).toBeUndefined();
   });
 });

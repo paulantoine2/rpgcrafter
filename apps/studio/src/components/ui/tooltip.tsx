@@ -1,5 +1,6 @@
 "use client"
 
+import type { ReactElement, ReactNode } from "react"
 import { Tooltip as TooltipPrimitive } from "@base-ui/react/tooltip"
 
 import { cn } from "@/lib/utils"
@@ -23,6 +24,15 @@ function Tooltip({ ...props }: TooltipPrimitive.Root.Props) {
 
 function TooltipTrigger({ ...props }: TooltipPrimitive.Trigger.Props) {
   return <TooltipPrimitive.Trigger data-slot="tooltip-trigger" {...props} />
+}
+
+function IconButtonTooltip({ label, children }: { label: ReactNode; children: ReactElement }) {
+  return (
+    <Tooltip>
+      <TooltipTrigger render={children} />
+      <TooltipContent>{label}</TooltipContent>
+    </Tooltip>
+  )
 }
 
 function TooltipContent({
@@ -63,4 +73,4 @@ function TooltipContent({
   )
 }
 
-export { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider }
+export { IconButtonTooltip, Tooltip, TooltipTrigger, TooltipContent, TooltipProvider }

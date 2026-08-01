@@ -2,16 +2,17 @@ export type Vec2 = { x: number; y: number };
 export type Rect = Vec2 & { w: number; h: number };
 export type Direction = 'north' | 'east' | 'south' | 'west';
 export type PlanePosition = Vec2 & { planeId: string };
+export type VariableComparison = 'equal' | 'notEqual' | 'greaterThan' | 'greaterThanOrEqual' | 'lessThan' | 'lessThanOrEqual';
 
 export type Condition =
-  | { kind: 'flag'; id: string; equals?: boolean }
+  | { kind: 'switch'; id: string; equals?: boolean }
   | { kind: 'item'; id: string; amount?: number }
-  | { kind: 'quest'; id: string; state: string };
+  | { kind: 'variable'; id: string; operator: VariableComparison; value: number };
 
 export type EventCommand =
   | { type: 'dialogue'; speaker: string; text: string; choices?: Array<{ label: string; commands: EventCommand[] }> }
-  | { type: 'setFlag'; id: string; value: boolean }
-  | { type: 'setQuestState'; id: string; state: string }
+  | { type: 'setSwitch'; id: string; value: boolean }
+  | { type: 'setVariable'; id: string; value: number }
   | { type: 'giveItem' | 'removeItem'; id: string; amount?: number }
   | { type: 'unlockSkill'; id: string }
   | { type: 'healPlayer'; amount: number }
@@ -199,6 +200,8 @@ export type EnemyTemplate = {
 export type Skill = { name: string; type: 'melee' | 'projectile' | 'area'; damage: number; cooldown: number; range?: number; projectileSpeed?: number; color?: string };
 export type Item = { name: string; type: 'quest' | 'consumable' | 'equipment'; healing?: number; equipmentSlot?: string; stats?: Record<string, number> };
 export type QuestDefinition = { name: string; states: string[]; reward?: { story: string } };
+export type SwitchDefinition = { name: string; initialValue: boolean };
+export type VariableDefinition = { name: string; initialValue: number };
 export type UiDefinition = {
   theme: { fontFamily: string; pageBackground: string; panel: string; panelBorder: string; text: string; accent: string; health: string };
   hud: { slots: string[] };
@@ -208,7 +211,7 @@ export type UiDefinition = {
 export type Manifest = { schemaVersion: string; engineRange: string; gameId: string; version: string; entryPoint: { mapId: string; spawnId: string }; title: string; contentRating: string };
 export type PlayerDefinition = { id: string; name: string; start: PlanePosition; stats: { maxHp: number; level: number; xp: number }; primaryAttack: string; skillSlots: Record<string, string>; unlockedSkills: string[] };
 export type Objective = { conditions?: Condition[]; text: string };
-export type InitialState = { flags: Record<string, boolean>; quests: Record<string, string>; inventory?: Record<string, number>; equipment?: Record<string, string | null> };
+export type InitialState = { switches: Record<string, SwitchDefinition>; variables: Record<string, VariableDefinition>; quests: Record<string, string>; inventory?: Record<string, number>; equipment?: Record<string, string | null> };
 export type EventData = { objectives: Objective[] };
 
 /** The exact authoring representation. Every coordinate remains in tile units. */

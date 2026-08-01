@@ -2,6 +2,7 @@ import { isStudioPreview, loadGameContent } from './content-loader.js';
 import { circleIntersectsBlockedDiagonal } from './circle-collision.js';
 import { MapEventRuntime, teleportDisposition, type RuntimeEvent } from './event-runtime.js';
 import { EventMovementRuntime } from './event-movement.js';
+import { conditionsMet as evaluateConditions } from './conditions.js';
 import { PixiRenderer } from './pixi-renderer.js';
 import type { Renderer, RenderState } from './renderer.js';
 import { DIRECTION_OFFSETS, eventPageMovement, navigationHasCell, navigationTarget, resolveEventPage } from './types.js';
@@ -17,7 +18,7 @@ void (async () => {
   };
   const keys = new Set<string>();
   const studioPreview = isStudioPreview();
-  const SAVE_SCHEMA = '0.7';
+  const SAVE_SCHEMA = '0.8';
   const VIEW_WIDTH = 960, VIEW_HEIGHT = 540;
   // Keep a small clearance inside one-tile-wide (48 px) passages.
   const PLAYER_RADIUS = 20;
@@ -45,19 +46,13 @@ void (async () => {
   const currentEnemies = () => game.enemies[game.mapId] || [];
   const saveKey = () => `runtime-v0:${content.manifest.gameId}:${content.manifest.version}`;
 
-  function conditionsMet(conditions: Condition[] = []) {
-    return conditions.every(condition => {
-      if (condition.kind === 'flag') return game.flags[condition.id] === (condition.equals ?? true);
-      if (condition.kind === 'item') return (game.inventory[condition.id] || 0) >= (condition.amount || 1);
-      return game.quests[condition.id] === condition.state;
-    });
-  }
+  const conditionsMet = (conditions: Condition[] = []) => evaluateConditions(conditions, game);
   function freshGame() {
     const mapId = content.manifest.entryPoint.mapId;
     const start = content.player.start;
     return {
       schema: SAVE_SCHEMA, mapId, player: { x: start.x, y: start.y, planeId: start.planeId, hp: content.player.stats.maxHp, maxHp: content.player.stats.maxHp, xp: content.player.stats.xp, level: content.player.stats.level, invuln: 0, dash: 0 },
-      flags: structuredClone(content.initialState.flags), quests: structuredClone(content.initialState.quests), inventory: structuredClone(content.initialState.inventory || {}), equipment: structuredClone(content.initialState.equipment || {}), unlockedSkills: [...content.player.unlockedSkills],
+      switches: Object.fromEntries(Object.entries(content.initialState.switches).map(([id, definition]) => [id, definition.initialValue])), variables: Object.fromEntries(Object.entries(content.initialState.variables).map(([id, definition]) => [id, definition.initialValue])), quests: structuredClone(content.initialState.quests), inventory: structuredClone(content.initialState.inventory || {}), equipment: structuredClone(content.initialState.equipment || {}), unlockedSkills: [...content.player.unlockedSkills],
       enemies: Object.fromEntries(Object.values(content.maps).map(map => [map.id, map.enemySpawns.map((spawn, index) => makeEnemy(spawn.enemyId, spawn.x, spawn.y, spawn.planeId, index))])), projectiles: [], particles: [], checkpoint: { mapId, spawn: structuredClone(start) }
     };
   }
@@ -71,7 +66,7 @@ void (async () => {
     if (!isRecord(saved) || saved.schema !== SAVE_SCHEMA || typeof saved.mapId !== 'string' || !content.maps[saved.mapId]) return false;
     const player = saved.player;
     if (!isRecord(player) || typeof player.planeId !== 'string' || !currentMapPlaneExists(saved.mapId, player.planeId) || !['x', 'y', 'hp', 'maxHp', 'xp', 'level', 'invuln', 'dash'].every(key => typeof player[key] === 'number' && Number.isFinite(player[key]))) return false;
-    if (!isRecord(saved.flags) || !isRecord(saved.quests) || !isRecord(saved.inventory) || !isRecord(saved.equipment) || !isRecord(saved.enemies) || !Array.isArray(saved.projectiles) || !Array.isArray(saved.particles) || !Array.isArray(saved.unlockedSkills) || !isRecord(saved.checkpoint)) return false;
+    if (!isRecord(saved.switches) || !isRecord(saved.variables) || !Object.values(saved.variables).every(value => typeof value === 'number' && Number.isFinite(value)) || !Object.keys(content.initialState.variables).every(id => typeof saved.variables[id] === 'number') || !isRecord(saved.quests) || !isRecord(saved.inventory) || !isRecord(saved.equipment) || !isRecord(saved.enemies) || !Array.isArray(saved.projectiles) || !Array.isArray(saved.particles) || !Array.isArray(saved.unlockedSkills) || !isRecord(saved.checkpoint)) return false;
     const checkpoint = saved.checkpoint; const spawn = checkpoint.spawn;
     if (typeof checkpoint.mapId !== 'string' || !content.maps[checkpoint.mapId] || !isRecord(spawn) || typeof spawn.planeId !== 'string' || !currentMapPlaneExists(checkpoint.mapId, spawn.planeId) || !['x', 'y'].every(key => typeof spawn[key] === 'number' && Number.isFinite(spawn[key]))) return false;
     if (!Object.values(saved.enemies).every(Array.isArray) || !Object.entries(saved.inventory).every(([itemId, amount]) => Boolean(content.items[itemId]) && typeof amount === 'number' && amount >= 0)) return false;
@@ -175,8 +170,8 @@ void (async () => {
         openDialogue(command.speaker, command.text, command.choices || [], process);
         return refreshHud();
       }
-      if (command.type === 'setFlag') game.flags[command.id] = command.value;
-      if (command.type === 'setQuestState') game.quests[command.id] = command.state;
+      if (command.type === 'setSwitch') game.switches[command.id] = command.value;
+      if (command.type === 'setVariable') game.variables[command.id] = command.value;
       if (command.type === 'giveItem') game.inventory[command.id] = (game.inventory[command.id] || 0) + (command.amount || 1);
       if (command.type === 'removeItem') game.inventory[command.id] = Math.max(0, (game.inventory[command.id] || 0) - (command.amount || 1));
       if (command.type === 'unlockSkill' && !game.unlockedSkills.includes(command.id)) game.unlockedSkills.push(command.id);

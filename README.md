@@ -34,7 +34,7 @@ RPG Crafter currently includes:
 - per-cell and per-edge collision editing;
 - explicit navigation connections between floors, bridges, roofs, and other overlapping surfaces;
 - visual event placement with conditional pages and reusable JSON actions;
-- dialogue, choices, quests, flags, inventory, healing, notifications, and teleportation;
+- dialogue, choices, quests, switches, inventory, healing, notifications, and teleportation;
 - real-time combat with melee attacks, dashes, projectiles, area attacks, and multi-phase bosses;
 - local browser saves and Studio drafts backed by IndexedDB;
 - keyboard and touch controls;

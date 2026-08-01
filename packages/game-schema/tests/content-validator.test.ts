@@ -40,6 +40,41 @@ describe('SourceGame validation', () => {
     ]));
   });
 
+  it('rejects quest conditions', () => {
+    const files = sourceFiles();
+    (files.maps as any).village.events[0].pages[0].conditions = [
+      { kind: 'quest', id: 'quest.bell-of-mist', state: 'inactive' },
+    ];
+
+    expect(parseSourceGame(files).success).toBe(false);
+  });
+
+  it('validates numeric variable conditions and their references', () => {
+    const files = sourceFiles();
+    (files.initialState as any).variables.score = { name: 'Score', initialValue: 0 };
+    (files.maps as any).village.events[0].pages[0].conditions = [
+      { kind: 'variable', id: 'score', operator: 'greaterThanOrEqual', value: 10 },
+    ];
+    expect(parseSourceGame(files).success).toBe(true);
+
+    (files.maps as any).village.events[0].pages[0].conditions[0].id = 'missing';
+    const result = parseSourceGame(files);
+    expect(result.success).toBe(false);
+    if (!result.success) expect(result.issues.some(issue => issue.message.includes('Unknown variable'))).toBe(true);
+  });
+
+  it('validates set-variable commands and their references', () => {
+    const files = sourceFiles();
+    (files.initialState as any).variables.score = { name: 'Score', initialValue: 0 };
+    (files.maps as any).village.events[0].pages[0].contents.push({ type: 'setVariable', id: 'score', value: 12 });
+    expect(parseSourceGame(files).success).toBe(true);
+
+    (files.maps as any).village.events[0].pages[0].contents.at(-1).id = 'missing';
+    const result = parseSourceGame(files);
+    expect(result.success).toBe(false);
+    if (!result.success) expect(result.issues.some(issue => issue.message.includes('Unknown variable'))).toBe(true);
+  });
+
   it('validates autonomous settings and structured movement routes', () => {
     const files = sourceFiles();
     const maps = files.maps as any;

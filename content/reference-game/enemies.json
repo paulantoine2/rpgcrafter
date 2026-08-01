@@ -52,18 +52,13 @@
     ],
     "onDefeated": [
       {
-        "type": "setFlag",
+        "type": "setSwitch",
         "id": "bossDefeated",
         "value": true
       },
       {
         "type": "giveItem",
         "id": "item.crystal-heart"
-      },
-      {
-        "type": "setQuestState",
-        "id": "quest.bell-of-mist",
-        "state": "return_to_mayor"
       },
       {
         "type": "toast",
