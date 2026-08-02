@@ -58,6 +58,12 @@ function Harness({ emptySwitches = false, withSprite = false, onEventChange }: {
 }
 
 describe('EventInspector pages', () => {
+  it('uses the sidebar theme colors', () => {
+    const { container } = render(<Harness />);
+
+    expect(container.querySelector('[data-slot="event-inspector"]')).toHaveClass('bg-sidebar', 'text-sidebar-foreground');
+  });
+
   it('omits the top border from the first section header', () => {
     const { container } = render(<Harness />);
 
@@ -66,7 +72,7 @@ describe('EventInspector pages', () => {
     expect(conditionsHeader?.parentElement?.children).toHaveLength(1);
     expect(screen.getByText('Autonomous Movement').closest('[data-slot="section-header"]')).not.toHaveClass('border-t-0');
     expect([...container.querySelectorAll('[data-slot="section-header"]')].map(header => header.textContent)).toEqual([
-      'Conditions', 'Trigger', 'Sprite', 'Autonomous Movement', 'Contents',
+      'Conditions', 'Trigger', 'Contents', 'Sprite', 'Autonomous Movement',
     ]);
     expect(screen.queryByRole('checkbox', { name: 'Walking animation' })).not.toBeInTheDocument();
     expect(screen.queryByText('Options')).not.toBeInTheDocument();
@@ -82,7 +88,37 @@ describe('EventInspector pages', () => {
     expect(spriteSection).toContainElement(screen.getByRole('checkbox', { name: 'Walking animation' }));
     expect(spriteSection).toContainElement(screen.getByRole('checkbox', { name: 'Through' }));
     expect(spriteSection).toHaveTextContent('Priority');
+    expect(screen.queryByRole('combobox', { name: 'Priority' })).not.toBeInTheDocument();
+    expect(screen.getByText('Priority').tagName).toBe('LABEL');
+    expect(screen.getByText('Priority').parentElement).toHaveClass('gap-1.5', 'text-[10px]');
+    expect(screen.getByText('Priority').parentElement?.parentElement).toHaveClass('grid-cols-2');
+    expect(screen.getByRole('tablist', { name: 'Priority' })).toHaveClass('w-full');
+    expect(screen.getByRole('tab', { name: 'Same as characters' })).toHaveAttribute('aria-selected', 'true');
+    expect(screen.getByRole('checkbox', { name: 'Walking animation' }).closest('.grid')).toHaveClass('grid-cols-2');
     expect(screen.queryByText('Options')).not.toBeInTheDocument();
+  });
+
+  it('selects sprite priority from icon tabs', async () => {
+    const user = userEvent.setup();
+    const onEventChange = vi.fn();
+    render(<Harness withSprite onEventChange={onEventChange} />);
+
+    await user.click(screen.getByRole('tab', { name: 'Above characters' }));
+
+    expect(screen.getByRole('tab', { name: 'Above characters' })).toHaveAttribute('aria-selected', 'true');
+    expect(onEventChange.mock.calls.at(-1)?.[0].pages[0].priority).toBe('aboveCharacters');
+  });
+
+  it('opens sprite selection as a contextual popover', async () => {
+    render(<Harness />);
+
+    await userEvent.click(screen.getByRole('button', { name: 'Choose a sprite' }));
+    const picker = screen.getByRole('dialog');
+    expect(picker).toHaveClass('w-72', 'rounded-lg', 'bg-popover', 'text-popover-foreground');
+    expect(screen.getByRole('searchbox', { name: 'Search event sprites' })).toBeInTheDocument();
+    expect(screen.getByText('Sprites').closest('[data-slot="section-header"]')).toBeInTheDocument();
+    await userEvent.click(screen.getByRole('button', { name: 'Close sprite picker' }));
+    expect(screen.queryByRole('searchbox', { name: 'Search event sprites' })).not.toBeInTheDocument();
   });
 
   it('selects the trigger type from icon tabs', async () => {
@@ -91,7 +127,9 @@ describe('EventInspector pages', () => {
     render(<Harness onEventChange={onEventChange} />);
 
     expect(screen.queryByRole('combobox', { name: 'Trigger type' })).not.toBeInTheDocument();
-    expect(screen.getByRole('tablist', { name: 'Trigger type' })).toHaveClass('w-full');
+    expect(screen.getByRole('tablist', { name: 'Type' })).toHaveClass('w-full');
+    expect(screen.getByText('Type').tagName).toBe('LABEL');
+    expect(screen.getByText('Type').parentElement).toHaveClass('gap-1.5', 'text-[10px]');
     const actionButton = screen.getByRole('tab', { name: 'Action Button' });
     expect(actionButton).toHaveAttribute('aria-selected', 'true');
     await user.click(screen.getByRole('tab', { name: 'Player Touch' }));
@@ -116,6 +154,7 @@ describe('EventInspector pages', () => {
     expect(enabled).toBeChecked();
     const type = screen.getByRole('combobox', { name: 'Autonomous movement type' });
     expect(type).toHaveTextContent('Random');
+    expect(screen.queryByText('Type')).not.toBeInTheDocument();
     await user.click(screen.getByRole('button', { name: 'Autonomous movement settings' }));
     expect(await screen.findByRole('slider', { name: 'Movement speed' })).toBeInTheDocument();
     expect(screen.getByRole('slider', { name: 'Movement frequency' })).toBeInTheDocument();
@@ -200,7 +239,7 @@ describe('EventInspector pages', () => {
     const picker = screen.getByRole('dialog');
     expect(screen.getByText('Switches').closest('[data-slot="section-header"]')).toHaveClass('h-12', 'px-4', 'py-4');
     const selectedOption = screen.getByRole('option', { name: 'Door open' });
-    expect(picker).toHaveClass('bg-background');
+    expect(picker).toHaveClass('rounded-lg', 'bg-popover', 'text-popover-foreground');
     expect(picker).not.toHaveClass('p-2');
     expect(selectedOption).toHaveClass('bg-primary/15');
     expect(selectedOption.closest('[data-slot="scroll-area"]')).toHaveClass('max-h-56');
@@ -242,7 +281,7 @@ describe('EventInspector pages', () => {
     await user.click(screen.getByRole('button', { name: 'Switch condition settings' }));
     expect(await screen.findByText('Switch condition')).toBeInTheDocument();
     expect(screen.getByText('Switch condition').closest('[data-slot="section-header"]')).toHaveClass('h-12', 'px-4', 'py-4');
-    expect(screen.getByText('Switch condition').closest('[role="dialog"]')).toHaveClass('bg-background');
+    expect(screen.getByText('Switch condition').closest('[role="dialog"]')).toHaveClass('rounded-lg', 'bg-popover', 'text-popover-foreground');
     expect(screen.getByRole('button', { name: 'Close condition settings' })).toBeInTheDocument();
     const expectedValue = await screen.findByLabelText('Expected switch value');
     expect(expectedValue).toBeChecked();
@@ -343,10 +382,19 @@ describe('EventInspector pages', () => {
     const onEventChange = vi.fn();
     render(<Harness onEventChange={onEventChange} />);
 
-    await user.click(screen.getByRole('button', { name: 'Add command' }));
-    await user.click(screen.getByRole('combobox', { name: 'Command type' }));
-    expect(screen.queryByRole('option', { name: /set quest state/i })).not.toBeInTheDocument();
-    await user.click(await screen.findByRole('option', { name: 'Set variable' }));
+    const addCommand = screen.getByRole('button', { name: 'Add command' });
+    expect(screen.getByText('Contents').closest('[data-slot="section-header"]')).toContainElement(addCommand);
+    await user.click(addCommand);
+    expect(screen.queryByRole('menuitem', { name: /set quest state/i })).not.toBeInTheDocument();
+    await user.click(await screen.findByRole('menuitem', { name: 'Set variable' }));
+
+    const commandSettings = screen.getByRole('button', { name: 'Set variable command settings' });
+    const commandRow = commandSettings.parentElement?.parentElement;
+    expect(commandRow).toHaveClass('items-center');
+    expect(commandRow).toHaveTextContent('Score · 0');
+    expect(screen.queryByRole('combobox', { name: 'Command type' })).not.toBeInTheDocument();
+    await user.click(commandSettings);
+    expect(await screen.findByRole('dialog')).toHaveTextContent('Set variable');
 
     const variable = screen.getByRole('combobox', { name: 'Variable' });
     expect(variable).toHaveTextContent('Score');

@@ -1,38 +1,45 @@
-import { Boxes, File, FilePlus2, FolderOpen, Play, RotateCcw, Save, Upload } from 'lucide-react';
+import { FilePlus2, FolderOpen, Images, MapPinned, RotateCcw, Save, Upload } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuShortcut, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { IconButtonTooltip } from '@/components/ui/tooltip';
 
+function RpgCrafterLogo() {
+  return <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+    <rect x="3.5" y="3.5" width="17" height="17" rx="3" stroke="currentColor" strokeWidth="1.5" />
+    <path d="M8 17V7h4.25a3 3 0 0 1 0 6H8m4-0.25L16 17" stroke="currentColor" strokeWidth="2" strokeLinecap="square" strokeLinejoin="miter" />
+  </svg>;
+}
+
 export function StudioAppSidebar({
   hasProject,
   canExport,
-  assetManagerOpen,
+  activeTab,
   onNewProject,
   onOpenProject,
   onSaveDraft,
   onExportProject,
   onRevertProject,
   onCloseProject,
-  onOpenAssetManager,
-  onPlay,
+  onSelectMaps,
+  onSelectAssets,
 }: {
   hasProject: boolean;
   canExport: boolean;
-  assetManagerOpen: boolean;
+  activeTab: 'maps' | 'assets';
   onNewProject: () => void;
   onOpenProject: () => void;
   onSaveDraft: () => void;
   onExportProject: () => void;
   onRevertProject: () => void;
   onCloseProject: () => void;
-  onOpenAssetManager: () => void;
-  onPlay: () => void;
+  onSelectMaps: () => void;
+  onSelectAssets: () => void;
 }) {
-  return <aside className="flex w-12 shrink-0 flex-col items-center border-r bg-sidebar py-1" aria-label="Studio navigation">
-    <nav className="flex w-full flex-col items-center gap-1" aria-label="Project tools">
+  return <aside className="flex w-12 shrink-0 flex-col items-center border-r bg-sidebar py-1 text-sidebar-foreground" aria-label="Studio navigation">
+    <div className="mb-1 border-b pb-1">
       <DropdownMenu>
-        <IconButtonTooltip label="File">
-          <DropdownMenuTrigger render={<Button type="button" variant="ghost" size="icon-lg" aria-label="File"><File /></Button>} />
+        <IconButtonTooltip label="RPG Crafter menu">
+          <DropdownMenuTrigger render={<Button type="button" variant="ghost" size="icon-lg" aria-label="RPG Crafter menu"><RpgCrafterLogo /></Button>} />
         </IconButtonTooltip>
         <DropdownMenuContent side="right" align="start" sideOffset={6} className="w-56">
           <DropdownMenuItem onClick={onNewProject}><FilePlus2 /> New Project…</DropdownMenuItem>
@@ -44,14 +51,14 @@ export function StudioAppSidebar({
           <DropdownMenuItem disabled={!hasProject} onClick={onCloseProject}>Close Project</DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
-      <IconButtonTooltip label="Asset Manager">
-        <Button type="button" variant={assetManagerOpen ? 'secondary' : 'ghost'} size="icon-lg" disabled={!hasProject} aria-label="Asset Manager" aria-pressed={assetManagerOpen} onClick={onOpenAssetManager}><Boxes /></Button>
+    </div>
+    <nav className="flex w-full flex-col items-center gap-1" aria-label="Studio tabs">
+      <IconButtonTooltip label="Maps">
+        <Button type="button" variant={activeTab === 'maps' ? 'default' : 'ghost'} size="icon-lg" className="rounded-md" aria-label="Maps" aria-pressed={activeTab === 'maps'} onClick={onSelectMaps}><MapPinned /></Button>
+      </IconButtonTooltip>
+      <IconButtonTooltip label="Assets">
+        <Button type="button" variant={activeTab === 'assets' ? 'default' : 'ghost'} size="icon-lg" className="rounded-md" disabled={!hasProject} aria-label="Assets" aria-pressed={activeTab === 'assets'} onClick={onSelectAssets}><Images /></Button>
       </IconButtonTooltip>
     </nav>
-    <div className="mt-auto border-t pt-1">
-      <IconButtonTooltip label="Play">
-        <Button type="button" variant="ghost" size="icon-lg" disabled={!canExport} aria-label="Play" onClick={onPlay}><Play className="fill-current" /></Button>
-      </IconButtonTooltip>
-    </div>
   </aside>;
 }

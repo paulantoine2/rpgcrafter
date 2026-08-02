@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState, type ReactNode, type RefObject } from 'react';
 import type { Condition, ContentIssue, EventCommand, MapEvent, MapEventPage, MovementCommand, MovementRoute, SourceGame, VariableComparison } from '@rpgcrafter/game-schema';
-import { ArrowDown, ArrowUp, ChevronsUpDown, Copy, Footprints, GitFork, Hand, Hash, ImageIcon, Minus, MousePointerClick, Package, Play, Plus, Search, Settings2, ToggleLeft, Trash2, X } from 'lucide-react';
+import { ArrowDown, ArrowUp, BringToFront, ChevronsUpDown, Copy, Footprints, GitFork, Hand, Hash, ImageIcon, Layers2, Minus, MousePointerClick, Package, Play, Plus, Search, SendToBack, Settings2, ToggleLeft, Trash2, X } from 'lucide-react';
 import { Popover } from '@base-ui/react/popover';
 import { Button } from '@/components/ui/button';
 import { Attachment, AttachmentAction, AttachmentActions, AttachmentContent, AttachmentDescription, AttachmentMedia, AttachmentTitle, AttachmentTrigger } from '@/components/ui/attachment';
@@ -37,13 +37,31 @@ type Props = {
 };
 
 const commandTypes: EventCommand['type'][] = ['dialogue', 'movementRoute', 'wait', 'setSwitch', 'setVariable', 'giveItem', 'removeItem', 'unlockSkill', 'healPlayer', 'toast', 'teleport', 'save'];
-const commandTypeLabels: Partial<Record<EventCommand['type'], string>> = { setVariable: 'Set variable' };
+const commandTypeLabels: Record<EventCommand['type'], string> = {
+  dialogue: 'Dialogue',
+  movementRoute: 'Movement route',
+  wait: 'Wait',
+  setSwitch: 'Set switch',
+  setVariable: 'Set variable',
+  giveItem: 'Give item',
+  removeItem: 'Remove item',
+  unlockSkill: 'Unlock skill',
+  healPlayer: 'Heal player',
+  toast: 'Toast',
+  teleport: 'Teleport',
+  save: 'Save',
+};
 const triggerTypes = [
   { type: 'actionButton', label: 'Action Button', icon: MousePointerClick },
   { type: 'playerTouch', label: 'Player Touch', icon: Footprints },
   { type: 'eventTouch', label: 'Event Touch', icon: Hand },
   { type: 'autorun', label: 'Autorun', icon: Play },
   { type: 'parallel', label: 'Parallel', icon: GitFork },
+] as const;
+const priorityTypes = [
+  { type: 'belowCharacters', label: 'Below characters', icon: SendToBack },
+  { type: 'sameAsCharacters', label: 'Same as characters', icon: Layers2 },
+  { type: 'aboveCharacters', label: 'Above characters', icon: BringToFront },
 ] as const;
 
 function Section({ title, children, actions, first = false }: { title: string; children: ReactNode; actions?: ReactNode; first?: boolean }) {
@@ -151,7 +169,7 @@ function NewSwitchPopover({ anchor, onCreate }: { anchor: RefObject<HTMLDivEleme
     <IconButtonTooltip label="Create switch"><Popover.Trigger render={<Button type="button" variant="ghost" size="icon-sm" aria-label="Create switch"><Plus /></Button>} /></IconButtonTooltip>
     <Popover.Portal>
       <Popover.Positioner anchor={anchor} positionMethod="fixed" side="left" align="start" sideOffset={0} collisionAvoidance={{ side: 'none', align: 'shift', fallbackAxisSide: 'none' }} className="z-50">
-        <Popover.Popup className="w-56 bg-background text-foreground shadow-md ring-1 ring-foreground/10 outline-none">
+        <Popover.Popup className="w-56 rounded-lg bg-popover text-popover-foreground shadow-md ring-1 ring-foreground/10 outline-none">
           <SectionHeader className="border-t-0 border-b">New switch</SectionHeader>
           <div className="space-y-3 p-3">
             <label className="grid gap-1.5 text-[10px] text-muted-foreground">Name<Input autoFocus value={name} onChange={event => setName(event.target.value)} onKeyDown={event => { if (event.key === 'Enter') create(); }} aria-label="Switch name" /></label>
@@ -180,7 +198,7 @@ function SwitchPicker({ game, value, equals, onChange, onCreate, autoOpen = fals
     <Popover.Trigger render={<Button ref={triggerRef} type="button" variant="outline" className="min-w-0 flex-1 justify-between font-normal" aria-label="Choose switch"><ConditionSelectIcon kind="switch" /><span className="min-w-0 flex-1 truncate text-left">{selectedName || 'Choose a switch'}</span><span className="shrink-0 text-muted-foreground">{equals ? 'True' : 'False'}</span><ChevronsUpDown className="text-muted-foreground" /></Button>} />
     <Popover.Portal>
       <Popover.Positioner anchor={() => conditionPickerAnchor(triggerRef.current)} positionMethod="fixed" side="left" align="start" sideOffset={0} collisionAvoidance={{ side: 'none', align: 'shift', fallbackAxisSide: 'none' }} className="z-50">
-        <Popover.Popup ref={popupRef} className="w-64 bg-background text-foreground shadow-md ring-1 ring-foreground/10 outline-none">
+        <Popover.Popup ref={popupRef} className="w-64 rounded-lg bg-popover text-popover-foreground shadow-md ring-1 ring-foreground/10 outline-none">
           <SectionHeader className="border-t-0 border-b">
             <span className="min-w-0 flex-1">Switches</span>
             <SectionHeaderActions><NewSwitchPopover anchor={popupRef} onCreate={name => {
@@ -224,7 +242,7 @@ function NewVariablePopover({ anchor, onCreate }: { anchor: RefObject<HTMLDivEle
     <IconButtonTooltip label="Create variable"><Popover.Trigger render={<Button type="button" variant="ghost" size="icon-sm" aria-label="Create variable"><Plus /></Button>} /></IconButtonTooltip>
     <Popover.Portal>
       <Popover.Positioner anchor={anchor} positionMethod="fixed" side="left" align="start" sideOffset={0} collisionAvoidance={{ side: 'none', align: 'shift', fallbackAxisSide: 'none' }} className="z-50">
-        <Popover.Popup className="w-56 bg-background text-foreground shadow-md ring-1 ring-foreground/10 outline-none">
+        <Popover.Popup className="w-56 rounded-lg bg-popover text-popover-foreground shadow-md ring-1 ring-foreground/10 outline-none">
           <SectionHeader className="border-t-0 border-b">New variable</SectionHeader>
           <div className="space-y-3 p-3">
             <label className="grid gap-1.5 text-[10px]">Name<Input autoFocus value={name} onChange={event => setName(event.target.value)} onKeyDown={event => { if (event.key === 'Enter') create(); }} aria-label="Variable name" /></label>
@@ -262,7 +280,7 @@ function VariablePicker({ game, condition, onChange, onCreate, autoOpen = false,
     <Popover.Trigger render={<Button ref={triggerRef} type="button" variant="outline" className="min-w-0 w-full justify-between font-normal" aria-label="Choose variable"><ConditionSelectIcon kind="variable" /><span className="min-w-0 flex-1 truncate text-left">{selectedName || 'Choose a variable'}</span><span className="shrink-0 text-muted-foreground">{variableComparisonSymbols[condition.operator]} {condition.value}</span><ChevronsUpDown className="text-muted-foreground" /></Button>} />
     <Popover.Portal>
       <Popover.Positioner anchor={() => conditionPickerAnchor(triggerRef.current)} positionMethod="fixed" side="left" align="start" sideOffset={0} collisionAvoidance={{ side: 'none', align: 'shift', fallbackAxisSide: 'none' }} className="z-50">
-        <Popover.Popup ref={popupRef} className="w-64 bg-background text-foreground shadow-md ring-1 ring-foreground/10 outline-none">
+        <Popover.Popup ref={popupRef} className="w-64 rounded-lg bg-popover text-popover-foreground shadow-md ring-1 ring-foreground/10 outline-none">
           <SectionHeader className="border-t-0 border-b">
             <span className="min-w-0 flex-1">Variables</span>
             <SectionHeaderActions><NewVariablePopover anchor={popupRef} onCreate={name => {
@@ -303,7 +321,7 @@ function ItemPicker({ game, value, amount, onChange }: { game: SourceGame; value
     <Popover.Trigger render={<Button ref={triggerRef} type="button" variant="outline" className="min-w-0 w-full justify-between font-normal" aria-label="Choose item"><ConditionSelectIcon kind="item" /><span className="min-w-0 flex-1 truncate text-left">{selectedName || 'Choose an item'}</span><span className="shrink-0 text-muted-foreground">×{amount}</span><ChevronsUpDown className="text-muted-foreground" /></Button>} />
     <Popover.Portal>
       <Popover.Positioner anchor={() => conditionPickerAnchor(triggerRef.current)} positionMethod="fixed" side="left" align="start" sideOffset={0} collisionAvoidance={{ side: 'none', align: 'shift', fallbackAxisSide: 'none' }} className="z-50">
-        <Popover.Popup className="w-64 bg-background text-foreground shadow-md ring-1 ring-foreground/10 outline-none">
+        <Popover.Popup className="w-64 rounded-lg bg-popover text-popover-foreground shadow-md ring-1 ring-foreground/10 outline-none">
           <SectionHeader className="border-t-0 border-b">
             <span className="min-w-0 flex-1">Items</span>
             <SectionHeaderActions><IconButtonTooltip label="Close item picker"><Button type="button" variant="ghost" size="icon-sm" aria-label="Close item picker" onClick={() => setOpen(false)}><X /></Button></IconButtonTooltip></SectionHeaderActions>
@@ -346,7 +364,7 @@ function ConditionSettings({ game, condition, onChange, onRenameSwitch, onRename
     <IconButtonTooltip label={`${kindLabel} condition settings`}><Popover.Trigger render={<Button ref={triggerRef} type="button" variant="ghost" size="icon-sm" className="shrink-0" aria-label={`${kindLabel} condition settings`}><Settings2 /></Button>} /></IconButtonTooltip>
     <Popover.Portal>
       <Popover.Positioner anchor={() => conditionPickerAnchor(triggerRef.current)} positionMethod="fixed" side="left" align="start" sideOffset={0} collisionAvoidance={{ side: 'none', align: 'shift', fallbackAxisSide: 'none' }} className="z-50">
-        <Popover.Popup className="w-72 bg-background text-foreground shadow-md ring-1 ring-foreground/10 outline-none">
+        <Popover.Popup className="w-72 rounded-lg bg-popover text-popover-foreground shadow-md ring-1 ring-foreground/10 outline-none">
           <SectionHeader className="border-t-0 border-b">
             <span className="min-w-0 flex-1">{kindLabel} condition</span>
             <SectionHeaderActions><IconButtonTooltip label="Close condition settings"><Button type="button" variant="ghost" size="icon-sm" aria-label="Close condition settings" onClick={() => setOpen(false)}><X /></Button></IconButtonTooltip></SectionHeaderActions>
@@ -451,14 +469,14 @@ function AutonomousMovementSettings({ movement, onChange }: { movement: MapEvent
     <IconButtonTooltip label="Autonomous movement settings"><Popover.Trigger render={<Button ref={triggerRef} type="button" variant="ghost" size="icon-sm" className="-mr-1" aria-label="Autonomous movement settings"><Settings2 /></Button>} /></IconButtonTooltip>
     <Popover.Portal>
       <Popover.Positioner anchor={() => conditionPickerAnchor(triggerRef.current)} positionMethod="fixed" side="left" align="start" sideOffset={0} collisionAvoidance={{ side: 'none', align: 'shift', fallbackAxisSide: 'none' }} className="z-50">
-        <Popover.Popup className="w-80 bg-background text-foreground shadow-md ring-1 ring-foreground/10 outline-none">
+        <Popover.Popup className="w-80 rounded-lg bg-popover text-popover-foreground shadow-md ring-1 ring-foreground/10 outline-none">
           <SectionHeader className="border-t-0 border-b">
             <span className="min-w-0 flex-1">Autonomous movement</span>
             <SectionHeaderActions><IconButtonTooltip label="Close autonomous movement settings"><Button type="button" variant="ghost" size="icon-sm" aria-label="Close autonomous movement settings" onClick={() => setOpen(false)}><X /></Button></IconButtonTooltip></SectionHeaderActions>
           </SectionHeader>
-          <div className="grid grid-cols-2 gap-4 p-3">
-            <label className="grid gap-2 text-[10px]">Speed · {movement.speed}<Slider aria-label="Movement speed" value={movement.speed} min={1} max={6} step={1} onValueChange={speed => onChange({ ...movement, speed: speed as MapEventPage['movement']['speed'] })} /></label>
-            <label className="grid gap-2 text-[10px]">Frequency · {movement.frequency}<Slider aria-label="Movement frequency" value={movement.frequency} min={1} max={5} step={1} onValueChange={frequency => onChange({ ...movement, frequency: frequency as MapEventPage['movement']['frequency'] })} /></label>
+          <div className="grid gap-4 p-3">
+            <label className="grid grid-cols-2 items-center gap-3 text-[10px]"><span>Speed · {movement.speed}</span><Slider aria-label="Movement speed" value={movement.speed} min={1} max={6} step={1} onValueChange={speed => onChange({ ...movement, speed: speed as MapEventPage['movement']['speed'] })} /></label>
+            <label className="grid grid-cols-2 items-center gap-3 text-[10px]"><span>Frequency · {movement.frequency}</span><Slider aria-label="Movement frequency" value={movement.frequency} min={1} max={5} step={1} onValueChange={frequency => onChange({ ...movement, frequency: frequency as MapEventPage['movement']['frequency'] })} /></label>
           </div>
           {movement.type === 'custom' && <LoopingRouteEditor value={movement.route} onChange={route => onChange({ ...movement, route })} />}
         </Popover.Popup>
@@ -520,14 +538,65 @@ function CommandFields({ game, mapId, command, onChange, depth }: { game: Source
   return <p className="text-xs text-muted-foreground">No parameters.</p>;
 }
 
-function CommandsEditor({ game, mapId, value, onChange, depth = 0 }: { game: SourceGame; mapId: string; value: EventCommand[]; onChange: (value: EventCommand[]) => void; depth?: number }) {
+function commandSummary(game: SourceGame, command: EventCommand) {
+  if (command.type === 'dialogue') return `${command.speaker}: ${command.text}`;
+  if (command.type === 'setSwitch') return `${game.initialState.switches[command.id]?.name || command.id} · ${command.value ? 'On' : 'Off'}`;
+  if (command.type === 'setVariable') return `${game.initialState.variables[command.id]?.name || command.id} · ${command.value}`;
+  if (command.type === 'giveItem' || command.type === 'removeItem') return `${game.items[command.id]?.name || command.id} · ×${command.amount ?? 1}`;
+  if (command.type === 'unlockSkill') return game.skills[command.id]?.name || command.id;
+  if (command.type === 'healPlayer') return `${command.amount} HP`;
+  if (command.type === 'toast') return command.text;
+  if (command.type === 'teleport') return game.maps[command.mapId]?.name || command.mapId;
+  if (command.type === 'movementRoute') return command.target.kind === 'player' ? 'Player' : command.target.kind === 'thisEvent' ? 'This event' : command.target.eventId;
+  if (command.type === 'wait') return `${command.duration}s`;
+  return 'Save game';
+}
+
+function AddCommandMenu({ game, onAdd }: { game: SourceGame; onAdd: (command: EventCommand) => void }) {
+  return <DropdownMenu>
+    <IconButtonTooltip label="Add command"><DropdownMenuTrigger render={<Button type="button" variant="ghost" size="icon-sm" aria-label="Add command"><Plus /></Button>} /></IconButtonTooltip>
+    <DropdownMenuContent align="end">
+      {commandTypes.map(type => <DropdownMenuItem key={type} onClick={() => onAdd(defaultCommand(type, game))}>{commandTypeLabels[type]}</DropdownMenuItem>)}
+    </DropdownMenuContent>
+  </DropdownMenu>;
+}
+
+function CommandSettings({ game, mapId, command, onChange, depth }: { game: SourceGame; mapId: string; command: EventCommand; onChange: (command: EventCommand) => void; depth: number }) {
+  const [open, setOpen] = useState(false);
+  const triggerRef = useRef<HTMLButtonElement>(null);
+  return <Popover.Root open={open} onOpenChange={setOpen}>
+    <IconButtonTooltip label={`${commandTypeLabels[command.type]} command settings`}><Button ref={triggerRef} type="button" variant="ghost" size="icon-sm" className="shrink-0" aria-label={`${commandTypeLabels[command.type]} command settings`} onClick={() => setOpen(true)}><Settings2 /></Button></IconButtonTooltip>
+    <Popover.Portal>
+      <Popover.Positioner anchor={() => conditionPickerAnchor(triggerRef.current)} positionMethod="fixed" side="left" align="start" sideOffset={0} collisionAvoidance={{ side: 'none', align: 'shift', fallbackAxisSide: 'none' }} className="z-50">
+        <Popover.Popup className="w-80 rounded-lg bg-popover text-popover-foreground shadow-md ring-1 ring-foreground/10 outline-none">
+          <SectionHeader className="border-t-0 border-b">
+            <span className="min-w-0 flex-1">{commandTypeLabels[command.type]}</span>
+            <SectionHeaderActions><IconButtonTooltip label="Close command settings"><Button type="button" variant="ghost" size="icon-sm" aria-label="Close command settings" onClick={() => setOpen(false)}><X /></Button></IconButtonTooltip></SectionHeaderActions>
+          </SectionHeader>
+          <div className="space-y-3 p-3">
+            <label className="grid gap-1.5 text-[10px]">Type<EnumSelect value={command.type} values={commandTypes} labels={commandTypeLabels} ariaLabel="Command type" onChange={type => onChange(defaultCommand(type, game))} /></label>
+            <CommandFields game={game} mapId={mapId} command={command} depth={depth} onChange={onChange} />
+          </div>
+        </Popover.Popup>
+      </Popover.Positioner>
+    </Popover.Portal>
+  </Popover.Root>;
+}
+
+function CommandsEditor({ game, mapId, value, onChange, depth = 0, showAddControl = true }: { game: SourceGame; mapId: string; value: EventCommand[]; onChange: (value: EventCommand[]) => void; depth?: number; showAddControl?: boolean }) {
   const update = (index: number, command: EventCommand) => onChange(value.map((item, itemIndex) => itemIndex === index ? command : item));
   return <div className="space-y-2">
-    {value.map((command, index) => <div key={index} className="space-y-2 border bg-muted/15 p-2">
-      <div className="flex items-center justify-between gap-2"><EnumSelect value={command.type} values={commandTypes} labels={commandTypeLabels} ariaLabel="Command type" onChange={type => update(index, defaultCommand(type, game))} /><RowActions index={index} count={value.length} onMove={delta => onChange(move(value, index, delta))} onRemove={() => onChange(value.filter((_, itemIndex) => itemIndex !== index))} /></div>
-      <CommandFields game={game} mapId={mapId} command={command} depth={depth} onChange={next => update(index, next)} />
+    {value.map((command, index) => <div key={index} className="flex min-w-0 items-center gap-2">
+      <div className="flex h-8 min-w-0 flex-1 items-center gap-2 border border-input px-2.5 text-xs">
+        <span className="shrink-0 font-medium">{commandTypeLabels[command.type]}</span>
+        <span className="truncate text-muted-foreground">{commandSummary(game, command)}</span>
+      </div>
+      <div className="-mr-1 flex shrink-0 items-center gap-0.5">
+        <CommandSettings game={game} mapId={mapId} command={command} depth={depth} onChange={next => update(index, next)} />
+        <RowActions index={index} count={value.length} onMove={delta => onChange(move(value, index, delta))} onRemove={() => onChange(value.filter((_, itemIndex) => itemIndex !== index))} />
+      </div>
     </div>)}
-    <Button variant="outline" size="sm" className="w-full" onClick={() => onChange([...value, defaultCommand('dialogue', game)])}><Plus /> Add command</Button>
+    {showAddControl && <div className="flex justify-end"><AddCommandMenu game={game} onAdd={command => onChange([...value, command])} /></div>}
   </div>;
 }
 
@@ -543,6 +612,7 @@ function defaultPage(): MapEventPage {
 
 export function EventInspector({ game, mapId, event, issues, assetUrls, sprites, onChangeEvent, onSelectPage, onImportSprite, onCreateSwitch, onCreateVariable, onRenameSwitch, onRenameVariable, onRenameItem }: Props) {
   const [spritePickerOpen, setSpritePickerOpen] = useState(false);
+  const spritePickerAnchorRef = useRef<HTMLDivElement>(null);
   const [pageIndex, setPageIndex] = useState(0);
   const [autoOpenSwitchConditionIndex, setAutoOpenSwitchConditionIndex] = useState<number | null>(null);
   const [autoOpenVariableConditionIndex, setAutoOpenVariableConditionIndex] = useState<number | null>(null);
@@ -604,8 +674,8 @@ export function EventInspector({ game, mapId, event, issues, assetUrls, sprites,
     if (persistedConditionsChanged) updatePage({ ...page, conditions: nextPersistedConditions.length ? nextPersistedConditions : undefined });
   };
   const autonomousMovementEnabled = page.movement.type !== 'fixed';
-  return <div className="flex h-full min-h-0 flex-col">
-    <div className="shrink-0 border-b bg-background px-3 py-2">
+  return <div data-slot="event-inspector" className="flex h-full min-h-0 flex-col bg-sidebar text-sidebar-foreground">
+    <div className="shrink-0 border-b bg-sidebar px-3 py-2">
       <div className="mb-2 truncate text-xs font-semibold">{event.id}</div>
       <div className="flex items-center gap-1">
         <div className="flex min-w-0 flex-1 gap-1 overflow-x-auto" role="tablist" aria-label="Event pages">
@@ -646,48 +716,62 @@ export function EventInspector({ game, mapId, event, issues, assetUrls, sprites,
         {editorConditions.length > 0 ? <ConditionsEditor game={game} value={editorConditions} onChange={changeConditions} onCreateSwitch={onCreateSwitch} onCreateVariable={onCreateVariable} onRenameSwitch={onRenameSwitch} onRenameVariable={onRenameVariable} onRenameItem={onRenameItem} autoOpenSwitchIndex={autoOpenSwitchConditionIndex} autoOpenVariableIndex={autoOpenVariableConditionIndex} onAutoOpenSwitch={() => setAutoOpenSwitchConditionIndex(null)} onAutoOpenVariable={() => setAutoOpenVariableConditionIndex(null)} /> : null}
       </Section>
       <Section title="Trigger"><Tabs value={page.trigger.type} onValueChange={value => updateTriggerType(value as MapEventPage['trigger']['type'])}>
-        <TabsList className="w-full" aria-label="Trigger type">
-          {triggerTypes.map(({ type, label, icon: Icon }) => <IconButtonTooltip key={type} label={label}><TabsTrigger value={type} aria-label={label}><Icon /></TabsTrigger></IconButtonTooltip>)}
-        </TabsList>
+        <div className="grid gap-1.5 text-[10px]">
+          <label id="event-trigger-type-label">Type</label>
+          <TabsList className="w-full" aria-labelledby="event-trigger-type-label">
+            {triggerTypes.map(({ type, label, icon: Icon }) => <IconButtonTooltip key={type} label={label}><TabsTrigger value={type} aria-label={label}><Icon /></TabsTrigger></IconButtonTooltip>)}
+          </TabsList>
+        </div>
         {page.trigger.type === 'actionButton' && <label className="grid gap-1.5 text-[10px]">Radius<NumberInput value={page.trigger.radius} min={0.25} step={0.25} onChange={radius => updatePage({ ...page, trigger: { type: 'actionButton', radius } })} /></label>}
         {touchTrigger && <div className="grid grid-cols-2 gap-2"><label className="grid gap-1.5 text-[10px]">Width<NumberInput value={touchTrigger.size.w} min={0.5} step={0.5} onChange={w => updatePage({ ...page, trigger: { ...touchTrigger, size: { ...touchTrigger.size, w } } })} /></label><label className="grid gap-1.5 text-[10px]">Height<NumberInput value={touchTrigger.size.h} min={0.5} step={0.5} onChange={h => updatePage({ ...page, trigger: { ...touchTrigger, size: { ...touchTrigger.size, h } } })} /></label></div>}
       </Tabs>
       </Section>
+      <Section title="Contents" actions={<AddCommandMenu game={game} onAdd={command => updatePage({ ...page, contents: [...page.contents, command] })} />}><CommandsEditor game={game} mapId={mapId} value={page.contents} showAddControl={false} onChange={contents => updatePage({ ...page, contents })} /></Section>
       <Section title="Sprite">
-        <Attachment state={page.sprite ? 'done' : 'idle'} className="w-full">
-          <AttachmentTrigger aria-label={page.sprite ? 'Change sprite' : 'Choose a sprite'} onClick={() => setSpritePickerOpen(true)} />
-          <AttachmentMedia variant={page.sprite ? 'image' : 'icon'}>
-            {page.sprite
-              ? <SpritePreview sprite={page.sprite} imageUrl={assetUrls[page.sprite.image] || sprites.find(sprite => sprite.imagePath === page.sprite?.image)?.url} characterRows={sprites.find(sprite => sprite.imagePath === page.sprite?.image)?.layout.characterRows} className="size-full" />
-              : <ImageIcon />}
-          </AttachmentMedia>
-          <AttachmentContent>
-            <AttachmentTitle>{page.sprite ? sprites.find(sprite => sprite.imagePath === page.sprite?.image)?.name || page.sprite.image : 'Choose a sprite'}</AttachmentTitle>
-            <AttachmentDescription>{page.sprite ? 'Click to choose another sprite.' : 'Browse the sprite library.'}</AttachmentDescription>
-          </AttachmentContent>
-          {page.sprite && <AttachmentActions><IconButtonTooltip label="Remove sprite"><AttachmentAction aria-label="Remove sprite" onClick={() => updatePage({ ...page, sprite: undefined })}><X /></AttachmentAction></IconButtonTooltip></AttachmentActions>}
-        </Attachment>
-        <EventSpritePicker open={spritePickerOpen} onOpenChange={setSpritePickerOpen} sprites={sprites} selected={page.sprite} onSelect={async (asset, characterIndex) => {
-          await onImportSprite(asset);
-          updatePage({ ...page, sprite: spriteReference(asset, characterIndex) });
-        }} />
+        <Popover.Root open={spritePickerOpen} onOpenChange={setSpritePickerOpen}>
+          <Attachment ref={spritePickerAnchorRef} state={page.sprite ? 'done' : 'idle'} className="w-full">
+            <Popover.Trigger render={<AttachmentTrigger aria-label={page.sprite ? 'Change sprite' : 'Choose a sprite'} />} />
+            <AttachmentMedia variant={page.sprite ? 'image' : 'icon'}>
+              {page.sprite
+                ? <SpritePreview sprite={page.sprite} imageUrl={assetUrls[page.sprite.image] || sprites.find(sprite => sprite.imagePath === page.sprite?.image)?.url} characterRows={sprites.find(sprite => sprite.imagePath === page.sprite?.image)?.layout.characterRows} className="size-full" />
+                : <ImageIcon />}
+            </AttachmentMedia>
+            <AttachmentContent>
+              <AttachmentTitle>{page.sprite ? sprites.find(sprite => sprite.imagePath === page.sprite?.image)?.name || page.sprite.image : 'Choose a sprite'}</AttachmentTitle>
+              <AttachmentDescription>{page.sprite ? 'Click to choose another sprite.' : 'Browse the sprite library.'}</AttachmentDescription>
+            </AttachmentContent>
+            {page.sprite && <AttachmentActions><IconButtonTooltip label="Remove sprite"><AttachmentAction aria-label="Remove sprite" onClick={() => updatePage({ ...page, sprite: undefined })}><X /></AttachmentAction></IconButtonTooltip></AttachmentActions>}
+          </Attachment>
+          <EventSpritePicker open={spritePickerOpen} onOpenChange={setSpritePickerOpen} anchor={spritePickerAnchorRef} sprites={sprites} selected={page.sprite} onSelect={async (asset, characterIndex) => {
+            await onImportSprite(asset);
+            updatePage({ ...page, sprite: spriteReference(asset, characterIndex) });
+          }} />
+        </Popover.Root>
         {page.sprite && <>
-          <div className="grid gap-2">
+          <div className="grid grid-cols-2 gap-2">
             <label className="flex items-center gap-2 text-xs"><Checkbox checked={page.options.walkingAnimation} onCheckedChange={walkingAnimation => updatePage({ ...page, options: { ...page.options, walkingAnimation } })} />Walking animation</label>
             <label className="flex items-center gap-2 text-xs"><Checkbox checked={page.options.steppingAnimation} onCheckedChange={steppingAnimation => updatePage({ ...page, options: { ...page.options, steppingAnimation } })} />Stepping animation</label>
             <label className="flex items-center gap-2 text-xs"><Checkbox checked={page.options.directionFix} onCheckedChange={directionFix => updatePage({ ...page, options: { ...page.options, directionFix } })} />Direction fix</label>
             <label className="flex items-center gap-2 text-xs"><Checkbox checked={page.options.through} onCheckedChange={through => updatePage({ ...page, options: { ...page.options, through } })} />Through</label>
           </div>
-          <Field label="Priority"><EnumSelect value={page.priority} values={['belowCharacters', 'sameAsCharacters', 'aboveCharacters'] as const} labels={{ belowCharacters: 'Below characters', sameAsCharacters: 'Same as characters', aboveCharacters: 'Above characters' }} onChange={priority => updatePage({ ...page, priority })} /></Field>
+          <div className="grid grid-cols-2 gap-3">
+            <div className="grid gap-1.5 text-[10px]">
+              <label id="event-priority-label">Priority</label>
+              <Tabs value={page.priority} onValueChange={priority => updatePage({ ...page, priority: priority as MapEventPage['priority'] })}>
+                <TabsList className="w-full" aria-labelledby="event-priority-label">
+                  {priorityTypes.map(({ type, label, icon: Icon }) => <IconButtonTooltip key={type} label={label}><TabsTrigger value={type} aria-label={label}><Icon /></TabsTrigger></IconButtonTooltip>)}
+                </TabsList>
+              </Tabs>
+            </div>
+          </div>
         </>}
       </Section>
       <Section title="Autonomous Movement" actions={<Switch size="sm" checked={autonomousMovementEnabled} onCheckedChange={enabled => updatePage({ ...page, movement: { ...page.movement, type: enabled ? 'random' : 'fixed' } })} aria-label="Enable autonomous movement" />}>
         {autonomousMovementEnabled && <div className="grid grid-cols-[minmax(0,1fr)_auto] items-end gap-2">
-          <label className="grid gap-1.5 text-[10px]">Type<EnumSelect value={page.movement.type} values={['random', 'approach', 'custom'] as const} labels={{ random: 'Random', approach: 'Approach player', custom: 'Custom route' }} ariaLabel="Autonomous movement type" onChange={type => updatePage({ ...page, movement: { ...page.movement, type } })} /></label>
+          <EnumSelect value={page.movement.type} values={['random', 'approach', 'custom'] as const} labels={{ random: 'Random', approach: 'Approach player', custom: 'Custom route' }} ariaLabel="Autonomous movement type" onChange={type => updatePage({ ...page, movement: { ...page.movement, type } })} />
           <AutonomousMovementSettings movement={page.movement} onChange={movement => updatePage({ ...page, movement })} />
         </div>}
       </Section>
-      <Section title="Contents"><CommandsEditor game={game} mapId={mapId} value={page.contents} onChange={contents => updatePage({ ...page, contents })} /></Section>
     </div></ScrollArea>
   </div>;
 }

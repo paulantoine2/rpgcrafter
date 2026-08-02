@@ -26,6 +26,7 @@ const map: GameMap = {
   events: [event], planeConnections: [], navigationOverrides: [], blockedRegions: [], enemySpawns: [],
 };
 const game = {
+  manifest: { title: 'Test Project' },
   maps: { village: map },
   initialState: { switches: {}, variables: {}, quests: {}, inventory: {}, equipment: {} },
   tilesets: {
@@ -45,6 +46,7 @@ const game = {
 const common = {
   game, assetUrls: { 'tilesets/outside-a2.png': 'outside.png', 'sprites/Actor1.png': 'actor1.png' }, map, selectedMapId: 'village', selectedEventId: null,
   selectedTerrain: null, activeLayerId: 'ground', onSelectMap: vi.fn(), onSelectEvent: vi.fn(), onRenameEvent: vi.fn(), onChangeMode: vi.fn(), onSelectTerrain: vi.fn(),
+  canPlay: true, onPlay: vi.fn(),
   onCreateMap: vi.fn(), onRenameMap: vi.fn(), onMoveMap: vi.fn(), onReorderMap: vi.fn(), onResizeMap: vi.fn(),
   onSelectLayer: vi.fn(), onAddLayer: vi.fn(), onRenameLayer: vi.fn(), onDeleteLayer: vi.fn(), onMoveLayer: vi.fn(),
   onChangeLayerPlane: vi.fn(), onChangeLayerPhase: vi.fn(), onAddPlane: vi.fn(), onRenamePlane: vi.fn(), onMovePlane: vi.fn(), onDeletePlane: vi.fn(), onChangeCoverage: vi.fn(), onChangeSurface: vi.fn(), onDeleteConnection: vi.fn(),
@@ -58,8 +60,10 @@ async function expandMaps() {
 }
 
 describe('StudioSidebar', () => {
-  it('shows Maps first and collapsed while keeping the editor section fixed open', () => {
+  it('shows the project header above Maps while keeping the editor section fixed open', () => {
     const { container } = render(<StudioSidebar {...common} mode="events" />);
+    expect(screen.getByText('Test Project').closest('[data-slot="studio-project-header"]')).toHaveClass('h-16', 'px-4');
+    expect(screen.getByRole('button', { name: 'Play' })).toBeEnabled();
     const mapsTrigger = screen.getByRole('button', { name: 'Maps' });
     const mapsHeader = mapsTrigger.closest<HTMLElement>('[data-slot="section-header"]')!;
     const eventsHeader = screen.getByText('Events').closest<HTMLElement>('[data-slot="section-header"]')!;
@@ -127,6 +131,8 @@ describe('StudioSidebar', () => {
     const eventRow = container.querySelector<HTMLElement>('[data-event-row-id="mayor"]')!;
     const eventSprite = eventRow.querySelector<HTMLElement>('[data-slot="event-sprite"]')!;
     expect(eventRow).toHaveRole('button');
+    expect(eventRow).toHaveClass('rounded-md', 'py-0.5');
+    expect(eventRow.parentElement).toHaveClass('px-2', 'py-1', 'space-y-1');
     expect(eventSprite.querySelector('[style*="background-image"]')).toHaveStyle({ backgroundImage: 'url("actor1.png")' });
     expect(screen.queryByText('interact')).not.toBeInTheDocument();
     await userEvent.click(eventSprite);
@@ -167,7 +173,7 @@ describe('StudioSidebar', () => {
     const tilesHeader = screen.getByText('Tiles').closest<HTMLElement>('[data-slot="section-header"]');
     const tilesContent = tilesHeader?.nextElementSibling;
 
-    expect(sidebar).toHaveClass('cursor-default', 'border-r');
+    expect(sidebar).toHaveClass('cursor-default', 'border-r', 'bg-sidebar', 'text-sidebar-foreground');
     expect(screen.queryByRole('button', { name: 'Tiles' })).not.toBeInTheDocument();
     expect(tilesContent).toHaveClass('overflow-hidden');
     expect(tilesContent?.querySelector('[data-slot="scroll-area"]')).toBeInTheDocument();
@@ -218,13 +224,17 @@ describe('StudioSidebar', () => {
     const addMap = screen.getByRole('button', { name: 'Add map' });
     expect(addMap).toHaveAttribute('data-base-ui-tooltip-trigger');
     await userEvent.click(addMap);
-    expect(screen.getByText('New map').closest('[data-slot="section-header"]')).toHaveClass('h-12', 'px-4', 'py-4');
+    const newMapHeader = screen.getByText('New map').closest('[data-slot="section-header"]');
+    expect(newMapHeader).toHaveClass('h-12', 'px-4', 'py-4');
+    expect(newMapHeader?.closest('[data-slot="popover-panel"]')).toHaveClass('rounded-lg', 'bg-popover', 'text-popover-foreground');
     await userEvent.click(screen.getByRole('button', { name: 'Create map' }));
     expect(onCreateMap).toHaveBeenCalledWith(20, 15);
     const mapSettings = screen.getByRole('button', { name: 'Map settings: Village' });
     expect(mapSettings).toHaveAttribute('data-base-ui-tooltip-trigger');
     await userEvent.click(mapSettings);
-    expect(screen.getByText('Map settings').closest('[data-slot="section-header"]')).toHaveClass('h-12', 'px-4', 'py-4');
+    const mapSettingsHeader = screen.getByText('Map settings').closest('[data-slot="section-header"]');
+    expect(mapSettingsHeader).toHaveClass('h-12', 'px-4', 'py-4');
+    expect(mapSettingsHeader?.closest('[data-slot="popover-panel"]')).toHaveClass('rounded-lg', 'bg-popover', 'text-popover-foreground');
     await userEvent.click(screen.getByRole('button', { name: 'Apply size' }));
     expect(onResizeMap).toHaveBeenCalledWith('village', 10, 8);
   });
@@ -253,10 +263,11 @@ describe('StudioSidebar', () => {
     await expandMaps();
 
     expect(screen.getByRole('tree', { name: 'Map hierarchy' })).toBeInTheDocument();
-    expect(screen.getByRole('tree', { name: 'Map hierarchy' })).not.toHaveClass('p-1');
+    expect(screen.getByRole('tree', { name: 'Map hierarchy' })).toHaveClass('px-2', 'py-1');
     expect(screen.getByText('Mayor House')).toBeInTheDocument();
     expect(screen.queryByRole('button', { name: 'Add sub-map to Village' })).not.toBeInTheDocument();
     expect(screen.getByText('Village').closest('[data-map-row-id]')).toHaveAttribute('draggable', 'true');
+    expect(screen.getByText('Village').closest('[data-map-row-id]')).toHaveClass('min-h-8', 'rounded-md');
     expect(screen.getByText('Mayor House').closest('[data-map-row-id]')).toHaveAttribute('draggable', 'true');
     expect(screen.queryByRole('img', { name: /Reorder/ })).not.toBeInTheDocument();
 

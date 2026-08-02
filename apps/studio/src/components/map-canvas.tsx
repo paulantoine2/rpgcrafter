@@ -759,7 +759,7 @@ export const MapCanvas = forwardRef<MapCanvasHandle, Props>(function MapCanvas(p
     }
   }, [props.mode, props.eventTool, props.selectedTerrain, props.drawingTool, props.navigationPaintMode]);
 
-  return <div className="relative size-full overflow-hidden bg-card" aria-label={`${props.map.name} map editor`}>
+  return <div className="relative size-full overflow-hidden bg-background" aria-label={`${props.map.name} map editor`}>
     <div ref={hostRef} className="size-full" />
     <div ref={cursorOverlayRef} hidden className="group pointer-events-none absolute top-0 left-0 z-20 size-6 text-white drop-shadow-[0_1px_1px_rgba(0,0,0,0.9)]" aria-hidden="true">
       <Hand className="size-6 fill-black/45 stroke-[2.5] group-data-[panning=true]:hidden" />

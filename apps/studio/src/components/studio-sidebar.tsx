@@ -4,10 +4,12 @@ import { ArrowDown, ArrowUp, Box, Layers3, Navigation, Plus, Settings2, Trash2 }
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { MapList } from '@/components/map-list';
+import { StudioProjectHeader } from '@/components/studio-project-header';
 import { TerrainPreview } from '@/components/terrain-preview';
 import { SpritePreview } from '@/components/event-sprite-picker';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { ResizableSidebarSection, SectionHeader, SidebarSection } from '@/components/sidebar-section';
+import { PopoverPanel, ResizableSidebarSection, SectionHeader, SidebarSection } from '@/components/sidebar-section';
+import { SidebarList, SidebarListItem, sidebarListItemVariants } from '@/components/sidebar-list';
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from '@/components/ui/resizable';
 import { IconButtonTooltip } from '@/components/ui/tooltip';
 import { Popover } from '@base-ui/react/popover';
@@ -32,14 +34,14 @@ function EventList({ map, assetUrls, selectedEventId, onSelect, onRename }: { ma
     setEditingEventId(null);
     if (name && name !== eventId) onRename(eventId, name);
   };
-  return <ScrollArea className="min-h-0 flex-1"><div>
+  return <ScrollArea className="min-h-0 flex-1"><SidebarList>
     {map.events.map(event => {
       const sprite = event.pages[0]?.sprite;
       const preview = sprite
         ? <span data-slot="event-sprite" className="size-10 shrink-0"><SpritePreview sprite={sprite} imageUrl={assetUrls[sprite.image]} characterRows={sprite.characterColumns === 1 ? 1 : 2} className="size-full" /></span>
         : <span className="grid size-10 shrink-0 place-items-center bg-muted/30"><Box className="size-4 text-primary" /></span>;
       return editingEventId === event.id
-        ? <div key={event.id} data-event-row-id={event.id} className={cn('flex min-h-12 w-full items-center gap-2 px-2 py-1', event.id === selectedEventId && 'bg-sidebar-accent text-sidebar-accent-foreground')}>
+        ? <div key={event.id} data-event-row-id={event.id} className={cn(sidebarListItemVariants({ selected: event.id === selectedEventId }), 'flex min-h-11 w-full items-center gap-2 px-2 py-0.5')}>
           {preview}
           <Input
             autoFocus
@@ -54,19 +56,19 @@ function EventList({ map, assetUrls, selectedEventId, onSelect, onRename }: { ma
             }}
           />
         </div>
-        : <button
+        : <SidebarListItem
           key={event.id}
-          type="button"
           data-event-row-id={event.id}
-          className={cn('flex min-h-12 w-full items-center gap-2 px-2 py-1 text-left hover:bg-sidebar-accent/60', event.id === selectedEventId && 'bg-sidebar-accent text-sidebar-accent-foreground')}
+          selected={event.id === selectedEventId}
+          className="min-h-11 gap-2 px-2 py-0.5"
           onClick={() => onSelect(event.id)}
           onDoubleClick={() => setEditingEventId(event.id)}
         >
           {preview}
           <span className="min-w-0 flex-1 truncate text-xs font-medium">{event.id}</span>
-        </button>;
+        </SidebarListItem>;
     })}
-  </div></ScrollArea>;
+  </SidebarList></ScrollArea>;
 }
 
 function DrawingTree({ map, activeLayer, onSelect, onAddLayer, onAddPlane, onRenameLayer, onDeleteLayer, onMoveLayer, onChangeLayerPlane, onChangeLayerPhase, onRenamePlane, onMovePlane, onDeletePlane, onCoverage, onSurface }: {
@@ -87,7 +89,7 @@ function DrawingTree({ map, activeLayer, onSelect, onAddLayer, onAddPlane, onRen
   onSurface: (id: string, layerId: string) => void;
 }) {
   const planes = [...map.planes].sort((a, b) => b.order - a.order);
-  return <ResizableSidebarSection defaultSize="35%" title="Planes & layers" icon={<Layers3 className="size-3.5" />} actions={<Popover.Root><IconButtonTooltip label="Add plane or layer"><Popover.Trigger render={<Button type="button" variant="ghost" size="icon-sm" aria-label="Add plane or layer"><Plus /></Button>} /></IconButtonTooltip><Popover.Portal><Popover.Positioner side="bottom" align="end" sideOffset={4} className="z-50"><Popover.Popup className="grid min-w-32 gap-1 bg-popover p-1 text-popover-foreground shadow-md ring-1 ring-foreground/10 outline-none"><Button type="button" variant="ghost" className="justify-start" onClick={onAddPlane}><Navigation />Add plane</Button><Button type="button" variant="ghost" className="justify-start" onClick={onAddLayer}><Layers3 />Add layer</Button></Popover.Popup></Popover.Positioner></Popover.Portal></Popover.Root>}>
+  return <ResizableSidebarSection defaultSize="35%" title="Planes & layers" icon={<Layers3 className="size-3.5" />} actions={<Popover.Root><IconButtonTooltip label="Add plane or layer"><Popover.Trigger render={<Button type="button" variant="ghost" size="icon-sm" aria-label="Add plane or layer"><Plus /></Button>} /></IconButtonTooltip><Popover.Portal><Popover.Positioner side="bottom" align="end" sideOffset={4} className="z-50"><PopoverPanel className="grid min-w-32 gap-1 p-1"><Button type="button" variant="ghost" className="justify-start" onClick={onAddPlane}><Navigation />Add plane</Button><Button type="button" variant="ghost" className="justify-start" onClick={onAddLayer}><Layers3 />Add layer</Button></PopoverPanel></Popover.Positioner></Popover.Portal></Popover.Root>}>
     <ScrollArea className="max-h-52" aria-label="Map planes and layers"><div className="p-1">
       {planes.map((plane, planeIndex) => {
         const layers = map.tileLayers.filter(layer => layer.planeId === plane.id).sort((a, b) => {
@@ -97,11 +99,11 @@ function DrawingTree({ map, activeLayer, onSelect, onAddLayer, onAddPlane, onRen
         return <div key={plane.id} className="mb-1 last:mb-0">
           <div className={cn('flex h-7 items-center gap-1 px-2 text-xs hover:bg-sidebar-accent/60', activeLayer?.planeId === plane.id && 'bg-primary/10')}>
             <button type="button" className="flex min-w-0 flex-1 items-center gap-2 text-left" onClick={() => onSelect(plane.surfaceLayerId)}><Navigation className="size-3 shrink-0 text-primary" /><span className="truncate font-medium">{plane.name}</span></button>
-            <Popover.Root><IconButtonTooltip label={`Plane settings: ${plane.name}`}><Popover.Trigger render={<Button type="button" variant="ghost" size="icon-sm" aria-label={`Plane settings: ${plane.name}`}><Settings2 /></Button>} /></IconButtonTooltip><Popover.Portal><Popover.Positioner side="right" align="start" sideOffset={4} className="z-50"><Popover.Popup className="w-60 bg-popover text-popover-foreground shadow-md ring-1 ring-foreground/10 outline-none">
+            <Popover.Root><IconButtonTooltip label={`Plane settings: ${plane.name}`}><Popover.Trigger render={<Button type="button" variant="ghost" size="icon-sm" aria-label={`Plane settings: ${plane.name}`}><Settings2 /></Button>} /></IconButtonTooltip><Popover.Portal><Popover.Positioner side="right" align="start" sideOffset={4} className="z-50"><PopoverPanel className="w-60">
               <SectionHeader className="border-t-0 border-b">Plane settings</SectionHeader><div className="space-y-2 p-2"><label className="grid gap-1 text-[10px] text-muted-foreground">Name<Input key={`${plane.id}:${plane.name}`} className="h-7 text-xs" defaultValue={plane.name} onBlur={event => { const name = event.currentTarget.value.trim(); if (name && name !== plane.name) onRenamePlane(plane.id, name); }} /></label><label className="grid gap-1 text-[10px] text-muted-foreground">Coverage<select className="h-7 border bg-background px-1 text-xs" value={plane.surfaceCoverage} onChange={event => onCoverage(plane.id, event.target.value as SurfaceCoverage)}><option value="bounds">Whole map</option><option value="painted">Painted cells</option></select></label><label className="grid gap-1 text-[10px] text-muted-foreground">Surface layer<select className="h-7 border bg-background px-1 text-xs" value={plane.surfaceLayerId} onChange={event => onSurface(plane.id, event.target.value)}>{layers.map(layer => <option key={layer.id} value={layer.id}>{layer.name}</option>)}</select></label><div className="flex justify-end gap-1 border-t pt-2"><TooltipIconButton tooltip="Move plane down" type="button" variant="ghost" size="icon-sm" disabled={planeIndex >= planes.length - 1} onClick={() => onMovePlane(plane.id, -1)}><ArrowDown /></TooltipIconButton><TooltipIconButton tooltip="Move plane up" type="button" variant="ghost" size="icon-sm" disabled={planeIndex <= 0} onClick={() => onMovePlane(plane.id, 1)}><ArrowUp /></TooltipIconButton><TooltipIconButton tooltip="Delete plane" type="button" variant="ghost" size="icon-sm" disabled={planes.length === 1} onClick={() => onDeletePlane(plane.id)}><Trash2 /></TooltipIconButton></div></div>
-            </Popover.Popup></Popover.Positioner></Popover.Portal></Popover.Root>
+            </PopoverPanel></Popover.Positioner></Popover.Portal></Popover.Root>
           </div>
-          <div className="ml-4 border-l border-border pl-1">{layers.map(layer => { const layerIndex = layers.findIndex(item => item.id === layer.id); return <div key={layer.id} className={cn('flex h-7 items-center gap-1 px-2 text-xs hover:bg-sidebar-accent', layer.id === activeLayer?.id && 'bg-sidebar-accent text-sidebar-accent-foreground')}><button type="button" className="flex min-w-0 flex-1 items-center gap-2 text-left" onClick={() => onSelect(layer.id)}><Layers3 className="size-3 shrink-0 text-primary" /><span className="min-w-0 flex-1 truncate">{layer.name}</span></button><Popover.Root><IconButtonTooltip label={`Layer settings: ${layer.name}`}><Popover.Trigger render={<Button type="button" variant="ghost" size="icon-sm" aria-label={`Layer settings: ${layer.name}`}><Settings2 /></Button>} /></IconButtonTooltip><Popover.Portal><Popover.Positioner side="right" align="start" sideOffset={4} className="z-50"><Popover.Popup className="w-60 bg-popover text-popover-foreground shadow-md ring-1 ring-foreground/10 outline-none"><SectionHeader className="border-t-0 border-b">Layer settings</SectionHeader><div className="space-y-2 p-2"><label className="grid gap-1 text-[10px] text-muted-foreground">Name<Input key={`${layer.id}:${layer.name}`} className="h-7 text-xs" defaultValue={layer.name} onBlur={event => { const name = event.currentTarget.value.trim(); if (name && name !== layer.name) onRenameLayer(layer.id, name); }} /></label><label className="grid gap-1 text-[10px] text-muted-foreground">Plane<select className="h-7 border bg-background px-1 text-xs" value={layer.planeId} disabled={plane.surfaceLayerId === layer.id} onChange={event => onChangeLayerPlane(layer.id, event.target.value)}>{planes.map(item => <option key={item.id} value={item.id}>{item.name}</option>)}</select></label><label className="grid gap-1 text-[10px] text-muted-foreground">Render phase<select className="h-7 border bg-background px-1 text-xs" value={layer.renderPhase} onChange={event => onChangeLayerPhase(layer.id, event.target.value as RenderPhase)}><option value="belowActors">Below actors</option><option value="aboveActors">Above actors</option></select></label><div className="flex justify-end gap-1 border-t pt-2"><TooltipIconButton tooltip="Move layer down" type="button" variant="ghost" size="icon-sm" disabled={layerIndex >= layers.length - 1} onClick={() => onMoveLayer(layer.id, -1)}><ArrowDown /></TooltipIconButton><TooltipIconButton tooltip="Move layer up" type="button" variant="ghost" size="icon-sm" disabled={layerIndex <= 0} onClick={() => onMoveLayer(layer.id, 1)}><ArrowUp /></TooltipIconButton><TooltipIconButton tooltip="Delete layer" type="button" variant="ghost" size="icon-sm" disabled={plane.surfaceLayerId === layer.id} onClick={() => onDeleteLayer(layer.id)}><Trash2 /></TooltipIconButton></div></div></Popover.Popup></Popover.Positioner></Popover.Portal></Popover.Root></div>; })}</div>
+          <div className="ml-4 border-l border-border pl-1">{layers.map(layer => { const layerIndex = layers.findIndex(item => item.id === layer.id); return <div key={layer.id} className={cn('flex h-7 items-center gap-1 px-2 text-xs hover:bg-sidebar-accent', layer.id === activeLayer?.id && 'bg-sidebar-accent text-sidebar-accent-foreground')}><button type="button" className="flex min-w-0 flex-1 items-center gap-2 text-left" onClick={() => onSelect(layer.id)}><Layers3 className="size-3 shrink-0 text-primary" /><span className="min-w-0 flex-1 truncate">{layer.name}</span></button><Popover.Root><IconButtonTooltip label={`Layer settings: ${layer.name}`}><Popover.Trigger render={<Button type="button" variant="ghost" size="icon-sm" aria-label={`Layer settings: ${layer.name}`}><Settings2 /></Button>} /></IconButtonTooltip><Popover.Portal><Popover.Positioner side="right" align="start" sideOffset={4} className="z-50"><PopoverPanel className="w-60"><SectionHeader className="border-t-0 border-b">Layer settings</SectionHeader><div className="space-y-2 p-2"><label className="grid gap-1 text-[10px] text-muted-foreground">Name<Input key={`${layer.id}:${layer.name}`} className="h-7 text-xs" defaultValue={layer.name} onBlur={event => { const name = event.currentTarget.value.trim(); if (name && name !== layer.name) onRenameLayer(layer.id, name); }} /></label><label className="grid gap-1 text-[10px] text-muted-foreground">Plane<select className="h-7 border bg-background px-1 text-xs" value={layer.planeId} disabled={plane.surfaceLayerId === layer.id} onChange={event => onChangeLayerPlane(layer.id, event.target.value)}>{planes.map(item => <option key={item.id} value={item.id}>{item.name}</option>)}</select></label><label className="grid gap-1 text-[10px] text-muted-foreground">Render phase<select className="h-7 border bg-background px-1 text-xs" value={layer.renderPhase} onChange={event => onChangeLayerPhase(layer.id, event.target.value as RenderPhase)}><option value="belowActors">Below actors</option><option value="aboveActors">Above actors</option></select></label><div className="flex justify-end gap-1 border-t pt-2"><TooltipIconButton tooltip="Move layer down" type="button" variant="ghost" size="icon-sm" disabled={layerIndex >= layers.length - 1} onClick={() => onMoveLayer(layer.id, -1)}><ArrowDown /></TooltipIconButton><TooltipIconButton tooltip="Move layer up" type="button" variant="ghost" size="icon-sm" disabled={layerIndex <= 0} onClick={() => onMoveLayer(layer.id, 1)}><ArrowUp /></TooltipIconButton><TooltipIconButton tooltip="Delete layer" type="button" variant="ghost" size="icon-sm" disabled={plane.surfaceLayerId === layer.id} onClick={() => onDeleteLayer(layer.id)}><Trash2 /></TooltipIconButton></div></div></PopoverPanel></Popover.Positioner></Popover.Portal></Popover.Root></div>; })}</div>
           {!layers.length && <div className="ml-7 px-2 py-1 text-[10px] text-muted-foreground">No layers</div>}
         </div>;
       })}
@@ -166,7 +168,7 @@ function NavigationPanel({ map, activePlaneId, onDeleteConnection }: { map: Game
   </div>;
 }
 
-export function StudioSidebar({ game, assetUrls, map, selectedMapId, selectedEventId, mode, selectedTerrain, activeLayerId, onSelectMap, onCreateMap, onRenameMap, onMoveMap, onReorderMap, onResizeMap, onSelectEvent, onRenameEvent, onSelectTerrain, onSelectLayer, onAddLayer, onRenameLayer, onDeleteLayer, onMoveLayer, onChangeLayerPlane, onChangeLayerPhase, onAddPlane, onRenamePlane, onMovePlane, onDeletePlane, onChangeCoverage, onChangeSurface, onDeleteConnection }: {
+export function StudioSidebar({ game, assetUrls, map, selectedMapId, selectedEventId, mode, selectedTerrain, activeLayerId, canPlay, onPlay, onSelectMap, onCreateMap, onRenameMap, onMoveMap, onReorderMap, onResizeMap, onSelectEvent, onRenameEvent, onSelectTerrain, onSelectLayer, onAddLayer, onRenameLayer, onDeleteLayer, onMoveLayer, onChangeLayerPlane, onChangeLayerPhase, onAddPlane, onRenamePlane, onMovePlane, onDeletePlane, onChangeCoverage, onChangeSurface, onDeleteConnection }: {
   game: SourceGame;
   assetUrls: Record<string, string>;
   map: GameMap;
@@ -175,6 +177,8 @@ export function StudioSidebar({ game, assetUrls, map, selectedMapId, selectedEve
   mode: EditorMode;
   selectedTerrain: SelectedTerrain | null;
   activeLayerId: string | null;
+  canPlay: boolean;
+  onPlay: () => void;
   onSelectMap: (id: string) => void;
   onCreateMap: (width: number, height: number, parentMapId?: string) => void;
   onRenameMap: (id: string, name: string) => void;
@@ -205,11 +209,12 @@ export function StudioSidebar({ game, assetUrls, map, selectedMapId, selectedEve
   const editorPanel = mode === 'events'
     ? <SidebarSection collapsible={false} topBorder={false} title="Events" className="h-full" contentClassName="flex min-h-0 flex-1"><EventList map={map} assetUrls={assetUrls} selectedEventId={selectedEventId} onSelect={onSelectEvent} onRename={onRenameEvent} /></SidebarSection>
     : <SidebarSection collapsible={false} topBorder={false} title="Tiles" className="h-full" contentClassName="flex min-h-0 flex-1 flex-col overflow-hidden"><TilePalette game={game} assetUrls={assetUrls} activeLayer={activeLayer} selectedTerrain={selectedTerrain} onSelect={onSelectTerrain}/></SidebarSection>;
-  return <div data-slot="studio-sidebar" className="h-full min-h-0 cursor-default border-r bg-background text-foreground">
-    <ResizablePanelGroup orientation="vertical">
+  return <div data-slot="studio-sidebar" className="flex h-full min-h-0 cursor-default flex-col border-r bg-sidebar text-sidebar-foreground">
+    <StudioProjectHeader title={game.manifest.title} canPlay={canPlay} onPlay={onPlay} />
+    <div className="min-h-0 flex-1"><ResizablePanelGroup orientation="vertical">
       <MapList game={game} selectedMapId={selectedMapId} open={mapsOpen} onOpenChange={setMapsOpen} onSelect={onSelectMap} onCreate={onCreateMap} onRename={onRenameMap} onMove={onMoveMap} onReorder={onReorderMap} onResize={onResizeMap} />
       <ResizableHandle disabled={!mapsOpen} />
       <ResizablePanel defaultSize="60%" minSize="160px" className="min-h-0">{editorPanel}</ResizablePanel>
-    </ResizablePanelGroup>
+    </ResizablePanelGroup></div>
   </div>;
 }

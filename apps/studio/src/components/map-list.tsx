@@ -6,7 +6,8 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { IconButtonTooltip } from '@/components/ui/tooltip';
-import { ResizableSidebarSection, SectionHeader } from '@/components/sidebar-section';
+import { PopoverPanel, ResizableSidebarSection, SectionHeader } from '@/components/sidebar-section';
+import { SidebarList, sidebarListItemVariants } from '@/components/sidebar-list';
 import { mapDropTargetForRow, type MapDropPosition } from '@/lib/map-hierarchy';
 import { cn } from '@/lib/utils';
 
@@ -17,7 +18,7 @@ function SizeFields({ width, height, onWidthChange, onHeightChange }: { width: n
 function NewMapPopover({ onCreate, trigger }: { onCreate: (width: number, height: number) => void; trigger: React.ReactElement }) {
   const [width, setWidth] = useState(20);
   const [height, setHeight] = useState(15);
-  return <Popover.Root><IconButtonTooltip label="Add map"><Popover.Trigger render={trigger} /></IconButtonTooltip><Popover.Portal><Popover.Positioner side="right" align="start" sideOffset={4} className="z-50"><Popover.Popup className="w-56 bg-popover text-popover-foreground shadow-md ring-1 ring-foreground/10 outline-none"><SectionHeader className="border-t-0 border-b">New map</SectionHeader><div className="space-y-3 p-3"><p className="text-[10px] text-muted-foreground">Choose the map size in tiles.</p><SizeFields width={width} height={height} onWidthChange={setWidth} onHeightChange={setHeight} /><Button type="button" size="sm" className="w-full" onClick={() => onCreate(width, height)}>Create map</Button></div></Popover.Popup></Popover.Positioner></Popover.Portal></Popover.Root>;
+  return <Popover.Root><IconButtonTooltip label="Add map"><Popover.Trigger render={trigger} /></IconButtonTooltip><Popover.Portal><Popover.Positioner side="right" align="start" sideOffset={4} className="z-50"><PopoverPanel className="w-56"><SectionHeader className="border-t-0 border-b">New map</SectionHeader><div className="space-y-3 p-3"><p className="text-[10px] text-muted-foreground">Choose the map size in tiles.</p><SizeFields width={width} height={height} onWidthChange={setWidth} onHeightChange={setHeight} /><Button type="button" size="sm" className="w-full" onClick={() => onCreate(width, height)}>Create map</Button></div></PopoverPanel></Popover.Positioner></Popover.Portal></Popover.Root>;
 }
 
 function descendantIds(game: SourceGame, mapId: string) {
@@ -36,7 +37,7 @@ function MapSettings({ game, map, onMove, onResize }: { game: SourceGame; map: G
   const [height, setHeight] = useState(map.bounds.h);
   const unavailableParents = descendantIds(game, map.id);
   unavailableParents.add(map.id);
-  return <Popover.Root><IconButtonTooltip label={`Map settings: ${map.name}`}><Popover.Trigger render={<Button type="button" variant="ghost" size="icon-sm" className="opacity-0 hover:bg-foreground/10 group-hover/map-row:opacity-100 group-focus-within/map-row:opacity-100 aria-expanded:bg-foreground/10 aria-expanded:opacity-100" aria-label={`Map settings: ${map.name}`}><Settings2 /></Button>} /></IconButtonTooltip><Popover.Portal><Popover.Positioner side="right" align="start" sideOffset={4} className="z-50"><Popover.Popup className="w-60 bg-popover text-popover-foreground shadow-md ring-1 ring-foreground/10 outline-none"><SectionHeader className="border-t-0 border-b">Map settings</SectionHeader><div className="space-y-3 p-3"><label className="grid gap-1 text-[10px] text-muted-foreground">Parent map<select aria-label="Parent map" className="h-8 border bg-background px-2 text-xs text-foreground" value={map.parentMapId || ''} onChange={event => onMove(map.id, event.target.value || null)}><option value="">Top level</option>{Object.values(game.maps).filter(candidate => !unavailableParents.has(candidate.id)).map(candidate => <option key={candidate.id} value={candidate.id}>{candidate.name}</option>)}</select></label><div className="border-t pt-3"><h3 className="text-xs font-medium">Map size</h3><p className="mb-2 text-[10px] text-muted-foreground">Changing the size crops content outside the new bounds.</p><SizeFields width={width} height={height} onWidthChange={setWidth} onHeightChange={setHeight} /></div><Button type="button" size="sm" className="w-full" onClick={() => onResize(map.id, width, height)}>Apply size</Button></div></Popover.Popup></Popover.Positioner></Popover.Portal></Popover.Root>;
+  return <Popover.Root><IconButtonTooltip label={`Map settings: ${map.name}`}><Popover.Trigger render={<Button type="button" variant="ghost" size="icon-sm" className="opacity-0 hover:bg-foreground/10 group-hover/map-row:opacity-100 group-focus-within/map-row:opacity-100 aria-expanded:bg-foreground/10 aria-expanded:opacity-100" aria-label={`Map settings: ${map.name}`}><Settings2 /></Button>} /></IconButtonTooltip><Popover.Portal><Popover.Positioner side="right" align="start" sideOffset={4} className="z-50"><PopoverPanel className="w-60"><SectionHeader className="border-t-0 border-b">Map settings</SectionHeader><div className="space-y-3 p-3"><label className="grid gap-1 text-[10px] text-muted-foreground">Parent map<select aria-label="Parent map" className="h-8 border bg-background px-2 text-xs text-foreground" value={map.parentMapId || ''} onChange={event => onMove(map.id, event.target.value || null)}><option value="">Top level</option>{Object.values(game.maps).filter(candidate => !unavailableParents.has(candidate.id)).map(candidate => <option key={candidate.id} value={candidate.id}>{candidate.name}</option>)}</select></label><div className="border-t pt-3"><h3 className="text-xs font-medium">Map size</h3><p className="mb-2 text-[10px] text-muted-foreground">Changing the size crops content outside the new bounds.</p><SizeFields width={width} height={height} onWidthChange={setWidth} onHeightChange={setHeight} /></div><Button type="button" size="sm" className="w-full" onClick={() => onResize(map.id, width, height)}>Apply size</Button></div></PopoverPanel></Popover.Positioner></Popover.Portal></Popover.Root>;
 }
 
 export function MapList({ game, selectedMapId, open, onOpenChange, onSelect, onCreate, onRename, onMove, onReorder, onResize }: { game: SourceGame; selectedMapId: string; open?: boolean; onOpenChange?: (open: boolean) => void; onSelect: (id: string) => void; onCreate: (width: number, height: number) => void; onRename: (id: string, name: string) => void; onMove: (id: string, parentMapId: string | null) => void; onReorder: (id: string, targetId: string, position: MapDropPosition) => void; onResize: (id: string, width: number, height: number) => void }) {
@@ -54,13 +55,13 @@ export function MapList({ game, selectedMapId, open, onOpenChange, onSelect, onC
       setEditingMapId(null);
       if (name && name !== map.name) onRename(map.id, name);
     };
-    return <div key={map.id} className="mb-1 last:mb-0" role="treeitem" aria-expanded={children.length ? !collapsed : undefined}>
+    return <div key={map.id} role="treeitem" aria-expanded={children.length ? !collapsed : undefined}>
       <div
         draggable
         data-map-row-id={map.id}
         className={cn(
-          'group/map-row flex min-h-9 items-center gap-1 border-y border-transparent px-1 text-xs hover:bg-sidebar-accent/60',
-          map.id === selectedMapId && 'bg-sidebar-accent text-sidebar-accent-foreground',
+          sidebarListItemVariants({ selected: map.id === selectedMapId }),
+          'group/map-row flex min-h-8 items-center gap-1 border-y border-transparent px-1 text-xs',
           dropTarget?.id === map.id && dropTarget.position === 'before' && 'border-t-primary',
           dropTarget?.id === map.id && dropTarget.position === 'after' && 'border-b-primary',
           dropTarget?.id === map.id && dropTarget.position === 'inside' && 'bg-primary/15 ring-1 ring-primary ring-inset',
@@ -100,7 +101,7 @@ export function MapList({ game, selectedMapId, open, onOpenChange, onSelect, onC
           })}
         ><ChevronRight className={cn('size-3 transition-transform', !collapsed && 'rotate-90')} /></button></IconButtonTooltip> : <span className="h-6 w-3 shrink-0" aria-hidden="true" />}
         {editingMapId === map.id
-          ? <div className="flex min-w-0 flex-1 items-center gap-2 px-1 py-1"><MapIcon className="size-3.5 shrink-0 text-primary" /><Input
+          ? <div className="flex min-w-0 flex-1 items-center gap-2 px-1 py-0.5"><MapIcon className="size-3.5 shrink-0 text-primary" /><Input
             autoFocus
             draggable={false}
             aria-label={`Rename map: ${map.name}`}
@@ -114,14 +115,14 @@ export function MapList({ game, selectedMapId, open, onOpenChange, onSelect, onC
             }}
             onDragStart={event => event.stopPropagation()}
           /></div>
-          : <button type="button" className="flex min-w-0 flex-1 items-center gap-2 px-1 py-1 text-left" onClick={() => onSelect(map.id)} onDoubleClick={() => setEditingMapId(map.id)}><MapIcon className="size-3.5 shrink-0 text-primary" /><span className="min-w-0 flex-1 truncate font-medium">{map.name}</span></button>}
+          : <button type="button" className="flex min-w-0 flex-1 items-center gap-2 px-1 py-0.5 text-left" onClick={() => onSelect(map.id)} onDoubleClick={() => setEditingMapId(map.id)}><MapIcon className="size-3.5 shrink-0 text-primary" /><span className="min-w-0 flex-1 truncate font-medium">{map.name}</span></button>}
         <MapSettings key={`${map.id}:${map.parentMapId}:${map.bounds.w}:${map.bounds.h}`} game={game} map={map} onMove={onMove} onResize={onResize} />
       </div>
-      {children.length > 0 && !collapsed && <div className="ml-4 border-l border-border pl-1" role="group">{children.map((child, index) => renderMap(child, index, children))}</div>}
+      {children.length > 0 && !collapsed && <div className="ml-4 space-y-1 border-l border-border pl-1" role="group">{children.map((child, index) => renderMap(child, index, children))}</div>}
     </div>;
   };
   const roots = childrenOf();
   return <ResizableSidebarSection defaultSize="40%" defaultOpen={false} open={open} onOpenChange={onOpenChange} topBorder={false} title="Maps" contentClassName="flex-1" actions={<NewMapPopover onCreate={onCreate} trigger={<Button type="button" variant="ghost" size="icon-sm" aria-label="Add map"><Plus /></Button>} />}>
-    <ScrollArea className="h-full min-h-0"><div role="tree" aria-label="Map hierarchy">{roots.map((map, index) => renderMap(map, index, roots))}</div></ScrollArea>
+    <ScrollArea className="h-full min-h-0"><SidebarList role="tree" aria-label="Map hierarchy">{roots.map((map, index) => renderMap(map, index, roots))}</SidebarList></ScrollArea>
   </ResizableSidebarSection>;
 }

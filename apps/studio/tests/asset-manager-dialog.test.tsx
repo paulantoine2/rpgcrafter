@@ -2,7 +2,7 @@ import { fireEvent, render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, expect, it, vi } from 'vitest';
 import type { SourceGame, TilesetDefinition } from '@rpgcrafter/game-schema';
-import { AssetManagerDialog, type LibrarySprite, type LibraryTileset } from '../src/components/asset-manager-dialog';
+import { AssetManager, AssetManagerDialog, type LibrarySprite, type LibraryTileset } from '../src/components/asset-manager-dialog';
 
 const grid: TilesetDefinition = {
   id: 'decor', name: 'Decor', category: 'Nature', kind: 'grid', image: 'tilesets/decor.png', tileSize: 48, columns: 2, rows: 1,
@@ -38,7 +38,7 @@ function props(overrides: Record<string, unknown> = {}) {
   return {
     open: true,
     onOpenChange: vi.fn(),
-    game: { tilesets: { decor: grid, cliffs: a2 } } as unknown as SourceGame,
+    game: { manifest: { title: 'Test Project' }, tilesets: { decor: grid, cliffs: a2 } } as unknown as SourceGame,
     assetUrls: { 'tilesets/decor.png': 'decor.png', 'tilesets/cliffs.png': 'cliffs.png' },
     library: [library],
     sprites: [],
@@ -54,10 +54,23 @@ function props(overrides: Record<string, unknown> = {}) {
 }
 
 describe('AssetManagerDialog obstacle editor', () => {
+  it('uses the editor sidebar layout without a page banner', async () => {
+    const onPlay = vi.fn();
+    render(<AssetManager {...props()} canPlay onPlay={onPlay} />);
+    expect(screen.queryByRole('heading', { name: 'Asset Manager' })).not.toBeInTheDocument();
+    expect(screen.queryByText('Manage project assets, inspect tileset pixels, and edit their default collisions.')).not.toBeInTheDocument();
+    expect(screen.getByText('Project tilesets').closest('[data-slot="asset-manager-sidebar"]')).toHaveClass('bg-sidebar', 'text-sidebar-foreground', 'border-r');
+    expect(screen.getByText('Test Project')).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Play' })).toBeEnabled();
+    await userEvent.click(screen.getByRole('button', { name: 'Play' }));
+    expect(onPlay).toHaveBeenCalledOnce();
+  });
+
   it('shows the selected tileset at actual size and toggles whole-cell collisions', async () => {
     const onChangeTerrainCollision = vi.fn();
     render(<AssetManagerDialog {...props({ onChangeTerrainCollision })} />);
-    expect(screen.getByRole('list', { name: 'Project tilesets' })).toBeInTheDocument();
+    expect(screen.getByRole('list', { name: 'Project tilesets' })).toHaveClass('space-y-1', 'px-2', 'py-1');
+    expect(screen.getByRole('button', { name: /Decor/ })).toHaveClass('rounded-md', 'py-0.5', 'bg-sidebar-accent');
     expect(screen.getByRole('img', { name: 'Decor source' })).toBeInTheDocument();
     expect(screen.getByRole('grid', { name: 'Decor obstacle grid' })).toHaveStyle({ width: '96px', height: '48px' });
     const moss = screen.getByRole('gridcell', { name: 'Moss obstacle: none' });

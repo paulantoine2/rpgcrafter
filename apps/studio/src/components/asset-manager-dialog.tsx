@@ -7,6 +7,9 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { SectionHeader, SectionHeaderActions } from '@/components/sidebar-section';
+import { SidebarList, SidebarListItem } from '@/components/sidebar-list';
+import { StudioProjectHeader } from '@/components/studio-project-header';
 import { COLLISION_DIRECTIONS, nearestCollisionEdge, toggleA2BoundaryCollision, toggleCellCollision, toggleEdgeCollision } from '@/lib/terrain-collision';
 import type { TilesetImportFormat } from '@/lib/tileset-import';
 
@@ -185,9 +188,7 @@ function ImportDialog({ open, onOpenChange, onImport }: {
   </DialogContent></Dialog>;
 }
 
-export function AssetManagerDialog({ open, onOpenChange, game, assetUrls, library, sprites, bundles, onImportLibrary, onImportSprite, onImportLibraryBundle, onImportLocal, onUpdate, onChangeTerrainCollision }: {
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
+type AssetManagerProps = {
   game: SourceGame;
   assetUrls: Record<string, string>;
   library: LibraryTileset[];
@@ -199,7 +200,11 @@ export function AssetManagerDialog({ open, onOpenChange, game, assetUrls, librar
   onImportLocal: (input: { file: File; name: string; category: string; format: TilesetImportFormat }) => Promise<void>;
   onUpdate: (id: string, values: { name: string; category: string }) => void;
   onChangeTerrainCollision: (tilesetId: string, terrainId: string, collision: TerrainCollision) => void;
-}) {
+  canPlay?: boolean;
+  onPlay?: () => void;
+};
+
+export function AssetManager({ game, assetUrls, library, sprites, bundles, onImportLibrary, onImportSprite, onImportLibraryBundle, onImportLocal, onUpdate, onChangeTerrainCollision, canPlay = false, onPlay = () => {} }: AssetManagerProps) {
   const projectTilesets = Object.values(game.tilesets);
   const categories = [...new Set(projectTilesets.map(tileset => tileset.category))].sort((a, b) => a.localeCompare(b));
   const [selectedId, setSelectedId] = useState(projectTilesets[0]?.id || '');
@@ -209,9 +214,8 @@ export function AssetManagerDialog({ open, onOpenChange, game, assetUrls, librar
   const selected = game.tilesets[selectedId] || projectTilesets[0];
 
   useEffect(() => {
-    if (!open) { setLibraryOpen(false); setImportOpen(false); setEditOpen(false); return; }
     if (!game.tilesets[selectedId]) setSelectedId(Object.keys(game.tilesets)[0] || '');
-  }, [open, game.tilesets, selectedId]);
+  }, [game.tilesets, selectedId]);
 
   const openMetadata = () => {
     if (!selected) return;
@@ -225,29 +229,27 @@ export function AssetManagerDialog({ open, onOpenChange, game, assetUrls, librar
     setEditOpen(false);
   };
 
-  return <>
-    <Dialog open={open} onOpenChange={onOpenChange}><DialogContent className="h-[92vh] w-[94vw] max-w-none grid-rows-[auto_1fr_auto] gap-0 overflow-hidden p-0 sm:max-w-none">
-      <DialogHeader className="border-b px-5 py-4"><DialogTitle className="text-base">Asset Manager</DialogTitle><DialogDescription>Manage project assets, inspect tileset pixels, and edit their default collisions.</DialogDescription></DialogHeader>
-      <div className="grid min-h-0 grid-cols-[280px_minmax(0,1fr)]">
-        <aside className="flex min-h-0 flex-col border-r bg-muted/10">
-          <div className="flex items-center justify-between border-b px-4 py-3"><h3 className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Project tilesets</h3><ImagePlus className="size-4 text-primary" /></div>
-          <ul className="min-h-0 flex-1 overflow-y-auto p-2" aria-label="Project tilesets">{projectTilesets.map(tileset => <li key={tileset.id}><button
-            type="button"
+  return <div className="grid size-full min-h-0 grid-cols-[384px_minmax(0,1fr)]" data-slot="asset-manager">
+        <aside className="flex h-full min-h-0 cursor-default flex-col border-r bg-sidebar text-sidebar-foreground" data-slot="asset-manager-sidebar">
+          <StudioProjectHeader title={game.manifest.title} canPlay={canPlay} onPlay={onPlay} />
+          <SectionHeader className="border-t-0 border-b">Project tilesets<SectionHeaderActions><ImagePlus className="size-3.5 text-primary" /></SectionHeaderActions></SectionHeader>
+          <SidebarList className="min-h-0 flex-1 overflow-y-auto" role="list" aria-label="Project tilesets">{projectTilesets.map(tileset => <div role="listitem" key={tileset.id}><SidebarListItem
             aria-current={selected?.id === tileset.id ? 'true' : undefined}
+            selected={selected?.id === tileset.id}
             onClick={() => setSelectedId(tileset.id)}
-            className="mb-1 flex w-full items-center gap-3 border border-transparent p-2 text-left outline-none hover:bg-muted/50 focus-visible:ring-2 focus-visible:ring-ring aria-current:border-border aria-current:bg-background aria-current:shadow-sm"
+            className="gap-3 px-2 py-0.5"
           >
             <img src={assetUrls[tileset.image]} alt="" className="size-12 shrink-0 border bg-background object-cover [image-rendering:pixelated]" />
             <span className="min-w-0 flex-1"><span className="block truncate text-xs font-medium">{tileset.name}</span><span className="block truncate text-[10px] text-muted-foreground">{tileset.category} · {tileset.kind.toUpperCase()}</span></span>
-          </button></li>)}</ul>
+          </SidebarListItem></div>)}</SidebarList>
           <div className="grid gap-2 border-t p-3"><Button variant="outline" size="sm" onClick={() => setLibraryOpen(true)}><Library />Open Assets Library</Button><Button size="sm" onClick={() => setImportOpen(true)}><Upload />Import PNG</Button></div>
         </aside>
 
         {selected ? <section className="flex min-h-0 flex-col">
-          <div className="flex shrink-0 items-center gap-3 border-b px-5 py-3">
+          <SectionHeader className="border-t-0 border-b bg-background">
             <div className="min-w-0"><h2 className="truncate text-sm font-semibold">{selected.name}</h2><p className="text-[10px] text-muted-foreground">{selected.category} · {selected.kind.toUpperCase()} · {selected.id}</p></div>
-            <Button className="ml-auto" variant="outline" size="sm" onClick={openMetadata}><Pencil />Rename &amp; categorize</Button>
-          </div>
+            <SectionHeaderActions><Button variant="outline" size="sm" onClick={openMetadata}><Pencil />Rename &amp; categorize</Button></SectionHeaderActions>
+          </SectionHeader>
           <div className="flex shrink-0 items-center gap-1 border-b bg-background/80 px-5 py-2" role="toolbar" aria-label="Tileset obstacle tools">
             <span className="mr-2 text-[10px] font-medium uppercase tracking-wide text-muted-foreground">Collision tool</span>
             <Button type="button" variant={tool === 'cell' ? 'default' : 'ghost'} size="sm" aria-label="Cell obstacle" aria-pressed={tool === 'cell'} onClick={() => setTool('cell')}><Square />Cell</Button>
@@ -259,10 +261,6 @@ export function AssetManagerDialog({ open, onOpenChange, game, assetUrls, librar
             <TilesetCanvas tileset={selected} imageUrl={assetUrls[selected.image]} tool={tool} onChange={(terrainId, collision) => onChangeTerrainCollision(selected.id, terrainId, collision)} />
           </div>
         </section> : <section className="grid place-items-center bg-muted/20"><div className="max-w-xs text-center"><ImagePlus className="mx-auto mb-3 size-7 text-muted-foreground" /><h2 className="text-sm font-medium">No project tilesets</h2><p className="mt-1 text-xs text-muted-foreground">Import a PNG or choose one from the Assets Library to get started.</p><div className="mt-4 flex justify-center gap-2"><Button variant="outline" size="sm" onClick={() => setLibraryOpen(true)}>Open Assets Library</Button><Button size="sm" onClick={() => setImportOpen(true)}>Import PNG</Button></div></div></section>}
-      </div>
-      <DialogFooter className="border-t px-5 py-3"><Button variant="outline" onClick={() => onOpenChange(false)}>Close</Button></DialogFooter>
-    </DialogContent></Dialog>
-
     <LibraryDialog open={libraryOpen} onOpenChange={setLibraryOpen} game={game} assetUrls={assetUrls} library={library} sprites={sprites} bundles={bundles} onImport={onImportLibrary} onImportSprite={onImportSprite} onImportBundle={onImportLibraryBundle} />
     <ImportDialog open={importOpen} onOpenChange={setImportOpen} onImport={onImportLocal} />
     <Dialog open={editOpen} onOpenChange={setEditOpen}><DialogContent>
@@ -271,5 +269,16 @@ export function AssetManagerDialog({ open, onOpenChange, game, assetUrls, librar
       <DialogFooter><Button variant="outline" onClick={() => setEditOpen(false)}>Cancel</Button><Button disabled={!editName.trim() || !editCategory.trim()} onClick={saveMetadata}>Save changes</Button></DialogFooter>
     </DialogContent></Dialog>
     <datalist id="asset-categories">{categories.map(item => <option key={item} value={item} />)}</datalist>
-  </>;
+  </div>;
+}
+
+export function AssetManagerDialog({ open, onOpenChange, ...props }: AssetManagerProps & {
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+}) {
+  return <Dialog open={open} onOpenChange={onOpenChange}><DialogContent className="h-[92vh] w-[94vw] max-w-none grid-rows-[1fr_auto] gap-0 overflow-hidden p-0 sm:max-w-none">
+    <DialogHeader className="sr-only"><DialogTitle>Asset Manager</DialogTitle><DialogDescription>Manage project assets and tileset collisions.</DialogDescription></DialogHeader>
+    <AssetManager {...props} />
+    <DialogFooter className="border-t px-5 py-3"><Button variant="outline" onClick={() => onOpenChange(false)}>Close</Button></DialogFooter>
+  </DialogContent></Dialog>;
 }

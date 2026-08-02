@@ -108,7 +108,7 @@ export function StudioToolbar({ mode, layers, activeLayerId, drawingTool, eventT
   }, [mode]);
 
   return <div className="pointer-events-none absolute inset-x-0 bottom-4 z-20 flex justify-center px-3">
-    <div ref={toolbarRef} className="pointer-events-auto flex max-w-full items-center gap-1.5 overflow-hidden rounded-xl border bg-background p-1.5 shadow-[0_12px_36px_-12px_rgb(0_0_0/0.45)] backdrop-blur-md">
+    <div ref={toolbarRef} data-slot="studio-toolbar" className="pointer-events-auto flex max-w-full items-center gap-1.5 overflow-hidden rounded-xl border bg-card p-1.5 text-card-foreground shadow-[0_12px_36px_-12px_rgb(0_0_0/0.45)] backdrop-blur-md">
       <div className="flex min-w-0 items-center gap-1.5 overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
         {mode === 'events' && <EventsTools eventTool={eventTool} onChangeEventTool={onChangeEventTool} />}
         {mode === 'drawing' && <DrawingTools layers={layers} activeLayerId={activeLayerId} drawingTool={drawingTool} onSelectLayer={onSelectLayer} onChangeDrawingTool={onChangeDrawingTool} />}

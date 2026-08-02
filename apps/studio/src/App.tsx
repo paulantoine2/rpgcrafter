@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { EventInspector } from '@/components/event-inspector';
-import { AssetManagerDialog, type LibraryBundle, type LibrarySprite, type LibraryTileset } from '@/components/asset-manager-dialog';
+import { AssetManager, type LibraryBundle, type LibrarySprite, type LibraryTileset } from '@/components/asset-manager-dialog';
 import { MapCanvas, type MapCanvasHandle } from '@/components/map-canvas';
 import { StudioSidebar, type DrawingTool, type EditorMode, type NavigationPaintMode, type SelectedTerrain } from '@/components/studio-sidebar';
 import { StudioToolbar, type EventTool } from '@/components/studio-toolbar';
@@ -28,6 +28,7 @@ import { defaultTerrainSelection, terrainSelectionExists } from '@/lib/tile-pale
 type SaveState = 'idle' | 'unsaved' | 'saving' | 'saved' | 'error';
 type DrawingHistoryState = Pick<GameMap, 'tileLayers' | 'navigationOverrides'>;
 type DrawingHistoryEntry = { mapId: string; before: DrawingHistoryState; after: DrawingHistoryState };
+type StudioTab = 'maps' | 'assets';
 
 export default function App() {
   const initialLocationRef = useRef(readStudioLocation(window.location.search));
@@ -61,7 +62,7 @@ export default function App() {
   const [openDialog, setOpenDialog] = useState(false);
   const [newProjectDialog, setNewProjectDialog] = useState(false);
   const [newProjectTitle, setNewProjectTitle] = useState('');
-  const [assetManagerDialog, setAssetManagerDialog] = useState(false);
+  const [studioTab, setStudioTab] = useState<StudioTab>('maps');
   const [revertDialog, setRevertDialog] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -91,7 +92,7 @@ export default function App() {
   }, [editorMode, game?.tilesets, selectedTerrain]);
 
   useEffect(() => {
-    if (!game || ((!assetManagerDialog && editorMode !== 'events') || library.length)) return;
+    if (!game || ((studioTab !== 'assets' && editorMode !== 'events') || library.length)) return;
     let cancelled = false;
     void loadBundledTilesetLibrary().then(catalog => {
       if (cancelled) return;
@@ -110,7 +111,7 @@ export default function App() {
       })));
     }).catch(reason => setError(reason instanceof Error ? reason.message : 'The asset library could not be loaded.'));
     return () => { cancelled = true; };
-  }, [assetManagerDialog, editorMode, game?.manifest.gameId, library.length]);
+  }, [studioTab, editorMode, game?.manifest.gameId, library.length]);
 
   useEffect(() => () => library.forEach(item => URL.revokeObjectURL(item.url)), [library]);
   useEffect(() => () => librarySprites.forEach(item => URL.revokeObjectURL(item.url)), [librarySprites]);
@@ -120,7 +121,7 @@ export default function App() {
     requestAnimationFrame(() => mapCanvasRef.current?.fit());
     const timer = window.setTimeout(() => mapCanvasRef.current?.fit(), 260);
     return () => window.clearTimeout(timer);
-  }, [editorMode]);
+  }, [editorMode, studioTab]);
 
   const validation = useMemo(() => game ? validateSourceGame(game) : null, [game]);
   const selectedMap = game?.maps[selectedMapId];
@@ -891,6 +892,7 @@ export default function App() {
     setSelectedLayerIds({});
     setSelectedTerrain(null);
     setSelectedEventId(null);
+    setStudioTab('maps');
     resetDrawingHistory();
     setSaveState('idle');
     setSaveError('');
@@ -1009,36 +1011,36 @@ export default function App() {
     <StudioAppSidebar
       hasProject={Boolean(game)}
       canExport={Boolean(game && validation?.success)}
-      assetManagerOpen={assetManagerDialog}
+      activeTab={studioTab}
       onNewProject={() => setNewProjectDialog(true)}
       onOpenProject={() => setOpenDialog(true)}
       onSaveDraft={() => void flushDraft()}
       onExportProject={() => game && void exportGamePackage(game, projectAssets)}
       onRevertProject={() => setRevertDialog(true)}
       onCloseProject={closeProject}
-      onOpenAssetManager={() => setAssetManagerDialog(true)}
-      onPlay={playGame}
+      onSelectMaps={() => setStudioTab('maps')}
+      onSelectAssets={() => setStudioTab('assets')}
     />
     <div className="flex min-w-0 flex-1 flex-col">
 
     {!game || !selectedMap ? <main className="flex min-h-0 flex-1 items-center justify-center bg-[radial-gradient(circle_at_center,var(--color-muted)_0,transparent_60%)]">
       <div className="max-w-sm border bg-card/80 p-8 text-center shadow-xl backdrop-blur"><FolderOpen className="mx-auto mb-4 size-8 text-primary" /><h1 className="text-base font-semibold">No project open</h1><p className="mt-2 text-xs leading-5 text-muted-foreground">Create an empty project or open an existing package.</p><div className="mt-5 flex justify-center gap-2"><Button size="sm" onClick={() => setNewProjectDialog(true)}>New project</Button><Button variant="outline" size="sm" onClick={() => setOpenDialog(true)}>Open…</Button></div></div>
-    </main> : <main className="min-h-0 flex-1">
+    </main> : studioTab === 'assets' ? <main className="min-h-0 flex-1"><AssetManager game={game} assetUrls={assetUrls} library={library} sprites={librarySprites} bundles={libraryBundles} onImportLibrary={importLibraryTileset} onImportSprite={importLibrarySprite} onImportLibraryBundle={importLibraryBundle} onImportLocal={importLocalTileset} onUpdate={updateTileset} onChangeTerrainCollision={changeTerrainCollision} canPlay={Boolean(validation?.success)} onPlay={playGame}/></main> : <main className="min-h-0 flex-1">
       <ResizablePanelGroup orientation="horizontal">
-        <ResizablePanel defaultSize="384px" minSize="384px" maxSize="384px"><StudioSidebar game={game} assetUrls={assetUrls} map={selectedMap} selectedMapId={selectedMapId} selectedEventId={selectedEventId} mode={editorMode} selectedTerrain={selectedTerrain} activeLayerId={selectedLayerId} onSelectMap={selectMap} onCreateMap={createMap} onRenameMap={renameMap} onMoveMap={moveMap} onReorderMap={reorderMap} onResizeMap={resizeMap} onSelectEvent={setSelectedEventId} onRenameEvent={renameEvent} onSelectTerrain={setSelectedTerrain} onSelectLayer={selectLayer} onAddLayer={addLayer} onRenameLayer={renameLayer} onDeleteLayer={deleteLayer} onMoveLayer={moveLayer} onChangeLayerPlane={changeLayerPlane} onChangeLayerPhase={changeLayerPhase} onAddPlane={() => setNewPlaneDialog(true)} onRenamePlane={renamePlane} onMovePlane={movePlane} onDeletePlane={deletePlane} onChangeCoverage={changeCoverage} onChangeSurface={changeSurface} onDeleteConnection={deleteConnection} /></ResizablePanel>
+        <ResizablePanel defaultSize="384px" minSize="384px" maxSize="384px"><StudioSidebar game={game} assetUrls={assetUrls} map={selectedMap} selectedMapId={selectedMapId} selectedEventId={selectedEventId} mode={editorMode} selectedTerrain={selectedTerrain} activeLayerId={selectedLayerId} canPlay={Boolean(validation?.success)} onPlay={playGame} onSelectMap={selectMap} onCreateMap={createMap} onRenameMap={renameMap} onMoveMap={moveMap} onReorderMap={reorderMap} onResizeMap={resizeMap} onSelectEvent={setSelectedEventId} onRenameEvent={renameEvent} onSelectTerrain={setSelectedTerrain} onSelectLayer={selectLayer} onAddLayer={addLayer} onRenameLayer={renameLayer} onDeleteLayer={deleteLayer} onMoveLayer={moveLayer} onChangeLayerPlane={changeLayerPlane} onChangeLayerPhase={changeLayerPhase} onAddPlane={() => setNewPlaneDialog(true)} onRenamePlane={renamePlane} onMovePlane={movePlane} onDeletePlane={deletePlane} onChangeCoverage={changeCoverage} onChangeSurface={changeSurface} onDeleteConnection={deleteConnection} /></ResizablePanel>
         <ResizablePanel defaultSize="100%" minSize="400px"><div className="flex h-full min-h-0">
           <div className="flex min-w-0 flex-1 flex-col">
             <SectionHeader className="border-t-0 border-b bg-background"><div className="flex min-w-0 items-center gap-3"><span className="truncate text-xs font-medium">{selectedMap.name}</span><span className="font-mono text-[10px] text-muted-foreground">{selectedMap.bounds.w}×{selectedMap.bounds.h}</span><span className="min-w-20 font-mono text-[10px] text-muted-foreground">{hoveredTile ? `x ${hoveredTile.x} · y ${hoveredTile.y}` : 'x — · y —'}</span></div><SectionHeaderActions><IconButtonTooltip label="Toggle grid"><Button variant={gridVisibility[editorMode] ? 'secondary' : 'ghost'} size="icon-sm" aria-label="Toggle grid" aria-pressed={gridVisibility[editorMode]} onClick={() => setGridVisibility(current => ({ ...current, [editorMode]: !current[editorMode] }))}><Grid3X3 /></Button></IconButtonTooltip>{editorMode === 'drawing' && <IconButtonTooltip label="Dim inactive layers"><Button variant={dimInactiveLayers ? 'secondary' : 'ghost'} size="icon-sm" aria-label="Dim inactive layers" aria-pressed={dimInactiveLayers} onClick={() => setDimInactiveLayers(value => !value)}><Contrast /></Button></IconButtonTooltip>}<div className="mx-1 h-5 w-px bg-border" aria-hidden="true"/><IconButtonTooltip label="Zoom out"><Button variant="ghost" size="icon-sm" onClick={() => mapCanvasRef.current?.zoomOut()} aria-label="Zoom out"><Minus /></Button></IconButtonTooltip><IconButtonTooltip label="Fit map"><Button variant="ghost" size="icon-sm" onClick={() => mapCanvasRef.current?.fit()} aria-label="Fit map"><Maximize2 /></Button></IconButtonTooltip><IconButtonTooltip label="Zoom in"><Button variant="ghost" size="icon-sm" onClick={() => mapCanvasRef.current?.zoomIn()} aria-label="Zoom in"><Plus /></Button></IconButtonTooltip></SectionHeaderActions></SectionHeader>
             <div className="relative min-h-0 flex-1">{tilesetAssetsReady
               ? <MapCanvas ref={mapCanvasRef} map={selectedMap} tilesets={game.tilesets} assetUrls={assetUrls} mode={editorMode} activePlaneId={selectedLayer?.planeId || selectedMap.planes[0].id} activeLayerId={selectedLayerId} selectedTerrain={selectedTerrain} drawingTool={drawingTool} eventTool={eventTool} playerStartMapId={game.manifest.entryPoint.mapId} playerStart={game.actors.player.start} showGrid={gridVisibility[editorMode]} dimInactiveLayers={dimInactiveLayers} navigationPaintMode={navigationPaintMode} selectedEventId={selectedEventId} selectedEventPageIndex={selectedEventPageIndex} onSelectEvent={setSelectedEventId} onCreateEvent={createEvent} onMoveEvent={moveEvent} onDrawTiles={drawMapTiles} onFillTile={fillMapTile} onPickTerrain={setSelectedTerrain} onPlacePlayerStart={placePlayerStart} onNavigateTarget={requestNavigationEdit} onHoverTile={setHoveredTile} />
-              : <div className="grid size-full place-items-center bg-card text-xs text-muted-foreground">Loading tileset images…</div>}
+              : <div className="grid size-full place-items-center bg-background text-xs text-muted-foreground">Loading tileset images…</div>}
               <StudioToolbar mode={editorMode} layers={selectedMap.tileLayers} activeLayerId={selectedLayerId} drawingTool={drawingTool} eventTool={eventTool} onChangeMode={setEditorMode} onSelectLayer={selectLayer} onChangeDrawingTool={setDrawingTool} onChangeEventTool={setEventTool} /></div>
           </div>
           <aside
             data-event-inspector-panel
             aria-hidden={!eventPanelOpen}
             inert={!eventPanelOpen}
-            className={`h-full shrink-0 overflow-hidden bg-background transition-[width] duration-[260ms] ease-[cubic-bezier(0.22,1,0.36,1)] ${eventPanelOpen ? 'w-[420px] border-l' : 'pointer-events-none w-0'}`}
+            className={`h-full shrink-0 overflow-hidden bg-sidebar text-sidebar-foreground transition-[width] duration-[260ms] ease-[cubic-bezier(0.22,1,0.36,1)] ${eventPanelOpen ? 'w-[420px] border-l' : 'pointer-events-none w-0'}`}
           >
             <div className="h-full w-[420px]">
               <EventInspector game={game} mapId={selectedMapId} event={selectedEvent} issues={issues} assetUrls={assetUrls} sprites={librarySprites} onChangeEvent={changeEvent} onSelectPage={setSelectedEventPageIndex} onImportSprite={importLibrarySprite} onCreateSwitch={createSwitch} onCreateVariable={createVariable} onRenameSwitch={renameSwitch} onRenameVariable={renameVariable} onRenameItem={renameItem} />
@@ -1051,7 +1053,6 @@ export default function App() {
 
     <Dialog open={openDialog} onOpenChange={setOpenDialog}><DialogContent><DialogHeader><DialogTitle>Open Project</DialogTitle><DialogDescription>Open a recent project, the bundled example, or an exported RPGCrafter ZIP.</DialogDescription></DialogHeader>{recentProjects.length > 0 && <div className="space-y-1"><div className="text-xs font-medium text-muted-foreground">Recent projects</div>{recentProjects.slice(0, 5).map(project => <button key={project.id} type="button" className="flex w-full items-center justify-between border px-3 py-2 text-left hover:bg-muted/30" onClick={() => void openRecent(project.id)}><span className="truncate text-sm">{project.title}</span><span className="text-[10px] text-muted-foreground">{project.gameVersion}</span></button>)}</div>}<button type="button" className="flex w-full items-center gap-3 border bg-muted/20 p-4 text-left outline-none hover:bg-muted/50 focus-visible:ring-2 focus-visible:ring-ring" onClick={() => void openReference()} disabled={loading}><div className="grid size-10 place-items-center bg-primary/15 text-primary"><FolderOpen /></div><span><span className="block text-sm font-medium">La Cloche des Brumes</span><span className="block text-xs text-muted-foreground">Bundled reference game · schema 0.8</span></span></button><label className="flex cursor-pointer items-center justify-center gap-2 border border-dashed p-4 text-sm hover:bg-muted/30"><Upload className="size-4"/>Choose project ZIP<Input className="sr-only" type="file" accept=".zip,application/zip" onChange={event => { const file = event.target.files?.[0]; if (file) void openArchive(file); }}/></label>{error && <pre className="max-h-36 overflow-auto whitespace-pre-wrap border border-destructive/40 bg-destructive/5 p-3 text-xs text-destructive">{error}</pre>}<DialogFooter><Button variant="outline" onClick={() => setOpenDialog(false)}>Cancel</Button></DialogFooter></DialogContent></Dialog>
     <Dialog open={newProjectDialog} onOpenChange={setNewProjectDialog}><DialogContent><DialogHeader><DialogTitle>New Project</DialogTitle><DialogDescription>The project starts with an empty map and no tilesets.</DialogDescription></DialogHeader><Input autoFocus value={newProjectTitle} placeholder="Project title" onChange={event => setNewProjectTitle(event.target.value)} onKeyDown={event => { if (event.key === 'Enter') void createProject(); }}/><DialogFooter><Button variant="outline" onClick={() => setNewProjectDialog(false)}>Cancel</Button><Button disabled={!newProjectTitle.trim()} onClick={() => void createProject()}>Create</Button></DialogFooter></DialogContent></Dialog>
-    {game && <AssetManagerDialog open={assetManagerDialog} onOpenChange={setAssetManagerDialog} game={game} assetUrls={assetUrls} library={library} sprites={librarySprites} bundles={libraryBundles} onImportLibrary={importLibraryTileset} onImportSprite={importLibrarySprite} onImportLibraryBundle={importLibraryBundle} onImportLocal={importLocalTileset} onUpdate={updateTileset} onChangeTerrainCollision={changeTerrainCollision}/>}
     {selectedMap && <Dialog open={Boolean(pendingConnection)} onOpenChange={open => { if (!open) setPendingConnection(null); }}><DialogContent><DialogHeader><DialogTitle>Create plane connection</DialogTitle><DialogDescription>Choose the destination plane for this bidirectional passage.</DialogDescription></DialogHeader>{pendingConnection && <div className="space-y-3"><div className="border bg-muted/20 px-3 py-2 text-xs"><span className="font-medium">{selectedMap.planes.find(plane => plane.id === pendingConnection.sourcePlaneId)?.name}</span><span className="text-muted-foreground"> · cell {pendingConnection.x}, {pendingConnection.y} · {pendingConnection.edge} edge</span></div><label className="block space-y-1"><span className="text-xs font-medium">Destination plane</span><select autoFocus aria-label="Destination plane" className="h-9 w-full border bg-background px-2 text-sm outline-none focus-visible:ring-2 focus-visible:ring-ring" value={connectionDestinationPlaneId} onChange={event => setConnectionDestinationPlaneId(event.target.value)}>{[...selectedMap.planes].sort((a, b) => a.order - b.order).filter(plane => plane.id !== pendingConnection.sourcePlaneId).map(plane => <option key={plane.id} value={plane.id}>{plane.name}</option>)}</select></label></div>}<DialogFooter><Button variant="outline" onClick={() => setPendingConnection(null)}>Cancel</Button><Button disabled={!pendingConnection || !connectionDestinationPlaneId} onClick={() => { if (!pendingConnection) return; if (addConnection(connectionDestinationPlaneId, pendingConnection.x, pendingConnection.y, pendingConnection.edge, true, pendingConnection.sourcePlaneId)) setPendingConnection(null); }}>Create connection</Button></DialogFooter></DialogContent></Dialog>}
     <Dialog open={newPlaneDialog} onOpenChange={setNewPlaneDialog}><DialogContent><DialogHeader><DialogTitle>Create navigation plane</DialogTitle><DialogDescription>Choose any name that describes this gameplay surface. Names have no engine semantics.</DialogDescription></DialogHeader><Input autoFocus value={newPlaneName} placeholder="Plane name" onChange={event => setNewPlaneName(event.target.value)} onKeyDown={event => { if (event.key === 'Enter') addPlane(); }}/><DialogFooter><Button variant="outline" onClick={() => setNewPlaneDialog(false)}>Cancel</Button><Button disabled={!newPlaneName.trim()} onClick={addPlane}>Create</Button></DialogFooter></DialogContent></Dialog>
     <AlertDialog open={revertDialog} onOpenChange={setRevertDialog}><AlertDialogContent><AlertDialogHeader><AlertDialogTitle>Revert all changes?</AlertDialogTitle><AlertDialogDescription>This clears the browser draft and restores the bundled source JSON. This action cannot be undone.</AlertDialogDescription></AlertDialogHeader><AlertDialogFooter><AlertDialogCancel>Cancel</AlertDialogCancel><AlertDialogAction onClick={() => void revert()}>Revert to Source</AlertDialogAction></AlertDialogFooter></AlertDialogContent></AlertDialog>

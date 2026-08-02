@@ -1,5 +1,6 @@
 import { useLayoutEffect, useRef, useState, type ComponentProps, type ReactNode, type UIEvent } from 'react';
 import { ChevronRight } from 'lucide-react';
+import { Popover } from '@base-ui/react/popover';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { ResizablePanel } from '@/components/ui/resizable';
 import { usePanelRef } from 'react-resizable-panels';
@@ -17,6 +18,14 @@ export function SectionHeader({ className, ...props }: ComponentProps<'div'>) {
 
 export function SectionHeaderActions({ className, ...props }: ComponentProps<'div'>) {
   return <div data-slot="section-header-actions" className={cn('ml-auto flex items-center gap-0.5', className)} {...props} />;
+}
+
+export function PopoverPanel({ className, ...props }: Popover.Popup.Props) {
+  return <Popover.Popup
+    data-slot="popover-panel"
+    className={cn('rounded-lg bg-popover text-popover-foreground shadow-md ring-1 ring-foreground/10 outline-none', className)}
+    {...props}
+  />;
 }
 
 export function SidebarSection({ title, icon, actions, children, collapsible = true, defaultOpen = true, open: controlledOpen, onOpenChange, topBorder = true, className, contentClassName }: SidebarSectionProps) {

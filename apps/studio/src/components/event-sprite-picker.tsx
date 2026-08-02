@@ -1,10 +1,13 @@
-import { useState } from 'react';
+import { useEffect, useState, type RefObject } from 'react';
 import type { MapEventSprite } from '@rpgcrafter/game-schema';
-import { Search } from 'lucide-react';
+import { Popover } from '@base-ui/react/popover';
+import { Search, X } from 'lucide-react';
 import type { LibrarySprite } from '@/components/asset-manager-dialog';
 import { Button } from '@/components/ui/button';
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
+import { ScrollArea } from '@/components/ui/scroll-area';
+import { IconButtonTooltip } from '@/components/ui/tooltip';
+import { PopoverPanel, SectionHeader, SectionHeaderActions } from '@/components/sidebar-section';
 import { cn } from '@/lib/utils';
 
 export function spriteReference(asset: LibrarySprite, characterIndex: number): MapEventSprite {
@@ -44,14 +47,40 @@ export function SpritePreview({ sprite, imageUrl, characterRows = 2, className }
   </span>;
 }
 
-export function EventSpritePicker({ open, onOpenChange, sprites, selected, onSelect }: {
+function spritePickerAnchor(trigger: HTMLElement | null) {
+  const panel = document.querySelector<HTMLElement>('[data-event-inspector-panel]');
+  if (!trigger || !panel) return trigger;
+  return {
+    contextElement: panel,
+    getBoundingClientRect: () => {
+      const panelRect = panel.getBoundingClientRect();
+      const triggerRect = trigger.getBoundingClientRect();
+      return {
+        x: panelRect.left,
+        y: triggerRect.top,
+        top: triggerRect.top,
+        right: panelRect.left,
+        bottom: triggerRect.bottom,
+        left: panelRect.left,
+        width: 0,
+        height: triggerRect.height,
+      };
+    },
+  };
+}
+
+export function EventSpritePicker({ open, onOpenChange, anchor, sprites, selected, onSelect }: {
   open: boolean;
   onOpenChange: (open: boolean) => void;
+  anchor: RefObject<HTMLElement | null>;
   sprites: LibrarySprite[];
   selected?: MapEventSprite;
   onSelect: (asset: LibrarySprite, characterIndex: number) => Promise<void>;
 }) {
   const [query, setQuery] = useState('');
+  useEffect(() => {
+    if (!open) setQuery('');
+  }, [open]);
   const normalizedQuery = query.trim().toLocaleLowerCase();
   const visibleSprites = sprites.filter(asset => !normalizedQuery || [asset.name, asset.bundleName || '', ...asset.tags].some(value => value.toLocaleLowerCase().includes(normalizedQuery)));
   const choose = async (asset: LibrarySprite, characterIndex: number) => {
@@ -59,23 +88,32 @@ export function EventSpritePicker({ open, onOpenChange, sprites, selected, onSel
     onOpenChange(false);
   };
 
-  return <Dialog open={open} onOpenChange={onOpenChange}>
-    <DialogContent className="flex max-h-[82vh] max-w-4xl flex-col gap-0 overflow-hidden p-0 sm:max-w-4xl">
-      <DialogHeader className="border-b px-5 py-4"><DialogTitle>Choose an event sprite</DialogTitle><DialogDescription>Browse the sprite library and select a character or object.</DialogDescription></DialogHeader>
-      <div className="relative border-b p-4"><Search className="pointer-events-none absolute left-7 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" /><Input type="search" aria-label="Search event sprites" className="pl-9" placeholder="Search by name, bundle, or tag…" value={query} onChange={event => setQuery(event.target.value)} /></div>
-      <div className="min-h-0 flex-1 overflow-y-auto p-4">
-        <div className="grid grid-cols-2 gap-3 sm:grid-cols-4 lg:grid-cols-6">
-          {visibleSprites.flatMap(asset => Array.from({ length: asset.layout.characterCount }, (_, characterIndex) => {
-            const reference = spriteReference(asset, characterIndex);
-            const active = selected?.image === reference.image && selected.characterIndex === characterIndex;
-            return <Button key={`${asset.id}:${characterIndex}`} type="button" variant="outline" className={cn('h-auto min-w-0 flex-col gap-2 p-2', active && 'border-primary ring-2 ring-primary/30')} aria-label={`Choose ${asset.name}${asset.layout.characterCount > 1 ? ` ${characterIndex + 1}` : ''}`} onClick={() => void choose(asset, characterIndex)}>
-              <SpritePreview sprite={reference} imageUrl={asset.url} characterRows={asset.layout.characterRows} className="size-20 border" />
-              <span className="w-full truncate text-xs">{asset.name}{asset.layout.characterCount > 1 ? ` · ${characterIndex + 1}` : ''}</span>
-            </Button>;
-          }))}
+  return <Popover.Portal>
+    <Popover.Positioner anchor={() => spritePickerAnchor(anchor.current)} positionMethod="fixed" side="left" align="start" sideOffset={0} collisionAvoidance={{ side: 'none', align: 'shift', fallbackAxisSide: 'none' }} className="z-50">
+      <PopoverPanel className="w-72">
+        <SectionHeader className="border-t-0 border-b">
+          <span className="min-w-0 flex-1">Sprites</span>
+          <SectionHeaderActions><IconButtonTooltip label="Close sprite picker"><Button type="button" variant="ghost" size="icon-sm" aria-label="Close sprite picker" onClick={() => onOpenChange(false)}><X /></Button></IconButtonTooltip></SectionHeaderActions>
+        </SectionHeader>
+        <div className="flex h-9 items-center gap-2 border-b px-3">
+          <Search className="size-3.5 shrink-0 text-muted-foreground" />
+          <Input autoFocus type="search" aria-label="Search event sprites" className="h-7 border-0 bg-transparent px-0 focus-visible:ring-0 dark:bg-transparent" placeholder="Search sprites…" value={query} onChange={event => setQuery(event.target.value)} />
         </div>
-        {!visibleSprites.length && <p className="py-12 text-center text-sm text-muted-foreground">No sprites match “{query}”.</p>}
-      </div>
-    </DialogContent>
-  </Dialog>;
+        <ScrollArea className="h-80 min-h-0">
+          <div className="p-1" role="listbox" aria-label="Event sprites">
+            {visibleSprites.flatMap(asset => Array.from({ length: asset.layout.characterCount }, (_, characterIndex) => {
+              const reference = spriteReference(asset, characterIndex);
+              const active = selected?.image === reference.image && selected.characterIndex === characterIndex;
+              const label = `${asset.name}${asset.layout.characterCount > 1 ? ` ${characterIndex + 1}` : ''}`;
+              return <button key={`${asset.id}:${characterIndex}`} type="button" role="option" aria-selected={active} className={cn('flex h-12 w-full items-center gap-2 px-2 text-left text-xs hover:bg-muted', active && 'bg-primary/15')} aria-label={label} onClick={() => void choose(asset, characterIndex)}>
+                <SpritePreview sprite={reference} imageUrl={asset.url} characterRows={asset.layout.characterRows} className="size-9 shrink-0 rounded-md border" />
+                <span className="min-w-0 flex-1 truncate">{asset.name}{asset.layout.characterCount > 1 ? ` · ${characterIndex + 1}` : ''}</span>
+              </button>;
+            }))}
+            {!visibleSprites.length && <p className="px-3 py-8 text-center text-xs text-muted-foreground">No sprites match “{query}”.</p>}
+          </div>
+        </ScrollArea>
+      </PopoverPanel>
+    </Popover.Positioner>
+  </Popover.Portal>;
 }

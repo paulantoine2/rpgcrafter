@@ -1,3 +1,5 @@
+import { createRef } from 'react';
+import { Popover } from '@base-ui/react/popover';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, expect, it, vi } from 'vitest';
@@ -31,11 +33,29 @@ describe('EventSpritePicker', () => {
   it('lets the user choose a character from a sprite sheet', async () => {
     const onSelect = vi.fn().mockResolvedValue(undefined);
     const onOpenChange = vi.fn();
-    render(<EventSpritePicker open onOpenChange={onOpenChange} sprites={[sprite]} onSelect={onSelect} />);
+    const anchor = createRef<HTMLButtonElement>();
+    render(<Popover.Root open><Popover.Trigger render={<button ref={anchor} type="button">Open sprites</button>} /><EventSpritePicker open onOpenChange={onOpenChange} anchor={anchor} sprites={[sprite]} onSelect={onSelect} /></Popover.Root>);
 
-    await userEvent.click(screen.getByRole('button', { name: 'Choose Actor 1 2' }));
+    expect(screen.getByRole('dialog')).toHaveClass('w-72', 'rounded-lg', 'bg-popover');
+    expect(screen.getByRole('searchbox', { name: 'Search event sprites' })).toBeInTheDocument();
+    const scrollArea = screen.getByRole('listbox', { name: 'Event sprites' }).closest('[data-slot="scroll-area"]');
+    expect(scrollArea).toHaveClass('h-80', 'min-h-0');
+    expect(scrollArea?.querySelector('[data-slot="scroll-area-viewport"]')).toBeInTheDocument();
+    const option = screen.getByRole('option', { name: 'Actor 1 2' });
+    expect(option.firstElementChild).toHaveClass('size-9');
+    await userEvent.click(option);
 
     expect(onSelect).toHaveBeenCalledWith(sprite, 1);
     expect(onOpenChange).toHaveBeenCalledWith(false);
+  });
+
+  it('filters the sprite list by name', async () => {
+    const anchor = createRef<HTMLButtonElement>();
+    const enemy = { ...sprite, id: 'enemy-1', name: 'Enemy', imagePath: 'sprites/enemy.png' };
+    render(<Popover.Root open><Popover.Trigger render={<button ref={anchor} type="button">Open sprites</button>} /><EventSpritePicker open onOpenChange={() => {}} anchor={anchor} sprites={[sprite, enemy]} onSelect={async () => {}} /></Popover.Root>);
+
+    await userEvent.type(screen.getByRole('searchbox', { name: 'Search event sprites' }), 'enemy');
+    expect(screen.queryByRole('option', { name: 'Actor 1 1' })).not.toBeInTheDocument();
+    expect(screen.getByRole('option', { name: 'Enemy 1' })).toBeInTheDocument();
   });
 });

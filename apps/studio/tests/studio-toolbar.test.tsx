@@ -19,7 +19,8 @@ const common = {
 describe('StudioToolbar', () => {
   it('keeps the mode switcher on the right and changes editor mode', async () => {
     const onChangeMode = vi.fn();
-    render(<StudioToolbar {...common} mode="events" onChangeMode={onChangeMode} />);
+    const { container } = render(<StudioToolbar {...common} mode="events" onChangeMode={onChangeMode} />);
+    expect(container.querySelector('[data-slot="studio-toolbar"]')).toHaveClass('bg-card', 'text-card-foreground');
     expect(screen.queryByRole('tab', { name: 'Nav' })).not.toBeInTheDocument();
     const modeTabs = screen.getByRole('tablist', { name: 'Editor mode' });
     expect(modeTabs).toHaveAttribute('data-slot', 'tabs-list');
@@ -33,9 +34,9 @@ describe('StudioToolbar', () => {
     render(<StudioToolbar {...common} mode="events" onChangeEventTool={onChangeEventTool} />);
     expect(screen.queryByRole('toolbar', { name: 'Event tools' })).not.toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Event cursor' })).toHaveAttribute('aria-pressed', 'true');
-    expect(screen.getByRole('button', { name: 'Event cursor' })).toHaveClass('size-9', 'rounded-md');
+    expect(screen.getByRole('button', { name: 'Event cursor' })).toHaveClass('size-8', 'rounded-md');
     expect(screen.getByRole('button', { name: 'Player start' })).toHaveAttribute('aria-pressed', 'false');
-    expect(screen.getByRole('button', { name: 'Player start' })).toHaveClass('size-9', 'rounded-md');
+    expect(screen.getByRole('button', { name: 'Player start' })).toHaveClass('size-8', 'rounded-md');
     await userEvent.click(screen.getByRole('button', { name: 'Player start' }));
     expect(onChangeEventTool).toHaveBeenCalledWith('playerStart');
   });
