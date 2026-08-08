@@ -56,14 +56,15 @@ export function MapList({ game, selectedMapId, open, onOpenChange, onSelect, onC
       if (name && name !== map.name) onRename(map.id, name);
     };
     return <div key={map.id} role="treeitem" aria-expanded={children.length ? !collapsed : undefined}>
+      <div data-map-separator-before={map.id} className="flex h-1 items-center" aria-hidden="true">
+        <div className={cn('h-px w-full bg-transparent transition-colors', dropTarget?.id === map.id && dropTarget.position === 'before' && 'bg-primary')} />
+      </div>
       <div
         draggable
         data-map-row-id={map.id}
         className={cn(
           sidebarListItemVariants({ selected: map.id === selectedMapId }),
-          'group/map-row flex min-h-8 items-center gap-1 border-y border-transparent px-1 text-xs',
-          dropTarget?.id === map.id && dropTarget.position === 'before' && 'border-t-primary',
-          dropTarget?.id === map.id && dropTarget.position === 'after' && 'border-b-primary',
+          'group/map-row relative flex min-h-8 items-center gap-1 px-1 text-xs',
           dropTarget?.id === map.id && dropTarget.position === 'inside' && 'bg-primary/15 ring-1 ring-primary ring-inset',
         )}
         onDragStart={event => {
@@ -117,12 +118,17 @@ export function MapList({ game, selectedMapId, open, onOpenChange, onSelect, onC
           /></div>
           : <button type="button" className="flex min-w-0 flex-1 items-center gap-2 px-1 py-0.5 text-left" onClick={() => onSelect(map.id)} onDoubleClick={() => setEditingMapId(map.id)}><MapIcon className="size-3.5 shrink-0 text-primary" /><span className="min-w-0 flex-1 truncate font-medium">{map.name}</span></button>}
         <MapSettings key={`${map.id}:${map.parentMapId}:${map.bounds.w}:${map.bounds.h}`} game={game} map={map} onMove={onMove} onResize={onResize} />
+        <div
+          data-map-separator-after={map.id}
+          className={cn('pointer-events-none absolute right-0 -bottom-[3px] left-0 h-px bg-transparent transition-colors', dropTarget?.id === map.id && dropTarget.position === 'after' && 'bg-primary')}
+          aria-hidden="true"
+        />
       </div>
-      {children.length > 0 && !collapsed && <div className="ml-4 space-y-1 border-l border-border pl-1" role="group">{children.map((child, index) => renderMap(child, index, children))}</div>}
+      {children.length > 0 && !collapsed && <div className="ml-4 border-l border-border pl-1" role="group">{children.map((child, index) => renderMap(child, index, children))}</div>}
     </div>;
   };
   const roots = childrenOf();
   return <ResizableSidebarSection defaultSize="40%" defaultOpen={false} open={open} onOpenChange={onOpenChange} topBorder={false} title="Maps" contentClassName="flex-1" actions={<NewMapPopover onCreate={onCreate} trigger={<Button type="button" variant="ghost" size="icon-sm" aria-label="Add map"><Plus /></Button>} />}>
-    <ScrollArea className="h-full min-h-0"><SidebarList role="tree" aria-label="Map hierarchy">{roots.map((map, index) => renderMap(map, index, roots))}</SidebarList></ScrollArea>
+    <ScrollArea className="h-full min-h-0"><SidebarList className="space-y-0 py-0 pb-1" role="tree" aria-label="Map hierarchy">{roots.map((map, index) => renderMap(map, index, roots))}</SidebarList></ScrollArea>
   </ResizableSidebarSection>;
 }

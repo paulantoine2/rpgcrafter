@@ -1,4 +1,4 @@
-import { fireEvent, render, screen } from '@testing-library/react';
+import { createEvent, fireEvent, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, expect, it, vi } from 'vitest';
 import type { GameMap, SourceGame } from '@rpgcrafter/game-schema';
@@ -263,12 +263,14 @@ describe('StudioSidebar', () => {
     await expandMaps();
 
     expect(screen.getByRole('tree', { name: 'Map hierarchy' })).toBeInTheDocument();
-    expect(screen.getByRole('tree', { name: 'Map hierarchy' })).toHaveClass('px-2', 'py-1');
+    expect(screen.getByRole('tree', { name: 'Map hierarchy' })).toHaveClass('px-2', 'space-y-0', 'py-0', 'pb-1');
     expect(screen.getByText('Mayor House')).toBeInTheDocument();
     expect(screen.queryByRole('button', { name: 'Add sub-map to Village' })).not.toBeInTheDocument();
     expect(screen.getByText('Village').closest('[data-map-row-id]')).toHaveAttribute('draggable', 'true');
     expect(screen.getByText('Village').closest('[data-map-row-id]')).toHaveClass('min-h-8', 'rounded-md');
     expect(screen.getByText('Mayor House').closest('[data-map-row-id]')).toHaveAttribute('draggable', 'true');
+    expect(document.querySelector('[data-map-separator-before="house"]')).toHaveClass('h-1');
+    expect(screen.getByText('Mayor House').closest('[data-map-row-id]')).not.toHaveClass('border-y');
     expect(screen.queryByRole('img', { name: /Reorder/ })).not.toBeInTheDocument();
 
     await userEvent.click(screen.getByRole('button', { name: 'Map settings: Mayor House' }));
@@ -300,10 +302,31 @@ describe('StudioSidebar', () => {
     const dataTransfer = { effectAllowed: 'none', dropEffect: 'none', setData: vi.fn() };
 
     fireEvent.dragStart(source, { dataTransfer });
-    fireEvent.dragOver(target, { dataTransfer, clientY: 105 });
-    fireEvent.drop(target, { dataTransfer, clientY: 105 });
+    const dragOverEvent = createEvent.dragOver(target, { dataTransfer });
+    Object.defineProperty(dragOverEvent, 'clientY', { value: 120 });
+    fireEvent(target, dragOverEvent);
+    fireEvent.drop(target, { dataTransfer });
 
     expect(onReorderMap).toHaveBeenCalledWith('town', 'village', 'inside');
+  });
+
+  it('highlights the separator instead of the rounded map row when reordering', async () => {
+    const town = { ...structuredClone(map), id: 'town', name: 'Town' };
+    const reorderGame = { ...game, maps: { village: map, town } } as unknown as SourceGame;
+    render(<StudioSidebar {...common} game={reorderGame} mode="drawing" />);
+    await expandMaps();
+    const source = screen.getByText('Town').closest('[data-map-row-id]')!;
+    const target = screen.getByText('Village').closest('[data-map-row-id]')!;
+    vi.spyOn(target, 'getBoundingClientRect').mockReturnValue({ top: 100, height: 40 } as DOMRect);
+    const dataTransfer = { effectAllowed: 'none', dropEffect: 'none', setData: vi.fn() };
+
+    fireEvent.dragStart(source, { dataTransfer });
+    const dragOverEvent = createEvent.dragOver(target, { dataTransfer });
+    Object.defineProperty(dragOverEvent, 'clientY', { value: 105 });
+    fireEvent(target, dragOverEvent);
+
+    expect(document.querySelector('[data-map-separator-before="village"] > div')).toHaveClass('bg-primary');
+    expect(target).not.toHaveClass('border-t-primary', 'border-b-primary');
   });
 
   it('keeps plane and layer configuration out of drawing mode', () => {
