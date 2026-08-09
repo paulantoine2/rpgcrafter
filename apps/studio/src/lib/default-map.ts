@@ -11,9 +11,10 @@ export function createDefaultLayers(planeId = DEFAULT_PLANE_ID): TileLayer[] {
   ];
 }
 
-export function createDefaultMap(id: string, name: string, width: number, height: number, parentMapId?: string): GameMap {
+export function createDefaultMap(id: string, numericId: number, name: string, width: number, height: number, parentMapId?: string): GameMap {
   return {
     id,
+    numericId,
     name,
     ...(parentMapId ? { parentMapId } : {}),
     ground: '#172033',

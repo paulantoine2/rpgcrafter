@@ -14,7 +14,7 @@ function placed(id: string, movement: Partial<typeof DEFAULT_EVENT_MOVEMENT> = {
 
 function mapWith(_events: ActiveMovementEvent[]): GameMap {
   return {
-    id: 'map', name: 'Map', ground: '#000', accent: '#000', tileSize: 48,
+    id: 'map', numericId: 1, name: 'Map', ground: '#000', accent: '#000', tileSize: 48,
     bounds: { x: 0, y: 0, w: 480, h: 480 },
     planes: [{ id: 'p', name: 'P', order: 0, surfaceLayerId: 'surface', surfaceCoverage: 'bounds' }],
     tileLayers: [{ id: 'surface', name: 'Surface', planeId: 'p', renderPhase: 'belowActors', tiles: [] }],

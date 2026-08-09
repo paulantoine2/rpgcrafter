@@ -1,6 +1,6 @@
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { DIRECTION_OFFSETS, buildNavigationGraph, navigationCellKey, navigationEdgeKey, navigationHasCell } from '@rpgcrafter/game-schema';
-import type { Direction, EventCommand, GameMap, MapEvent, RenderPhase, SourceGame, SurfaceCoverage, TerrainCollision, Vec2 } from '@rpgcrafter/game-schema';
+import type { Direction, GameMap, MapEvent, RenderPhase, SourceGame, SurfaceCoverage, TerrainCollision, Vec2 } from '@rpgcrafter/game-schema';
 import { Contrast, FolderOpen, Grid3X3, Maximize2, Minus, Plus, Upload } from 'lucide-react';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
 import { Button } from '@/components/ui/button';
@@ -366,8 +366,11 @@ export default function App() {
     setGame(current => {
       if (!current) return current;
       markDirty('maps.json');
+      markDirty('manifest.json');
       const next = structuredClone(current);
-      next.maps = { [id]: createDefaultMap(id, `Map ${number}`, width, height, parentMapId), ...next.maps };
+      const numericId = next.manifest.nextMapNumericId;
+      next.maps = { [id]: createDefaultMap(id, numericId, `Map ${number}`, width, height, parentMapId), ...next.maps };
+      next.manifest.nextMapNumericId = numericId + 1;
       return next;
     });
     setSelectedMapId(id);
@@ -536,29 +539,11 @@ export default function App() {
       nextMap.planeConnections = nextMap.planeConnections.filter(connection => connection.from.planeId !== planeId && connection.to.planeId !== planeId);
       nextMap.navigationOverrides = nextMap.navigationOverrides.filter(item => item.planeId !== planeId);
       nextMap.blockedRegions = nextMap.blockedRegions.filter(region => region.planeId !== planeId);
-      const remapCommands = (commands: EventCommand[]): EventCommand[] => commands.map(command => {
-        if (command.type === 'teleport' && command.mapId === selectedMapId && command.position.planeId === planeId) return { ...command, position: { ...command.position, planeId: fallback.id } };
-        if (command.type === 'dialogue' && command.choices) return { ...command, choices: command.choices.map(choice => ({ ...choice, commands: remapCommands(choice.commands) })) };
-        return command;
-      });
-      for (const sourceMap of Object.values(next.maps)) {
-        sourceMap.events = sourceMap.events.map(event => ({
-          ...event,
-          pages: event.pages.map(page => ({ ...page, contents: remapCommands(page.contents) })),
-        }));
-      }
       if (next.actors.player.start.planeId === planeId && next.manifest.entryPoint.mapId === selectedMapId) {
         next.actors.player.start = { ...next.actors.player.start, planeId: fallback.id };
         markDirty('actors.json');
       }
-      let changedEnemies = false;
-      next.enemies = Object.fromEntries(Object.entries(next.enemies).map(([id, enemy]) => {
-        const onDefeated = enemy.onDefeated && remapCommands(enemy.onDefeated);
-        if (onDefeated && onDefeated !== enemy.onDefeated) changedEnemies = true;
-        return [id, onDefeated ? { ...enemy, onDefeated } : enemy];
-      }));
       for (const sourceMap of Object.values(next.maps)) if (sourceMap.deathDestination?.mapId === selectedMapId && sourceMap.deathDestination.spawn.planeId === planeId) sourceMap.deathDestination.spawn.planeId = fallback.id;
-      if (changedEnemies) markDirty('enemies.json');
       return next;
     });
     setSelectedLayerIds(current => ({ ...current, [selectedMapId]: fallback.surfaceLayerId }));

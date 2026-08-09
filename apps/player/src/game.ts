@@ -3,7 +3,9 @@ import { circleIntersectsBlockedDiagonal } from './circle-collision.js';
 import { MapEventRuntime, teleportDisposition, type RuntimeEvent } from './event-runtime.js';
 import { EventMovementRuntime } from './event-movement.js';
 import { conditionsMet as evaluateConditions } from './conditions.js';
+import { conditionalCommands } from './conditional.js';
 import { PixiRenderer } from './pixi-renderer.js';
+import { resolveTeleport, runTeleportFade, teleportFacing } from './teleport.js';
 import type { Renderer, RenderState } from './renderer.js';
 import { DIRECTION_OFFSETS, eventPageMovement, navigationHasCell, navigationTarget, resolveEventPage } from './types.js';
 import type { Condition, Direction, EnemyTemplate, EventCommand, GameMap, LoadedGame, MapEvent, MapEventPage, PlanePosition, Skill, Vec2 } from './types.js';
@@ -14,7 +16,7 @@ void (async () => {
   canvas.tabIndex = 0;
 
   const ui = {
-    dialogue: document.querySelector<HTMLElement>('#dialogue')!, speaker: document.querySelector<HTMLElement>('#dialogue-speaker')!, text: document.querySelector<HTMLElement>('#dialogue-text')!, choices: document.querySelector<HTMLElement>('#dialogue-choices')!, toast: document.querySelector<HTMLElement>('#toast')!, objective: document.querySelector<HTMLElement>('#objective')!, mapName: document.querySelector<HTMLElement>('#map-name')!, skillStatus: document.querySelector<HTMLElement>('#skill-status')!, pause: document.querySelector<HTMLElement>('#pause-menu')!, pauseTitle: document.querySelector<HTMLElement>('#pause-title')!, pauseTabs: document.querySelector<HTMLElement>('#pause-tabs')!, pauseContent: document.querySelector<HTMLElement>('#pause-content')!, devGrid: document.querySelector<HTMLButtonElement>('#dev-grid-toggle')!
+    dialogue: document.querySelector<HTMLElement>('#dialogue')!, speaker: document.querySelector<HTMLElement>('#dialogue-speaker')!, text: document.querySelector<HTMLElement>('#dialogue-text')!, choices: document.querySelector<HTMLElement>('#dialogue-choices')!, toast: document.querySelector<HTMLElement>('#toast')!, objective: document.querySelector<HTMLElement>('#objective')!, mapName: document.querySelector<HTMLElement>('#map-name')!, skillStatus: document.querySelector<HTMLElement>('#skill-status')!, pause: document.querySelector<HTMLElement>('#pause-menu')!, pauseTitle: document.querySelector<HTMLElement>('#pause-title')!, pauseTabs: document.querySelector<HTMLElement>('#pause-tabs')!, pauseContent: document.querySelector<HTMLElement>('#pause-content')!, devGrid: document.querySelector<HTMLButtonElement>('#dev-grid-toggle')!, teleportTransition: document.querySelector<HTMLElement>('#teleport-transition')!
   };
   const keys = new Set<string>();
   const studioPreview = isStudioPreview();
@@ -35,7 +37,7 @@ void (async () => {
     autorun: boolean;
     revision: number;
   };
-  let content: LoadedGame, game: any, renderer: Renderer, eventRuntime: MapEventRuntime, movementRuntime: EventMovementRuntime, visitRevision = 0, dialogue: { choices: Array<{ label: string; commands: EventCommand[] }>; choiceIndex: number; process?: CommandProcess } | null = null, paused = false, pauseTabIndex = 0, inventorySelection = 0, lastTime = performance.now(), toastTimer = 0, showTileGrid = false, playerMoving = false, playerAnimationTime = 0;
+  let content: LoadedGame, game: any, renderer: Renderer, eventRuntime: MapEventRuntime, movementRuntime: EventMovementRuntime, visitRevision = 0, dialogue: { choices: Array<{ label: string; commands: EventCommand[] }>; choiceIndex: number; process?: CommandProcess } | null = null, paused = false, transitioning = false, pauseTabIndex = 0, inventorySelection = 0, lastTime = performance.now(), toastTimer = 0, showTileGrid = false, playerMoving = false, playerAnimationTime = 0;
   const eventProcesses = new Map<string, CommandProcess>();
   let facing = { x: 0, y: 1 };
   const cooldowns: Record<string, number> = {};
@@ -170,6 +172,7 @@ void (async () => {
         openDialogue(command.speaker, command.text, command.choices || [], process);
         return refreshHud();
       }
+      if (command.type === 'conditional') process.commands.splice(process.index, 0, ...conditionalCommands(command, game));
       if (command.type === 'setSwitch') game.switches[command.id] = command.value;
       if (command.type === 'setVariable') game.variables[command.id] = command.value;
       if (command.type === 'giveItem') game.inventory[command.id] = (game.inventory[command.id] || 0) + (command.amount || 1);
@@ -181,7 +184,30 @@ void (async () => {
         process.waitRemaining = command.duration;
         if (command.duration > 0) return refreshHud();
       }
-      if (command.type === 'teleport' && teleport(command.mapId, command.position, command.resetMap)) return;
+      if (command.type === 'teleport') {
+        const resolved = resolveTeleport(command, content.maps, game.variables);
+        if (!resolved) console.warn('Teleport ignored because its destination could not be resolved.', command);
+        else if (resolved.transition === 'instant') {
+          facing = teleportFacing(resolved.direction, facing);
+          if (relocate(resolved.mapId, resolved.position)) return;
+        } else {
+          process.blocked = true;
+          transitioning = true;
+          keys.clear();
+          let changedVisit = false;
+          void runTeleportFade(ui.teleportTransition, resolved.transition === 'fadeBlack' ? 'black' : 'white', () => {
+            facing = teleportFacing(resolved.direction, facing);
+            changedVisit = relocate(resolved.mapId, resolved.position);
+          }).finally(() => {
+            transitioning = false;
+            if (!changedVisit && eventProcesses.get(process.key) === process) {
+              process.blocked = false;
+              advanceProcess(process, 0);
+            }
+          });
+          return refreshHud();
+        }
+      }
       if (command.type === 'movementRoute') {
         const completion = movementRuntime.forceRoute(command.target, command.route, process.eventId);
         if (command.route.wait) {
@@ -344,11 +370,10 @@ void (async () => {
   function dash() { if ((cooldowns.dash || 0) > 0 || game.player.dash > 0) return; game.player.dash = .17; cooldowns.dash = .85; }
   function hurtEnemy(enemy: any, damage: number) { enemy.hp -= damage; game.particles.push({ type: 'hit', x: enemy.x, y: enemy.y, planeId: enemy.planeId, t: .25, text: `-${damage}` }); if (enemy.hp <= 0) killEnemy(enemy); }
   function killEnemy(enemy: any) { enemy.alive = false; game.player.xp += enemy.xp; if (game.player.xp >= game.player.level * 35) { game.player.level += 1; game.player.maxHp += 15; game.player.hp = game.player.maxHp; showToast(`Niveau ${game.player.level} ! PV restaurés`); } game.particles.push({ type: 'burst', x: enemy.x, y: enemy.y, planeId: enemy.planeId, t: .5 }); executeCommands(enemy.onDefeated || []); }
-  function hurtPlayer(amount: number) { if (game.player.invuln > 0 || game.player.dash > 0) return; game.player.hp -= Math.max(1, amount - equippedStat('defense')); game.player.invuln = .55; if (game.player.hp <= 0) { game.player.hp = game.player.maxHp; const destination = currentMap().deathDestination || game.checkpoint; teleport(destination.mapId, destination.spawn, true); showToast('Vous reprenez conscience au dernier passage.'); } }
-  function teleport(mapId: string, position: PlanePosition, resetMap: boolean) {
-    const command = { type: 'teleport' as const, mapId, position, resetMap };
-    const disposition = teleportDisposition(game.mapId, command);
-    if (!content.maps[mapId] || disposition === 'invalid') return false;
+  function hurtPlayer(amount: number) { if (game.player.invuln > 0 || game.player.dash > 0) return; game.player.hp -= Math.max(1, amount - equippedStat('defense')); game.player.invuln = .55; if (game.player.hp <= 0) { game.player.hp = game.player.maxHp; const destination = currentMap().deathDestination || game.checkpoint; relocate(destination.mapId, destination.spawn); showToast('Vous reprenez conscience au dernier passage.'); } }
+  function relocate(mapId: string, position: PlanePosition) {
+    const disposition = teleportDisposition(game.mapId, mapId);
+    if (!content.maps[mapId]) return false;
     game.mapId = mapId;
     Object.assign(game.player, position);
     if (disposition === 'local') return false;
@@ -371,7 +396,7 @@ void (async () => {
   function update(dt: number) {
     playerMoving = false;
     if (toastTimer > 0 && (toastTimer -= dt) <= 0) ui.toast.classList.add('hidden');
-    if (paused || document.hidden) { playerAnimationTime = 0; return; }
+    if (paused || transitioning || document.hidden) { playerAnimationTime = 0; return; }
     updateProcesses(dt);
     let events = activeEvents();
     const activePages = new Map(events.map(event => [event.id, event.pageIndex]));
@@ -455,10 +480,10 @@ void (async () => {
   }
   function draw() { renderer.render(renderState()); }
 
-  function trigger(action: string) { if (dialogue) { if (action === 'previousChoice') moveDialogueChoice(-1); else if (action === 'nextChoice') moveDialogueChoice(1); else if (dialogue.choices.length && ['interact', 'attack'].includes(action)) chooseDialogueChoice(); else if (!dialogue.choices.length && ['interact', 'attack'].includes(action)) closeDialogue(); return; } if (action === 'interact') interact(); if (action === 'attack') usePrimaryAttack(); if (action === 'dash') dash(); if (action === 'skill1' || action === 'skill2') useSlot(action); }
+  function trigger(action: string) { if (transitioning) return; if (dialogue) { if (action === 'previousChoice') moveDialogueChoice(-1); else if (action === 'nextChoice') moveDialogueChoice(1); else if (dialogue.choices.length && ['interact', 'attack'].includes(action)) chooseDialogueChoice(); else if (!dialogue.choices.length && ['interact', 'attack'].includes(action)) closeDialogue(); return; } if (action === 'interact') interact(); if (action === 'attack') usePrimaryAttack(); if (action === 'dash') dash(); if (action === 'skill1' || action === 'skill2') useSlot(action); }
   function frame(time: number) { const dt = Math.min(.034, (time - lastTime) / 1000); lastTime = time; update(dt); draw(); requestAnimationFrame(frame); }
   ui.devGrid.addEventListener('click', toggleTileGrid);
-  window.addEventListener('keydown', event => { if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'Space', 'Escape', 'F2'].includes(event.code)) event.preventDefault(); if (event.code === 'F2' && !event.repeat) return toggleTileGrid(); if (paused) { if (!event.repeat) handlePauseKey(event); return; } if (event.code === 'Escape') return openPause(); if ((event.metaKey || event.ctrlKey) && event.code === 'KeyS') { event.preventDefault(); saveGame(); return; } if (event.repeat) return; if (event.code === 'KeyR') { resetGame(); return; } const actions: Record<string, string> = { KeyE: 'interact', Space: 'attack', KeyK: 'dash', KeyL: 'skill1', KeyI: 'skill2', Enter: 'interact', ArrowUp: 'previousChoice', ArrowLeft: 'previousChoice', ArrowDown: 'nextChoice', ArrowRight: 'nextChoice' }; if (actions[event.code] && (dialogue || !['previousChoice', 'nextChoice'].includes(actions[event.code]))) return trigger(actions[event.code]); keys.add(event.code); });
+  window.addEventListener('keydown', event => { if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'Space', 'Escape', 'F2'].includes(event.code)) event.preventDefault(); if (transitioning) return; if (event.code === 'F2' && !event.repeat) return toggleTileGrid(); if (paused) { if (!event.repeat) handlePauseKey(event); return; } if (event.code === 'Escape') return openPause(); if ((event.metaKey || event.ctrlKey) && event.code === 'KeyS') { event.preventDefault(); saveGame(); return; } if (event.repeat) return; if (event.code === 'KeyR') { resetGame(); return; } const actions: Record<string, string> = { KeyE: 'interact', Space: 'attack', KeyK: 'dash', KeyL: 'skill1', KeyI: 'skill2', Enter: 'interact', ArrowUp: 'previousChoice', ArrowLeft: 'previousChoice', ArrowDown: 'nextChoice', ArrowRight: 'nextChoice' }; if (actions[event.code] && (dialogue || !['previousChoice', 'nextChoice'].includes(actions[event.code]))) return trigger(actions[event.code]); keys.add(event.code); });
   window.addEventListener('keyup', event => keys.delete(event.code));
   window.addEventListener('blur', () => keys.clear());
   document.addEventListener('visibilitychange', () => { if (document.hidden) keys.clear(); });

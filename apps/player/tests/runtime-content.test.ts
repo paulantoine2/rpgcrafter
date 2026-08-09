@@ -28,4 +28,29 @@ describe('sourceGameToLoadedGame', () => {
     ]);
     expect(loaded.maps.village.tileLayers.map(layer => layer.id)).toEqual(['ground', 'details']);
   });
+
+  it('keeps teleport tile sources intact in conditional branches', () => {
+    const source = assertSourceGame({
+      manifest: read('manifest.json'), tilesets: read('tilesets.json'), maps: read('maps.json'), actors: read('actors.json'), enemies: read('enemies.json'),
+      skills: read('skills.json'), items: read('items.json'), quests: read('quests.json'), ui: read('ui.json'),
+      events: read('events.json'), initialState: read('initial-state.json'),
+    });
+    source.maps.village.events[0].pages[0].contents = [{
+      type: 'conditional',
+      condition: { kind: 'switch', id: 'questAccepted' },
+      thenCommands: [{ type: 'teleport', destination: { map: { kind: 'constant', mapId: 'path' }, x: { kind: 'constant', value: 2 }, y: { kind: 'constant', value: 3 } }, direction: 'retain', transition: 'instant' }],
+      elseCommands: [{
+        type: 'conditional',
+        condition: { kind: 'item', id: 'item.potion' },
+        thenCommands: [{ type: 'teleport', destination: { map: { kind: 'constant', mapId: 'village' }, x: { kind: 'constant', value: 4 }, y: { kind: 'constant', value: 5 } }, direction: 'retain', transition: 'instant' }],
+      }],
+    }];
+
+    const loaded = sourceGameToLoadedGame(source);
+    const conditional = loaded.maps.village.events[0].pages[0].contents[0];
+    expect(conditional).toMatchObject({
+      thenCommands: [{ destination: { x: { value: 2 }, y: { value: 3 } } }],
+      elseCommands: [{ thenCommands: [{ destination: { x: { value: 4 }, y: { value: 5 } } }] }],
+    });
+  });
 });

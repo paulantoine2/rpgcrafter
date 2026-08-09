@@ -1,6 +1,6 @@
 {
-  "schemaVersion": "0.8",
-  "engineRange": ">=0.8 <0.9",
+  "schemaVersion": "0.9",
+  "engineRange": ">=0.9 <0.10",
   "gameId": "game.bell-of-mist",
   "version": "0.7.0",
   "entryPoint": {
@@ -8,5 +8,6 @@
     "spawnId": "spawn.village-start"
   },
   "title": "The Bell of Mists",
-  "contentRating": "all"
+  "contentRating": "all",
+  "nextMapNumericId": 6
 }

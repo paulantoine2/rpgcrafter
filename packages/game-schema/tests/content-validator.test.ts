@@ -23,7 +23,7 @@ describe('SourceGame validation', () => {
     expect(mayor.position).toEqual({ x: 11, y: 7, planeId: 'aubeval' });
     expect(mayor.pages[0].trigger).toMatchObject({ type: 'actionButton', radius: 1.25 });
     const exitCommand = result.data.maps.village.events.find(event => event.id === 'exit-east')!.pages[0].contents[0];
-    expect(exitCommand).toMatchObject({ type: 'teleport', mapId: 'path', position: { x: 2, y: 8, planeId: 'lower-trail' } });
+    expect(exitCommand).toMatchObject({ type: 'teleport', destination: { map: { kind: 'constant', mapId: 'path' }, x: { kind: 'constant', value: 2 }, y: { kind: 'constant', value: 8 } }, direction: 'retain', transition: 'instant' });
   });
 
   it('returns structured duplicate and invalid-page issues', () => {
@@ -63,6 +63,32 @@ describe('SourceGame validation', () => {
     if (!result.success) expect(result.issues.some(issue => issue.message.includes('Unknown variable'))).toBe(true);
   });
 
+  it('validates numeric map ids, their counter, and fixed teleport bounds', () => {
+    const duplicateIds = sourceFiles();
+    (duplicateIds.maps as any).path.numericId = (duplicateIds.maps as any).village.numericId;
+    const duplicateResult = parseSourceGame(duplicateIds);
+    expect(duplicateResult.success).toBe(false);
+    if (!duplicateResult.success) expect(duplicateResult.issues.some(issue => issue.message.includes('Duplicate numeric map id'))).toBe(true);
+
+    const invalidCounter = sourceFiles();
+    (invalidCounter.manifest as any).nextMapNumericId = 1;
+    const counterResult = parseSourceGame(invalidCounter);
+    expect(counterResult.success).toBe(false);
+    if (!counterResult.success) expect(counterResult.issues.some(issue => issue.path === 'manifest.nextMapNumericId')).toBe(true);
+
+    const outside = sourceFiles();
+    const teleport = (outside.maps as any).village.events.find((event: any) => event.id === 'exit-east').pages[0].contents[0];
+    teleport.destination.x = { kind: 'constant', value: 999 };
+    const outsideResult = parseSourceGame(outside);
+    expect(outsideResult.success).toBe(false);
+    if (!outsideResult.success) expect(outsideResult.issues.some(issue => issue.message.includes('inside map bounds'))).toBe(true);
+
+    const fractional = sourceFiles();
+    const fractionalTeleport = (fractional.maps as any).village.events.find((event: any) => event.id === 'exit-east').pages[0].contents[0];
+    fractionalTeleport.destination.y = { kind: 'constant', value: 3.5 };
+    expect(parseSourceGame(fractional).success).toBe(false);
+  });
+
   it('validates set-variable commands and their references', () => {
     const files = sourceFiles();
     (files.initialState as any).variables.score = { name: 'Score', initialValue: 0 };
@@ -73,6 +99,40 @@ describe('SourceGame validation', () => {
     const result = parseSourceGame(files);
     expect(result.success).toBe(false);
     if (!result.success) expect(result.issues.some(issue => issue.message.includes('Unknown variable'))).toBe(true);
+  });
+
+  it('validates conditional branches, nested references and the maximum depth', () => {
+    const files = sourceFiles();
+    (files.initialState as any).variables.score = { name: 'Score', initialValue: 0 };
+    const level3 = {
+      type: 'conditional',
+      condition: { kind: 'item', id: 'item.potion', amount: 1 },
+      thenCommands: [{ type: 'toast', text: 'Deep branch' }],
+    };
+    const level2 = {
+      type: 'conditional',
+      condition: { kind: 'variable', id: 'score', operator: 'greaterThanOrEqual', value: 10 },
+      thenCommands: [level3],
+      elseCommands: [],
+    };
+    (files.maps as any).village.events[0].pages[0].contents.push({
+      type: 'conditional',
+      condition: { kind: 'switch', id: 'questAccepted', equals: true },
+      thenCommands: [level2],
+    });
+    expect(parseSourceGame(files).success).toBe(true);
+
+    (level3 as any).thenCommands = [{
+      type: 'conditional',
+      condition: { kind: 'switch', id: 'missing' },
+      thenCommands: [],
+    }];
+    const result = parseSourceGame(files);
+    expect(result.success).toBe(false);
+    if (!result.success) {
+      expect(result.issues.some(issue => issue.message.includes('cannot exceed 3 levels'))).toBe(true);
+      expect(result.issues.some(issue => issue.message.includes('Unknown switch: missing'))).toBe(true);
+    }
   });
 
   it('validates autonomous settings and structured movement routes', () => {
@@ -127,17 +187,17 @@ describe('SourceGame validation', () => {
     if (!cycleResult.success) expect(cycleResult.issues.some(issue => issue.message.includes('cycle'))).toBe(true);
   });
 
-  it('rejects invalid geometry and cross-map local teleports', () => {
+  it('rejects invalid geometry and unknown teleport variables', () => {
     const files = sourceFiles();
     (files.maps as any).village.events[1].pages[0].trigger.radius = 0;
     const geometry = parseSourceGame(files);
     expect(geometry.success).toBe(false);
 
     const teleportFiles = sourceFiles();
-    (teleportFiles.maps as any).village.events[0].pages[0].contents[0].resetMap = false;
+    (teleportFiles.maps as any).village.events[0].pages[0].contents[0].destination.map = { kind: 'variable', variableId: 'missing-map' };
     const teleport = parseSourceGame(teleportFiles);
     expect(teleport.success).toBe(false);
-    if (!teleport.success) expect(teleport.issues.some(issue => issue.message.includes('current map'))).toBe(true);
+    if (!teleport.success) expect(teleport.issues.some(issue => issue.message.includes('Unknown variable'))).toBe(true);
   });
 
   it('validates authored terrain layers and tileset references', () => {

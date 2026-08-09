@@ -16,7 +16,7 @@ const event = {
   }],
 };
 const map: GameMap = {
-  id: 'village', name: 'Village', ground: '#000000', accent: '#ffffff', tileSize: 48,
+  id: 'village', numericId: 1, name: 'Village', ground: '#000000', accent: '#ffffff', tileSize: 48,
   bounds: { x: 0, y: 0, w: 10, h: 8 },
   planes: [{ id: 'p', name: 'My plane', order: 0, surfaceLayerId: 'details', surfaceCoverage: 'bounds' }],
   tileLayers: [
@@ -221,6 +221,7 @@ describe('StudioSidebar', () => {
     const onResizeMap = vi.fn();
     render(<StudioSidebar {...common} mode="drawing" onCreateMap={onCreateMap} onResizeMap={onResizeMap} />);
     await expandMaps();
+    expect(screen.getByText('#1')).toBeInTheDocument();
     const addMap = screen.getByRole('button', { name: 'Add map' });
     expect(addMap).toHaveAttribute('data-base-ui-tooltip-trigger');
     await userEvent.click(addMap);
@@ -235,6 +236,8 @@ describe('StudioSidebar', () => {
     const mapSettingsHeader = screen.getByText('Map settings').closest('[data-slot="section-header"]');
     expect(mapSettingsHeader).toHaveClass('h-12', 'px-4', 'py-4');
     expect(mapSettingsHeader?.closest('[data-slot="popover-panel"]')).toHaveClass('rounded-lg', 'bg-popover', 'text-popover-foreground');
+    expect(screen.getByRole('textbox', { name: 'Numeric map ID' })).toHaveValue('1');
+    expect(screen.getByRole('textbox', { name: 'Numeric map ID' })).toHaveAttribute('readonly');
     await userEvent.click(screen.getByRole('button', { name: 'Apply size' }));
     expect(onResizeMap).toHaveBeenCalledWith('village', 10, 8);
   });

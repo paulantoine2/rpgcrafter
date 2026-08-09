@@ -1,14 +1,14 @@
-import { render, screen, within } from '@testing-library/react';
+import { fireEvent, render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { useState } from 'react';
 import { describe, expect, it, vi } from 'vitest';
-import type { MapEvent, SourceGame } from '@rpgcrafter/game-schema';
+import type { EventCommand, MapEvent, SourceGame } from '@rpgcrafter/game-schema';
 import { EventInspector } from '../src/components/event-inspector';
 import { TooltipProvider } from '../src/components/ui/tooltip';
 import { createMapEventAt } from '../src/lib/editor-events';
 import { createEmptyProject } from '../src/lib/source-game';
 
-function Harness({ emptySwitches = false, withSprite = false, onEventChange }: { emptySwitches?: boolean; withSprite?: boolean; onEventChange?: (event: MapEvent) => void }) {
+function Harness({ emptySwitches = false, emptyVariables = false, withSprite = false, initialContents = [], onEventChange }: { emptySwitches?: boolean; emptyVariables?: boolean; withSprite?: boolean; initialContents?: EventCommand[]; onEventChange?: (event: MapEvent) => void }) {
   const project = createEmptyProject('Inspector');
   const [switches, setSwitches] = useState<SourceGame['initialState']['switches']>(emptySwitches ? {} : {
       'door-open': { name: 'Door open', initialValue: false },
@@ -20,13 +20,14 @@ function Harness({ emptySwitches = false, withSprite = false, onEventChange }: {
     'silver-sword': { name: 'Silver Sword', type: 'equipment', equipmentSlot: 'weapon' },
   });
   project.game.items = items;
-  const [variables, setVariables] = useState<SourceGame['initialState']['variables']>({
+  const [variables, setVariables] = useState<SourceGame['initialState']['variables']>(emptyVariables ? {} : {
     score: { name: 'Score', initialValue: 0 },
     reputation: { name: 'Reputation', initialValue: 0 },
   });
   project.game.initialState.variables = variables;
   const [event, setEvent] = useState<MapEvent>(() => {
     const created = createMapEventAt(project.game, 'map-1', { x: 1, y: 1, planeId: 'plane-1' });
+    created.pages[0].contents = structuredClone(initialContents);
     if (withSprite) created.pages[0].sprite = { image: 'sprites/test.png', characterIndex: 0, characterColumns: 4, frameWidth: 48, frameHeight: 48, objectAligned: false };
     return created;
   });
@@ -90,7 +91,8 @@ describe('EventInspector pages', () => {
     expect(spriteSection).toHaveTextContent('Priority');
     expect(screen.queryByRole('combobox', { name: 'Priority' })).not.toBeInTheDocument();
     expect(screen.getByText('Priority').tagName).toBe('LABEL');
-    expect(screen.getByText('Priority').parentElement).toHaveClass('gap-1.5', 'text-[10px]');
+    expect(screen.getByText('Priority')).toHaveClass('text-[10px]', 'font-medium', 'text-muted-foreground');
+    expect(screen.getByText('Priority').parentElement).toHaveClass('gap-1.5');
     expect(screen.getByText('Priority').parentElement?.parentElement).toHaveClass('grid-cols-2');
     expect(screen.getByRole('tablist', { name: 'Priority' })).toHaveClass('w-full');
     expect(screen.getByRole('tab', { name: 'Same as characters' })).toHaveAttribute('aria-selected', 'true');
@@ -129,7 +131,8 @@ describe('EventInspector pages', () => {
     expect(screen.queryByRole('combobox', { name: 'Trigger type' })).not.toBeInTheDocument();
     expect(screen.getByRole('tablist', { name: 'Type' })).toHaveClass('w-full');
     expect(screen.getByText('Type').tagName).toBe('LABEL');
-    expect(screen.getByText('Type').parentElement).toHaveClass('gap-1.5', 'text-[10px]');
+    expect(screen.getByText('Type')).toHaveClass('text-[10px]', 'font-medium', 'text-muted-foreground');
+    expect(screen.getByText('Type').parentElement).toHaveClass('gap-1.5');
     const actionButton = screen.getByRole('tab', { name: 'Action Button' });
     expect(actionButton).toHaveAttribute('aria-selected', 'true');
     await user.click(screen.getByRole('tab', { name: 'Player Touch' }));
@@ -154,10 +157,11 @@ describe('EventInspector pages', () => {
     expect(enabled).toBeChecked();
     const type = screen.getByRole('combobox', { name: 'Autonomous movement type' });
     expect(type).toHaveTextContent('Random');
-    expect(screen.queryByText('Type')).not.toBeInTheDocument();
+    expect(type.parentElement).not.toHaveTextContent(/^Type/);
     await user.click(screen.getByRole('button', { name: 'Autonomous movement settings' }));
-    expect(await screen.findByRole('slider', { name: 'Movement speed' })).toBeInTheDocument();
-    expect(screen.getByRole('slider', { name: 'Movement frequency' })).toBeInTheDocument();
+    const settings = await screen.findByRole('dialog');
+    expect(settings).toHaveTextContent('Speed · 3');
+    expect(settings).toHaveTextContent('Frequency · 3');
     await user.click(screen.getByRole('button', { name: 'Close autonomous movement settings' }));
 
     await user.click(type);
@@ -386,17 +390,35 @@ describe('EventInspector pages', () => {
     expect(screen.getByText('Contents').closest('[data-slot="section-header"]')).toContainElement(addCommand);
     await user.click(addCommand);
     expect(screen.queryByRole('menuitem', { name: /set quest state/i })).not.toBeInTheDocument();
-    await user.click(await screen.findByRole('menuitem', { name: 'Set variable' }));
+    const setVariableItem = await screen.findByRole('menuitem', { name: 'Set variable' });
+    expect(setVariableItem.querySelector('.lucide-hash')).toBeInTheDocument();
+    await user.click(setVariableItem);
 
     const commandSettings = screen.getByRole('button', { name: 'Set variable command settings' });
-    const commandRow = commandSettings.parentElement?.parentElement;
+    const commandRow = commandSettings.parentElement;
     expect(commandRow).toHaveClass('items-center');
+    expect(commandSettings).toHaveClass('border', 'border-input');
+    expect(commandSettings).toHaveClass('h-7');
+    expect(commandSettings).toHaveAttribute('data-slot', 'toggle');
+    const setVariableIcon = commandSettings.querySelector('.lucide-hash')!;
+    expect(setVariableIcon).toBeInTheDocument();
+    expect(setVariableIcon.parentElement).toHaveClass('text-muted-foreground', '[&_svg]:size-3.5');
+    expect(commandSettings.querySelector('.truncate')).toHaveClass('text-right', 'text-muted-foreground');
+    expect(commandSettings).toHaveTextContent('Set');
+    expect(commandSettings).not.toHaveTextContent('Set variable');
+    expect(commandSettings).toHaveAttribute('aria-pressed', 'true');
+    expect(commandSettings).toHaveAttribute('aria-expanded', 'true');
     expect(commandRow).toHaveTextContent('Score · 0');
+    expect(within(commandRow!).queryByRole('button', { name: 'Move up' })).not.toBeInTheDocument();
+    expect(within(commandRow!).queryByRole('button', { name: 'Move down' })).not.toBeInTheDocument();
+    expect(within(commandRow!).getByRole('button', { name: 'Remove setVariable command' }).querySelector('.lucide-minus')).toBeInTheDocument();
+    expect(commandRow?.querySelector('.lucide-settings-2')).not.toBeInTheDocument();
     expect(screen.queryByRole('combobox', { name: 'Command type' })).not.toBeInTheDocument();
-    await user.click(commandSettings);
-    expect(await screen.findByRole('dialog')).toHaveTextContent('Set variable');
+    const commandDialog = await screen.findByRole('dialog');
+    expect(commandDialog).toHaveTextContent('Set variable');
+    expect(within(commandDialog).queryByRole('combobox', { name: 'Command type' })).not.toBeInTheDocument();
 
-    const variable = screen.getByRole('combobox', { name: 'Variable' });
+    const variable = within(commandDialog).getByRole('button', { name: 'Choose variable' });
     expect(variable).toHaveTextContent('Score');
     await user.click(variable);
     await user.click(await screen.findByRole('option', { name: 'Reputation' }));
@@ -405,6 +427,303 @@ describe('EventInspector pages', () => {
     await user.type(value, '25');
 
     expect(onEventChange.mock.calls.at(-1)?.[0].pages[0].contents[0]).toEqual({ type: 'setVariable', id: 'reputation', value: 25 });
+  });
+
+  it('opens the variable picker when a set-variable command has nothing to select', async () => {
+    const user = userEvent.setup();
+    const onEventChange = vi.fn();
+    render(<Harness emptyVariables onEventChange={onEventChange} />);
+
+    await user.click(screen.getByRole('button', { name: 'Add command' }));
+    await user.click(await screen.findByRole('menuitem', { name: 'Set variable' }));
+
+    expect(screen.getByRole('button', { name: 'Set variable command settings' })).toHaveTextContent('Choose a variable · 0');
+    expect(screen.getByRole('button', { name: 'Choose variable' })).toHaveTextContent('Choose a variable');
+    expect(await screen.findByRole('textbox', { name: 'Search variables' })).toBeInTheDocument();
+    expect(screen.getByText('No variables found.')).toBeInTheDocument();
+    expect(onEventChange).not.toHaveBeenCalled();
+    await user.click(screen.getByRole('button', { name: 'Create variable' }));
+    await user.type(await screen.findByRole('textbox', { name: 'Variable name' }), 'Quest progress');
+    await user.click(screen.getByRole('button', { name: 'Confirm variable creation' }));
+
+    expect(onEventChange.mock.calls.at(-1)?.[0].pages[0].contents[0]).toEqual({ type: 'setVariable', id: 'quest-progress', value: 0 });
+    expect(screen.getByRole('button', { name: 'Choose variable' })).toHaveTextContent('Quest progress');
+  });
+
+  it('opens the switch picker when a set-switch command has nothing to select', async () => {
+    const user = userEvent.setup();
+    const onEventChange = vi.fn();
+    render(<Harness emptySwitches onEventChange={onEventChange} />);
+
+    await user.click(screen.getByRole('button', { name: 'Add command' }));
+    await user.click(await screen.findByRole('menuitem', { name: 'Set switch' }));
+
+    expect(screen.getByRole('button', { name: 'Set switch command settings' })).toHaveTextContent('Choose a switch · On');
+    expect(screen.getByRole('button', { name: 'Choose switch' })).toHaveTextContent('Choose a switch');
+    expect(await screen.findByRole('textbox', { name: 'Search switches' })).toBeInTheDocument();
+    expect(screen.getByText('No switches found.')).toBeInTheDocument();
+    expect(onEventChange).not.toHaveBeenCalled();
+    await user.click(screen.getByRole('button', { name: 'Create switch' }));
+    await user.type(await screen.findByRole('textbox', { name: 'Switch name' }), 'Bridge open');
+    await user.click(screen.getByRole('button', { name: 'Confirm switch creation' }));
+
+    expect(onEventChange.mock.calls.at(-1)?.[0].pages[0].contents[0]).toEqual({ type: 'setSwitch', id: 'bridge-open', value: true });
+    expect(screen.getByRole('button', { name: 'Choose switch' })).toHaveTextContent('Bridge open');
+  });
+
+  it('automatically opens a command added to a dialogue choice', async () => {
+    const user = userEvent.setup();
+    render(<Harness />);
+
+    await user.click(screen.getByRole('button', { name: 'Add command' }));
+    await user.click(await screen.findByRole('menuitem', { name: 'Dialogue' }));
+    const dialogueDialog = await screen.findByRole('dialog');
+    await user.click(within(dialogueDialog).getByRole('button', { name: 'Add choice' }));
+    await user.click(within(dialogueDialog).getByRole('button', { name: 'Add command' }));
+    await user.click(await screen.findByRole('menuitem', { name: 'Toast' }));
+
+    expect(screen.getByRole('button', { name: 'Toast command settings' })).toHaveAttribute('aria-expanded', 'true');
+    expect(screen.getAllByRole('dialog').at(-1)).toHaveTextContent('Toast');
+  });
+
+  it('shows concise command names with only their primary configured value', () => {
+    const commands: EventCommand[] = [
+      { type: 'dialogue', speaker: 'Guide', text: 'A very long dialogue that should stay hidden', choices: [] },
+      { type: 'setSwitch', id: 'door-open', value: true },
+      { type: 'setVariable', id: 'score', value: 12 },
+      { type: 'giveItem', id: 'potion', amount: 2 },
+      { type: 'removeItem', id: 'silver-sword', amount: 1 },
+      { type: 'unlockSkill', id: 'dash' },
+      { type: 'healPlayer', amount: 25 },
+      { type: 'toast', text: 'Quest updated' },
+      { type: 'movementRoute', target: { kind: 'player' }, route: { commands: [], repeat: false, skippable: false, wait: true } },
+      { type: 'wait', duration: 0.5 },
+      { type: 'teleport', destination: { map: { kind: 'constant', mapId: 'map-1' }, x: { kind: 'constant', value: 8 }, y: { kind: 'constant', value: 4 } }, direction: 'east', transition: 'fadeWhite' },
+      { type: 'save' },
+    ];
+    render(<Harness initialContents={commands} />);
+
+    expect(screen.getByRole('button', { name: 'Dialogue command settings' })).toHaveTextContent('DialogueGuide');
+    expect(screen.getByRole('button', { name: 'Dialogue command settings' })).not.toHaveTextContent('A very long dialogue');
+    expect(screen.getByRole('button', { name: 'Set switch command settings' })).toHaveTextContent('SetDoor open · On');
+    expect(screen.getByRole('button', { name: 'Set variable command settings' })).toHaveTextContent('SetScore · 12');
+    expect(screen.getByRole('button', { name: 'Give item command settings' })).toHaveTextContent('GivePotion ×2');
+    expect(screen.getByRole('button', { name: 'Remove item command settings' })).toHaveTextContent('RemoveSilver Sword ×1');
+    expect(screen.getByRole('button', { name: 'Unlock skill command settings' })).toHaveTextContent('Unlockdash');
+    expect(screen.getByRole('button', { name: 'Heal player command settings' })).toHaveTextContent('Heal25 HP');
+    expect(screen.getByRole('button', { name: 'Toast command settings' })).toHaveTextContent('ToastQuest updated');
+    expect(screen.getByRole('button', { name: 'Movement route command settings' })).toHaveTextContent('MovePlayer');
+    expect(screen.getByRole('button', { name: 'Wait command settings' })).toHaveTextContent('Wait0.5s');
+    expect(screen.getByRole('button', { name: 'Teleport command settings' })).toHaveTextContent('TeleportMap 1');
+    expect(screen.getByRole('button', { name: 'Teleport command settings' })).not.toHaveTextContent('8');
+    expect(screen.getByRole('button', { name: 'Save command settings' })).toHaveTextContent('Save');
+  });
+
+  it('reorders commands from their handles with drag and drop or the keyboard', () => {
+    const onEventChange = vi.fn();
+    render(<Harness initialContents={[
+      { type: 'toast', text: 'First' },
+      { type: 'wait', duration: 1 },
+      { type: 'save' },
+    ]} onEventChange={onEventChange} />);
+
+    const toastHandle = screen.getByRole('button', { name: 'Reorder Toast command' });
+    expect(toastHandle.querySelector('.lucide-grip-vertical')).toBeInTheDocument();
+    expect(toastHandle).not.toHaveAttribute('data-base-ui-tooltip-trigger');
+    fireEvent.keyDown(toastHandle, { key: 'ArrowDown', altKey: true });
+    expect(onEventChange.mock.calls.at(-1)?.[0].pages[0].contents.map((command: EventCommand) => command.type)).toEqual(['wait', 'toast', 'save']);
+
+    const saveHandle = screen.getByRole('button', { name: 'Reorder Save command' });
+    const dataTransfer = { effectAllowed: '', dropEffect: '', setData: vi.fn() };
+    fireEvent.dragStart(saveHandle, { dataTransfer });
+    const unchangedLastPosition = document.querySelector<HTMLElement>('[data-command-drop-position="3"]')!;
+    fireEvent.dragOver(unchangedLastPosition, { dataTransfer });
+    expect(unchangedLastPosition.querySelector('.bg-primary')).not.toBeInTheDocument();
+    const firstPosition = document.querySelector<HTMLElement>('[data-command-drop-position="0"]')!;
+    fireEvent.dragOver(firstPosition, { dataTransfer });
+    expect(firstPosition.querySelector('.bg-primary')).toBeInTheDocument();
+    fireEvent.drop(firstPosition, { dataTransfer });
+    expect(onEventChange.mock.calls.at(-1)?.[0].pages[0].contents.map((command: EventCommand) => command.type)).toEqual(['save', 'wait', 'toast']);
+  });
+
+  it('configures teleport sources, direction, and transition without plane settings', async () => {
+    const user = userEvent.setup();
+    const onEventChange = vi.fn();
+    const teleport: EventCommand = {
+      type: 'teleport',
+      destination: { map: { kind: 'constant', mapId: 'map-1' }, x: { kind: 'constant', value: 2 }, y: { kind: 'constant', value: 3 } },
+      direction: 'retain',
+      transition: 'instant',
+    };
+    render(<Harness initialContents={[teleport]} onEventChange={onEventChange} />);
+
+    const settings = screen.getByRole('button', { name: 'Teleport command settings' });
+    expect(settings).toHaveTextContent('TeleportMap 1');
+    expect(settings).not.toHaveTextContent('X 2');
+    expect(settings).not.toHaveTextContent('Keep direction');
+    await user.click(settings);
+    const dialog = await screen.findByRole('dialog');
+    expect(within(dialog).queryByText('Reset map state')).not.toBeInTheDocument();
+    expect(within(dialog).getByRole('combobox', { name: 'Map source' }).parentElement).toHaveClass('grid-cols-2');
+    expect(within(dialog).getByRole('combobox', { name: 'X source' }).parentElement).toHaveClass('grid-cols-2');
+    expect(within(dialog).getByRole('combobox', { name: 'Y source' }).parentElement).toHaveClass('grid-cols-2');
+    expect(within(dialog).getByRole('combobox', { name: 'Player direction' }).closest('label')?.parentElement).toHaveClass('grid-cols-2');
+    expect(within(dialog).getByRole('combobox', { name: 'Destination map' })).toHaveTextContent('#1 · Map 1');
+    expect(within(dialog).getByRole('spinbutton', { name: 'X coordinate' })).toHaveValue(2);
+    expect(within(dialog).getByRole('spinbutton', { name: 'Y coordinate' })).toHaveValue(3);
+    expect(within(dialog).getByRole('spinbutton', { name: 'X coordinate' })).toHaveAttribute('step', '1');
+    expect(within(dialog).getByRole('spinbutton', { name: 'Y coordinate' })).toHaveAttribute('step', '1');
+
+    await user.click(within(dialog).getByRole('combobox', { name: 'Map source' }));
+    await user.click(await screen.findByRole('option', { name: 'Variable' }));
+    expect(within(dialog).getByRole('combobox', { name: 'Map variable' })).toHaveTextContent('Score');
+    await user.click(within(dialog).getByRole('combobox', { name: 'X source' }));
+    await user.click(await screen.findByRole('option', { name: 'Variable' }));
+    await user.click(within(dialog).getByRole('combobox', { name: 'X variable' }));
+    await user.click(await screen.findByRole('option', { name: 'Reputation' }));
+    await user.click(within(dialog).getByRole('combobox', { name: 'Player direction' }));
+    await user.click(await screen.findByRole('option', { name: 'East' }));
+    await user.click(within(dialog).getByRole('combobox', { name: 'Teleport transition' }));
+    await user.click(await screen.findByRole('option', { name: 'Fade to black' }));
+
+    expect(onEventChange.mock.calls.at(-1)?.[0].pages[0].contents[0]).toEqual({
+      type: 'teleport',
+      destination: { map: { kind: 'variable', variableId: 'score' }, x: { kind: 'variable', variableId: 'reputation' }, y: { kind: 'constant', value: 3 } },
+      direction: 'east',
+      transition: 'fadeBlack',
+    });
+  });
+
+  it('adds and edits a conditional branch with an optional else', async () => {
+    const user = userEvent.setup();
+    const onEventChange = vi.fn();
+    render(<Harness onEventChange={onEventChange} />);
+
+    await user.click(screen.getByRole('button', { name: 'Add command' }));
+    const flowGroup = (await screen.findByText('Flow & state')).closest<HTMLElement>('[data-slot="dropdown-menu-group"]')!;
+    expect(flowGroup.closest('[data-slot="dropdown-menu-content"]')).toHaveClass('w-64');
+    expect(within(flowGroup).getByRole('menuitem', { name: 'Conditional branch' })).toBeInTheDocument();
+    expect(within(flowGroup).getByRole('menuitem', { name: 'Set switch' })).toBeInTheDocument();
+    expect(screen.getByText('Dialogue & feedback')).toBeInTheDocument();
+    expect(screen.getByText('Player & inventory')).toBeInTheDocument();
+    expect(screen.getByText('Movement & world')).toBeInTheDocument();
+    await user.click(await screen.findByRole('menuitem', { name: 'Conditional branch' }));
+    expect(onEventChange.mock.calls.at(-1)?.[0].pages[0].contents[0]).toEqual({
+      type: 'conditional',
+      condition: { kind: 'switch', id: 'door-open', equals: true },
+      thenCommands: [],
+    });
+    const conditionalSettings = screen.getByRole('button', { name: 'Conditional branch command settings' });
+    const conditionalCommandIcon = conditionalSettings.querySelector('.lucide-git-branch')!;
+    expect(conditionalCommandIcon).toBeInTheDocument();
+    expect(conditionalCommandIcon.parentElement).toHaveClass('text-muted-foreground', '[&_svg]:size-3.5');
+    expect(conditionalSettings.querySelector('.lucide-toggle-left')).not.toBeInTheDocument();
+    expect(conditionalSettings.querySelector('.truncate')).toHaveClass('text-right', 'text-muted-foreground');
+    expect(conditionalSettings).toHaveTextContent('If');
+    expect(conditionalSettings).toHaveTextContent('Door open is true');
+    expect(conditionalSettings).not.toHaveTextContent('·');
+
+    const conditionType = await screen.findByRole('combobox', { name: 'Condition type' });
+    const dialog = screen.getByRole('dialog');
+    const triggerTypeLabel = screen.getByText('Type', { selector: 'label' });
+    const conditionTypeLabel = within(dialog).getByText('Condition type', { selector: 'span' });
+    expect(conditionTypeLabel.className).toBe(triggerTypeLabel.className);
+    expect(conditionTypeLabel).toHaveClass('text-[10px]', 'font-medium', 'text-muted-foreground');
+    expect(within(dialog).queryByText('Then')).not.toBeInTheDocument();
+    expect(within(dialog).queryByText('Else')).not.toBeInTheDocument();
+    expect(conditionType.querySelector('.lucide-toggle-left')).toBeInTheDocument();
+    const switchPicker = within(dialog).getByRole('button', { name: 'Choose switch' });
+    expect(switchPicker).toHaveTextContent('Door open');
+    expect(switchPicker.querySelector('.lucide-toggle-left')).not.toBeInTheDocument();
+    const expectedSwitchValue = within(dialog).getByRole('switch', { name: /Expected switch value/ });
+    expect(expectedSwitchValue).toBeChecked();
+    await user.click(expectedSwitchValue);
+    expect(conditionalSettings).toHaveTextContent('Door open is false');
+    await user.click(expectedSwitchValue);
+    expect(conditionalSettings).toHaveTextContent('Door open is true');
+    expect(within(dialog).queryByRole('button', { name: 'Switch condition settings' })).not.toBeInTheDocument();
+    await user.click(switchPicker);
+    const searchSwitches = await screen.findByRole('textbox', { name: 'Search switches' });
+    await user.type(searchSwitches, 'boss');
+    expect(screen.queryByRole('option', { name: 'Door open' })).not.toBeInTheDocument();
+    await user.click(screen.getByRole('option', { name: 'Boss defeated' }));
+    expect(onEventChange.mock.calls.at(-1)?.[0].pages[0].contents[0].condition.id).toBe('boss-defeated');
+    const elseBranch = within(dialog).getByRole('checkbox', { name: 'Else branch' });
+    expect(elseBranch).not.toBeChecked();
+    await user.click(conditionType);
+    await user.click(await screen.findByRole('option', { name: 'Variable' }));
+    expect(onEventChange.mock.calls.at(-1)?.[0].pages[0].contents[0].condition).toEqual({ kind: 'variable', id: 'score', operator: 'equal', value: 0 });
+    expect(conditionalSettings.querySelector('.lucide-hash')).not.toBeInTheDocument();
+    expect(conditionalSettings).toHaveTextContent('Score = 0');
+    expect(conditionalSettings).not.toHaveTextContent('·');
+    expect(conditionType.querySelector('.lucide-hash')).toBeInTheDocument();
+    const variablePicker = within(dialog).getByRole('button', { name: 'Choose variable' });
+    expect(variablePicker).toHaveTextContent('Score');
+    expect(variablePicker.querySelector('.lucide-hash')).not.toBeInTheDocument();
+    expect(within(dialog).getByRole('combobox', { name: 'Variable comparison' })).toHaveTextContent('= Equal');
+    expect(within(dialog).getByRole('spinbutton', { name: 'Value' })).toHaveValue(0);
+    expect(within(dialog).queryByRole('button', { name: 'Variable condition settings' })).not.toBeInTheDocument();
+    await user.click(variablePicker);
+    const searchVariables = await screen.findByRole('textbox', { name: 'Search variables' });
+    await user.type(searchVariables, 'repu');
+    expect(screen.queryByRole('option', { name: 'Score' })).not.toBeInTheDocument();
+    await user.click(screen.getByRole('option', { name: 'Reputation' }));
+    expect(onEventChange.mock.calls.at(-1)?.[0].pages[0].contents[0].condition.id).toBe('reputation');
+    expect(conditionalSettings).toHaveTextContent('Reputation = 0');
+    await user.click(conditionType);
+    await user.click(await screen.findByRole('option', { name: 'Item' }));
+    expect(conditionType.querySelector('.lucide-package')).toBeInTheDocument();
+    const itemPicker = within(dialog).getByRole('button', { name: 'Choose item' });
+    expect(itemPicker).toHaveTextContent('Potion');
+    expect(itemPicker.querySelector('.lucide-package')).not.toBeInTheDocument();
+    await user.click(itemPicker);
+    const searchItems = await screen.findByRole('textbox', { name: 'Search items' });
+    await user.type(searchItems, 'silver');
+    expect(screen.queryByRole('option', { name: 'Potion' })).not.toBeInTheDocument();
+    await user.click(screen.getByRole('option', { name: 'Silver Sword' }));
+    expect(onEventChange.mock.calls.at(-1)?.[0].pages[0].contents[0].condition).toEqual({ kind: 'item', id: 'silver-sword', amount: 1 });
+    expect(conditionalSettings).toHaveTextContent('Silver Sword ×1');
+
+    await user.click(elseBranch);
+    expect(elseBranch).toBeChecked();
+    expect(onEventChange.mock.calls.at(-1)?.[0].pages[0].contents[0].elseCommands).toEqual([]);
+    await user.click(within(dialog).getByRole('button', { name: 'Close command settings' }));
+    const thenHeader = screen.getByText('Then').closest<HTMLElement>('[data-slot="conditional-branch-header"]')!;
+    const elseHeader = screen.getByText('Else').closest<HTMLElement>('[data-slot="conditional-branch-header"]')!;
+    expect(thenHeader).toHaveClass('text-xs', 'font-normal');
+    expect(elseHeader).toHaveClass('text-xs', 'font-normal');
+    expect(thenHeader).not.toHaveAttribute('data-slot', 'section-header');
+    expect(elseHeader).not.toHaveAttribute('data-slot', 'section-header');
+    expect(thenHeader.parentElement).toHaveClass('border-green-500/70');
+    expect(elseHeader.parentElement).toHaveClass('border-red-500/70');
+    expect(within(thenHeader).getByRole('button', { name: 'Add command' }).parentElement).toHaveClass('-mr-1');
+    expect(within(elseHeader).getByRole('button', { name: 'Add command' }).parentElement).toHaveClass('-mr-1');
+    await user.click(within(thenHeader).getByRole('button', { name: 'Add command' }));
+    await user.click(await screen.findByRole('menuitem', { name: 'Toast' }));
+    expect(onEventChange.mock.calls.at(-1)?.[0].pages[0].contents[0].thenCommands).toEqual([{ type: 'toast', text: 'Notification' }]);
+    const toastSettings = screen.getByRole('button', { name: 'Toast command settings' });
+    expect(toastSettings).toHaveAttribute('aria-expanded', 'true');
+    expect(screen.getByRole('dialog')).toHaveTextContent('Toast');
+    await user.click(within(screen.getByRole('dialog')).getByRole('button', { name: 'Close command settings' }));
+
+    await user.click(screen.getByRole('button', { name: 'Conditional branch command settings' }));
+    await user.click(within(screen.getByRole('dialog')).getByRole('checkbox', { name: 'Else branch' }));
+    expect(onEventChange.mock.calls.at(-1)?.[0].pages[0].contents[0]).not.toHaveProperty('elseCommands');
+  });
+
+  it('does not offer a fourth conditional nesting level', async () => {
+    const user = userEvent.setup();
+    const condition = { kind: 'switch' as const, id: 'door-open', equals: true };
+    const level3: EventCommand = { type: 'conditional', condition, thenCommands: [] };
+    const level2: EventCommand = { type: 'conditional', condition, thenCommands: [level3] };
+    const level1: EventCommand = { type: 'conditional', condition, thenCommands: [level2] };
+    render(<Harness initialContents={[level1]} />);
+
+    const deepestThenBranch = screen.getAllByText('Then').at(-1)!.parentElement!;
+    await user.click(within(deepestThenBranch).getByRole('button', { name: 'Add command' }));
+
+    expect(screen.queryByRole('menuitem', { name: 'Conditional branch' })).not.toBeInTheDocument();
+    expect(await screen.findByRole('menuitem', { name: 'Toast' })).toBeInTheDocument();
   });
 
   it('adds, duplicates, navigates and deletes inline pages', async () => {

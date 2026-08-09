@@ -9582,13 +9582,22 @@
             "contents": [
               {
                 "type": "teleport",
-                "mapId": "path",
-                "position": {
-                  "x": 2,
-                  "y": 8,
-                  "planeId": "lower-trail"
+                "destination": {
+                  "map": {
+                    "kind": "constant",
+                    "mapId": "path"
+                  },
+                  "x": {
+                    "kind": "constant",
+                    "value": 2
+                  },
+                  "y": {
+                    "kind": "constant",
+                    "value": 8
+                  }
                 },
-                "resetMap": true
+                "direction": "retain",
+                "transition": "instant"
               }
             ]
           },
@@ -9955,7 +9964,8 @@
         "h": 3
       }
     ],
-    "enemySpawns": []
+    "enemySpawns": [],
+    "numericId": 1
   },
   "path": {
     "id": "path",
@@ -10694,13 +10704,22 @@
             "contents": [
               {
                 "type": "teleport",
-                "mapId": "village",
-                "position": {
-                  "x": 42,
-                  "y": 8,
-                  "planeId": "aubeval"
+                "destination": {
+                  "map": {
+                    "kind": "constant",
+                    "mapId": "village"
+                  },
+                  "x": {
+                    "kind": "constant",
+                    "value": 42
+                  },
+                  "y": {
+                    "kind": "constant",
+                    "value": 8
+                  }
                 },
-                "resetMap": true
+                "direction": "retain",
+                "transition": "instant"
               }
             ]
           }
@@ -10745,13 +10764,22 @@
             "contents": [
               {
                 "type": "teleport",
-                "mapId": "sanctuary",
-                "position": {
-                  "x": 2,
-                  "y": 8,
-                  "planeId": "gallery"
+                "destination": {
+                  "map": {
+                    "kind": "constant",
+                    "mapId": "sanctuary"
+                  },
+                  "x": {
+                    "kind": "constant",
+                    "value": 2
+                  },
+                  "y": {
+                    "kind": "constant",
+                    "value": 8
+                  }
                 },
-                "resetMap": true
+                "direction": "retain",
+                "transition": "instant"
               }
             ]
           },
@@ -10859,7 +10887,8 @@
         "y": 9,
         "planeId": "raised-bridge"
       }
-    ]
+    ],
+    "numericId": 2
   },
   "sanctuary": {
     "id": "sanctuary",
@@ -13886,13 +13915,22 @@
             "contents": [
               {
                 "type": "teleport",
-                "mapId": "path",
-                "position": {
-                  "x": 24,
-                  "y": 8,
-                  "planeId": "raised-bridge"
+                "destination": {
+                  "map": {
+                    "kind": "constant",
+                    "mapId": "path"
+                  },
+                  "x": {
+                    "kind": "constant",
+                    "value": 24
+                  },
+                  "y": {
+                    "kind": "constant",
+                    "value": 8
+                  }
                 },
-                "resetMap": true
+                "direction": "retain",
+                "transition": "instant"
               }
             ]
           }
@@ -14086,13 +14124,22 @@
               },
               {
                 "type": "teleport",
-                "mapId": "arena",
-                "position": {
-                  "x": 3,
-                  "y": 8,
-                  "planeId": "guardian-ring"
+                "destination": {
+                  "map": {
+                    "kind": "constant",
+                    "mapId": "arena"
+                  },
+                  "x": {
+                    "kind": "constant",
+                    "value": 3
+                  },
+                  "y": {
+                    "kind": "constant",
+                    "value": 8
+                  }
                 },
-                "resetMap": true
+                "direction": "retain",
+                "transition": "instant"
               }
             ]
           },
@@ -14270,7 +14317,8 @@
         "y": 6,
         "planeId": "bell-terrace"
       }
-    ]
+    ],
+    "numericId": 3
   },
   "arena": {
     "id": "arena",
@@ -17932,13 +17980,22 @@
             "contents": [
               {
                 "type": "teleport",
-                "mapId": "sanctuary",
-                "position": {
-                  "x": 23,
-                  "y": 8,
-                  "planeId": "gallery"
+                "destination": {
+                  "map": {
+                    "kind": "constant",
+                    "mapId": "sanctuary"
+                  },
+                  "x": {
+                    "kind": "constant",
+                    "value": 23
+                  },
+                  "y": {
+                    "kind": "constant",
+                    "value": 8
+                  }
                 },
-                "resetMap": true
+                "direction": "retain",
+                "transition": "instant"
               }
             ]
           },
@@ -18005,13 +18062,22 @@
             "contents": [
               {
                 "type": "teleport",
-                "mapId": "village",
-                "position": {
-                  "x": 42,
-                  "y": 8,
-                  "planeId": "aubeval"
+                "destination": {
+                  "map": {
+                    "kind": "constant",
+                    "mapId": "village"
+                  },
+                  "x": {
+                    "kind": "constant",
+                    "value": 42
+                  },
+                  "y": {
+                    "kind": "constant",
+                    "value": 8
+                  }
                 },
-                "resetMap": true
+                "direction": "retain",
+                "transition": "instant"
               }
             ]
           },
@@ -18057,7 +18123,8 @@
         "y": 8,
         "planeId": "gallery"
       }
-    }
+    },
+    "numericId": 4
   },
   "empty-map": {
     "id": "empty-map",
@@ -18114,6 +18181,7 @@
     "navigationOverrides": [],
     "events": [],
     "blockedRegions": [],
-    "enemySpawns": []
+    "enemySpawns": [],
+    "numericId": 5
   }
 }

@@ -73,12 +73,8 @@ describe('MapEventRuntime', () => {
 });
 
 describe('teleportDisposition', () => {
-  const position = { x: 1, y: 2, planeId: 'p' };
-
-  it('distingue déplacement local, reset local, transition et destination invalide', () => {
-    expect(teleportDisposition('village', { type: 'teleport', mapId: 'village', position, resetMap: false })).toBe('local');
-    expect(teleportDisposition('village', { type: 'teleport', mapId: 'village', position, resetMap: true })).toBe('reset');
-    expect(teleportDisposition('village', { type: 'teleport', mapId: 'path', position, resetMap: true })).toBe('reset');
-    expect(teleportDisposition('village', { type: 'teleport', mapId: 'path', position, resetMap: false })).toBe('invalid');
+  it('distinguishes a local relocation from a new map visit', () => {
+    expect(teleportDisposition('village', 'village')).toBe('local');
+    expect(teleportDisposition('village', 'path')).toBe('visit');
   });
 });

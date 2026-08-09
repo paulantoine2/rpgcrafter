@@ -16,6 +16,12 @@ function toV06(files: SourceGameFiles) {
   const legacyConditions = (conditions: any[] | undefined) => conditions?.map(condition => condition.kind === 'switch' ? { ...condition, kind: 'flag' } : condition);
   const legacyCommands = (commands: any[]): any[] => commands.map(command => {
     if (command.type === 'dialogue' && command.choices) return { ...command, choices: command.choices.map((choice: any) => ({ label: choice.label, actions: legacyCommands(choice.commands) })) };
+    if (command.type === 'teleport') return {
+      type: 'teleport',
+      mapId: command.destination.map.mapId,
+      position: { x: command.destination.x.value, y: command.destination.y.value, planeId: 'plane-1' },
+      resetMap: true,
+    };
     return command.type === 'setSwitch' ? { ...command, type: 'setFlag' } : command;
   });
   for (const [mapId, map] of Object.entries(legacy.maps) as Array<[string, any]>) {
@@ -74,7 +80,7 @@ describe('V0.4 migration', () => {
     const result = parseSourceGame(legacy);
     expect(result.success).toBe(true);
     if (!result.success) return;
-    expect(result.data.manifest.schemaVersion).toBe('0.8');
+    expect(result.data.manifest.schemaVersion).toBe('0.9');
     expect(result.data.maps.village.planes).toEqual([{ id: 'plane-1', name: 'Plan 1', order: 0, surfaceLayerId: 'surface', surfaceCoverage: 'bounds' }]);
     expect(result.data.maps.village.blockedRegions[0].planeId).toBe('plane-1');
     expect(result.data.actors.player.start.planeId).toBe('plane-1');
@@ -178,5 +184,37 @@ describe('V0.7 draft migration', () => {
     expect(dialogue?.type).toBe('dialogue');
     if (dialogue?.type === 'dialogue') expect(dialogue.choices?.[0].commands).toEqual([]);
     expect(result.data.enemies.slime.onDefeated).toEqual([]);
+  });
+});
+
+describe('V0.8 migration', () => {
+  it('assigns stable numeric map ids and migrates nested teleports', () => {
+    const files = {
+      manifest: read('manifest.json'), tilesets: read('tilesets.json'), maps: read('maps.json'), actors: read('actors.json'), enemies: read('enemies.json'),
+      skills: read('skills.json'), items: read('items.json'), quests: read('quests.json'), ui: read('ui.json'), events: read('events.json'), initialState: read('initial-state.json'),
+    } as SourceGameFiles;
+    (files.manifest as any).schemaVersion = '0.8';
+    (files.manifest as any).engineRange = '>=0.8 <0.9';
+    delete (files.manifest as any).nextMapNumericId;
+    for (const map of Object.values(files.maps as Record<string, any>)) delete map.numericId;
+    const oldTeleport = { type: 'teleport', mapId: 'path', position: { x: 2, y: 3, planeId: 'lower-trail' }, resetMap: true };
+    (files.maps as any).village.events[0].pages[0].contents = [{
+      type: 'dialogue', speaker: 'Guide', text: 'Go', choices: [{ label: 'Yes', commands: [{
+        type: 'conditional', condition: { kind: 'switch', id: 'questAccepted', equals: true }, thenCommands: [oldTeleport], elseCommands: [],
+      }] }],
+    }];
+    (files.enemies as any).slime.onDefeated = [oldTeleport];
+
+    const result = parseSourceGame(files);
+    expect(result.success).toBe(true);
+    if (!result.success) return;
+    const maps = Object.values(result.data.maps);
+    expect(maps.map(map => map.numericId)).toEqual(maps.map((_, index) => index + 1));
+    expect(result.data.manifest.nextMapNumericId).toBe(maps.length + 1);
+    const dialogue = result.data.maps.village.events[0].pages[0].contents[0];
+    expect(dialogue).toMatchObject({ choices: [{ commands: [{ thenCommands: [{
+      type: 'teleport', destination: { map: { kind: 'constant', mapId: 'path' }, x: { kind: 'constant', value: 2 }, y: { kind: 'constant', value: 3 } }, direction: 'retain', transition: 'instant',
+    }] }] }] });
+    expect(result.data.enemies.slime.onDefeated).toEqual([expect.objectContaining({ type: 'teleport', direction: 'retain', transition: 'instant' })]);
   });
 });

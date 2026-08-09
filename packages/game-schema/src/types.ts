@@ -3,6 +3,10 @@ export type Rect = Vec2 & { w: number; h: number };
 export type Direction = 'north' | 'east' | 'south' | 'west';
 export type PlanePosition = Vec2 & { planeId: string };
 export type VariableComparison = 'equal' | 'notEqual' | 'greaterThan' | 'greaterThanOrEqual' | 'lessThan' | 'lessThanOrEqual';
+export type TeleportMapSource = { kind: 'constant'; mapId: string } | { kind: 'variable'; variableId: string };
+export type TeleportNumberSource = { kind: 'constant'; value: number } | { kind: 'variable'; variableId: string };
+export type TeleportDirection = 'retain' | Direction;
+export type TeleportTransition = 'instant' | 'fadeBlack' | 'fadeWhite';
 
 export type Condition =
   | { kind: 'switch'; id: string; equals?: boolean }
@@ -11,13 +15,14 @@ export type Condition =
 
 export type EventCommand =
   | { type: 'dialogue'; speaker: string; text: string; choices?: Array<{ label: string; commands: EventCommand[] }> }
+  | { type: 'conditional'; condition: Condition; thenCommands: EventCommand[]; elseCommands?: EventCommand[] }
   | { type: 'setSwitch'; id: string; value: boolean }
   | { type: 'setVariable'; id: string; value: number }
   | { type: 'giveItem' | 'removeItem'; id: string; amount?: number }
   | { type: 'unlockSkill'; id: string }
   | { type: 'healPlayer'; amount: number }
   | { type: 'toast'; text: string }
-  | { type: 'teleport'; mapId: string; position: PlanePosition; resetMap: boolean }
+  | { type: 'teleport'; destination: { map: TeleportMapSource; x: TeleportNumberSource; y: TeleportNumberSource }; direction: TeleportDirection; transition: TeleportTransition }
   | { type: 'movementRoute'; target: MovementTarget; route: MovementRoute }
   | { type: 'wait'; duration: number }
   | { type: 'save' };
@@ -163,6 +168,7 @@ export type NavigationOverride = PlanePosition & {
 export type BlockedRegion = Rect & { planeId: string };
 export type GameMap = {
   id: string;
+  numericId: number;
   name: string;
   parentMapId?: string;
   ground: string;
@@ -208,7 +214,7 @@ export type UiDefinition = {
   pauseMenu: { title: string; tabs: Array<{ id: string; label: string }> };
   equipmentSlots: Array<{ id: string; label: string }>;
 };
-export type Manifest = { schemaVersion: string; engineRange: string; gameId: string; version: string; entryPoint: { mapId: string; spawnId: string }; title: string; contentRating: string };
+export type Manifest = { schemaVersion: string; engineRange: string; gameId: string; version: string; nextMapNumericId: number; entryPoint: { mapId: string; spawnId: string }; title: string; contentRating: string };
 export type PlayerDefinition = { id: string; name: string; start: PlanePosition; stats: { maxHp: number; level: number; xp: number }; primaryAttack: string; skillSlots: Record<string, string>; unlockedSkills: string[] };
 export type Objective = { conditions?: Condition[]; text: string };
 export type InitialState = { switches: Record<string, SwitchDefinition>; variables: Record<string, VariableDefinition>; quests: Record<string, string>; inventory?: Record<string, number>; equipment?: Record<string, string | null> };

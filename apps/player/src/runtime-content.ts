@@ -44,10 +44,14 @@ function normalizeMaps(sourceMaps: SourceGame['maps']): Record<string, GameMap> 
 
 function normalizeCommands(commands: EventCommand[], sourceMaps: SourceGame['maps']): EventCommand[] {
   return commands.map(command => {
-    if (command.type === 'teleport') return { ...command, position: toPixels(command.position, sourceMaps[command.mapId].tileSize) };
     if (command.type === 'dialogue') return {
       ...command,
       choices: command.choices?.map(choice => ({ ...choice, commands: normalizeCommands(choice.commands, sourceMaps) })),
+    };
+    if (command.type === 'conditional') return {
+      ...command,
+      thenCommands: normalizeCommands(command.thenCommands, sourceMaps),
+      ...(command.elseCommands ? { elseCommands: normalizeCommands(command.elseCommands, sourceMaps) } : {}),
     };
     return command;
   });

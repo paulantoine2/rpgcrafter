@@ -254,6 +254,58 @@ function migrateV07(files: SourceGameFiles): SourceGameFiles {
   return next;
 }
 
+function migrateTeleportCommands(commands: unknown): unknown {
+  if (!Array.isArray(commands)) return commands;
+  return commands.map(command => {
+    if (!command || typeof command !== 'object') return command;
+    const next = { ...(command as JsonObject) };
+    if (next.type === 'teleport' && typeof next.mapId === 'string' && next.position && typeof next.position === 'object') {
+      const position = next.position as JsonObject;
+      return {
+        type: 'teleport',
+        destination: {
+          map: { kind: 'constant', mapId: next.mapId },
+          x: { kind: 'constant', value: position.x },
+          y: { kind: 'constant', value: position.y },
+        },
+        direction: 'retain',
+        transition: 'instant',
+      };
+    }
+    if (next.type === 'dialogue' && Array.isArray(next.choices)) {
+      next.choices = next.choices.map((choice: JsonObject) => ({ ...choice, commands: migrateTeleportCommands(choice.commands) }));
+    }
+    if (next.type === 'conditional') {
+      next.thenCommands = migrateTeleportCommands(next.thenCommands);
+      if (Array.isArray(next.elseCommands)) next.elseCommands = migrateTeleportCommands(next.elseCommands);
+    }
+    return next;
+  });
+}
+
+/** Adds stable numeric map ids and upgrades teleport commands to the V0.9 source model. */
+function migrateV08(files: SourceGameFiles): SourceGameFiles {
+  const manifest = files.manifest as JsonObject | null;
+  if (!manifest || manifest.schemaVersion !== '0.8') return files;
+  const next = structuredClone(files) as SourceGameFiles;
+  const nextManifest = next.manifest as JsonObject;
+  nextManifest.schemaVersion = '0.9';
+  nextManifest.engineRange = '>=0.9 <0.10';
+
+  let numericId = 1;
+  for (const map of Object.values((next.maps || {}) as Record<string, JsonObject>)) {
+    map.numericId = numericId++;
+    for (const event of Array.isArray(map.events) ? map.events : []) {
+      for (const page of Array.isArray(event.pages) ? event.pages : []) page.contents = migrateTeleportCommands(page.contents);
+    }
+  }
+  nextManifest.nextMapNumericId = numericId;
+  for (const enemy of Object.values((next.enemies || {}) as Record<string, JsonObject>)) {
+    if (enemy.onDefeated) enemy.onDefeated = migrateTeleportCommands(enemy.onDefeated);
+  }
+  return next;
+}
+
 function ensureVariables(files: SourceGameFiles): SourceGameFiles {
   const initialState = files.initialState as JsonObject | null;
   if (!initialState || 'variables' in initialState) return files;
@@ -292,5 +344,5 @@ function removeQuestStateCommands(files: SourceGameFiles): SourceGameFiles {
 
 /** Migrates every supported legacy authoring shape to the current schema. */
 export function migrateSourceGameFiles(files: SourceGameFiles): SourceGameFiles {
-  return removeQuestStateCommands(ensureVariables(migrateV07(migrateV06(migrateEventVisuals(migrateV05(migrateV04(files)))))));
+  return removeQuestStateCommands(ensureVariables(migrateV08(migrateV07(migrateV06(migrateEventVisuals(migrateV05(migrateV04(files))))))));
 }

@@ -1,4 +1,4 @@
-import type { EventCommand, MapEvent, MapEventTrigger, PlanePosition, Vec2 } from './types.js';
+import type { MapEvent, MapEventTrigger, PlanePosition, Vec2 } from './types.js';
 
 type EventState = {
   pageIndex: number;
@@ -15,9 +15,8 @@ export type EventRuntimeCallbacks = {
   execute(event: RuntimeEvent): { stop?: boolean } | void;
 };
 
-export function teleportDisposition(currentMapId: string, command: Extract<EventCommand, { type: 'teleport' }>) {
-  if (!command.resetMap && command.mapId !== currentMapId) return 'invalid' as const;
-  return command.resetMap ? 'reset' as const : 'local' as const;
+export function teleportDisposition(currentMapId: string, destinationMapId: string) {
+  return destinationMapId === currentMapId ? 'local' as const : 'visit' as const;
 }
 
 /** Page-aware scheduler for map-event triggers. */
