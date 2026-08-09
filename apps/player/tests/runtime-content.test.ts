@@ -37,7 +37,7 @@ describe('sourceGameToLoadedGame', () => {
     });
     source.maps.village.events[0].pages[0].contents = [{
       type: 'conditional',
-      condition: { kind: 'switch', id: 'questAccepted' },
+      condition: { kind: 'switch', id: 'questAccepted', operand: { kind: 'constant', value: true } },
       thenCommands: [{ type: 'teleport', destination: { map: { kind: 'constant', mapId: 'path' }, x: { kind: 'constant', value: 2 }, y: { kind: 'constant', value: 3 } }, direction: 'retain', transition: 'instant' }],
       elseCommands: [{
         type: 'conditional',

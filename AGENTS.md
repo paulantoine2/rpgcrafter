@@ -37,6 +37,8 @@ Write all README files and code comments in English. Do not use French or any ot
 
 In the Event Editor, render small contextual pickers and settings panels immediately to the left of the inspector sidebar. Anchor their right edge to the sidebar's left edge and align them vertically with the control that opened them. Reuse the same fixed-position popover behavior as the switch and item condition pickers so related interactions remain spatially consistent.
 
+Use the shared `Toggle` component for controls that open and close a separate picker, popover, dialog, or settings panel, and keep its pressed state synchronized with that surface. Use a standard `Select` only for direct selection from a fixed list of values that does not open a separate configuration surface. Do not recreate either interaction with custom button styling.
+
 ## Testing Guidelines
 
 Vitest is the test runner. Studio component tests use Testing Library, `jsdom`, and setup from `apps/studio/tests/setup.ts`; runtime and schema tests run in Node. Name tests `*.test.ts` or `*.test.tsx`. Add regression tests for behavioral fixes and cover schema migrations or validation changes with representative content. Run the affected workspace test first, then `pnpm test` and `pnpm check` before submitting.

@@ -197,18 +197,20 @@ describe('EventInspector pages', () => {
     expect(screen.queryByRole('menuitem', { name: 'Quest' })).not.toBeInTheDocument();
     await userEvent.click(await screen.findByRole('menuitem', { name: 'Switch' }));
 
-    const switchPicker = screen.getByRole('button', { name: 'Choose switch' });
-    expect(switchPicker).toHaveTextContent('Door openTrue');
-    expect(switchPicker).toContainElement(screen.getByRole('img', { name: 'switch condition' }));
-    expect(await screen.findByRole('textbox', { name: 'Search switches' })).toBeInTheDocument();
+    const conditionToggle = screen.getByRole('button', { name: 'Event condition' });
+    expect(conditionToggle).toHaveAttribute('data-slot', 'toggle');
+    expect(conditionToggle).toHaveTextContent('SwitchDoor open = On');
+    expect(conditionToggle.querySelector('.lucide-toggle-left')).toBeInTheDocument();
+    expect(conditionToggle.querySelector('.lucide-git-branch')).not.toBeInTheDocument();
+    expect(conditionToggle).toHaveAttribute('aria-expanded', 'true');
     expect(screen.getByRole('button', { name: 'Remove switch condition' })).toHaveAttribute('data-base-ui-tooltip-trigger');
 
     await userEvent.click(screen.getByRole('button', { name: 'Remove switch condition' }));
-    expect(screen.queryByRole('img', { name: 'switch condition' })).not.toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: 'Event condition' })).not.toBeInTheDocument();
 
     await userEvent.click(addCondition);
     await userEvent.click(await screen.findByRole('menuitem', { name: 'Item' }));
-    expect(screen.getByRole('button', { name: 'Choose item' })).toContainElement(screen.getByRole('img', { name: 'item condition' }));
+    expect(screen.getByRole('button', { name: 'Event condition' })).toHaveTextContent('ItemPotion ×1');
   });
 
   it('searches and selects items from the condition picker', async () => {
@@ -217,9 +219,13 @@ describe('EventInspector pages', () => {
 
     await user.click(screen.getByRole('button', { name: 'Add condition' }));
     await user.click(await screen.findByRole('menuitem', { name: 'Item' }));
-    const itemPicker = screen.getByRole('button', { name: 'Choose item' });
-    expect(itemPicker).toHaveTextContent('Potion×1');
+    const conditionToggle = screen.getByRole('button', { name: 'Event condition' });
+    expect(conditionToggle).toHaveTextContent('ItemPotion ×1');
+    expect(conditionToggle.querySelector('.lucide-package')).toBeInTheDocument();
 
+    await user.click(conditionToggle);
+    const dialog = screen.getByRole('dialog');
+    const itemPicker = within(dialog).getByRole('button', { name: 'Choose item' });
     await user.click(itemPicker);
     const search = await screen.findByRole('textbox', { name: 'Search items' });
     expect(screen.getByText('Items').closest('[data-slot="section-header"]')).toHaveClass('h-12', 'px-4', 'py-4');
@@ -229,7 +235,7 @@ describe('EventInspector pages', () => {
     await user.type(search, 'silver');
     expect(screen.queryByRole('option', { name: 'Potion' })).not.toBeInTheDocument();
     await user.click(screen.getByRole('option', { name: 'Silver Sword' }));
-    expect(itemPicker).toHaveTextContent('Silver Sword');
+    expect(conditionToggle).toHaveTextContent('Silver Sword ×1');
   });
 
   it('searches, selects and creates switches from the condition picker', async () => {
@@ -239,8 +245,19 @@ describe('EventInspector pages', () => {
     await user.click(screen.getByRole('button', { name: 'Add condition' }));
     await user.click(await screen.findByRole('menuitem', { name: 'Switch' }));
 
+    const conditionDialog = await screen.findByRole('dialog');
+    const switchPicker = within(conditionDialog).getByRole('button', { name: 'Choose switch' });
+    expect(switchPicker).toHaveTextContent('Door open');
+    expect(switchPicker).not.toHaveTextContent('On');
+    expect(switchPicker).toHaveAttribute('data-slot', 'toggle');
+    expect(switchPicker).toHaveClass('hover:bg-muted');
+    expect(switchPicker).toHaveAttribute('aria-pressed', 'false');
+    const conditionDialogRect = vi.spyOn(conditionDialog, 'getBoundingClientRect').mockReturnValue({ x: 300, y: 50, left: 300, top: 50, right: 620, bottom: 500, width: 320, height: 450, toJSON: () => ({}) });
+    await user.click(switchPicker);
     const search = await screen.findByRole('textbox', { name: 'Search switches' });
-    const picker = screen.getByRole('dialog');
+    expect(switchPicker).toHaveAttribute('aria-pressed', 'true');
+    expect(conditionDialogRect).toHaveBeenCalled();
+    const picker = screen.getAllByRole('dialog').at(-1)!;
     expect(screen.getByText('Switches').closest('[data-slot="section-header"]')).toHaveClass('h-12', 'px-4', 'py-4');
     const selectedOption = screen.getByRole('option', { name: 'Door open' });
     expect(picker).toHaveClass('rounded-lg', 'bg-popover', 'text-popover-foreground');
@@ -255,110 +272,133 @@ describe('EventInspector pages', () => {
 
     await user.click(screen.getByRole('button', { name: 'Close switch picker' }));
     expect(screen.queryByRole('textbox', { name: 'Search switches' })).not.toBeInTheDocument();
-    await user.click(screen.getByRole('button', { name: 'Choose switch' }));
+    await user.click(switchPicker);
 
     await user.type(screen.getByRole('textbox', { name: 'Search switches' }), 'boss');
     expect(screen.queryByRole('option', { name: 'Door open' })).not.toBeInTheDocument();
     await user.click(screen.getByRole('option', { name: 'Boss defeated' }));
-    expect(screen.getByRole('button', { name: 'Choose switch' })).toHaveTextContent('Boss defeated');
+    expect(switchPicker).toHaveTextContent('Boss defeated');
 
-    await user.click(screen.getByRole('button', { name: 'Choose switch' }));
+    await user.click(switchPicker);
     await user.click(screen.getByRole('button', { name: 'Create switch' }));
     await user.type(await screen.findByRole('textbox', { name: 'Switch name' }), 'Treasure claimed');
     await user.click(screen.getByRole('button', { name: 'Confirm switch creation' }));
 
-    expect(screen.getByRole('button', { name: 'Choose switch' })).toHaveTextContent('Treasure claimed');
-    await user.click(screen.getByRole('button', { name: 'Choose switch' }));
+    expect(switchPicker).toHaveTextContent('Treasure claimed');
+    await user.click(switchPicker);
     expect(await screen.findByRole('option', { name: 'Treasure claimed' })).toBeInTheDocument();
   });
 
-  it('configures and renames a switch condition from its settings', async () => {
+  it('configures a switch condition with the shared condition form', async () => {
     const user = userEvent.setup();
     const onEventChange = vi.fn();
     render(<Harness onEventChange={onEventChange} />);
 
     await user.click(screen.getByRole('button', { name: 'Add condition' }));
     await user.click(await screen.findByRole('menuitem', { name: 'Switch' }));
-    await user.click(await screen.findByRole('option', { name: 'Door open' }));
-    expect(screen.queryByLabelText('Expected switch value')).not.toBeInTheDocument();
-
-    await user.click(screen.getByRole('button', { name: 'Switch condition settings' }));
-    expect(await screen.findByText('Switch condition')).toBeInTheDocument();
-    expect(screen.getByText('Switch condition').closest('[data-slot="section-header"]')).toHaveClass('h-12', 'px-4', 'py-4');
-    expect(screen.getByText('Switch condition').closest('[role="dialog"]')).toHaveClass('rounded-lg', 'bg-popover', 'text-popover-foreground');
+    const conditionToggle = screen.getByRole('button', { name: 'Event condition' });
+    expect(conditionToggle).toHaveTextContent('SwitchDoor open = On');
+    const dialog = await screen.findByRole('dialog');
+    expect(within(dialog).getByText('Condition').closest('[data-slot="section-header"]')).toHaveClass('h-12', 'px-4', 'py-4');
+    expect(dialog).toHaveClass('rounded-lg', 'bg-popover', 'text-popover-foreground');
     expect(screen.getByRole('button', { name: 'Close condition settings' })).toBeInTheDocument();
-    const expectedValue = await screen.findByLabelText('Expected switch value');
+    expect(screen.getByRole('combobox', { name: 'Condition type' })).toHaveTextContent('Switch');
+    const expectedValue = await screen.findByLabelText('Fixed switch value');
     expect(expectedValue).toBeChecked();
     await user.click(expectedValue);
-    expect(onEventChange.mock.calls.at(-1)?.[0].pages[0].conditions?.[0]).toMatchObject({ kind: 'switch', equals: false });
-    expect(screen.getByRole('button', { name: 'Choose switch' })).toHaveTextContent('False');
-
-    const name = screen.getByRole('textbox', { name: 'Switch name' });
-    await user.clear(name);
-    await user.type(name, 'Entry unlocked');
-    await user.tab();
-    expect(screen.getByRole('button', { name: 'Choose switch' })).toHaveTextContent('Entry unlocked');
+    expect(onEventChange.mock.calls.at(-1)?.[0].pages[0].conditions?.[0]).toMatchObject({ kind: 'switch', operand: { kind: 'constant', value: false } });
+    expect(conditionToggle).toHaveTextContent('Door open = Off');
+    await user.click(screen.getByRole('combobox', { name: 'Condition type' }));
+    await user.click(await screen.findByRole('option', { name: 'Variable' }));
+    expect(conditionToggle).toHaveTextContent('VariableScore = 0');
+    expect(conditionToggle.querySelector('.lucide-hash')).toBeInTheDocument();
+    expect(conditionToggle.querySelector('.lucide-toggle-left')).not.toBeInTheDocument();
     await user.click(screen.getByRole('button', { name: 'Close condition settings' }));
-    expect(screen.queryByText('Expected value')).not.toBeInTheDocument();
   });
 
-  it('configures and renames an item condition from its settings', async () => {
+  it('configures an item condition with the shared condition form', async () => {
     const user = userEvent.setup();
     const onEventChange = vi.fn();
     render(<Harness onEventChange={onEventChange} />);
 
     await user.click(screen.getByRole('button', { name: 'Add condition' }));
     await user.click(await screen.findByRole('menuitem', { name: 'Item' }));
+    const conditionToggle = screen.getByRole('button', { name: 'Event condition' });
+    expect(conditionToggle).toHaveTextContent('ItemPotion ×1');
+    expect(conditionToggle.querySelector('.lucide-package')).toBeInTheDocument();
     expect(screen.queryByRole('spinbutton', { name: 'Required quantity' })).not.toBeInTheDocument();
 
-    await user.click(screen.getByRole('button', { name: 'Item condition settings' }));
+    await user.click(conditionToggle);
     const quantity = await screen.findByRole('spinbutton', { name: 'Required quantity' });
     await user.clear(quantity);
     await user.type(quantity, '3');
     expect(onEventChange.mock.calls.at(-1)?.[0].pages[0].conditions?.[0]).toMatchObject({ kind: 'item', amount: 3 });
-    expect(screen.getByRole('button', { name: 'Choose item' })).toHaveTextContent('×3');
-
-    const name = screen.getByRole('textbox', { name: 'Item name' });
-    await user.clear(name);
-    await user.type(name, 'Greater Potion');
-    await user.tab();
-    expect(screen.getByRole('button', { name: 'Choose item' })).toHaveTextContent('Greater Potion');
+    expect(conditionToggle).toHaveTextContent('×3');
   });
 
-  it('searches, configures and renames a variable condition', async () => {
+  it('searches and configures a variable condition with the shared condition form', async () => {
     const user = userEvent.setup();
     const onEventChange = vi.fn();
     render(<Harness onEventChange={onEventChange} />);
 
     await user.click(screen.getByRole('button', { name: 'Add condition' }));
     await user.click(await screen.findByRole('menuitem', { name: 'Variable' }));
-    expect(await screen.findByRole('textbox', { name: 'Search variables' })).toBeInTheDocument();
-    await user.click(screen.getByRole('button', { name: 'Create variable' }));
-    await user.type(await screen.findByRole('textbox', { name: 'Variable name' }), 'Enemy Count');
-    await user.click(screen.getByRole('button', { name: 'Confirm variable creation' }));
-    expect(screen.getByRole('button', { name: 'Choose variable' })).toHaveTextContent('Enemy Count');
-
-    await user.click(screen.getByRole('button', { name: 'Choose variable' }));
+    const conditionToggle = screen.getByRole('button', { name: 'Event condition' });
+    expect(conditionToggle).toHaveTextContent('VariableScore = 0');
+    expect(conditionToggle.querySelector('.lucide-hash')).toBeInTheDocument();
+    const dialog = await screen.findByRole('dialog');
+    const variablePicker = within(dialog).getByRole('button', { name: 'Choose variable' });
+    expect(variablePicker).toHaveTextContent('Score');
+    expect(variablePicker).not.toHaveTextContent('= 0');
+    expect(variablePicker).toHaveAttribute('data-slot', 'toggle');
+    expect(variablePicker).toHaveClass('hover:bg-muted');
+    await user.click(variablePicker);
     await user.type(screen.getByRole('textbox', { name: 'Search variables' }), 'reputation');
     await user.click(screen.getByRole('option', { name: 'Reputation' }));
 
-    const variablePicker = screen.getByRole('button', { name: 'Choose variable' });
-    expect(variablePicker).toHaveTextContent('Reputation= 0');
-    await user.click(screen.getByRole('button', { name: 'Variable condition settings' }));
+    expect(conditionToggle).toHaveTextContent('Reputation = 0');
 
-    await user.click(await screen.findByRole('combobox', { name: 'Variable comparison' }));
-    await user.click(await screen.findByRole('option', { name: '≥ Greater than or equal' }));
+    const comparisonTabs = await screen.findByRole('tablist', { name: 'Variable comparison' });
+    await user.click(within(comparisonTabs).getByRole('tab', { name: 'Greater than or equal' }));
     const comparisonValue = screen.getByRole('spinbutton', { name: 'Value' });
     await user.clear(comparisonValue);
     await user.type(comparisonValue, '12');
-    expect(onEventChange.mock.calls.at(-1)?.[0].pages[0].conditions?.[0]).toMatchObject({ kind: 'variable', id: 'reputation', operator: 'greaterThanOrEqual', value: 12 });
-    expect(variablePicker).toHaveTextContent('Reputation≥ 12');
+    expect(onEventChange.mock.calls.at(-1)?.[0].pages[0].conditions?.[0]).toMatchObject({ kind: 'variable', id: 'reputation', operator: 'greaterThanOrEqual', operand: { kind: 'constant', value: 12 } });
+    expect(conditionToggle).toHaveTextContent('Reputation ≥ 12');
+    await user.click(screen.getByRole('combobox', { name: 'Variable operand type' }));
+    expect(screen.queryByRole('option', { name: 'Random range' })).not.toBeInTheDocument();
+  });
 
-    const name = screen.getByRole('textbox', { name: 'Variable name' });
-    await user.clear(name);
-    await user.type(name, 'Town Reputation');
-    await user.tab();
-    expect(variablePicker).toHaveTextContent('Town Reputation');
+  it('configures structured operands for event conditions', async () => {
+    const user = userEvent.setup();
+    const onEventChange = vi.fn();
+    render(<Harness onEventChange={onEventChange} />);
+
+    await user.click(screen.getByRole('button', { name: 'Add condition' }));
+    await user.click(await screen.findByRole('menuitem', { name: 'Switch' }));
+    const switchDialog = await screen.findByRole('dialog');
+    await user.click(within(switchDialog).getByRole('combobox', { name: 'Switch operand type' }));
+    await user.click(await screen.findByRole('option', { name: 'Switch' }));
+    await user.click(within(switchDialog).getAllByRole('button', { name: 'Choose switch' })[1]);
+    await user.click(await screen.findByRole('option', { name: 'Boss defeated' }));
+    expect(onEventChange.mock.calls.at(-1)?.[0].pages[0].conditions?.[0]).toEqual({ kind: 'switch', id: 'door-open', operand: { kind: 'switch', switchId: 'boss-defeated' } });
+    await user.click(within(switchDialog).getByRole('combobox', { name: 'Switch operand type' }));
+    await user.click(await screen.findByRole('option', { name: 'Game data' }));
+    expect(onEventChange.mock.calls.at(-1)?.[0].pages[0].conditions?.[0]).toEqual({ kind: 'switch', id: 'door-open', operand: { kind: 'gameData', data: { kind: 'hasItem', itemId: 'potion' } } });
+    await user.click(within(switchDialog).getByRole('button', { name: 'Close condition settings' }));
+
+    await user.click(screen.getByRole('button', { name: 'Remove switch condition' }));
+    await user.click(screen.getByRole('button', { name: 'Add condition' }));
+    await user.click(await screen.findByRole('menuitem', { name: 'Variable' }));
+    const variableDialog = await screen.findByRole('dialog');
+    await user.click(within(variableDialog).getByRole('combobox', { name: 'Variable operand type' }));
+    await user.click(await screen.findByRole('option', { name: 'Variable' }));
+    await user.click(within(variableDialog).getAllByRole('button', { name: 'Choose variable' })[1]);
+    await user.click(await screen.findByRole('option', { name: 'Reputation' }));
+    expect(onEventChange.mock.calls.at(-1)?.[0].pages[0].conditions?.[0]).toEqual({ kind: 'variable', id: 'score', operator: 'equal', operand: { kind: 'variable', variableId: 'reputation' } });
+    await user.click(within(variableDialog).getByRole('combobox', { name: 'Variable operand type' }));
+    await user.click(await screen.findByRole('option', { name: 'Game data' }));
+    expect(onEventChange.mock.calls.at(-1)?.[0].pages[0].conditions?.[0]).toEqual({ kind: 'variable', id: 'score', operator: 'equal', operand: { kind: 'gameData', data: { kind: 'itemAmount', itemId: 'potion' } } });
   });
 
   it('keeps a switch condition as a draft until its first switch is created', async () => {
@@ -369,6 +409,8 @@ describe('EventInspector pages', () => {
     await user.click(screen.getByRole('button', { name: 'Add condition' }));
     await user.click(await screen.findByRole('menuitem', { name: 'Switch' }));
 
+    const dialog = await screen.findByRole('dialog');
+    await user.click(within(dialog).getByRole('button', { name: 'Choose switch' }));
     expect(await screen.findByText('No switches found.')).toBeInTheDocument();
     expect(onEventChange).not.toHaveBeenCalled();
 
@@ -378,7 +420,7 @@ describe('EventInspector pages', () => {
 
     expect(onEventChange).toHaveBeenCalledTimes(1);
     const persistedCondition = onEventChange.mock.calls[0][0].pages[0].conditions?.[0];
-    expect(persistedCondition).toMatchObject({ kind: 'switch', id: 'first-switch', equals: true });
+    expect(persistedCondition).toMatchObject({ kind: 'switch', id: 'first-switch', operand: { kind: 'constant', value: true } });
   });
 
   it('adds and configures a set-variable command without offering set quest state', async () => {
@@ -680,7 +722,7 @@ describe('EventInspector pages', () => {
     await user.click(await screen.findByRole('menuitem', { name: 'Conditional branch' }));
     expect(onEventChange.mock.calls.at(-1)?.[0].pages[0].contents[0]).toEqual({
       type: 'conditional',
-      condition: { kind: 'switch', id: 'door-open', equals: true },
+      condition: { kind: 'switch', id: 'door-open', operand: { kind: 'constant', value: true } },
       thenCommands: [],
     });
     const conditionalSettings = screen.getByRole('button', { name: 'Conditional branch command settings' });
@@ -690,7 +732,7 @@ describe('EventInspector pages', () => {
     expect(conditionalSettings.querySelector('.lucide-toggle-left')).not.toBeInTheDocument();
     expect(conditionalSettings.querySelector('.truncate')).toHaveClass('text-right', 'text-muted-foreground');
     expect(conditionalSettings).toHaveTextContent('If');
-    expect(conditionalSettings).toHaveTextContent('Door open is true');
+    expect(conditionalSettings).toHaveTextContent('Door open = On');
     expect(conditionalSettings).not.toHaveTextContent('·');
 
     const conditionType = await screen.findByRole('combobox', { name: 'Condition type' });
@@ -705,12 +747,12 @@ describe('EventInspector pages', () => {
     const switchPicker = within(dialog).getByRole('button', { name: 'Choose switch' });
     expect(switchPicker).toHaveTextContent('Door open');
     expect(switchPicker.querySelector('.lucide-toggle-left')).not.toBeInTheDocument();
-    const expectedSwitchValue = within(dialog).getByRole('switch', { name: /Expected switch value/ });
+    const expectedSwitchValue = within(dialog).getByRole('checkbox', { name: /^Fixed switch value/ });
     expect(expectedSwitchValue).toBeChecked();
     await user.click(expectedSwitchValue);
-    expect(conditionalSettings).toHaveTextContent('Door open is false');
+    expect(conditionalSettings).toHaveTextContent('Door open = Off');
     await user.click(expectedSwitchValue);
-    expect(conditionalSettings).toHaveTextContent('Door open is true');
+    expect(conditionalSettings).toHaveTextContent('Door open = On');
     expect(within(dialog).queryByRole('button', { name: 'Switch condition settings' })).not.toBeInTheDocument();
     await user.click(switchPicker);
     const searchSwitches = await screen.findByRole('textbox', { name: 'Search switches' });
@@ -722,7 +764,7 @@ describe('EventInspector pages', () => {
     expect(elseBranch).not.toBeChecked();
     await user.click(conditionType);
     await user.click(await screen.findByRole('option', { name: 'Variable' }));
-    expect(onEventChange.mock.calls.at(-1)?.[0].pages[0].contents[0].condition).toEqual({ kind: 'variable', id: 'score', operator: 'equal', value: 0 });
+    expect(onEventChange.mock.calls.at(-1)?.[0].pages[0].contents[0].condition).toEqual({ kind: 'variable', id: 'score', operator: 'equal', operand: { kind: 'constant', value: 0 } });
     expect(conditionalSettings.querySelector('.lucide-hash')).not.toBeInTheDocument();
     expect(conditionalSettings).toHaveTextContent('Score = 0');
     expect(conditionalSettings).not.toHaveTextContent('·');
@@ -730,7 +772,8 @@ describe('EventInspector pages', () => {
     const variablePicker = within(dialog).getByRole('button', { name: 'Choose variable' });
     expect(variablePicker).toHaveTextContent('Score');
     expect(variablePicker.querySelector('.lucide-hash')).not.toBeInTheDocument();
-    expect(within(dialog).getByRole('combobox', { name: 'Variable comparison' })).toHaveTextContent('= Equal');
+    const comparisonTabs = within(dialog).getByRole('tablist', { name: 'Variable comparison' });
+    expect(within(comparisonTabs).getByRole('tab', { name: 'Equal' })).toHaveAttribute('aria-selected', 'true');
     expect(within(dialog).getByRole('spinbutton', { name: 'Value' })).toHaveValue(0);
     expect(within(dialog).queryByRole('button', { name: 'Variable condition settings' })).not.toBeInTheDocument();
     await user.click(variablePicker);
@@ -740,6 +783,16 @@ describe('EventInspector pages', () => {
     await user.click(screen.getByRole('option', { name: 'Reputation' }));
     expect(onEventChange.mock.calls.at(-1)?.[0].pages[0].contents[0].condition.id).toBe('reputation');
     expect(conditionalSettings).toHaveTextContent('Reputation = 0');
+    await user.click(within(dialog).getByRole('combobox', { name: 'Variable operand type' }));
+    await user.click(await screen.findByRole('option', { name: 'Game data' }));
+    await user.click(within(dialog).getByRole('combobox', { name: 'Variable game data' }));
+    await user.click(await screen.findByRole('option', { name: 'Character coordinate' }));
+    await user.click(within(dialog).getByRole('combobox', { name: 'Coordinate character' }));
+    await user.click(await screen.findByRole('option', { name: 'This event' }));
+    await user.click(within(dialog).getByRole('combobox', { name: 'Coordinate axis' }));
+    await user.click(await screen.findByRole('option', { name: 'Y' }));
+    expect(onEventChange.mock.calls.at(-1)?.[0].pages[0].contents[0].condition).toEqual({ kind: 'variable', id: 'reputation', operator: 'equal', operand: { kind: 'gameData', data: { kind: 'characterCoordinate', target: { kind: 'thisEvent' }, axis: 'y' } } });
+    expect(conditionalSettings).toHaveTextContent('Reputation = This event Y');
     await user.click(conditionType);
     await user.click(await screen.findByRole('option', { name: 'Item' }));
     expect(conditionType.querySelector('.lucide-package')).toBeInTheDocument();
@@ -783,7 +836,7 @@ describe('EventInspector pages', () => {
 
   it('does not offer a fourth conditional nesting level', async () => {
     const user = userEvent.setup();
-    const condition = { kind: 'switch' as const, id: 'door-open', equals: true };
+    const condition = { kind: 'switch' as const, id: 'door-open', operand: { kind: 'constant' as const, value: true } };
     const level3: EventCommand = { type: 'conditional', condition, thenCommands: [] };
     const level2: EventCommand = { type: 'conditional', condition, thenCommands: [level3] };
     const level1: EventCommand = { type: 'conditional', condition, thenCommands: [level2] };

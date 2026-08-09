@@ -49,7 +49,7 @@ void (async () => {
   const currentEnemies = () => game.enemies[game.mapId] || [];
   const saveKey = () => `runtime-v0:${content.manifest.gameId}:${content.manifest.version}`;
 
-  function stateOperandContext(process: CommandProcess): StateOperandContext {
+  function stateOperandContext(currentEventId?: string): StateOperandContext {
     return {
       switches: game.switches,
       variables: game.variables,
@@ -60,7 +60,7 @@ void (async () => {
       mapNumericId: currentMap().numericId,
       tileSize: currentMap().tileSize,
       characterPosition: target => {
-        const id = target.kind === 'player' ? 'player' : target.kind === 'thisEvent' ? process.eventId : target.eventId;
+        const id = target.kind === 'player' ? 'player' : target.kind === 'thisEvent' ? currentEventId : target.eventId;
         if (!id) return undefined;
         const runtimePosition = movementRuntime?.actor(id)?.position;
         if (runtimePosition) return runtimePosition;
@@ -69,7 +69,7 @@ void (async () => {
     };
   }
 
-  const conditionsMet = (conditions: Condition[] = []) => evaluateConditions(conditions, game);
+  const conditionsMet = (conditions: Condition[] = [], currentEventId?: string) => evaluateConditions(conditions, stateOperandContext(currentEventId));
   function freshGame() {
     const mapId = content.manifest.entryPoint.mapId;
     const start = content.player.start;
@@ -103,7 +103,7 @@ void (async () => {
   }
   function activeEvents(useRuntimePosition = true): ActiveEvent[] {
     return currentMap().events.flatMap(event => {
-      const resolved = resolveEventPage(event, conditionsMet);
+      const resolved = resolveEventPage(event, conditions => conditionsMet(conditions, event.id));
       if (!resolved) return [];
       const actor = useRuntimePosition ? movementRuntime?.actor(event.id) : undefined;
       return [{
@@ -193,14 +193,14 @@ void (async () => {
         openDialogue(command.speaker, command.text, command.choices || [], process);
         return refreshHud();
       }
-      if (command.type === 'conditional') process.commands.splice(process.index, 0, ...conditionalCommands(command, game));
+      if (command.type === 'conditional') process.commands.splice(process.index, 0, ...conditionalCommands(command, stateOperandContext(process.eventId)));
       if (command.type === 'setSwitch') {
-        const value = resolveSetSwitch(command, game.switches[command.id], stateOperandContext(process));
+        const value = resolveSetSwitch(command, game.switches[command.id], stateOperandContext(process.eventId));
         if (value === undefined) console.warn('Set switch ignored because its operand could not be resolved.', command);
         else game.switches[command.id] = value;
       }
       if (command.type === 'setVariable') {
-        const value = resolveSetVariable(command, game.variables[command.id], stateOperandContext(process));
+        const value = resolveSetVariable(command, game.variables[command.id], stateOperandContext(process.eventId));
         if (value === undefined) console.warn('Set variable ignored because its operand or result was invalid.', command);
         else game.variables[command.id] = value;
       }

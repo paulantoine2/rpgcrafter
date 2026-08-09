@@ -1,5 +1,5 @@
 import { Fragment, useEffect, useRef, useState, type ReactNode, type RefObject } from 'react';
-import type { Condition, ContentIssue, EventCommand, MapEvent, MapEventPage, MovementCommand, MovementRoute, SourceGame, SwitchOperand, TeleportMapSource, TeleportNumberSource, VariableComparison, VariableOperand, VariableOperation } from '@rpgcrafter/game-schema';
+import type { Condition, ContentIssue, EventCommand, MapEvent, MapEventPage, MovementCommand, MovementRoute, SourceGame, SwitchOperand, TeleportMapSource, TeleportNumberSource, VariableComparison, VariableConditionOperand, VariableOperand, VariableOperation } from '@rpgcrafter/game-schema';
 import { ArrowDown, ArrowUp, Asterisk, Bell, BringToFront, ChevronsUpDown, Clock3, Copy, Divide, Equal, Footprints, GitBranch, GitFork, GripVertical, Hand, Hash, HeartPulse, ImageIcon, Layers2, MapPin, MessageSquare, Minus, MousePointerClick, Package, PackageMinus, PackagePlus, Percent, Play, Plus, Save, Search, SendToBack, Settings2, Sparkles, ToggleLeft, Trash2, X, type LucideIcon } from 'lucide-react';
 import { Popover } from '@base-ui/react/popover';
 import { Button } from '@/components/ui/button';
@@ -37,7 +37,7 @@ type Props = {
   onRenameItem: (id: string, name: string) => void;
 };
 
-type ConditionActions = Pick<Props, 'onCreateSwitch' | 'onCreateVariable' | 'onRenameSwitch' | 'onRenameVariable' | 'onRenameItem'>;
+type ConditionActions = Pick<Props, 'onCreateSwitch' | 'onCreateVariable'>;
 
 const commandGroups: { label: string; types: EventCommand['type'][] }[] = [
   { label: 'Flow & state', types: ['conditional', 'wait', 'setSwitch', 'setVariable', 'save'] },
@@ -172,9 +172,9 @@ function RowActions({ index, count, onMove, onRemove, removeDisabled }: { index:
 }
 
 function defaultCondition(kind: Condition['kind'], game: SourceGame): Condition {
-  if (kind === 'switch') return { kind, id: Object.keys(game.initialState.switches)[0] || '', equals: true };
+  if (kind === 'switch') return { kind, id: Object.keys(game.initialState.switches)[0] || '', operand: { kind: 'constant', value: true } };
   if (kind === 'item') return { kind, id: Object.keys(game.items)[0] || '', amount: 1 };
-  return { kind, id: Object.keys(game.initialState.variables)[0] || '', operator: 'equal', value: 0 };
+  return { kind, id: Object.keys(game.initialState.variables)[0] || '', operator: 'equal', operand: { kind: 'constant', value: 0 } };
 }
 
 function ConditionIcon({ kind }: { kind: Condition['kind'] }) {
@@ -191,19 +191,27 @@ const normalizePickerQuery = (text: string) => text.normalize('NFKD').replace(/[
 
 function conditionPickerAnchor(trigger: HTMLButtonElement | null) {
   const panel = document.querySelector<HTMLElement>('[data-event-inspector-panel]');
-  if (!trigger || !panel) return trigger;
+  return pickerContainerEdgeAnchor(trigger, panel);
+}
+
+function containingPopoverAnchor(trigger: HTMLButtonElement | null) {
+  return pickerContainerEdgeAnchor(trigger, trigger?.closest<HTMLElement>('[role="dialog"]') ?? null);
+}
+
+function pickerContainerEdgeAnchor(trigger: HTMLButtonElement | null, container: HTMLElement | null) {
+  if (!trigger || !container) return trigger;
   return {
-    contextElement: panel,
+    contextElement: container,
     getBoundingClientRect: () => {
-      const panelRect = panel.getBoundingClientRect();
+      const containerRect = container.getBoundingClientRect();
       const triggerRect = trigger.getBoundingClientRect();
       return {
-        x: panelRect.left,
+        x: containerRect.left,
         y: triggerRect.top,
         top: triggerRect.top,
-        right: panelRect.left,
+        right: containerRect.left,
         bottom: triggerRect.bottom,
-        left: panelRect.left,
+        left: containerRect.left,
         width: 0,
         height: triggerRect.height,
       };
@@ -248,7 +256,7 @@ function NewSwitchPopover({ anchor, onCreate }: { anchor: RefObject<HTMLDivEleme
   </Popover.Root>;
 }
 
-function SwitchPicker({ game, value, equals, onChange, onCreate, autoOpen = false, onAutoOpen, showIcon = true, showValue = true, anchorToInspector = true }: { game: SourceGame; value: string; equals: boolean; onChange: (id: string) => void; onCreate: (name: string) => string; autoOpen?: boolean; onAutoOpen?: () => void; showIcon?: boolean; showValue?: boolean; anchorToInspector?: boolean }) {
+function SwitchPicker({ game, value, equals = true, comparison, onChange, onCreate, autoOpen = false, onAutoOpen, showIcon = true, showValue = true, anchorToInspector = true }: { game: SourceGame; value: string; equals?: boolean; comparison?: string; onChange: (id: string) => void; onCreate: (name: string) => string; autoOpen?: boolean; onAutoOpen?: () => void; showIcon?: boolean; showValue?: boolean; anchorToInspector?: boolean }) {
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState('');
   const triggerRef = useRef<HTMLButtonElement>(null);
@@ -262,9 +270,9 @@ function SwitchPicker({ game, value, equals, onChange, onCreate, autoOpen = fals
   const switches = Object.entries(game.initialState.switches).filter(([id, definition]) => !normalizedQuery || normalizePickerQuery(`${definition.name} ${id}`).includes(normalizedQuery));
   const selectedName = game.initialState.switches[value]?.name;
   return <Popover.Root open={open} onOpenChange={nextOpen => { setOpen(nextOpen); if (!nextOpen) setQuery(''); }}>
-    <Popover.Trigger render={<Button ref={triggerRef} type="button" variant="outline" className="min-w-0 flex-1 justify-between font-normal" aria-label="Choose switch">{showIcon && <ConditionSelectIcon kind="switch" />}<span className="min-w-0 flex-1 truncate text-left">{selectedName || 'Choose a switch'}</span>{showValue && <span className="shrink-0 text-muted-foreground">{equals ? 'True' : 'False'}</span>}<ChevronsUpDown className="text-muted-foreground" /></Button>} />
+    <Popover.Trigger render={<Toggle ref={triggerRef} type="button" variant="outline" pressed={open} className="min-w-0 flex-1 justify-between font-normal" aria-label="Choose switch">{showIcon && <ConditionSelectIcon kind="switch" />}<span className="min-w-0 flex-1 truncate text-left">{selectedName || 'Choose a switch'}</span>{showValue && <span className="shrink-0 text-muted-foreground">{comparison ?? (equals ? 'True' : 'False')}</span>}<ChevronsUpDown className="text-muted-foreground" /></Toggle>} />
     <Popover.Portal>
-      <Popover.Positioner anchor={() => anchorToInspector ? conditionPickerAnchor(triggerRef.current) : triggerRef.current} positionMethod="fixed" side="left" align="start" sideOffset={0} collisionAvoidance={{ side: 'none', align: 'shift', fallbackAxisSide: 'none' }} className="z-50">
+      <Popover.Positioner anchor={() => anchorToInspector ? conditionPickerAnchor(triggerRef.current) : containingPopoverAnchor(triggerRef.current)} positionMethod="fixed" side="left" align="start" sideOffset={0} collisionAvoidance={{ side: 'none', align: 'shift', fallbackAxisSide: 'none' }} className="z-50">
         <Popover.Popup ref={popupRef} className="w-64 rounded-lg bg-popover text-popover-foreground shadow-md ring-1 ring-foreground/10 outline-none">
           <SectionHeader className="border-t-0 border-b">
             <span className="min-w-0 flex-1">Switches</span>
@@ -330,6 +338,26 @@ const variableComparisonSymbols: Record<VariableComparison, string> = {
   lessThanOrEqual: '≤',
 };
 
+const variableComparisons: ReadonlyArray<{ type: VariableComparison; label: string }> = [
+  { type: 'equal', label: 'Equal' },
+  { type: 'notEqual', label: 'Not equal' },
+  { type: 'greaterThan', label: 'Greater than' },
+  { type: 'greaterThanOrEqual', label: 'Greater than or equal' },
+  { type: 'lessThan', label: 'Less than' },
+  { type: 'lessThanOrEqual', label: 'Less than or equal' },
+];
+
+function ComparisonTabs({ value, onChange }: { value: VariableComparison; onChange: (value: VariableComparison) => void }) {
+  return <div className="grid gap-1.5">
+    <span className={fieldLabelClassName}>Comparison</span>
+    <Tabs value={value} onValueChange={next => onChange(next as VariableComparison)}>
+      <TabsList className="w-full" aria-label="Variable comparison">
+        {variableComparisons.map(comparison => <IconButtonTooltip key={comparison.type} label={comparison.label}><TabsTrigger value={comparison.type} aria-label={comparison.label}>{variableComparisonSymbols[comparison.type]}</TabsTrigger></IconButtonTooltip>)}
+      </TabsList>
+    </Tabs>
+  </div>;
+}
+
 function VariablePicker({ game, condition, onChange, onCreate, autoOpen = false, onAutoOpen, showIcon = true, showComparison = true, anchorToInspector = true }: { game: SourceGame; condition: Extract<Condition, { kind: 'variable' }>; onChange: (id: string) => void; onCreate: (name: string) => string; autoOpen?: boolean; onAutoOpen?: () => void; showIcon?: boolean; showComparison?: boolean; anchorToInspector?: boolean }) {
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState('');
@@ -344,9 +372,9 @@ function VariablePicker({ game, condition, onChange, onCreate, autoOpen = false,
   const variables = Object.entries(game.initialState.variables).filter(([id, definition]) => !normalizedQuery || normalizePickerQuery(`${definition.name} ${id}`).includes(normalizedQuery));
   const selectedName = game.initialState.variables[condition.id]?.name;
   return <Popover.Root open={open} onOpenChange={nextOpen => { setOpen(nextOpen); if (!nextOpen) setQuery(''); }}>
-    <Popover.Trigger render={<Button ref={triggerRef} type="button" variant="outline" className="min-w-0 w-full justify-between font-normal" aria-label="Choose variable">{showIcon && <ConditionSelectIcon kind="variable" />}<span className="min-w-0 flex-1 truncate text-left">{selectedName || 'Choose a variable'}</span>{showComparison && <span className="shrink-0 text-muted-foreground">{variableComparisonSymbols[condition.operator]} {condition.value}</span>}<ChevronsUpDown className="text-muted-foreground" /></Button>} />
+    <Popover.Trigger render={<Toggle ref={triggerRef} type="button" variant="outline" pressed={open} className="min-w-0 w-full justify-between font-normal" aria-label="Choose variable">{showIcon && <ConditionSelectIcon kind="variable" />}<span className="min-w-0 flex-1 truncate text-left">{selectedName || 'Choose a variable'}</span>{showComparison && <span className="shrink-0 text-muted-foreground">{variableComparisonSymbols[condition.operator]} {variableOperandSummary(game, condition.operand)}</span>}<ChevronsUpDown className="text-muted-foreground" /></Toggle>} />
     <Popover.Portal>
-      <Popover.Positioner anchor={() => anchorToInspector ? conditionPickerAnchor(triggerRef.current) : triggerRef.current} positionMethod="fixed" side="left" align="start" sideOffset={0} collisionAvoidance={{ side: 'none', align: 'shift', fallbackAxisSide: 'none' }} className="z-50">
+      <Popover.Positioner anchor={() => anchorToInspector ? conditionPickerAnchor(triggerRef.current) : containingPopoverAnchor(triggerRef.current)} positionMethod="fixed" side="left" align="start" sideOffset={0} collisionAvoidance={{ side: 'none', align: 'shift', fallbackAxisSide: 'none' }} className="z-50">
         <Popover.Popup ref={popupRef} className="w-64 rounded-lg bg-popover text-popover-foreground shadow-md ring-1 ring-foreground/10 outline-none">
           <SectionHeader className="border-t-0 border-b">
             <span className="min-w-0 flex-1">Variables</span>
@@ -387,7 +415,7 @@ function ItemPicker({ game, value, amount, onChange, showIcon = true, anchorToIn
   return <Popover.Root open={open} onOpenChange={nextOpen => { setOpen(nextOpen); if (!nextOpen) setQuery(''); }}>
     <Popover.Trigger render={<Button ref={triggerRef} type="button" variant="outline" className="min-w-0 w-full justify-between font-normal" aria-label="Choose item">{showIcon && <ConditionSelectIcon kind="item" />}<span className="min-w-0 flex-1 truncate text-left">{selectedName || 'Choose an item'}</span><span className="shrink-0 text-muted-foreground">×{amount}</span><ChevronsUpDown className="text-muted-foreground" /></Button>} />
     <Popover.Portal>
-      <Popover.Positioner anchor={() => anchorToInspector ? conditionPickerAnchor(triggerRef.current) : triggerRef.current} positionMethod="fixed" side="left" align="start" sideOffset={0} collisionAvoidance={{ side: 'none', align: 'shift', fallbackAxisSide: 'none' }} className="z-50">
+      <Popover.Positioner anchor={() => anchorToInspector ? conditionPickerAnchor(triggerRef.current) : containingPopoverAnchor(triggerRef.current)} positionMethod="fixed" side="left" align="start" sideOffset={0} collisionAvoidance={{ side: 'none', align: 'shift', fallbackAxisSide: 'none' }} className="z-50">
         <Popover.Popup className="w-64 rounded-lg bg-popover text-popover-foreground shadow-md ring-1 ring-foreground/10 outline-none">
           <SectionHeader className="border-t-0 border-b">
             <span className="min-w-0 flex-1">Items</span>
@@ -411,60 +439,43 @@ function ItemPicker({ game, value, amount, onChange, showIcon = true, anchorToIn
   </Popover.Root>;
 }
 
-function ConditionSettings({ game, condition, onChange, onRenameSwitch, onRenameVariable, onRenameItem }: { game: SourceGame; condition: Condition; onChange: (condition: Condition) => void; onRenameSwitch: (id: string, name: string) => void; onRenameVariable: (id: string, name: string) => void; onRenameItem: (id: string, name: string) => void }) {
+function ConditionSettings({ game, mapId, condition, onChange, conditionActions, autoOpen = false, onAutoOpen }: { game: SourceGame; mapId: string; condition: Condition; onChange: (condition: Condition) => void; conditionActions: ConditionActions; autoOpen?: boolean; onAutoOpen?: () => void }) {
   const [open, setOpen] = useState(false);
   const triggerRef = useRef<HTMLButtonElement>(null);
-  const kindLabel = condition.kind === 'switch' ? 'Switch' : condition.kind === 'item' ? 'Item' : 'Variable';
-  const definitionName = condition.kind === 'switch'
-    ? game.initialState.switches[condition.id]?.name
-    : condition.kind === 'item'
-      ? game.items[condition.id]?.name
-      : game.initialState.variables[condition.id]?.name;
-  const rename = (name: string) => {
-    const nextName = name.trim();
-    if (!nextName || nextName === definitionName) return;
-    if (condition.kind === 'switch') onRenameSwitch(condition.id, nextName);
-    else if (condition.kind === 'item') onRenameItem(condition.id, nextName);
-    else onRenameVariable(condition.id, nextName);
-  };
+  const rowContent = conditionRowContent(game, condition);
+  const kindLabel = condition.kind === 'switch' ? 'Switch' : condition.kind === 'variable' ? 'Variable' : 'Item';
+  useEffect(() => {
+    if (!autoOpen) return;
+    setOpen(true);
+    onAutoOpen?.();
+  }, [autoOpen, onAutoOpen]);
   return <Popover.Root open={open} onOpenChange={setOpen}>
-    <IconButtonTooltip label={`${kindLabel} condition settings`}><Popover.Trigger render={<Button ref={triggerRef} type="button" variant="ghost" size="icon-sm" className="shrink-0" aria-label={`${kindLabel} condition settings`}><Settings2 /></Button>} /></IconButtonTooltip>
+    <Toggle ref={triggerRef} variant="outline" className="min-w-0 flex-1 justify-start font-normal" pressed={open} onPressedChange={setOpen} aria-label="Event condition" aria-haspopup="dialog" aria-expanded={open}>
+      <span className="shrink-0 text-muted-foreground [&_svg]:size-3.5"><ConditionIcon kind={condition.kind} /></span>
+      <span className="shrink-0 text-foreground">{kindLabel}</span>
+      <span className="ml-auto min-w-0 truncate text-right text-muted-foreground">{rowContent.value}</span>
+    </Toggle>
     <Popover.Portal>
       <Popover.Positioner anchor={() => conditionPickerAnchor(triggerRef.current)} positionMethod="fixed" side="left" align="start" sideOffset={0} collisionAvoidance={{ side: 'none', align: 'shift', fallbackAxisSide: 'none' }} className="z-50">
-        <Popover.Popup className="w-72 rounded-lg bg-popover text-popover-foreground shadow-md ring-1 ring-foreground/10 outline-none">
+        <Popover.Popup className="w-80 rounded-lg bg-popover text-popover-foreground shadow-md ring-1 ring-foreground/10 outline-none">
           <SectionHeader className="border-t-0 border-b">
-            <span className="min-w-0 flex-1">{kindLabel} condition</span>
+            <span className="min-w-0 flex-1">Condition</span>
             <SectionHeaderActions><IconButtonTooltip label="Close condition settings"><Button type="button" variant="ghost" size="icon-sm" aria-label="Close condition settings" onClick={() => setOpen(false)}><X /></Button></IconButtonTooltip></SectionHeaderActions>
           </SectionHeader>
-          <div className="space-y-3 p-3">
-            <Field label={`${kindLabel} name`}><Input key={`${condition.id}:${definitionName}`} defaultValue={definitionName || ''} disabled={!definitionName} onBlur={event => rename(event.currentTarget.value)} /></Field>
-            {condition.kind === 'switch'
-              ? <Field label="Expected value"><span className="flex items-center gap-2 text-xs"><Switch checked={condition.equals ?? true} onCheckedChange={equals => onChange({ ...condition, equals })} aria-label="Expected switch value" /><span>{(condition.equals ?? true) ? 'True' : 'False'}</span></span></Field>
-              : condition.kind === 'item'
-                ? <Field label="Required quantity"><NumberInput value={condition.amount ?? 1} min={1} onChange={amount => onChange({ ...condition, amount })} /></Field>
-                : <><Field label="Comparison"><EnumSelect value={condition.operator} values={Object.keys(variableComparisonSymbols) as VariableComparison[]} labels={{ equal: '= Equal', notEqual: '≠ Not equal', greaterThan: '> Greater than', greaterThanOrEqual: '≥ Greater than or equal', lessThan: '< Less than', lessThanOrEqual: '≤ Less than or equal' }} ariaLabel="Variable comparison" onChange={operator => onChange({ ...condition, operator })} /></Field><Field label="Value"><NumberInput value={condition.value} onChange={value => onChange({ ...condition, value })} /></Field></>}
-          </div>
+          <div className="p-3"><ConditionalConditionFields game={game} mapId={mapId} condition={condition} onChange={onChange} conditionActions={conditionActions} /></div>
         </Popover.Popup>
       </Popover.Positioner>
     </Popover.Portal>
   </Popover.Root>;
 }
 
-function ConditionsEditor({ game, value, onChange, onCreateSwitch, onCreateVariable, onRenameSwitch, onRenameVariable, onRenameItem, autoOpenSwitchIndex, autoOpenVariableIndex, onAutoOpenSwitch, onAutoOpenVariable, removeDisabled = false }: { game: SourceGame; value: Condition[]; onChange: (value: Condition[]) => void; onCreateSwitch: (name: string) => string; onCreateVariable: (name: string) => string; onRenameSwitch: (id: string, name: string) => void; onRenameVariable: (id: string, name: string) => void; onRenameItem: (id: string, name: string) => void; autoOpenSwitchIndex: number | null; autoOpenVariableIndex: number | null; onAutoOpenSwitch: () => void; onAutoOpenVariable: () => void; removeDisabled?: boolean }) {
+function ConditionsEditor({ game, mapId, value, onChange, onCreateSwitch, onCreateVariable, autoOpenSwitchIndex, autoOpenVariableIndex, onAutoOpenSwitch, onAutoOpenVariable, removeDisabled = false }: { game: SourceGame; mapId: string; value: Condition[]; onChange: (value: Condition[]) => void; onCreateSwitch: (name: string) => string; onCreateVariable: (name: string) => string; autoOpenSwitchIndex: number | null; autoOpenVariableIndex: number | null; onAutoOpenSwitch: () => void; onAutoOpenVariable: () => void; removeDisabled?: boolean }) {
   const update = (index: number, condition: Condition) => onChange(value.map((item, itemIndex) => itemIndex === index ? condition : item));
+  const conditionActions = { onCreateSwitch, onCreateVariable };
   return <div className="space-y-2">
-    {value.map((condition, index) => <div key={index} className="flex min-w-0 items-center gap-2">
-      {condition.kind === 'switch' && <div className="flex min-w-0 flex-1">
-        <SwitchPicker game={game} value={condition.id} equals={condition.equals ?? true} onChange={id => update(index, { ...condition, id })} onCreate={onCreateSwitch} autoOpen={autoOpenSwitchIndex === index} onAutoOpen={onAutoOpenSwitch} />
-      </div>}
-      {condition.kind === 'item' && <div className="min-w-0 flex-1">
-        <ItemPicker game={game} value={condition.id} amount={condition.amount ?? 1} onChange={id => update(index, { ...condition, id })} />
-      </div>}
-      {condition.kind === 'variable' && <div className="min-w-0 flex-1">
-        <VariablePicker game={game} condition={condition} onChange={id => update(index, { ...condition, id })} onCreate={onCreateVariable} autoOpen={autoOpenVariableIndex === index} onAutoOpen={onAutoOpenVariable} />
-      </div>}
-      <div className="-mr-1 flex shrink-0 items-center gap-0.5"><ConditionSettings game={game} condition={condition} onChange={next => update(index, next)} onRenameSwitch={onRenameSwitch} onRenameVariable={onRenameVariable} onRenameItem={onRenameItem} />
-        <IconButtonTooltip label={`Remove ${condition.kind} condition`}><Button type="button" variant="ghost" size="icon-sm" className="shrink-0" disabled={removeDisabled} onClick={() => onChange(value.filter((_, itemIndex) => itemIndex !== index))} aria-label={`Remove ${condition.kind} condition`}><Minus /></Button></IconButtonTooltip></div>
+    {value.map((condition, index) => <div key={index} className="flex min-w-0 items-center gap-1">
+      <ConditionSettings game={game} mapId={mapId} condition={condition} onChange={next => update(index, next)} conditionActions={conditionActions} autoOpen={autoOpenSwitchIndex === index || autoOpenVariableIndex === index} onAutoOpen={condition.kind === 'switch' ? onAutoOpenSwitch : condition.kind === 'variable' ? onAutoOpenVariable : undefined} />
+      <IconButtonTooltip label={`Remove ${condition.kind} condition`}><Button type="button" variant="ghost" size="icon-sm" className="-mr-1 shrink-0" disabled={removeDisabled} onClick={() => onChange(value.filter((_, itemIndex) => itemIndex !== index))} aria-label={`Remove ${condition.kind} condition`}><Minus /></Button></IconButtonTooltip>
     </div>)}
   </div>;
 }
@@ -574,7 +585,7 @@ function MovementRouteEditor({ value, onChange, showWait = true }: { value: Move
   </div>;
 }
 
-function ConditionalConditionFields({ game, condition, onChange, conditionActions }: { game: SourceGame; condition: Condition; onChange: (condition: Condition) => void; conditionActions: ConditionActions }) {
+function ConditionalConditionFields({ game, mapId, condition, onChange, conditionActions }: { game: SourceGame; mapId: string; condition: Condition; onChange: (condition: Condition) => void; conditionActions: ConditionActions }) {
   const conditionTypeLabels = { switch: 'Switch', variable: 'Variable', item: 'Item' } as const;
   return <div className="space-y-3">
     <Field label="Condition type">
@@ -582,18 +593,16 @@ function ConditionalConditionFields({ game, condition, onChange, conditionAction
     </Field>
     {condition.kind === 'switch' && <>
       <Field label="Switch">
-        <div className="flex min-w-0"><SwitchPicker game={game} value={condition.id} equals={condition.equals ?? true} onChange={id => onChange({ ...condition, id })} onCreate={conditionActions.onCreateSwitch} showIcon={false} anchorToInspector={false} /></div>
+        <div className="flex min-w-0"><SwitchPicker game={game} value={condition.id} onChange={id => onChange({ ...condition, id })} onCreate={conditionActions.onCreateSwitch} showIcon={false} showValue={false} anchorToInspector={false} /></div>
       </Field>
-      <Field label="Expected value"><span className="flex items-center gap-2 text-xs"><Switch checked={condition.equals ?? true} onCheckedChange={equals => onChange({ ...condition, equals })} aria-label="Expected switch value" /><span>{(condition.equals ?? true) ? 'True' : 'False'}</span></span></Field>
+      <SwitchOperandFields game={game} value={condition.operand} onChange={operand => onChange({ ...condition, operand })} conditionActions={conditionActions} />
     </>}
     {condition.kind === 'variable' && <>
       <Field label="Variable">
-        <VariablePicker game={game} condition={condition} onChange={id => onChange({ ...condition, id })} onCreate={conditionActions.onCreateVariable} showIcon={false} anchorToInspector={false} />
+        <VariablePicker game={game} condition={condition} onChange={id => onChange({ ...condition, id })} onCreate={conditionActions.onCreateVariable} showIcon={false} showComparison={false} anchorToInspector={false} />
       </Field>
-      <div className="grid grid-cols-[1fr_88px] gap-2">
-        <Field label="Comparison"><EnumSelect value={condition.operator} values={Object.keys(variableComparisonSymbols) as VariableComparison[]} labels={{ equal: '= Equal', notEqual: '≠ Not equal', greaterThan: '> Greater than', greaterThanOrEqual: '≥ Greater than or equal', lessThan: '< Less than', lessThanOrEqual: '≤ Less than or equal' }} ariaLabel="Variable comparison" onChange={operator => onChange({ ...condition, operator })} /></Field>
-        <Field label="Value"><NumberInput value={condition.value} ariaLabel="Value" onChange={value => onChange({ ...condition, value })} /></Field>
-      </div>
+      <ComparisonTabs value={condition.operator} onChange={operator => onChange({ ...condition, operator })} />
+      <VariableConditionOperandFields game={game} mapId={mapId} value={condition.operand} onChange={operand => onChange({ ...condition, operand })} conditionActions={conditionActions} />
     </>}
     {condition.kind === 'item' && <>
       <Field label="Item">
@@ -642,47 +651,62 @@ function defaultVariableOperand(kind: VariableOperand['kind'], game: SourceGame)
   return { kind, data: { kind: 'itemAmount', itemId: Object.keys(game.items)[0] || '' } };
 }
 
-function SetSwitchFields({ game, action, onChange, conditionActions, autoOpenMissingReference, onAutoOpen }: { game: SourceGame; action: SetSwitchCommand; onChange: (command: SetSwitchCommand) => void; conditionActions: ConditionActions; autoOpenMissingReference: boolean; onAutoOpen: () => void }) {
+function SwitchOperandFields({ game, value, onChange, conditionActions }: { game: SourceGame; value: SwitchOperand; onChange: (operand: SwitchOperand) => void; conditionActions: ConditionActions }) {
   const itemIds = Object.keys(game.items);
   const equipmentItemIds = itemIds.filter(id => game.items[id].type === 'equipment');
   const skillIds = Object.keys(game.skills);
-  const switchData = action.operation === 'set' && action.operand.kind === 'gameData' ? action.operand.data : undefined;
+  const data = value.kind === 'gameData' ? value.data : undefined;
   return <div className="space-y-3">
-    <Field label="Switch"><SwitchPicker game={game} value={action.id} equals={action.operation === 'set' && action.operand.kind === 'constant' ? action.operand.value : true} onChange={id => onChange({ ...action, id })} onCreate={conditionActions.onCreateSwitch} autoOpen={autoOpenMissingReference && !game.initialState.switches[action.id]} onAutoOpen={onAutoOpen} showIcon={false} showValue={false} anchorToInspector={false} /></Field>
-    <OperationTabs value={action.operation} operations={switchOperations} label="Switch operation" onChange={operation => onChange(operation === 'toggle' ? { type: 'setSwitch', id: action.id, operation } : { type: 'setSwitch', id: action.id, operation, operand: { kind: 'constant', value: true } })} />
-    {action.operation === 'set' && <>
-      <Field label="Operand"><EnumSelect value={action.operand.kind} values={['constant', 'switch', 'gameData'] as const} labels={{ constant: 'Fixed value', switch: 'Switch', gameData: 'Game data' }} ariaLabel="Switch operand type" onChange={kind => onChange({ ...action, operand: defaultSwitchOperand(kind, game) })} /></Field>
-      {action.operand.kind === 'constant' && <label className="flex items-center gap-2 text-xs"><Checkbox checked={action.operand.value} onCheckedChange={value => onChange({ ...action, operand: { kind: 'constant', value } })} />On</label>}
-      {action.operand.kind === 'switch' && <SwitchPicker game={game} value={action.operand.switchId} equals={true} onChange={switchId => onChange({ ...action, operand: { kind: 'switch', switchId } })} onCreate={conditionActions.onCreateSwitch} showIcon={false} showValue={false} anchorToInspector={false} />}
-      {switchData && <>
-        <Field label="Game data"><EnumSelect value={switchData.kind} values={['hasItem', 'itemEquipped', 'skillUnlocked'] as const} labels={{ hasItem: 'Item in inventory', itemEquipped: 'Item equipped', skillUnlocked: 'Skill unlocked' }} ariaLabel="Switch game data" onChange={kind => onChange({ ...action, operand: { kind: 'gameData', data: kind === 'skillUnlocked' ? { kind, skillId: skillIds[0] || '' } : { kind, itemId: (kind === 'itemEquipped' ? equipmentItemIds : itemIds)[0] || '' } } })} /></Field>
-        {(switchData.kind === 'hasItem' || switchData.kind === 'itemEquipped') && <Field label="Item"><EnumSelect value={switchData.itemId} values={switchData.kind === 'itemEquipped' ? equipmentItemIds : itemIds} labels={Object.fromEntries(Object.entries(game.items).map(([id, item]) => [id, item.name]))} ariaLabel="Game data item" onChange={itemId => onChange({ ...action, operand: { kind: 'gameData', data: { kind: switchData.kind, itemId } } })} /></Field>}
-        {switchData.kind === 'skillUnlocked' && <Field label="Skill"><EnumSelect value={switchData.skillId} values={skillIds} labels={Object.fromEntries(Object.entries(game.skills).map(([id, skill]) => [id, skill.name]))} ariaLabel="Game data skill" onChange={skillId => onChange({ ...action, operand: { kind: 'gameData', data: { kind: 'skillUnlocked', skillId } } })} /></Field>}
-      </>}
+    <Field label="Operand"><EnumSelect value={value.kind} values={['constant', 'switch', 'gameData'] as const} labels={{ constant: 'Fixed value', switch: 'Switch', gameData: 'Game data' }} ariaLabel="Switch operand type" onChange={kind => onChange(defaultSwitchOperand(kind, game))} /></Field>
+    {value.kind === 'constant' && <label className="flex items-center gap-2 text-xs"><Checkbox checked={value.value} onCheckedChange={nextValue => onChange({ kind: 'constant', value: nextValue })} aria-label="Fixed switch value" /><span>{value.value ? 'On' : 'Off'}</span></label>}
+    {value.kind === 'switch' && <SwitchPicker game={game} value={value.switchId} equals={true} onChange={switchId => onChange({ kind: 'switch', switchId })} onCreate={conditionActions.onCreateSwitch} showIcon={false} showValue={false} anchorToInspector={false} />}
+    {data && <>
+      <Field label="Game data"><EnumSelect value={data.kind} values={['hasItem', 'itemEquipped', 'skillUnlocked'] as const} labels={{ hasItem: 'Item in inventory', itemEquipped: 'Item equipped', skillUnlocked: 'Skill unlocked' }} ariaLabel="Switch game data" onChange={kind => onChange({ kind: 'gameData', data: kind === 'skillUnlocked' ? { kind, skillId: skillIds[0] || '' } : { kind, itemId: (kind === 'itemEquipped' ? equipmentItemIds : itemIds)[0] || '' } })} /></Field>
+      {(data.kind === 'hasItem' || data.kind === 'itemEquipped') && <Field label="Item"><EnumSelect value={data.itemId} values={data.kind === 'itemEquipped' ? equipmentItemIds : itemIds} labels={Object.fromEntries(Object.entries(game.items).map(([id, item]) => [id, item.name]))} ariaLabel="Game data item" onChange={itemId => onChange({ kind: 'gameData', data: { kind: data.kind, itemId } })} /></Field>}
+      {data.kind === 'skillUnlocked' && <Field label="Skill"><EnumSelect value={data.skillId} values={skillIds} labels={Object.fromEntries(Object.entries(game.skills).map(([id, skill]) => [id, skill.name]))} ariaLabel="Game data skill" onChange={skillId => onChange({ kind: 'gameData', data: { kind: 'skillUnlocked', skillId } })} /></Field>}
     </>}
   </div>;
 }
 
-function SetVariableFields({ game, mapId, action, onChange, conditionActions, autoOpenMissingReference, onAutoOpen }: { game: SourceGame; mapId: string; action: SetVariableCommand; onChange: (command: SetVariableCommand) => void; conditionActions: ConditionActions; autoOpenMissingReference: boolean; onAutoOpen: () => void }) {
-  const variableIds = Object.keys(game.initialState.variables);
+function VariableOperandFields({ game, mapId, value, onChange, conditionActions, allowRandom = true }: { game: SourceGame; mapId: string; value: VariableOperand; onChange: (operand: VariableOperand) => void; conditionActions: ConditionActions; allowRandom?: boolean }) {
   const itemIds = Object.keys(game.items);
   const eventIds = game.maps[mapId].events.map(event => event.id);
-  const data = action.operand.kind === 'gameData' ? action.operand.data : undefined;
-  const randomOperand = action.operand.kind === 'random' ? action.operand : undefined;
+  const data = value.kind === 'gameData' ? value.data : undefined;
+  const randomOperand = value.kind === 'random' ? value : undefined;
   const targetValue = data?.kind === 'characterCoordinate' ? (data.target.kind === 'event' ? `event:${data.target.eventId}` : data.target.kind) : 'player';
   return <div className="space-y-3">
-    <Field label="Variable"><VariablePicker game={game} condition={{ kind: 'variable', id: action.id, operator: 'equal', value: 0 }} onChange={id => onChange({ ...action, id })} onCreate={conditionActions.onCreateVariable} autoOpen={autoOpenMissingReference && !game.initialState.variables[action.id]} onAutoOpen={onAutoOpen} showIcon={false} showComparison={false} anchorToInspector={false} /></Field>
-    <OperationTabs value={action.operation} operations={variableOperations} label="Variable operation" onChange={operation => onChange({ ...action, operation })} />
-    <Field label="Operand"><EnumSelect value={action.operand.kind} values={['constant', 'variable', 'random', 'gameData'] as const} labels={{ constant: 'Fixed value', variable: 'Variable', random: 'Random range', gameData: 'Game data' }} ariaLabel="Variable operand type" onChange={kind => onChange({ ...action, operand: defaultVariableOperand(kind, game) })} /></Field>
-    {action.operand.kind === 'constant' && <Field label="Value"><NumberInput value={action.operand.value} onChange={value => onChange({ ...action, operand: { kind: 'constant', value } })} /></Field>}
-    {action.operand.kind === 'variable' && <VariablePicker game={game} condition={{ kind: 'variable', id: action.operand.variableId, operator: 'equal', value: 0 }} onChange={variableId => onChange({ ...action, operand: { kind: 'variable', variableId } })} onCreate={conditionActions.onCreateVariable} showIcon={false} showComparison={false} anchorToInspector={false} />}
-    {randomOperand && <div className="grid grid-cols-2 gap-2"><Field label="Minimum"><NumberInput value={randomOperand.min} onChange={min => onChange({ ...action, operand: { ...randomOperand, min } })} /></Field><Field label="Maximum"><NumberInput value={randomOperand.max} onChange={max => onChange({ ...action, operand: { ...randomOperand, max } })} /></Field></div>}
+    <Field label="Operand"><EnumSelect value={value.kind} values={allowRandom ? ['constant', 'variable', 'random', 'gameData'] as const : ['constant', 'variable', 'gameData'] as const} labels={{ constant: 'Fixed value', variable: 'Variable', random: 'Random range', gameData: 'Game data' }} ariaLabel="Variable operand type" onChange={kind => onChange(defaultVariableOperand(kind, game))} /></Field>
+    {value.kind === 'constant' && <Field label="Value"><NumberInput value={value.value} onChange={nextValue => onChange({ kind: 'constant', value: nextValue })} /></Field>}
+    {value.kind === 'variable' && <VariablePicker game={game} condition={{ kind: 'variable', id: value.variableId, operator: 'equal', operand: { kind: 'constant', value: 0 } }} onChange={variableId => onChange({ kind: 'variable', variableId })} onCreate={conditionActions.onCreateVariable} showIcon={false} showComparison={false} anchorToInspector={false} />}
+    {randomOperand && <div className="grid grid-cols-2 gap-2"><Field label="Minimum"><NumberInput value={randomOperand.min} onChange={min => onChange({ ...randomOperand, min })} /></Field><Field label="Maximum"><NumberInput value={randomOperand.max} onChange={max => onChange({ ...randomOperand, max })} /></Field></div>}
     {data && <>
-      <Field label="Game data"><EnumSelect value={data.kind} values={['itemAmount', 'playerStat', 'mapId', 'characterCoordinate'] as const} labels={{ itemAmount: 'Item quantity', playerStat: 'Player stat', mapId: 'Current map ID', characterCoordinate: 'Character coordinate' }} ariaLabel="Variable game data" onChange={kind => onChange({ ...action, operand: { kind: 'gameData', data: kind === 'itemAmount' ? { kind, itemId: itemIds[0] || '' } : kind === 'playerStat' ? { kind, stat: 'hp' } : kind === 'mapId' ? { kind } : { kind, target: { kind: 'player' }, axis: 'x' } } })} /></Field>
-      {data.kind === 'itemAmount' && <Field label="Item"><EnumSelect value={data.itemId} values={itemIds} labels={Object.fromEntries(Object.entries(game.items).map(([id, item]) => [id, item.name]))} ariaLabel="Quantity item" onChange={itemId => onChange({ ...action, operand: { kind: 'gameData', data: { kind: 'itemAmount', itemId } } })} /></Field>}
-      {data.kind === 'playerStat' && <Field label="Stat"><EnumSelect value={data.stat} values={['hp', 'maxHp', 'level', 'xp'] as const} labels={{ hp: 'HP', maxHp: 'Maximum HP', level: 'Level', xp: 'XP' }} ariaLabel="Player stat" onChange={stat => onChange({ ...action, operand: { kind: 'gameData', data: { kind: 'playerStat', stat } } })} /></Field>}
-      {data.kind === 'characterCoordinate' && <div className="grid grid-cols-[1fr_72px] gap-2"><Field label="Character"><EnumSelect value={targetValue} values={['player', 'thisEvent', ...eventIds.map(id => `event:${id}`)]} labels={{ player: 'Player', thisEvent: 'This event' }} ariaLabel="Coordinate character" onChange={value => onChange({ ...action, operand: { kind: 'gameData', data: { ...data, target: value === 'player' ? { kind: 'player' } : value === 'thisEvent' ? { kind: 'thisEvent' } : { kind: 'event', eventId: value.slice(6) } } } })} /></Field><Field label="Axis"><EnumSelect value={data.axis} values={['x', 'y'] as const} labels={{ x: 'X', y: 'Y' }} ariaLabel="Coordinate axis" onChange={axis => onChange({ ...action, operand: { kind: 'gameData', data: { ...data, axis } } })} /></Field></div>}
+      <Field label="Game data"><EnumSelect value={data.kind} values={['itemAmount', 'playerStat', 'mapId', 'characterCoordinate'] as const} labels={{ itemAmount: 'Item quantity', playerStat: 'Player stat', mapId: 'Current map ID', characterCoordinate: 'Character coordinate' }} ariaLabel="Variable game data" onChange={kind => onChange({ kind: 'gameData', data: kind === 'itemAmount' ? { kind, itemId: itemIds[0] || '' } : kind === 'playerStat' ? { kind, stat: 'hp' } : kind === 'mapId' ? { kind } : { kind, target: { kind: 'player' }, axis: 'x' } })} /></Field>
+      {data.kind === 'itemAmount' && <Field label="Item"><EnumSelect value={data.itemId} values={itemIds} labels={Object.fromEntries(Object.entries(game.items).map(([id, item]) => [id, item.name]))} ariaLabel="Quantity item" onChange={itemId => onChange({ kind: 'gameData', data: { kind: 'itemAmount', itemId } })} /></Field>}
+      {data.kind === 'playerStat' && <Field label="Stat"><EnumSelect value={data.stat} values={['hp', 'maxHp', 'level', 'xp'] as const} labels={{ hp: 'HP', maxHp: 'Maximum HP', level: 'Level', xp: 'XP' }} ariaLabel="Player stat" onChange={stat => onChange({ kind: 'gameData', data: { kind: 'playerStat', stat } })} /></Field>}
+      {data.kind === 'characterCoordinate' && <div className="grid grid-cols-[1fr_72px] gap-2"><Field label="Character"><EnumSelect value={targetValue} values={['player', 'thisEvent', ...eventIds.map(id => `event:${id}`)]} labels={{ player: 'Player', thisEvent: 'This event' }} ariaLabel="Coordinate character" onChange={nextValue => onChange({ kind: 'gameData', data: { ...data, target: nextValue === 'player' ? { kind: 'player' } : nextValue === 'thisEvent' ? { kind: 'thisEvent' } : { kind: 'event', eventId: nextValue.slice(6) } } })} /></Field><Field label="Axis"><EnumSelect value={data.axis} values={['x', 'y'] as const} labels={{ x: 'X', y: 'Y' }} ariaLabel="Coordinate axis" onChange={axis => onChange({ kind: 'gameData', data: { ...data, axis } })} /></Field></div>}
     </>}
+  </div>;
+}
+
+function VariableConditionOperandFields({ game, mapId, value, onChange, conditionActions }: { game: SourceGame; mapId: string; value: VariableConditionOperand; onChange: (operand: VariableConditionOperand) => void; conditionActions: ConditionActions }) {
+  return <VariableOperandFields game={game} mapId={mapId} value={value} allowRandom={false} conditionActions={conditionActions} onChange={operand => {
+    if (operand.kind !== 'random') onChange(operand);
+  }} />;
+}
+
+function SetSwitchFields({ game, action, onChange, conditionActions, autoOpenMissingReference, onAutoOpen }: { game: SourceGame; action: SetSwitchCommand; onChange: (command: SetSwitchCommand) => void; conditionActions: ConditionActions; autoOpenMissingReference: boolean; onAutoOpen: () => void }) {
+  return <div className="space-y-3">
+    <Field label="Switch"><SwitchPicker game={game} value={action.id} equals={true} onChange={id => onChange({ ...action, id })} onCreate={conditionActions.onCreateSwitch} autoOpen={autoOpenMissingReference && !game.initialState.switches[action.id]} onAutoOpen={onAutoOpen} showIcon={false} showValue={false} anchorToInspector={false} /></Field>
+    <OperationTabs value={action.operation} operations={switchOperations} label="Switch operation" onChange={operation => onChange(operation === 'toggle' ? { type: 'setSwitch', id: action.id, operation } : { type: 'setSwitch', id: action.id, operation, operand: { kind: 'constant', value: true } })} />
+    {action.operation === 'set' && <SwitchOperandFields game={game} value={action.operand} onChange={operand => onChange({ ...action, operand })} conditionActions={conditionActions} />}
+  </div>;
+}
+
+function SetVariableFields({ game, mapId, action, onChange, conditionActions, autoOpenMissingReference, onAutoOpen }: { game: SourceGame; mapId: string; action: SetVariableCommand; onChange: (command: SetVariableCommand) => void; conditionActions: ConditionActions; autoOpenMissingReference: boolean; onAutoOpen: () => void }) {
+  return <div className="space-y-3">
+    <Field label="Variable"><VariablePicker game={game} condition={{ kind: 'variable', id: action.id, operator: 'equal', operand: { kind: 'constant', value: 0 } }} onChange={id => onChange({ ...action, id })} onCreate={conditionActions.onCreateVariable} autoOpen={autoOpenMissingReference && !game.initialState.variables[action.id]} onAutoOpen={onAutoOpen} showIcon={false} showComparison={false} anchorToInspector={false} /></Field>
+    <OperationTabs value={action.operation} operations={variableOperations} label="Variable operation" onChange={operation => onChange({ ...action, operation })} />
+    <VariableOperandFields game={game} mapId={mapId} value={action.operand} onChange={operand => onChange({ ...action, operand })} conditionActions={conditionActions} />
   </div>;
 }
 
@@ -708,7 +732,7 @@ function CommandFields({ game, mapId, command, onChange, conditionalDepth, condi
   </div>;
   if (action.type === 'conditional') {
     return <div className="space-y-3">
-      <ConditionalConditionFields game={game} condition={action.condition} conditionActions={conditionActions} onChange={condition => onChange({ ...action, condition })} />
+      <ConditionalConditionFields game={game} mapId={mapId} condition={action.condition} conditionActions={conditionActions} onChange={condition => onChange({ ...action, condition })} />
       <label className="flex items-center gap-2 text-xs"><Checkbox checked={Boolean(action.elseCommands)} onCheckedChange={enabled => {
         if (enabled) onChange({ ...action, elseCommands: [] });
         else { const next = { ...action }; delete next.elseCommands; onChange(next); }
@@ -757,13 +781,16 @@ function variableOperandSummary(game: SourceGame, operand: VariableOperand) {
   return `${target} ${operand.data.axis.toUpperCase()}`;
 }
 
+function conditionRowContent(game: SourceGame, condition: Condition): { label: string; value: string } {
+  if (condition.kind === 'switch') return { label: 'If', value: `${game.initialState.switches[condition.id]?.name || condition.id || 'Choose a switch'} = ${switchOperandSummary(game, condition.operand)}` };
+  if (condition.kind === 'item') return { label: 'If', value: `${game.items[condition.id]?.name || condition.id || 'Choose an item'} ×${condition.amount ?? 1}` };
+  return { label: 'If', value: `${game.initialState.variables[condition.id]?.name || condition.id || 'Choose a variable'} ${variableComparisonSymbols[condition.operator]} ${variableOperandSummary(game, condition.operand)}` };
+}
+
 function commandRowContent(game: SourceGame, command: EventCommand): { label: string; value?: string } {
   if (command.type === 'dialogue') return { label: 'Dialogue', value: command.speaker || 'No speaker' };
   if (command.type === 'conditional') {
-    const condition = command.condition;
-    if (condition.kind === 'switch') return { label: 'If', value: `${game.initialState.switches[condition.id]?.name || condition.id} is ${(condition.equals ?? true) ? 'true' : 'false'}` };
-    if (condition.kind === 'item') return { label: 'If', value: `${game.items[condition.id]?.name || condition.id} ×${condition.amount ?? 1}` };
-    return { label: 'If', value: `${game.initialState.variables[condition.id]?.name || condition.id} ${variableComparisonSymbols[condition.operator]} ${condition.value}` };
+    return conditionRowContent(game, command.condition);
   }
   if (command.type === 'setSwitch') return { label: command.operation === 'toggle' ? 'Toggle' : 'Set', value: `${game.initialState.switches[command.id]?.name || command.id || 'Choose a switch'}${command.operation === 'set' ? ` · ${switchOperandSummary(game, command.operand)}` : ''}` };
   if (command.type === 'setVariable') return { label: 'Variable', value: `${game.initialState.variables[command.id]?.name || command.id || 'Choose a variable'} ${variableOperationSymbols[command.operation]} ${variableOperandSummary(game, command.operand)}` };
@@ -945,7 +972,7 @@ function defaultPage(): MapEventPage {
   };
 }
 
-export function EventInspector({ game, mapId, event, issues, assetUrls, sprites, onChangeEvent, onSelectPage, onImportSprite, onCreateSwitch, onCreateVariable, onRenameSwitch, onRenameVariable, onRenameItem }: Props) {
+export function EventInspector({ game, mapId, event, issues, assetUrls, sprites, onChangeEvent, onSelectPage, onImportSprite, onCreateSwitch, onCreateVariable }: Props) {
   const [spritePickerOpen, setSpritePickerOpen] = useState(false);
   const spritePickerAnchorRef = useRef<HTMLDivElement>(null);
   const [pageIndex, setPageIndex] = useState(0);
@@ -1054,7 +1081,7 @@ export function EventInspector({ game, mapId, event, issues, assetUrls, sprites,
         setAutoOpenSwitchConditionIndex(condition.kind === 'switch' ? nextConditions.length - 1 : null);
         setAutoOpenVariableConditionIndex(condition.kind === 'variable' ? nextConditions.length - 1 : null);
       }} />}>
-        {editorConditions.length > 0 ? <ConditionsEditor game={game} value={editorConditions} onChange={changeConditions} onCreateSwitch={onCreateSwitch} onCreateVariable={onCreateVariable} onRenameSwitch={onRenameSwitch} onRenameVariable={onRenameVariable} onRenameItem={onRenameItem} autoOpenSwitchIndex={autoOpenSwitchConditionIndex} autoOpenVariableIndex={autoOpenVariableConditionIndex} onAutoOpenSwitch={() => setAutoOpenSwitchConditionIndex(null)} onAutoOpenVariable={() => setAutoOpenVariableConditionIndex(null)} /> : null}
+        {editorConditions.length > 0 ? <ConditionsEditor game={game} mapId={mapId} value={editorConditions} onChange={changeConditions} onCreateSwitch={onCreateSwitch} onCreateVariable={onCreateVariable} autoOpenSwitchIndex={autoOpenSwitchConditionIndex} autoOpenVariableIndex={autoOpenVariableConditionIndex} onAutoOpenSwitch={() => setAutoOpenSwitchConditionIndex(null)} onAutoOpenVariable={() => setAutoOpenVariableConditionIndex(null)} /> : null}
       </Section>
       <Section title="Trigger"><Tabs value={page.trigger.type} onValueChange={value => updateTriggerType(value as MapEventPage['trigger']['type'])}>
         <div className="grid gap-1.5">
@@ -1072,7 +1099,7 @@ export function EventInspector({ game, mapId, event, issues, assetUrls, sprites,
         const nextContents = [...(draftContents || page.contents), command];
         if (hasUnresolvedCommandReferences(game, nextContents)) setDraftContents(nextContents);
         else updatePage({ ...page, contents: nextContents });
-      }} />}><CommandsEditor game={game} mapId={mapId} value={draftContents || page.contents} conditionActions={{ onCreateSwitch, onCreateVariable, onRenameSwitch, onRenameVariable, onRenameItem }} showAddControl={false} autoOpenCommand={autoOpenCommand} onAutoOpenCommand={() => setAutoOpenCommand(null)} onCommandAdded={setAutoOpenCommand} onChange={contents => { setDraftContents(null); updatePage({ ...page, contents }); }} /></Section>
+      }} />}><CommandsEditor game={game} mapId={mapId} value={draftContents || page.contents} conditionActions={{ onCreateSwitch, onCreateVariable }} showAddControl={false} autoOpenCommand={autoOpenCommand} onAutoOpenCommand={() => setAutoOpenCommand(null)} onCommandAdded={setAutoOpenCommand} onChange={contents => { setDraftContents(null); updatePage({ ...page, contents }); }} /></Section>
       <Section title="Sprite">
         <Popover.Root open={spritePickerOpen} onOpenChange={setSpritePickerOpen}>
           <Attachment ref={spritePickerAnchorRef} state={page.sprite ? 'done' : 'idle'} className="w-full">

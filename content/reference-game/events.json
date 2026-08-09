@@ -5,7 +5,10 @@
         {
           "kind": "switch",
           "id": "questAccepted",
-          "equals": false
+          "operand": {
+            "kind": "constant",
+            "value": false
+          }
         }
       ],
       "text": "Speak to the mayor of Dawnvale."
@@ -15,12 +18,18 @@
         {
           "kind": "switch",
           "id": "questAccepted",
-          "equals": true
+          "operand": {
+            "kind": "constant",
+            "value": true
+          }
         },
         {
           "kind": "switch",
           "id": "keyChestOpened",
-          "equals": false
+          "operand": {
+            "kind": "constant",
+            "value": false
+          }
         }
       ],
       "text": "Cross the Misty Path and find the Sanctuary Key."
@@ -30,12 +39,18 @@
         {
           "kind": "switch",
           "id": "keyChestOpened",
-          "equals": true
+          "operand": {
+            "kind": "constant",
+            "value": true
+          }
         },
         {
           "kind": "switch",
           "id": "guardianDoorOpen",
-          "equals": false
+          "operand": {
+            "kind": "constant",
+            "value": false
+          }
         }
       ],
       "text": "Open the Guardian's door."
@@ -45,12 +60,18 @@
         {
           "kind": "switch",
           "id": "guardianDoorOpen",
-          "equals": true
+          "operand": {
+            "kind": "constant",
+            "value": true
+          }
         },
         {
           "kind": "switch",
           "id": "bossDefeated",
-          "equals": false
+          "operand": {
+            "kind": "constant",
+            "value": false
+          }
         }
       ],
       "text": "Defeat the Drowned Guardian."
@@ -60,12 +81,18 @@
         {
           "kind": "switch",
           "id": "bossDefeated",
-          "equals": true
+          "operand": {
+            "kind": "constant",
+            "value": true
+          }
         },
         {
           "kind": "switch",
           "id": "questCompleted",
-          "equals": false
+          "operand": {
+            "kind": "constant",
+            "value": false
+          }
         }
       ],
       "text": "Bring the Crystal Heart back to the mayor."
@@ -75,7 +102,10 @@
         {
           "kind": "switch",
           "id": "questCompleted",
-          "equals": true
+          "operand": {
+            "kind": "constant",
+            "value": true
+          }
         }
       ],
       "text": "The mist clears. Your adventure is complete."

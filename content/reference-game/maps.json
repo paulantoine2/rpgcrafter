@@ -9556,7 +9556,10 @@
               {
                 "kind": "switch",
                 "id": "questAccepted",
-                "equals": true
+                "operand": {
+                  "kind": "constant",
+                  "value": true
+                }
               }
             ],
             "movement": {
@@ -9644,7 +9647,10 @@
               {
                 "kind": "switch",
                 "id": "questAccepted",
-                "equals": false
+                "operand": {
+                  "kind": "constant",
+                  "value": false
+                }
               }
             ],
             "sprite": {
@@ -9718,12 +9724,18 @@
               {
                 "kind": "switch",
                 "id": "bossDefeated",
-                "equals": true
+                "operand": {
+                  "kind": "constant",
+                  "value": true
+                }
               },
               {
                 "kind": "switch",
                 "id": "questCompleted",
-                "equals": false
+                "operand": {
+                  "kind": "constant",
+                  "value": false
+                }
               },
               {
                 "kind": "item",
@@ -9796,7 +9808,10 @@
               {
                 "kind": "switch",
                 "id": "questCompleted",
-                "equals": true
+                "operand": {
+                  "kind": "constant",
+                  "value": true
+                }
               }
             ],
             "sprite": {
@@ -10746,7 +10761,10 @@
               {
                 "kind": "switch",
                 "id": "questAccepted",
-                "equals": true
+                "operand": {
+                  "kind": "constant",
+                  "value": true
+                }
               }
             ],
             "movement": {
@@ -13957,12 +13975,18 @@
               {
                 "kind": "switch",
                 "id": "keyChestOpened",
-                "equals": false
+                "operand": {
+                  "kind": "constant",
+                  "value": false
+                }
               },
               {
                 "kind": "switch",
                 "id": "keyChestOpened",
-                "equals": false
+                "operand": {
+                  "kind": "constant",
+                  "value": false
+                }
               }
             ],
             "sprite": {
@@ -14034,7 +14058,10 @@
               {
                 "kind": "switch",
                 "id": "keyChestOpened",
-                "equals": false
+                "operand": {
+                  "kind": "constant",
+                  "value": false
+                }
               }
             ],
             "sprite": {
@@ -14085,7 +14112,10 @@
               {
                 "kind": "switch",
                 "id": "guardianDoorOpen",
-                "equals": false
+                "operand": {
+                  "kind": "constant",
+                  "value": false
+                }
               },
               {
                 "kind": "item",
@@ -14164,7 +14194,10 @@
               {
                 "kind": "switch",
                 "id": "guardianDoorOpen",
-                "equals": false
+                "operand": {
+                  "kind": "constant",
+                  "value": false
+                }
               }
             ],
             "sprite": {
@@ -17970,7 +18003,11 @@
             "conditions": [
               {
                 "kind": "switch",
-                "id": "bossDefeated"
+                "id": "bossDefeated",
+                "operand": {
+                  "kind": "constant",
+                  "value": true
+                }
               }
             ],
             "movement": {

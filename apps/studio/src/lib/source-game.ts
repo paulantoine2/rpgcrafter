@@ -132,7 +132,7 @@ function safeId(value: string) {
 export function createEmptyProject(title: string, requestedId?: string): ProjectBundle {
   const gameId = `game.${safeId(requestedId || title)}`;
   const game = assertSourceGame({
-    manifest: { schemaVersion: '0.10', engineRange: '>=0.10 <0.11', gameId, version: '0.1.0', nextMapNumericId: 2, entryPoint: { mapId: 'map-1', spawnId: 'spawn-1' }, title, contentRating: 'all' },
+    manifest: { schemaVersion: '0.11', engineRange: '>=0.11 <0.12', gameId, version: '0.1.0', nextMapNumericId: 2, entryPoint: { mapId: 'map-1', spawnId: 'spawn-1' }, title, contentRating: 'all' },
     tilesets: {},
     maps: { 'map-1': createDefaultMap('map-1', 1, 'Map 1', 20, 15) },
     actors: { player: { id: 'player', name: 'Player', start: { x: 1.5, y: 1.5, planeId: 'plane-1' }, stats: { maxHp: 100, level: 1, xp: 0 }, primaryAttack: 'basic-attack', skillSlots: {}, unlockedSkills: ['basic-attack'] } },

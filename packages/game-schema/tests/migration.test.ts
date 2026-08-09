@@ -80,7 +80,7 @@ describe('V0.4 migration', () => {
     const result = parseSourceGame(legacy);
     expect(result.success).toBe(true);
     if (!result.success) return;
-    expect(result.data.manifest.schemaVersion).toBe('0.10');
+    expect(result.data.manifest.schemaVersion).toBe('0.11');
     expect(result.data.maps.village.planes).toEqual([{ id: 'plane-1', name: 'Plan 1', order: 0, surfaceLayerId: 'surface', surfaceCoverage: 'bounds' }]);
     expect(result.data.maps.village.blockedRegions[0].planeId).toBe('plane-1');
     expect(result.data.actors.player.start.planeId).toBe('plane-1');
@@ -122,7 +122,7 @@ describe('V0.6 event-page migration', () => {
     if (!result.success) return;
     const mayor = result.data.maps.village.events.find(event => event.id === 'mayor')!;
     expect(mayor.pages).toHaveLength(4);
-    expect(mayor.pages[0].conditions).toEqual([{ kind: 'switch', id: 'questAccepted', equals: false }]);
+    expect(mayor.pages[0].conditions).toEqual([{ kind: 'switch', id: 'questAccepted', operand: { kind: 'constant', value: false } }]);
     expect(mayor.pages[0].contents[0].type).toBe('dialogue');
     expect(result.data.events).toEqual({ objectives: expect.any(Array) });
     expect(result.data.initialState.switches.keyChestOpened).toEqual({ name: 'Key Chest Opened', initialValue: false });
@@ -241,12 +241,40 @@ describe('V0.9 migration', () => {
 
     expect(result.success).toBe(true);
     if (!result.success) return;
-    expect(result.data.manifest).toMatchObject({ schemaVersion: '0.10', engineRange: '>=0.10 <0.11' });
+    expect(result.data.manifest).toMatchObject({ schemaVersion: '0.11', engineRange: '>=0.11 <0.12' });
     const dialogue = result.data.maps.village.events[0].pages[0].contents[0];
     expect(dialogue).toMatchObject({ choices: [{ commands: [{
       thenCommands: [{ type: 'setSwitch', id: 'questAccepted', operation: 'set', operand: { kind: 'constant', value: false } }],
       elseCommands: [{ type: 'setVariable', id: 'score', operation: 'set', operand: { kind: 'constant', value: 12 } }],
     }] }] });
     expect(result.data.enemies.slime.onDefeated).toEqual([{ type: 'setVariable', id: 'score', operation: 'set', operand: { kind: 'constant', value: 4 } }]);
+  });
+});
+
+describe('V0.10 migration', () => {
+  it('migrates fixed switch and variable comparisons in every condition container', () => {
+    const files = {
+      manifest: read('manifest.json'), tilesets: read('tilesets.json'), maps: read('maps.json'), actors: read('actors.json'), enemies: read('enemies.json'),
+      skills: read('skills.json'), items: read('items.json'), quests: read('quests.json'), ui: read('ui.json'), events: read('events.json'), initialState: read('initial-state.json'),
+    } as SourceGameFiles;
+    (files.manifest as any).schemaVersion = '0.10';
+    (files.manifest as any).engineRange = '>=0.10 <0.11';
+    (files.initialState as any).variables.score = { name: 'Score', initialValue: 0 };
+    (files.maps as any).village.events[0].pages[0].conditions = [{ kind: 'variable', id: 'score', operator: 'greaterThanOrEqual', value: 3 }];
+    (files.maps as any).village.events[0].pages[0].contents = [{
+      type: 'conditional', condition: { kind: 'switch', id: 'questAccepted', equals: false }, thenCommands: [],
+    }];
+    (files.enemies as any).slime.onDefeated = [{
+      type: 'conditional', condition: { kind: 'variable', id: 'score', operator: 'equal', value: 5 }, thenCommands: [],
+    }];
+
+    const result = parseSourceGame(files);
+
+    expect(result.success).toBe(true);
+    if (!result.success) return;
+    expect(result.data.manifest).toMatchObject({ schemaVersion: '0.11', engineRange: '>=0.11 <0.12' });
+    expect(result.data.maps.village.events[0].pages[0].conditions).toEqual([{ kind: 'variable', id: 'score', operator: 'greaterThanOrEqual', operand: { kind: 'constant', value: 3 } }]);
+    expect(result.data.maps.village.events[0].pages[0].contents[0]).toMatchObject({ condition: { kind: 'switch', id: 'questAccepted', operand: { kind: 'constant', value: false } } });
+    expect(result.data.enemies.slime.onDefeated?.[0]).toMatchObject({ condition: { kind: 'variable', id: 'score', operator: 'equal', operand: { kind: 'constant', value: 5 } } });
   });
 });

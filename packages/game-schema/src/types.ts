@@ -26,11 +26,12 @@ export type VariableOperand =
   | { kind: 'variable'; variableId: string }
   | { kind: 'random'; min: number; max: number }
   | { kind: 'gameData'; data: VariableGameData };
+export type VariableConditionOperand = Exclude<VariableOperand, { kind: 'random' }>;
 
 export type Condition =
-  | { kind: 'switch'; id: string; equals?: boolean }
+  | { kind: 'switch'; id: string; operand: SwitchOperand }
   | { kind: 'item'; id: string; amount?: number }
-  | { kind: 'variable'; id: string; operator: VariableComparison; value: number };
+  | { kind: 'variable'; id: string; operator: VariableComparison; operand: VariableConditionOperand };
 
 export type EventCommand =
   | { type: 'dialogue'; speaker: string; text: string; choices?: Array<{ label: string; commands: EventCommand[] }> }

@@ -53,7 +53,7 @@ describe('SourceGame validation', () => {
     const files = sourceFiles();
     (files.initialState as any).variables.score = { name: 'Score', initialValue: 0 };
     (files.maps as any).village.events[0].pages[0].conditions = [
-      { kind: 'variable', id: 'score', operator: 'greaterThanOrEqual', value: 10 },
+      { kind: 'variable', id: 'score', operator: 'greaterThanOrEqual', operand: { kind: 'gameData', data: { kind: 'itemAmount', itemId: 'item.potion' } } },
     ];
     expect(parseSourceGame(files).success).toBe(true);
 
@@ -110,6 +110,13 @@ describe('SourceGame validation', () => {
     (invalidRange.maps as any).village.events[0].pages[0].contents.push({ type: 'setVariable', id: 'score', operation: 'set', operand: { kind: 'random', min: 5, max: 1 } });
     expect(parseSourceGame(invalidRange).success).toBe(false);
 
+    const randomComparison = sourceFiles();
+    (randomComparison.initialState as any).variables.score = { name: 'Score', initialValue: 0 };
+    (randomComparison.maps as any).village.events[0].pages[0].conditions = [
+      { kind: 'variable', id: 'score', operator: 'equal', operand: { kind: 'random', min: 1, max: 2 } },
+    ];
+    expect(parseSourceGame(randomComparison).success).toBe(false);
+
     const crossedTypes = sourceFiles();
     (crossedTypes.initialState as any).variables.score = { name: 'Score', initialValue: 0 };
     (crossedTypes.maps as any).village.events[0].pages[0].contents.push({ type: 'setVariable', id: 'score', operation: 'set', operand: { kind: 'switch', switchId: 'questAccepted' } });
@@ -126,20 +133,20 @@ describe('SourceGame validation', () => {
     };
     const level2 = {
       type: 'conditional',
-      condition: { kind: 'variable', id: 'score', operator: 'greaterThanOrEqual', value: 10 },
+      condition: { kind: 'variable', id: 'score', operator: 'greaterThanOrEqual', operand: { kind: 'variable', variableId: 'score' } },
       thenCommands: [level3],
       elseCommands: [],
     };
     (files.maps as any).village.events[0].pages[0].contents.push({
       type: 'conditional',
-      condition: { kind: 'switch', id: 'questAccepted', equals: true },
+      condition: { kind: 'switch', id: 'questAccepted', operand: { kind: 'gameData', data: { kind: 'hasItem', itemId: 'item.potion' } } },
       thenCommands: [level2],
     });
     expect(parseSourceGame(files).success).toBe(true);
 
     (level3 as any).thenCommands = [{
       type: 'conditional',
-      condition: { kind: 'switch', id: 'missing' },
+      condition: { kind: 'switch', id: 'missing', operand: { kind: 'constant', value: true } },
       thenCommands: [],
     }];
     const result = parseSourceGame(files);

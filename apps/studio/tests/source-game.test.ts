@@ -22,7 +22,7 @@ function blobText(blob: Blob) {
 describe('Studio persistence and export', () => {
   it('creates a valid project with no assets', () => {
     const project = createEmptyProject('Empty World');
-    expect(project.game.manifest.schemaVersion).toBe('0.10');
+    expect(project.game.manifest.schemaVersion).toBe('0.11');
     expect(project.game.manifest.nextMapNumericId).toBe(2);
     expect(project.game.maps['map-1'].numericId).toBe(1);
     expect(project.game.tilesets).toEqual({});

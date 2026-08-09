@@ -351,6 +351,61 @@ function migrateV09(files: SourceGameFiles): SourceGameFiles {
   return next;
 }
 
+function migrateConditionOperand(condition: unknown): unknown {
+  if (!condition || typeof condition !== 'object') return condition;
+  const next = { ...(condition as JsonObject) };
+  if (next.kind === 'switch' && !next.operand) {
+    next.operand = { kind: 'constant', value: typeof next.equals === 'boolean' ? next.equals : true };
+    delete next.equals;
+  }
+  if (next.kind === 'variable' && !next.operand && typeof next.value === 'number') {
+    next.operand = { kind: 'constant', value: next.value };
+    delete next.value;
+  }
+  return next;
+}
+
+function migrateConditionCommands(commands: unknown): unknown {
+  if (!Array.isArray(commands)) return commands;
+  return commands.map(command => {
+    if (!command || typeof command !== 'object') return command;
+    const next = { ...(command as JsonObject) };
+    if (next.type === 'conditional') {
+      next.condition = migrateConditionOperand(next.condition);
+      next.thenCommands = migrateConditionCommands(next.thenCommands);
+      if (Array.isArray(next.elseCommands)) next.elseCommands = migrateConditionCommands(next.elseCommands);
+    }
+    if (next.type === 'dialogue' && Array.isArray(next.choices)) {
+      next.choices = next.choices.map((choice: JsonObject) => ({ ...choice, commands: migrateConditionCommands(choice.commands) }));
+    }
+    return next;
+  });
+}
+
+/** Adds structured condition operands and upgrades the V0.10 source model to V0.11. */
+function migrateV10(files: SourceGameFiles): SourceGameFiles {
+  const manifest = files.manifest as JsonObject | null;
+  if (!manifest || manifest.schemaVersion !== '0.10') return files;
+  const next = structuredClone(files) as SourceGameFiles;
+  const nextManifest = next.manifest as JsonObject;
+  nextManifest.schemaVersion = '0.11';
+  nextManifest.engineRange = '>=0.11 <0.12';
+  for (const map of Object.values((next.maps || {}) as Record<string, JsonObject>)) {
+    for (const event of Array.isArray(map.events) ? map.events : []) {
+      for (const page of Array.isArray(event.pages) ? event.pages : []) {
+        page.conditions = Array.isArray(page.conditions) ? page.conditions.map(migrateConditionOperand) : page.conditions;
+        page.contents = migrateConditionCommands(page.contents);
+      }
+    }
+  }
+  for (const enemy of Object.values((next.enemies || {}) as Record<string, JsonObject>)) {
+    if (enemy.onDefeated) enemy.onDefeated = migrateConditionCommands(enemy.onDefeated);
+  }
+  const events = (next.events || {}) as JsonObject;
+  if (Array.isArray(events.objectives)) events.objectives = events.objectives.map((objective: JsonObject) => ({ ...objective, conditions: Array.isArray(objective.conditions) ? objective.conditions.map(migrateConditionOperand) : objective.conditions }));
+  return next;
+}
+
 function ensureVariables(files: SourceGameFiles): SourceGameFiles {
   const initialState = files.initialState as JsonObject | null;
   if (!initialState || 'variables' in initialState) return files;
@@ -389,5 +444,5 @@ function removeQuestStateCommands(files: SourceGameFiles): SourceGameFiles {
 
 /** Migrates every supported legacy authoring shape to the current schema. */
 export function migrateSourceGameFiles(files: SourceGameFiles): SourceGameFiles {
-  return removeQuestStateCommands(ensureVariables(migrateV09(migrateV08(migrateV07(migrateV06(migrateEventVisuals(migrateV05(migrateV04(files)))))))));
+  return removeQuestStateCommands(ensureVariables(migrateV10(migrateV09(migrateV08(migrateV07(migrateV06(migrateEventVisuals(migrateV05(migrateV04(files))))))))));
 }
