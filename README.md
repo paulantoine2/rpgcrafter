@@ -2,7 +2,9 @@
 
 **A modern, web-based RPG Maker clone for building and playing 2D action RPGs.**
 
-![RPG Crafter Studio editing a village map](docs/images/rpg-crafter-studio.png)
+![RPG Crafter Studio map editor](docs/images/rpg-crafter-map-editor.png)
+
+![RPG Crafter Studio event editor](docs/images/rpg-crafter-event-editor.png)
 
 RPG Crafter reimagines the familiar RPG Maker workflow for the web. It combines a visual game editor, a browser-based runtime, and a portable JSON game format in a single open-source project. The goal is to make creating, testing, and sharing an RPG feel immediate: edit a project in the Studio, click **Play**, and run it directly in the browser.
 
