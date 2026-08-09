@@ -89,16 +89,31 @@ describe('SourceGame validation', () => {
     expect(parseSourceGame(fractional).success).toBe(false);
   });
 
-  it('validates set-variable commands and their references', () => {
+  it('validates structured state commands, operands, and their references', () => {
     const files = sourceFiles();
     (files.initialState as any).variables.score = { name: 'Score', initialValue: 0 };
-    (files.maps as any).village.events[0].pages[0].contents.push({ type: 'setVariable', id: 'score', value: 12 });
+    (files.maps as any).village.events[0].pages[0].contents.push(
+      { type: 'setSwitch', id: 'questAccepted', operation: 'set', operand: { kind: 'gameData', data: { kind: 'hasItem', itemId: 'item.potion' } } },
+      { type: 'setVariable', id: 'score', operation: 'add', operand: { kind: 'variable', variableId: 'score' } },
+      { type: 'setVariable', id: 'score', operation: 'set', operand: { kind: 'random', min: 1.5, max: 4.5 } },
+      { type: 'setVariable', id: 'score', operation: 'set', operand: { kind: 'gameData', data: { kind: 'characterCoordinate', target: { kind: 'event', eventId: 'mayor' }, axis: 'x' } } },
+    );
     expect(parseSourceGame(files).success).toBe(true);
 
-    (files.maps as any).village.events[0].pages[0].contents.at(-1).id = 'missing';
+    (files.maps as any).village.events[0].pages[0].contents.at(-1).operand.data.target.eventId = 'missing';
     const result = parseSourceGame(files);
     expect(result.success).toBe(false);
-    if (!result.success) expect(result.issues.some(issue => issue.message.includes('Unknown variable'))).toBe(true);
+    if (!result.success) expect(result.issues.some(issue => issue.message.includes('Unknown event'))).toBe(true);
+
+    const invalidRange = sourceFiles();
+    (invalidRange.initialState as any).variables.score = { name: 'Score', initialValue: 0 };
+    (invalidRange.maps as any).village.events[0].pages[0].contents.push({ type: 'setVariable', id: 'score', operation: 'set', operand: { kind: 'random', min: 5, max: 1 } });
+    expect(parseSourceGame(invalidRange).success).toBe(false);
+
+    const crossedTypes = sourceFiles();
+    (crossedTypes.initialState as any).variables.score = { name: 'Score', initialValue: 0 };
+    (crossedTypes.maps as any).village.events[0].pages[0].contents.push({ type: 'setVariable', id: 'score', operation: 'set', operand: { kind: 'switch', switchId: 'questAccepted' } });
+    expect(parseSourceGame(crossedTypes).success).toBe(false);
   });
 
   it('validates conditional branches, nested references and the maximum depth', () => {

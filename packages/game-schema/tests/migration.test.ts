@@ -80,7 +80,7 @@ describe('V0.4 migration', () => {
     const result = parseSourceGame(legacy);
     expect(result.success).toBe(true);
     if (!result.success) return;
-    expect(result.data.manifest.schemaVersion).toBe('0.9');
+    expect(result.data.manifest.schemaVersion).toBe('0.10');
     expect(result.data.maps.village.planes).toEqual([{ id: 'plane-1', name: 'Plan 1', order: 0, surfaceLayerId: 'surface', surfaceCoverage: 'bounds' }]);
     expect(result.data.maps.village.blockedRegions[0].planeId).toBe('plane-1');
     expect(result.data.actors.player.start.planeId).toBe('plane-1');
@@ -216,5 +216,37 @@ describe('V0.8 migration', () => {
       type: 'teleport', destination: { map: { kind: 'constant', mapId: 'path' }, x: { kind: 'constant', value: 2 }, y: { kind: 'constant', value: 3 } }, direction: 'retain', transition: 'instant',
     }] }] }] });
     expect(result.data.enemies.slime.onDefeated).toEqual([expect.objectContaining({ type: 'teleport', direction: 'retain', transition: 'instant' })]);
+  });
+});
+
+describe('V0.9 migration', () => {
+  it('migrates fixed state values recursively in events and enemy commands', () => {
+    const files = {
+      manifest: read('manifest.json'), tilesets: read('tilesets.json'), maps: read('maps.json'), actors: read('actors.json'), enemies: read('enemies.json'),
+      skills: read('skills.json'), items: read('items.json'), quests: read('quests.json'), ui: read('ui.json'), events: read('events.json'), initialState: read('initial-state.json'),
+    } as SourceGameFiles;
+    (files.manifest as any).schemaVersion = '0.9';
+    (files.manifest as any).engineRange = '>=0.9 <0.10';
+    (files.initialState as any).variables.score = { name: 'Score', initialValue: 0 };
+    (files.maps as any).village.events[0].pages[0].contents = [{
+      type: 'dialogue', speaker: 'Guide', text: 'Choose', choices: [{ label: 'Continue', commands: [{
+        type: 'conditional', condition: { kind: 'switch', id: 'questAccepted', equals: true },
+        thenCommands: [{ type: 'setSwitch', id: 'questAccepted', value: false }],
+        elseCommands: [{ type: 'setVariable', id: 'score', value: 12 }],
+      }] }],
+    }];
+    (files.enemies as any).slime.onDefeated = [{ type: 'setVariable', id: 'score', value: 4 }];
+
+    const result = parseSourceGame(files);
+
+    expect(result.success).toBe(true);
+    if (!result.success) return;
+    expect(result.data.manifest).toMatchObject({ schemaVersion: '0.10', engineRange: '>=0.10 <0.11' });
+    const dialogue = result.data.maps.village.events[0].pages[0].contents[0];
+    expect(dialogue).toMatchObject({ choices: [{ commands: [{
+      thenCommands: [{ type: 'setSwitch', id: 'questAccepted', operation: 'set', operand: { kind: 'constant', value: false } }],
+      elseCommands: [{ type: 'setVariable', id: 'score', operation: 'set', operand: { kind: 'constant', value: 12 } }],
+    }] }] });
+    expect(result.data.enemies.slime.onDefeated).toEqual([{ type: 'setVariable', id: 'score', operation: 'set', operand: { kind: 'constant', value: 4 } }]);
   });
 });

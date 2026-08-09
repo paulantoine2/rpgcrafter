@@ -1,6 +1,6 @@
 import { Fragment, useEffect, useRef, useState, type ReactNode, type RefObject } from 'react';
-import type { Condition, ContentIssue, EventCommand, MapEvent, MapEventPage, MovementCommand, MovementRoute, SourceGame, TeleportMapSource, TeleportNumberSource, VariableComparison } from '@rpgcrafter/game-schema';
-import { ArrowDown, ArrowUp, Bell, BringToFront, ChevronsUpDown, Clock3, Copy, Footprints, GitBranch, GitFork, GripVertical, Hand, Hash, HeartPulse, ImageIcon, Layers2, MapPin, MessageSquare, Minus, MousePointerClick, Package, PackageMinus, PackagePlus, Play, Plus, Save, Search, SendToBack, Settings2, Sparkles, ToggleLeft, Trash2, X, type LucideIcon } from 'lucide-react';
+import type { Condition, ContentIssue, EventCommand, MapEvent, MapEventPage, MovementCommand, MovementRoute, SourceGame, SwitchOperand, TeleportMapSource, TeleportNumberSource, VariableComparison, VariableOperand, VariableOperation } from '@rpgcrafter/game-schema';
+import { ArrowDown, ArrowUp, Asterisk, Bell, BringToFront, ChevronsUpDown, Clock3, Copy, Divide, Equal, Footprints, GitBranch, GitFork, GripVertical, Hand, Hash, HeartPulse, ImageIcon, Layers2, MapPin, MessageSquare, Minus, MousePointerClick, Package, PackageMinus, PackagePlus, Percent, Play, Plus, Save, Search, SendToBack, Settings2, Sparkles, ToggleLeft, Trash2, X, type LucideIcon } from 'lucide-react';
 import { Popover } from '@base-ui/react/popover';
 import { Button } from '@/components/ui/button';
 import { Attachment, AttachmentAction, AttachmentActions, AttachmentContent, AttachmentDescription, AttachmentMedia, AttachmentTitle, AttachmentTrigger } from '@/components/ui/attachment';
@@ -87,6 +87,18 @@ const priorityTypes = [
   { type: 'sameAsCharacters', label: 'Same as characters', icon: Layers2 },
   { type: 'aboveCharacters', label: 'Above characters', icon: BringToFront },
 ] as const;
+const switchOperations = [
+  { type: 'set', label: 'Set', icon: Equal },
+  { type: 'toggle', label: 'Toggle', icon: ToggleLeft },
+] as const;
+const variableOperations: Array<{ type: VariableOperation; label: string; icon: LucideIcon }> = [
+  { type: 'set', label: 'Set', icon: Equal },
+  { type: 'add', label: 'Add', icon: Plus },
+  { type: 'subtract', label: 'Subtract', icon: Minus },
+  { type: 'multiply', label: 'Multiply', icon: Asterisk },
+  { type: 'divide', label: 'Divide', icon: Divide },
+  { type: 'modulo', label: 'Modulo', icon: Percent },
+];
 
 function Section({ title, children, actions, first = false }: { title: string; children: ReactNode; actions?: ReactNode; first?: boolean }) {
   return <section>
@@ -112,6 +124,17 @@ function EnumSelect<T extends string>({ value, values, onChange, labels, ariaLab
       <SelectContent>{values.map(item => <SelectItem key={item} value={item}>{labels?.[item] || item}</SelectItem>)}</SelectContent>
     </Select>
   );
+}
+
+function OperationTabs<T extends string>({ value, operations, label, onChange }: { value: T; operations: ReadonlyArray<{ type: T; label: string; icon: LucideIcon }>; label: string; onChange: (value: T) => void }) {
+  return <div className="grid gap-1.5">
+    <span className={fieldLabelClassName}>{label}</span>
+    <Tabs value={value} onValueChange={next => onChange(next as T)}>
+      <TabsList className="w-full" aria-label={label}>
+        {operations.map(({ type, label: operationLabel, icon: Icon }) => <IconButtonTooltip key={type} label={operationLabel}><TabsTrigger value={type} aria-label={operationLabel}><Icon /></TabsTrigger></IconButtonTooltip>)}
+      </TabsList>
+    </Tabs>
+  </div>;
 }
 
 function move<T>(items: T[], index: number, delta: number) {
@@ -454,8 +477,8 @@ function defaultCommand(type: EventCommand['type'], game: SourceGame): EventComm
   const mapId = Object.keys(game.maps)[0] || '';
   if (type === 'dialogue') return { type, speaker: 'Speaker', text: 'Dialogue text', choices: [] };
   if (type === 'conditional') return { type, condition: defaultCondition('switch', game), thenCommands: [] };
-  if (type === 'setSwitch') return { type, id: gameSwitch, value: true };
-  if (type === 'setVariable') return { type, id: variable, value: 0 };
+  if (type === 'setSwitch') return { type, id: gameSwitch, operation: 'set', operand: { kind: 'constant', value: true } };
+  if (type === 'setVariable') return { type, id: variable, operation: 'set', operand: { kind: 'constant', value: 0 } };
   if (type === 'giveItem' || type === 'removeItem') return { type, id: item, amount: 1 };
   if (type === 'unlockSkill') return { type, id: skill };
   if (type === 'healPlayer') return { type, amount: 10 };
@@ -603,6 +626,66 @@ function TeleportNumberField({ game, label, value, onChange }: { game: SourceGam
   </div></Field>;
 }
 
+type SetSwitchCommand = Extract<EventCommand, { type: 'setSwitch' }>;
+type SetVariableCommand = Extract<EventCommand, { type: 'setVariable' }>;
+
+function defaultSwitchOperand(kind: SwitchOperand['kind'], game: SourceGame): SwitchOperand {
+  if (kind === 'constant') return { kind, value: true };
+  if (kind === 'switch') return { kind, switchId: Object.keys(game.initialState.switches)[0] || '' };
+  return { kind, data: { kind: 'hasItem', itemId: Object.keys(game.items)[0] || '' } };
+}
+
+function defaultVariableOperand(kind: VariableOperand['kind'], game: SourceGame): VariableOperand {
+  if (kind === 'constant') return { kind, value: 0 };
+  if (kind === 'variable') return { kind, variableId: Object.keys(game.initialState.variables)[0] || '' };
+  if (kind === 'random') return { kind, min: 0, max: 1 };
+  return { kind, data: { kind: 'itemAmount', itemId: Object.keys(game.items)[0] || '' } };
+}
+
+function SetSwitchFields({ game, action, onChange, conditionActions, autoOpenMissingReference, onAutoOpen }: { game: SourceGame; action: SetSwitchCommand; onChange: (command: SetSwitchCommand) => void; conditionActions: ConditionActions; autoOpenMissingReference: boolean; onAutoOpen: () => void }) {
+  const itemIds = Object.keys(game.items);
+  const equipmentItemIds = itemIds.filter(id => game.items[id].type === 'equipment');
+  const skillIds = Object.keys(game.skills);
+  const switchData = action.operation === 'set' && action.operand.kind === 'gameData' ? action.operand.data : undefined;
+  return <div className="space-y-3">
+    <Field label="Switch"><SwitchPicker game={game} value={action.id} equals={action.operation === 'set' && action.operand.kind === 'constant' ? action.operand.value : true} onChange={id => onChange({ ...action, id })} onCreate={conditionActions.onCreateSwitch} autoOpen={autoOpenMissingReference && !game.initialState.switches[action.id]} onAutoOpen={onAutoOpen} showIcon={false} showValue={false} anchorToInspector={false} /></Field>
+    <OperationTabs value={action.operation} operations={switchOperations} label="Switch operation" onChange={operation => onChange(operation === 'toggle' ? { type: 'setSwitch', id: action.id, operation } : { type: 'setSwitch', id: action.id, operation, operand: { kind: 'constant', value: true } })} />
+    {action.operation === 'set' && <>
+      <Field label="Operand"><EnumSelect value={action.operand.kind} values={['constant', 'switch', 'gameData'] as const} labels={{ constant: 'Fixed value', switch: 'Switch', gameData: 'Game data' }} ariaLabel="Switch operand type" onChange={kind => onChange({ ...action, operand: defaultSwitchOperand(kind, game) })} /></Field>
+      {action.operand.kind === 'constant' && <label className="flex items-center gap-2 text-xs"><Checkbox checked={action.operand.value} onCheckedChange={value => onChange({ ...action, operand: { kind: 'constant', value } })} />On</label>}
+      {action.operand.kind === 'switch' && <SwitchPicker game={game} value={action.operand.switchId} equals={true} onChange={switchId => onChange({ ...action, operand: { kind: 'switch', switchId } })} onCreate={conditionActions.onCreateSwitch} showIcon={false} showValue={false} anchorToInspector={false} />}
+      {switchData && <>
+        <Field label="Game data"><EnumSelect value={switchData.kind} values={['hasItem', 'itemEquipped', 'skillUnlocked'] as const} labels={{ hasItem: 'Item in inventory', itemEquipped: 'Item equipped', skillUnlocked: 'Skill unlocked' }} ariaLabel="Switch game data" onChange={kind => onChange({ ...action, operand: { kind: 'gameData', data: kind === 'skillUnlocked' ? { kind, skillId: skillIds[0] || '' } : { kind, itemId: (kind === 'itemEquipped' ? equipmentItemIds : itemIds)[0] || '' } } })} /></Field>
+        {(switchData.kind === 'hasItem' || switchData.kind === 'itemEquipped') && <Field label="Item"><EnumSelect value={switchData.itemId} values={switchData.kind === 'itemEquipped' ? equipmentItemIds : itemIds} labels={Object.fromEntries(Object.entries(game.items).map(([id, item]) => [id, item.name]))} ariaLabel="Game data item" onChange={itemId => onChange({ ...action, operand: { kind: 'gameData', data: { kind: switchData.kind, itemId } } })} /></Field>}
+        {switchData.kind === 'skillUnlocked' && <Field label="Skill"><EnumSelect value={switchData.skillId} values={skillIds} labels={Object.fromEntries(Object.entries(game.skills).map(([id, skill]) => [id, skill.name]))} ariaLabel="Game data skill" onChange={skillId => onChange({ ...action, operand: { kind: 'gameData', data: { kind: 'skillUnlocked', skillId } } })} /></Field>}
+      </>}
+    </>}
+  </div>;
+}
+
+function SetVariableFields({ game, mapId, action, onChange, conditionActions, autoOpenMissingReference, onAutoOpen }: { game: SourceGame; mapId: string; action: SetVariableCommand; onChange: (command: SetVariableCommand) => void; conditionActions: ConditionActions; autoOpenMissingReference: boolean; onAutoOpen: () => void }) {
+  const variableIds = Object.keys(game.initialState.variables);
+  const itemIds = Object.keys(game.items);
+  const eventIds = game.maps[mapId].events.map(event => event.id);
+  const data = action.operand.kind === 'gameData' ? action.operand.data : undefined;
+  const randomOperand = action.operand.kind === 'random' ? action.operand : undefined;
+  const targetValue = data?.kind === 'characterCoordinate' ? (data.target.kind === 'event' ? `event:${data.target.eventId}` : data.target.kind) : 'player';
+  return <div className="space-y-3">
+    <Field label="Variable"><VariablePicker game={game} condition={{ kind: 'variable', id: action.id, operator: 'equal', value: 0 }} onChange={id => onChange({ ...action, id })} onCreate={conditionActions.onCreateVariable} autoOpen={autoOpenMissingReference && !game.initialState.variables[action.id]} onAutoOpen={onAutoOpen} showIcon={false} showComparison={false} anchorToInspector={false} /></Field>
+    <OperationTabs value={action.operation} operations={variableOperations} label="Variable operation" onChange={operation => onChange({ ...action, operation })} />
+    <Field label="Operand"><EnumSelect value={action.operand.kind} values={['constant', 'variable', 'random', 'gameData'] as const} labels={{ constant: 'Fixed value', variable: 'Variable', random: 'Random range', gameData: 'Game data' }} ariaLabel="Variable operand type" onChange={kind => onChange({ ...action, operand: defaultVariableOperand(kind, game) })} /></Field>
+    {action.operand.kind === 'constant' && <Field label="Value"><NumberInput value={action.operand.value} onChange={value => onChange({ ...action, operand: { kind: 'constant', value } })} /></Field>}
+    {action.operand.kind === 'variable' && <VariablePicker game={game} condition={{ kind: 'variable', id: action.operand.variableId, operator: 'equal', value: 0 }} onChange={variableId => onChange({ ...action, operand: { kind: 'variable', variableId } })} onCreate={conditionActions.onCreateVariable} showIcon={false} showComparison={false} anchorToInspector={false} />}
+    {randomOperand && <div className="grid grid-cols-2 gap-2"><Field label="Minimum"><NumberInput value={randomOperand.min} onChange={min => onChange({ ...action, operand: { ...randomOperand, min } })} /></Field><Field label="Maximum"><NumberInput value={randomOperand.max} onChange={max => onChange({ ...action, operand: { ...randomOperand, max } })} /></Field></div>}
+    {data && <>
+      <Field label="Game data"><EnumSelect value={data.kind} values={['itemAmount', 'playerStat', 'mapId', 'characterCoordinate'] as const} labels={{ itemAmount: 'Item quantity', playerStat: 'Player stat', mapId: 'Current map ID', characterCoordinate: 'Character coordinate' }} ariaLabel="Variable game data" onChange={kind => onChange({ ...action, operand: { kind: 'gameData', data: kind === 'itemAmount' ? { kind, itemId: itemIds[0] || '' } : kind === 'playerStat' ? { kind, stat: 'hp' } : kind === 'mapId' ? { kind } : { kind, target: { kind: 'player' }, axis: 'x' } } })} /></Field>
+      {data.kind === 'itemAmount' && <Field label="Item"><EnumSelect value={data.itemId} values={itemIds} labels={Object.fromEntries(Object.entries(game.items).map(([id, item]) => [id, item.name]))} ariaLabel="Quantity item" onChange={itemId => onChange({ ...action, operand: { kind: 'gameData', data: { kind: 'itemAmount', itemId } } })} /></Field>}
+      {data.kind === 'playerStat' && <Field label="Stat"><EnumSelect value={data.stat} values={['hp', 'maxHp', 'level', 'xp'] as const} labels={{ hp: 'HP', maxHp: 'Maximum HP', level: 'Level', xp: 'XP' }} ariaLabel="Player stat" onChange={stat => onChange({ ...action, operand: { kind: 'gameData', data: { kind: 'playerStat', stat } } })} /></Field>}
+      {data.kind === 'characterCoordinate' && <div className="grid grid-cols-[1fr_72px] gap-2"><Field label="Character"><EnumSelect value={targetValue} values={['player', 'thisEvent', ...eventIds.map(id => `event:${id}`)]} labels={{ player: 'Player', thisEvent: 'This event' }} ariaLabel="Coordinate character" onChange={value => onChange({ ...action, operand: { kind: 'gameData', data: { ...data, target: value === 'player' ? { kind: 'player' } : value === 'thisEvent' ? { kind: 'thisEvent' } : { kind: 'event', eventId: value.slice(6) } } } })} /></Field><Field label="Axis"><EnumSelect value={data.axis} values={['x', 'y'] as const} labels={{ x: 'X', y: 'Y' }} ariaLabel="Coordinate axis" onChange={axis => onChange({ ...action, operand: { kind: 'gameData', data: { ...data, axis } } })} /></Field></div>}
+    </>}
+  </div>;
+}
+
 type CommandAutoOpenProps = {
   autoOpenCommand?: EventCommand | null;
   onAutoOpenCommand?: () => void;
@@ -632,8 +715,8 @@ function CommandFields({ game, mapId, command, onChange, conditionalDepth, condi
       }} />Else branch</label>
     </div>;
   }
-  if (action.type === 'setSwitch') return <div className="grid gap-2"><Field label="Switch"><div className="flex min-w-0"><SwitchPicker game={game} value={action.id} equals={action.value} onChange={id => onChange({ ...action, id })} onCreate={conditionActions.onCreateSwitch} autoOpen={autoOpenMissingReference && !game.initialState.switches[action.id]} onAutoOpen={() => setAutoOpenMissingReference(false)} showIcon={false} showValue={false} anchorToInspector={false} /></div></Field><label className="flex items-center gap-2 text-xs"><Checkbox checked={action.value} onCheckedChange={value => onChange({ ...action, value })} />Set on</label></div>;
-  if (action.type === 'setVariable') return <div className="grid grid-cols-[1fr_88px] gap-2"><Field label="Variable"><VariablePicker game={game} condition={{ kind: 'variable', id: action.id, operator: 'equal', value: action.value }} onChange={id => onChange({ ...action, id })} onCreate={conditionActions.onCreateVariable} autoOpen={autoOpenMissingReference && !game.initialState.variables[action.id]} onAutoOpen={() => setAutoOpenMissingReference(false)} showIcon={false} showComparison={false} anchorToInspector={false} /></Field><Field label="Value"><NumberInput value={action.value} onChange={value => onChange({ ...action, value })} /></Field></div>;
+  if (action.type === 'setSwitch') return <SetSwitchFields game={game} action={action} onChange={onChange} conditionActions={conditionActions} autoOpenMissingReference={autoOpenMissingReference} onAutoOpen={() => setAutoOpenMissingReference(false)} />;
+  if (action.type === 'setVariable') return <SetVariableFields game={game} mapId={mapId} action={action} onChange={onChange} conditionActions={conditionActions} autoOpenMissingReference={autoOpenMissingReference} onAutoOpen={() => setAutoOpenMissingReference(false)} />;
   if (action.type === 'giveItem' || action.type === 'removeItem') return <div className="grid grid-cols-[1fr_88px] gap-2"><EnumSelect value={action.id} values={Object.keys(game.items)} onChange={id => onChange({ ...action, id })} /><NumberInput value={action.amount ?? 1} min={1} onChange={amount => onChange({ ...action, amount })} /></div>;
   if (action.type === 'unlockSkill') return <EnumSelect value={action.id} values={Object.keys(game.skills)} onChange={id => onChange({ ...action, id })} />;
   if (action.type === 'healPlayer') return <NumberInput value={action.amount} onChange={amount => onChange({ ...action, amount })} />;
@@ -653,6 +736,27 @@ function CommandFields({ game, mapId, command, onChange, conditionalDepth, condi
   return <p className="text-xs text-muted-foreground">No parameters.</p>;
 }
 
+function switchOperandSummary(game: SourceGame, operand: SwitchOperand) {
+  if (operand.kind === 'constant') return operand.value ? 'On' : 'Off';
+  if (operand.kind === 'switch') return game.initialState.switches[operand.switchId]?.name || operand.switchId;
+  if (operand.data.kind === 'hasItem') return `Has ${game.items[operand.data.itemId]?.name || operand.data.itemId}`;
+  if (operand.data.kind === 'itemEquipped') return `${game.items[operand.data.itemId]?.name || operand.data.itemId} equipped`;
+  return `${game.skills[operand.data.skillId]?.name || operand.data.skillId} unlocked`;
+}
+
+const variableOperationSymbols: Record<VariableOperation, string> = { set: '=', add: '+=', subtract: '-=', multiply: '×=', divide: '÷=', modulo: '%=' };
+
+function variableOperandSummary(game: SourceGame, operand: VariableOperand) {
+  if (operand.kind === 'constant') return String(operand.value);
+  if (operand.kind === 'variable') return game.initialState.variables[operand.variableId]?.name || operand.variableId;
+  if (operand.kind === 'random') return `Random ${operand.min}–${operand.max}`;
+  if (operand.data.kind === 'itemAmount') return `${game.items[operand.data.itemId]?.name || operand.data.itemId} quantity`;
+  if (operand.data.kind === 'playerStat') return `Player ${operand.data.stat}`;
+  if (operand.data.kind === 'mapId') return 'Current map ID';
+  const target = operand.data.target.kind === 'player' ? 'Player' : operand.data.target.kind === 'thisEvent' ? 'This event' : operand.data.target.eventId;
+  return `${target} ${operand.data.axis.toUpperCase()}`;
+}
+
 function commandRowContent(game: SourceGame, command: EventCommand): { label: string; value?: string } {
   if (command.type === 'dialogue') return { label: 'Dialogue', value: command.speaker || 'No speaker' };
   if (command.type === 'conditional') {
@@ -661,8 +765,8 @@ function commandRowContent(game: SourceGame, command: EventCommand): { label: st
     if (condition.kind === 'item') return { label: 'If', value: `${game.items[condition.id]?.name || condition.id} ×${condition.amount ?? 1}` };
     return { label: 'If', value: `${game.initialState.variables[condition.id]?.name || condition.id} ${variableComparisonSymbols[condition.operator]} ${condition.value}` };
   }
-  if (command.type === 'setSwitch') return { label: 'Set', value: `${game.initialState.switches[command.id]?.name || command.id || 'Choose a switch'} · ${command.value ? 'On' : 'Off'}` };
-  if (command.type === 'setVariable') return { label: 'Set', value: `${game.initialState.variables[command.id]?.name || command.id || 'Choose a variable'} · ${command.value}` };
+  if (command.type === 'setSwitch') return { label: command.operation === 'toggle' ? 'Toggle' : 'Set', value: `${game.initialState.switches[command.id]?.name || command.id || 'Choose a switch'}${command.operation === 'set' ? ` · ${switchOperandSummary(game, command.operand)}` : ''}` };
+  if (command.type === 'setVariable') return { label: 'Variable', value: `${game.initialState.variables[command.id]?.name || command.id || 'Choose a variable'} ${variableOperationSymbols[command.operation]} ${variableOperandSummary(game, command.operand)}` };
   if (command.type === 'giveItem') return { label: 'Give', value: `${game.items[command.id]?.name || command.id} ×${command.amount ?? 1}` };
   if (command.type === 'removeItem') return { label: 'Remove', value: `${game.items[command.id]?.name || command.id} ×${command.amount ?? 1}` };
   if (command.type === 'unlockSkill') return { label: 'Unlock', value: game.skills[command.id]?.name || command.id };

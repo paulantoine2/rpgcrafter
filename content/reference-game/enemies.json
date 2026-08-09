@@ -54,7 +54,11 @@
       {
         "type": "setSwitch",
         "id": "bossDefeated",
-        "value": true
+        "operation": "set",
+        "operand": {
+          "kind": "constant",
+          "value": true
+        }
       },
       {
         "type": "giveItem",

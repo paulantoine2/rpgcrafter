@@ -7,6 +7,25 @@ export type TeleportMapSource = { kind: 'constant'; mapId: string } | { kind: 'v
 export type TeleportNumberSource = { kind: 'constant'; value: number } | { kind: 'variable'; variableId: string };
 export type TeleportDirection = 'retain' | Direction;
 export type TeleportTransition = 'instant' | 'fadeBlack' | 'fadeWhite';
+export type SwitchGameData =
+  | { kind: 'hasItem'; itemId: string }
+  | { kind: 'itemEquipped'; itemId: string }
+  | { kind: 'skillUnlocked'; skillId: string };
+export type SwitchOperand =
+  | { kind: 'constant'; value: boolean }
+  | { kind: 'switch'; switchId: string }
+  | { kind: 'gameData'; data: SwitchGameData };
+export type VariableOperation = 'set' | 'add' | 'subtract' | 'multiply' | 'divide' | 'modulo';
+export type VariableGameData =
+  | { kind: 'itemAmount'; itemId: string }
+  | { kind: 'playerStat'; stat: 'hp' | 'maxHp' | 'level' | 'xp' }
+  | { kind: 'mapId' }
+  | { kind: 'characterCoordinate'; target: MovementTarget; axis: 'x' | 'y' };
+export type VariableOperand =
+  | { kind: 'constant'; value: number }
+  | { kind: 'variable'; variableId: string }
+  | { kind: 'random'; min: number; max: number }
+  | { kind: 'gameData'; data: VariableGameData };
 
 export type Condition =
   | { kind: 'switch'; id: string; equals?: boolean }
@@ -16,8 +35,9 @@ export type Condition =
 export type EventCommand =
   | { type: 'dialogue'; speaker: string; text: string; choices?: Array<{ label: string; commands: EventCommand[] }> }
   | { type: 'conditional'; condition: Condition; thenCommands: EventCommand[]; elseCommands?: EventCommand[] }
-  | { type: 'setSwitch'; id: string; value: boolean }
-  | { type: 'setVariable'; id: string; value: number }
+  | { type: 'setSwitch'; id: string; operation: 'set'; operand: SwitchOperand }
+  | { type: 'setSwitch'; id: string; operation: 'toggle' }
+  | { type: 'setVariable'; id: string; operation: VariableOperation; operand: VariableOperand }
   | { type: 'giveItem' | 'removeItem'; id: string; amount?: number }
   | { type: 'unlockSkill'; id: string }
   | { type: 'healPlayer'; amount: number }

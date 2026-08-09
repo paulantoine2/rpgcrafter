@@ -9,7 +9,7 @@ import type {
 import { CANONICAL_AUTOTILE_MASKS, canonicalizeAutotileMask } from './autotile.js';
 import { migrateSourceGameFiles } from './migration.js';
 
-export const ENGINE_VERSION = '0.9.0';
+export const ENGINE_VERSION = '0.10.0';
 
 const Id = z.string().min(1);
 const FiniteNumber = z.number().finite();
@@ -134,6 +134,28 @@ const MovementTargetSchema: z.ZodType<MovementTarget> = z.discriminatedUnion('ki
   z.object({ kind: z.literal('thisEvent') }).strict(),
   z.object({ kind: z.literal('event'), eventId: Id }).strict(),
 ]);
+const SwitchGameDataSchema = z.discriminatedUnion('kind', [
+  z.object({ kind: z.literal('hasItem'), itemId: Id }).strict(),
+  z.object({ kind: z.literal('itemEquipped'), itemId: Id }).strict(),
+  z.object({ kind: z.literal('skillUnlocked'), skillId: Id }).strict(),
+]);
+const SwitchOperandSchema = z.discriminatedUnion('kind', [
+  z.object({ kind: z.literal('constant'), value: z.boolean() }).strict(),
+  z.object({ kind: z.literal('switch'), switchId: Id }).strict(),
+  z.object({ kind: z.literal('gameData'), data: SwitchGameDataSchema }).strict(),
+]);
+const VariableGameDataSchema = z.discriminatedUnion('kind', [
+  z.object({ kind: z.literal('itemAmount'), itemId: Id }).strict(),
+  z.object({ kind: z.literal('playerStat'), stat: z.enum(['hp', 'maxHp', 'level', 'xp']) }).strict(),
+  z.object({ kind: z.literal('mapId') }).strict(),
+  z.object({ kind: z.literal('characterCoordinate'), target: MovementTargetSchema, axis: z.enum(['x', 'y']) }).strict(),
+]);
+const VariableOperandSchema = z.discriminatedUnion('kind', [
+  z.object({ kind: z.literal('constant'), value: FiniteNumber }).strict(),
+  z.object({ kind: z.literal('variable'), variableId: Id }).strict(),
+  z.object({ kind: z.literal('random'), min: FiniteNumber, max: FiniteNumber }).strict().refine(value => value.min <= value.max, { message: 'Minimum must not exceed maximum' }),
+  z.object({ kind: z.literal('gameData'), data: VariableGameDataSchema }).strict(),
+]);
 const MovementRouteSchema: z.ZodType<MovementRoute> = z.object({
   commands: z.array(MovementCommandSchema),
   repeat: z.boolean(),
@@ -163,11 +185,12 @@ const EventOptionsSchema: z.ZodType<EventOptions> = z.object({
   through: z.boolean(),
 }).strict();
 
-const EventCommandSchema: z.ZodType<EventCommand> = z.lazy(() => z.discriminatedUnion('type', [
+const EventCommandSchema = z.lazy(() => z.union([
   z.object({ type: z.literal('dialogue'), speaker: Id, text: Id, choices: z.array(z.object({ label: Id, commands: z.array(EventCommandSchema) }).strict()).optional() }).strict(),
   z.object({ type: z.literal('conditional'), condition: ConditionSchema, thenCommands: z.array(EventCommandSchema), elseCommands: z.array(EventCommandSchema).optional() }).strict(),
-  z.object({ type: z.literal('setSwitch'), id: Id, value: z.boolean() }).strict(),
-  z.object({ type: z.literal('setVariable'), id: Id, value: FiniteNumber }).strict(),
+  z.object({ type: z.literal('setSwitch'), id: Id, operation: z.literal('set'), operand: SwitchOperandSchema }).strict(),
+  z.object({ type: z.literal('setSwitch'), id: Id, operation: z.literal('toggle') }).strict(),
+  z.object({ type: z.literal('setVariable'), id: Id, operation: z.enum(['set', 'add', 'subtract', 'multiply', 'divide', 'modulo']), operand: VariableOperandSchema }).strict(),
   z.object({ type: z.literal('giveItem'), id: Id, amount: FiniteNumber.optional() }).strict(),
   z.object({ type: z.literal('removeItem'), id: Id, amount: FiniteNumber.optional() }).strict(),
   z.object({ type: z.literal('unlockSkill'), id: Id }).strict(),
@@ -182,7 +205,7 @@ const EventCommandSchema: z.ZodType<EventCommand> = z.lazy(() => z.discriminated
   z.object({ type: z.literal('movementRoute'), target: MovementTargetSchema, route: MovementRouteSchema }).strict(),
   z.object({ type: z.literal('wait'), duration: NonNegativeNumber }).strict(),
   z.object({ type: z.literal('save') }).strict(),
-]));
+])) as z.ZodType<EventCommand>;
 
 const MapEventTriggerSchema: z.ZodType<MapEventTrigger> = z.discriminatedUnion('type', [
   z.object({ type: z.literal('actionButton'), radius: PositiveNumber }).strict(),
@@ -359,8 +382,26 @@ function validateReferences(game: SourceGame): ContentIssue[] {
     const target = `${path}[${index}]`;
     if ((command.type === 'giveItem' || command.type === 'removeItem') && !items[command.id]) issue(target, `Unknown item: ${command.id}`);
     if (command.type === 'unlockSkill' && !skills[command.id]) issue(target, `Unknown skill: ${command.id}`);
-    if (command.type === 'setSwitch' && !(command.id in initialState.switches)) issue(target, `Unknown switch: ${command.id}`);
-    if (command.type === 'setVariable' && !(command.id in initialState.variables)) issue(target, `Unknown variable: ${command.id}`);
+    if (command.type === 'setSwitch') {
+      if (!(command.id in initialState.switches)) issue(target, `Unknown switch: ${command.id}`);
+      if (command.operation === 'set') {
+        const operand = command.operand;
+        if (operand.kind === 'switch' && !(operand.switchId in initialState.switches)) issue(`${target}.operand.switchId`, `Unknown switch: ${operand.switchId}`);
+        if (operand.kind === 'gameData' && (operand.data.kind === 'hasItem' || operand.data.kind === 'itemEquipped') && !items[operand.data.itemId]) issue(`${target}.operand.data.itemId`, `Unknown item: ${operand.data.itemId}`);
+        if (operand.kind === 'gameData' && operand.data.kind === 'itemEquipped' && items[operand.data.itemId]?.type !== 'equipment') issue(`${target}.operand.data.itemId`, `Item is not equipment: ${operand.data.itemId}`);
+        if (operand.kind === 'gameData' && operand.data.kind === 'skillUnlocked' && !skills[operand.data.skillId]) issue(`${target}.operand.data.skillId`, `Unknown skill: ${operand.data.skillId}`);
+      }
+    }
+    if (command.type === 'setVariable') {
+      if (!(command.id in initialState.variables)) issue(target, `Unknown variable: ${command.id}`);
+      const operand = command.operand;
+      if (operand.kind === 'variable' && !(operand.variableId in initialState.variables)) issue(`${target}.operand.variableId`, `Unknown variable: ${operand.variableId}`);
+      if (operand.kind === 'gameData' && operand.data.kind === 'itemAmount' && !items[operand.data.itemId]) issue(`${target}.operand.data.itemId`, `Unknown item: ${operand.data.itemId}`);
+      if (operand.kind === 'gameData' && operand.data.kind === 'characterCoordinate' && sourceMapId && operand.data.target.kind === 'event') {
+        const eventId = operand.data.target.eventId;
+        if (!maps[sourceMapId]?.events.some(event => event.id === eventId)) issue(`${target}.operand.data.target.eventId`, `Unknown event on the current map: ${eventId}`);
+      }
+    }
     if (command.type === 'teleport') {
       const sources = [command.destination.map, command.destination.x, command.destination.y];
       for (const source of sources) if (source.kind === 'variable' && !(source.variableId in initialState.variables)) issue(target, `Unknown variable: ${source.variableId}`);
@@ -521,7 +562,7 @@ export function parseSourceGame(files: SourceGameFiles): SourceGameResult {
   }
   if (issues.length) return { success: false, issues };
   const game = parsed as SourceGame;
-  if (game.manifest.schemaVersion !== '0.9') issues.push({ path: 'manifest.schemaVersion', message: `Unsupported schema version: ${game.manifest.schemaVersion}` });
+  if (game.manifest.schemaVersion !== '0.10') issues.push({ path: 'manifest.schemaVersion', message: `Unsupported schema version: ${game.manifest.schemaVersion}` });
   if (!engineSupports(game.manifest.engineRange)) issues.push({ path: 'manifest.engineRange', message: `Player ${ENGINE_VERSION} is incompatible with ${game.manifest.engineRange}` });
   issues.push(...validateReferences(game));
   return issues.length ? { success: false, issues } : { success: true, data: game, issues: [] };

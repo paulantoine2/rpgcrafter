@@ -404,11 +404,11 @@ describe('EventInspector pages', () => {
     expect(setVariableIcon).toBeInTheDocument();
     expect(setVariableIcon.parentElement).toHaveClass('text-muted-foreground', '[&_svg]:size-3.5');
     expect(commandSettings.querySelector('.truncate')).toHaveClass('text-right', 'text-muted-foreground');
-    expect(commandSettings).toHaveTextContent('Set');
+    expect(commandSettings).toHaveTextContent('Variable');
     expect(commandSettings).not.toHaveTextContent('Set variable');
     expect(commandSettings).toHaveAttribute('aria-pressed', 'true');
     expect(commandSettings).toHaveAttribute('aria-expanded', 'true');
-    expect(commandRow).toHaveTextContent('Score · 0');
+    expect(commandRow).toHaveTextContent('Score = 0');
     expect(within(commandRow!).queryByRole('button', { name: 'Move up' })).not.toBeInTheDocument();
     expect(within(commandRow!).queryByRole('button', { name: 'Move down' })).not.toBeInTheDocument();
     expect(within(commandRow!).getByRole('button', { name: 'Remove setVariable command' }).querySelector('.lucide-minus')).toBeInTheDocument();
@@ -426,7 +426,7 @@ describe('EventInspector pages', () => {
     await user.clear(value);
     await user.type(value, '25');
 
-    expect(onEventChange.mock.calls.at(-1)?.[0].pages[0].contents[0]).toEqual({ type: 'setVariable', id: 'reputation', value: 25 });
+    expect(onEventChange.mock.calls.at(-1)?.[0].pages[0].contents[0]).toEqual({ type: 'setVariable', id: 'reputation', operation: 'set', operand: { kind: 'constant', value: 25 } });
   });
 
   it('opens the variable picker when a set-variable command has nothing to select', async () => {
@@ -437,7 +437,7 @@ describe('EventInspector pages', () => {
     await user.click(screen.getByRole('button', { name: 'Add command' }));
     await user.click(await screen.findByRole('menuitem', { name: 'Set variable' }));
 
-    expect(screen.getByRole('button', { name: 'Set variable command settings' })).toHaveTextContent('Choose a variable · 0');
+    expect(screen.getByRole('button', { name: 'Set variable command settings' })).toHaveTextContent('Choose a variable = 0');
     expect(screen.getByRole('button', { name: 'Choose variable' })).toHaveTextContent('Choose a variable');
     expect(await screen.findByRole('textbox', { name: 'Search variables' })).toBeInTheDocument();
     expect(screen.getByText('No variables found.')).toBeInTheDocument();
@@ -446,8 +446,40 @@ describe('EventInspector pages', () => {
     await user.type(await screen.findByRole('textbox', { name: 'Variable name' }), 'Quest progress');
     await user.click(screen.getByRole('button', { name: 'Confirm variable creation' }));
 
-    expect(onEventChange.mock.calls.at(-1)?.[0].pages[0].contents[0]).toEqual({ type: 'setVariable', id: 'quest-progress', value: 0 });
+    expect(onEventChange.mock.calls.at(-1)?.[0].pages[0].contents[0]).toEqual({ type: 'setVariable', id: 'quest-progress', operation: 'set', operand: { kind: 'constant', value: 0 } });
     expect(screen.getByRole('button', { name: 'Choose variable' })).toHaveTextContent('Quest progress');
+  });
+
+  it('configures arithmetic, random, and coordinate operands for variables', async () => {
+    const user = userEvent.setup();
+    const onEventChange = vi.fn();
+    render(<Harness onEventChange={onEventChange} />);
+
+    await user.click(screen.getByRole('button', { name: 'Add command' }));
+    await user.click(await screen.findByRole('menuitem', { name: 'Set variable' }));
+    expect(screen.queryByRole('combobox', { name: 'Variable operation' })).not.toBeInTheDocument();
+    expect(screen.getByRole('tablist', { name: 'Variable operation' })).toBeInTheDocument();
+    await user.click(screen.getByRole('tab', { name: 'Add' }));
+    expect(screen.getByRole('tab', { name: 'Add' })).toHaveAttribute('aria-selected', 'true');
+    await user.click(screen.getByRole('combobox', { name: 'Variable operand type' }));
+    await user.click(await screen.findByRole('option', { name: 'Random range' }));
+    await user.clear(screen.getByRole('spinbutton', { name: 'Minimum' }));
+    await user.type(screen.getByRole('spinbutton', { name: 'Minimum' }), '2.5');
+    await user.clear(screen.getByRole('spinbutton', { name: 'Maximum' }));
+    await user.type(screen.getByRole('spinbutton', { name: 'Maximum' }), '8');
+
+    expect(onEventChange.mock.calls.at(-1)?.[0].pages[0].contents[0]).toEqual({ type: 'setVariable', id: 'score', operation: 'add', operand: { kind: 'random', min: 2.5, max: 8 } });
+
+    await user.click(screen.getByRole('combobox', { name: 'Variable operand type' }));
+    await user.click(await screen.findByRole('option', { name: 'Game data' }));
+    await user.click(screen.getByRole('combobox', { name: 'Variable game data' }));
+    await user.click(await screen.findByRole('option', { name: 'Character coordinate' }));
+    await user.click(screen.getByRole('combobox', { name: 'Coordinate character' }));
+    await user.click(await screen.findByRole('option', { name: 'This event' }));
+    await user.click(screen.getByRole('combobox', { name: 'Coordinate axis' }));
+    await user.click(await screen.findByRole('option', { name: 'Y' }));
+
+    expect(onEventChange.mock.calls.at(-1)?.[0].pages[0].contents[0]).toEqual({ type: 'setVariable', id: 'score', operation: 'add', operand: { kind: 'gameData', data: { kind: 'characterCoordinate', target: { kind: 'thisEvent' }, axis: 'y' } } });
   });
 
   it('opens the switch picker when a set-switch command has nothing to select', async () => {
@@ -467,8 +499,46 @@ describe('EventInspector pages', () => {
     await user.type(await screen.findByRole('textbox', { name: 'Switch name' }), 'Bridge open');
     await user.click(screen.getByRole('button', { name: 'Confirm switch creation' }));
 
-    expect(onEventChange.mock.calls.at(-1)?.[0].pages[0].contents[0]).toEqual({ type: 'setSwitch', id: 'bridge-open', value: true });
+    expect(onEventChange.mock.calls.at(-1)?.[0].pages[0].contents[0]).toEqual({ type: 'setSwitch', id: 'bridge-open', operation: 'set', operand: { kind: 'constant', value: true } });
     expect(screen.getByRole('button', { name: 'Choose switch' })).toHaveTextContent('Bridge open');
+  });
+
+  it('toggles a switch without displaying an operand', async () => {
+    const user = userEvent.setup();
+    const onEventChange = vi.fn();
+    render(<Harness onEventChange={onEventChange} />);
+
+    await user.click(screen.getByRole('button', { name: 'Add command' }));
+    await user.click(await screen.findByRole('menuitem', { name: 'Set switch' }));
+    expect(screen.queryByRole('combobox', { name: 'Switch operation' })).not.toBeInTheDocument();
+    expect(screen.getByRole('tablist', { name: 'Switch operation' })).toBeInTheDocument();
+    await user.click(screen.getByRole('tab', { name: 'Toggle' }));
+    expect(screen.getByRole('tab', { name: 'Toggle' })).toHaveAttribute('aria-selected', 'true');
+
+    expect(screen.queryByRole('combobox', { name: 'Switch operand type' })).not.toBeInTheDocument();
+    expect(onEventChange.mock.calls.at(-1)?.[0].pages[0].contents[0]).toEqual({ type: 'setSwitch', id: 'door-open', operation: 'toggle' });
+    expect(screen.getByRole('button', { name: 'Set switch command settings' })).toHaveTextContent('ToggleDoor open');
+  });
+
+  it('configures switch and boolean game-data operands', async () => {
+    const user = userEvent.setup();
+    const onEventChange = vi.fn();
+    render(<Harness onEventChange={onEventChange} />);
+
+    await user.click(screen.getByRole('button', { name: 'Add command' }));
+    await user.click(await screen.findByRole('menuitem', { name: 'Set switch' }));
+    await user.click(screen.getByRole('combobox', { name: 'Switch operand type' }));
+    await user.click(await screen.findByRole('option', { name: 'Switch' }));
+    await user.click(screen.getAllByRole('button', { name: 'Choose switch' })[1]);
+    await user.click(await screen.findByRole('option', { name: 'Boss defeated' }));
+    expect(onEventChange.mock.calls.at(-1)?.[0].pages[0].contents[0]).toEqual({ type: 'setSwitch', id: 'door-open', operation: 'set', operand: { kind: 'switch', switchId: 'boss-defeated' } });
+
+    await user.click(screen.getByRole('combobox', { name: 'Switch operand type' }));
+    await user.click(await screen.findByRole('option', { name: 'Game data' }));
+    await user.click(screen.getByRole('combobox', { name: 'Switch game data' }));
+    await user.click(await screen.findByRole('option', { name: 'Item equipped' }));
+    expect(screen.getByRole('combobox', { name: 'Game data item' })).toHaveTextContent('Silver Sword');
+    expect(onEventChange.mock.calls.at(-1)?.[0].pages[0].contents[0]).toEqual({ type: 'setSwitch', id: 'door-open', operation: 'set', operand: { kind: 'gameData', data: { kind: 'itemEquipped', itemId: 'silver-sword' } } });
   });
 
   it('automatically opens a command added to a dialogue choice', async () => {
@@ -489,8 +559,8 @@ describe('EventInspector pages', () => {
   it('shows concise command names with only their primary configured value', () => {
     const commands: EventCommand[] = [
       { type: 'dialogue', speaker: 'Guide', text: 'A very long dialogue that should stay hidden', choices: [] },
-      { type: 'setSwitch', id: 'door-open', value: true },
-      { type: 'setVariable', id: 'score', value: 12 },
+      { type: 'setSwitch', id: 'door-open', operation: 'set', operand: { kind: 'constant', value: true } },
+      { type: 'setVariable', id: 'score', operation: 'set', operand: { kind: 'constant', value: 12 } },
       { type: 'giveItem', id: 'potion', amount: 2 },
       { type: 'removeItem', id: 'silver-sword', amount: 1 },
       { type: 'unlockSkill', id: 'dash' },
@@ -506,7 +576,7 @@ describe('EventInspector pages', () => {
     expect(screen.getByRole('button', { name: 'Dialogue command settings' })).toHaveTextContent('DialogueGuide');
     expect(screen.getByRole('button', { name: 'Dialogue command settings' })).not.toHaveTextContent('A very long dialogue');
     expect(screen.getByRole('button', { name: 'Set switch command settings' })).toHaveTextContent('SetDoor open · On');
-    expect(screen.getByRole('button', { name: 'Set variable command settings' })).toHaveTextContent('SetScore · 12');
+    expect(screen.getByRole('button', { name: 'Set variable command settings' })).toHaveTextContent('VariableScore = 12');
     expect(screen.getByRole('button', { name: 'Give item command settings' })).toHaveTextContent('GivePotion ×2');
     expect(screen.getByRole('button', { name: 'Remove item command settings' })).toHaveTextContent('RemoveSilver Sword ×1');
     expect(screen.getByRole('button', { name: 'Unlock skill command settings' })).toHaveTextContent('Unlockdash');

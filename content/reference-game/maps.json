@@ -9684,7 +9684,11 @@
                       {
                         "type": "setSwitch",
                         "id": "questAccepted",
-                        "value": true
+                        "operation": "set",
+                        "operand": {
+                          "kind": "constant",
+                          "value": true
+                        }
                       },
                       {
                         "type": "toast",
@@ -9767,7 +9771,11 @@
                       {
                         "type": "setSwitch",
                         "id": "questCompleted",
-                        "value": true
+                        "operation": "set",
+                        "operand": {
+                          "kind": "constant",
+                          "value": true
+                        }
                       },
                       {
                         "type": "save"
@@ -13986,7 +13994,11 @@
               {
                 "type": "setSwitch",
                 "id": "keyChestOpened",
-                "value": true
+                "operation": "set",
+                "operand": {
+                  "kind": "constant",
+                  "value": true
+                }
               },
               {
                 "type": "giveItem",
@@ -14113,7 +14125,11 @@
               {
                 "type": "setSwitch",
                 "id": "guardianDoorOpen",
-                "value": true
+                "operation": "set",
+                "operand": {
+                  "kind": "constant",
+                  "value": true
+                }
               },
               {
                 "type": "toast",

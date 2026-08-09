@@ -6,6 +6,7 @@ import { conditionsMet as evaluateConditions } from './conditions.js';
 import { conditionalCommands } from './conditional.js';
 import { PixiRenderer } from './pixi-renderer.js';
 import { resolveTeleport, runTeleportFade, teleportFacing } from './teleport.js';
+import { resolveSetSwitch, resolveSetVariable, type StateOperandContext } from './state-commands.js';
 import type { Renderer, RenderState } from './renderer.js';
 import { DIRECTION_OFFSETS, eventPageMovement, navigationHasCell, navigationTarget, resolveEventPage } from './types.js';
 import type { Condition, Direction, EnemyTemplate, EventCommand, GameMap, LoadedGame, MapEvent, MapEventPage, PlanePosition, Skill, Vec2 } from './types.js';
@@ -47,6 +48,26 @@ void (async () => {
   const currentMap = (): GameMap => content.maps[game.mapId];
   const currentEnemies = () => game.enemies[game.mapId] || [];
   const saveKey = () => `runtime-v0:${content.manifest.gameId}:${content.manifest.version}`;
+
+  function stateOperandContext(process: CommandProcess): StateOperandContext {
+    return {
+      switches: game.switches,
+      variables: game.variables,
+      inventory: game.inventory,
+      equipment: game.equipment,
+      unlockedSkills: game.unlockedSkills,
+      player: game.player,
+      mapNumericId: currentMap().numericId,
+      tileSize: currentMap().tileSize,
+      characterPosition: target => {
+        const id = target.kind === 'player' ? 'player' : target.kind === 'thisEvent' ? process.eventId : target.eventId;
+        if (!id) return undefined;
+        const runtimePosition = movementRuntime?.actor(id)?.position;
+        if (runtimePosition) return runtimePosition;
+        return id === 'player' ? game.player : currentMap().events.find(event => event.id === id)?.position;
+      },
+    };
+  }
 
   const conditionsMet = (conditions: Condition[] = []) => evaluateConditions(conditions, game);
   function freshGame() {
@@ -173,8 +194,16 @@ void (async () => {
         return refreshHud();
       }
       if (command.type === 'conditional') process.commands.splice(process.index, 0, ...conditionalCommands(command, game));
-      if (command.type === 'setSwitch') game.switches[command.id] = command.value;
-      if (command.type === 'setVariable') game.variables[command.id] = command.value;
+      if (command.type === 'setSwitch') {
+        const value = resolveSetSwitch(command, game.switches[command.id], stateOperandContext(process));
+        if (value === undefined) console.warn('Set switch ignored because its operand could not be resolved.', command);
+        else game.switches[command.id] = value;
+      }
+      if (command.type === 'setVariable') {
+        const value = resolveSetVariable(command, game.variables[command.id], stateOperandContext(process));
+        if (value === undefined) console.warn('Set variable ignored because its operand or result was invalid.', command);
+        else game.variables[command.id] = value;
+      }
       if (command.type === 'giveItem') game.inventory[command.id] = (game.inventory[command.id] || 0) + (command.amount || 1);
       if (command.type === 'removeItem') game.inventory[command.id] = Math.max(0, (game.inventory[command.id] || 0) - (command.amount || 1));
       if (command.type === 'unlockSkill' && !game.unlockedSkills.includes(command.id)) game.unlockedSkills.push(command.id);
