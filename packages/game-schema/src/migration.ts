@@ -447,6 +447,19 @@ function migrateV11(files: SourceGameFiles): SourceGameFiles {
   return next;
 }
 
+/** Adds common events and upgrades the V0.12 source model to V0.13. */
+function migrateV12(files: SourceGameFiles): SourceGameFiles {
+  const manifest = files.manifest as JsonObject | null;
+  if (!manifest || manifest.schemaVersion !== '0.12') return files;
+  const next = structuredClone(files) as SourceGameFiles;
+  const nextManifest = next.manifest as JsonObject;
+  nextManifest.schemaVersion = '0.13';
+  nextManifest.engineRange = '>=0.13 <0.14';
+  const events = (next.events || {}) as JsonObject;
+  if (!events.commonEvents) events.commonEvents = {};
+  return next;
+}
+
 function ensureVariables(files: SourceGameFiles): SourceGameFiles {
   const initialState = files.initialState as JsonObject | null;
   if (!initialState || 'variables' in initialState) return files;
@@ -485,5 +498,5 @@ function removeQuestStateCommands(files: SourceGameFiles): SourceGameFiles {
 
 /** Migrates every supported legacy authoring shape to the current schema. */
 export function migrateSourceGameFiles(files: SourceGameFiles): SourceGameFiles {
-  return removeQuestStateCommands(ensureVariables(migrateV11(migrateV10(migrateV09(migrateV08(migrateV07(migrateV06(migrateEventVisuals(migrateV05(migrateV04(files)))))))))));
+  return removeQuestStateCommands(ensureVariables(migrateV12(migrateV11(migrateV10(migrateV09(migrateV08(migrateV07(migrateV06(migrateEventVisuals(migrateV05(migrateV04(files))))))))))));
 }

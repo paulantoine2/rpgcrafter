@@ -40,6 +40,15 @@ describe('findDatabaseReferences', () => {
     expect(findDatabaseReferences(game, 'item', 'key')).toEqual([]);
   });
 
+  it('finds common event calls and switch triggers', () => {
+    const game = createEmptyProject('Common references').game;
+    game.initialState.switches.ready = { name: 'Ready', initialValue: false };
+    game.events.commonEvents.first = { name: 'First', trigger: { type: 'autorun', switchId: 'ready' }, contents: [{ type: 'callCommonEvent', id: 'second' }] };
+    game.events.commonEvents.second = { name: 'Second', trigger: { type: 'none' }, contents: [] };
+    expect(findDatabaseReferences(game, 'switch', 'ready')[0].path).toBe('events.commonEvents.first.trigger.switchId');
+    expect(findDatabaseReferences(game, 'commonEvent', 'second')[0].path).toBe('events.commonEvents.first.contents[0]');
+  });
+
   it('finds equipment type references in items and initial equipment', () => {
     const game = createEmptyProject('Type references').game;
     game.items.sword = { name: 'Sword', type: 'equipment', equipmentTypeId: 1 };

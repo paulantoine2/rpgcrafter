@@ -1,6 +1,6 @@
 import { z } from 'zod';
 import type {
-  AutonomousMovement, Condition, ContentIssue, EnemyTemplate, EventCommand, EventOptions, GameMap, GameTypes, InitialState, Item, Manifest,
+  AutonomousMovement, CommonEvent, Condition, ContentIssue, EnemyTemplate, EventCommand, EventOptions, GameMap, GameTypes, InitialState, Item, Manifest,
   MapEventPage, MapEventTrigger, MapEventSprite, Objective, PlayerDefinition, QuestDefinition,
   Skill, SourceGame, SourceGameFiles, SourceGameResult, TilesetDefinition, UiDefinition, MovementCommand,
   MovementTarget, MovementRoute,
@@ -9,7 +9,7 @@ import type {
 import { CANONICAL_AUTOTILE_MASKS, canonicalizeAutotileMask } from './autotile.js';
 import { migrateSourceGameFiles } from './migration.js';
 
-export const ENGINE_VERSION = '0.12.0';
+export const ENGINE_VERSION = '0.13.0';
 
 const Id = z.string().min(1);
 const FiniteNumber = z.number().finite();
@@ -209,6 +209,7 @@ const EventCommandSchema = z.lazy(() => z.union([
   }).strict(),
   z.object({ type: z.literal('movementRoute'), target: MovementTargetSchema, route: MovementRouteSchema }).strict(),
   z.object({ type: z.literal('wait'), duration: NonNegativeNumber }).strict(),
+  z.object({ type: z.literal('callCommonEvent'), id: Id }).strict(),
   z.object({ type: z.literal('save') }).strict(),
 ])) as z.ZodType<EventCommand>;
 
@@ -300,7 +301,16 @@ const InitialStateSchema: z.ZodType<InitialState> = z.object({
   equipment: z.record(Id, Id.nullable()).optional(),
 }).strict();
 const ActorsSchema = z.object({ player: PlayerSchema }).strict();
-const EventsSchema = z.object({ objectives: z.array(ObjectiveSchema) }).strict();
+const CommonEventSchema = z.object({
+  name: Id,
+  trigger: z.discriminatedUnion('type', [
+    z.object({ type: z.literal('none') }).strict(),
+    z.object({ type: z.literal('autorun'), switchId: Id }).strict(),
+    z.object({ type: z.literal('parallel'), switchId: Id }).strict(),
+  ]),
+  contents: z.array(EventCommandSchema),
+}).strict() as z.ZodType<CommonEvent>;
+const EventsSchema = z.object({ objectives: z.array(ObjectiveSchema), commonEvents: z.record(Id, CommonEventSchema) }).strict();
 
 function compareVersions(left: string, right: string) {
   const parse = (value: string) => value.split('.').map(part => Number(part || 0));
@@ -431,6 +441,7 @@ function validateReferences(game: SourceGame): ContentIssue[] {
       if (!(command.id in initialState.variables)) issue(target, `Unknown variable: ${command.id}`);
       validateVariableOperand(command.operand, `${target}.operand`, sourceMapId);
     }
+    if (command.type === 'callCommonEvent' && !events.commonEvents[command.id]) issue(target, `Unknown common event: ${command.id}`);
     if (command.type === 'teleport') {
       const sources = [command.destination.map, command.destination.x, command.destination.y];
       for (const source of sources) if (source.kind === 'variable' && !(source.variableId in initialState.variables)) issue(target, `Unknown variable: ${source.variableId}`);
@@ -569,6 +580,19 @@ function validateReferences(game: SourceGame): ContentIssue[] {
   const highestMapNumericId = Math.max(0, ...mapNumericIds);
   if (manifest.nextMapNumericId <= highestMapNumericId) issue('manifest.nextMapNumericId', 'Must be greater than every numeric map id');
   events.objectives.forEach((objective, index) => validateConditions(objective.conditions || [], `events.objectives[${index}].conditions`));
+  const hasMapEventTarget = (commands: EventCommand[]): boolean => commands.some(command => {
+    if (command.type === 'movementRoute' && command.target.kind !== 'player') return true;
+    if (command.type === 'setVariable' && command.operand.kind === 'gameData' && command.operand.data.kind === 'characterCoordinate' && command.operand.data.target.kind !== 'player') return true;
+    if (command.type === 'conditional' && command.condition.kind === 'variable' && command.condition.operand.kind === 'gameData' && command.condition.operand.data.kind === 'characterCoordinate' && command.condition.operand.data.target.kind !== 'player') return true;
+    if (command.type === 'conditional' && (hasMapEventTarget(command.thenCommands) || hasMapEventTarget(command.elseCommands || []))) return true;
+    return command.type === 'dialogue' && Boolean(command.choices?.some(choice => hasMapEventTarget(choice.commands)));
+  });
+  for (const [commonEventId, commonEvent] of Object.entries(events.commonEvents)) {
+    const path = `events.commonEvents.${commonEventId}`;
+    if (commonEvent.trigger.type !== 'none' && !initialState.switches[commonEvent.trigger.switchId]) issue(`${path}.trigger.switchId`, `Unknown switch: ${commonEvent.trigger.switchId}`);
+    validateCommands(commonEvent.contents, `${path}.contents`);
+    if (hasMapEventTarget(commonEvent.contents)) issue(`${path}.contents`, 'Common events can only target the player');
+  }
   for (const [category, catalog] of Object.entries(types)) {
     const ids = new Set<number>();
     for (const entry of catalog.entries) {
@@ -599,7 +623,7 @@ export function parseSourceGame(files: SourceGameFiles): SourceGameResult {
   }
   if (issues.length) return { success: false, issues };
   const game = parsed as SourceGame;
-  if (game.manifest.schemaVersion !== '0.12') issues.push({ path: 'manifest.schemaVersion', message: `Unsupported schema version: ${game.manifest.schemaVersion}` });
+  if (game.manifest.schemaVersion !== '0.13') issues.push({ path: 'manifest.schemaVersion', message: `Unsupported schema version: ${game.manifest.schemaVersion}` });
   if (!engineSupports(game.manifest.engineRange)) issues.push({ path: 'manifest.engineRange', message: `Player ${ENGINE_VERSION} is incompatible with ${game.manifest.engineRange}` });
   issues.push(...validateReferences(game));
   return issues.length ? { success: false, issues } : { success: true, data: game, issues: [] };

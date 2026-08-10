@@ -15,6 +15,29 @@ function sourceFiles(): SourceGameFiles {
 }
 
 describe('SourceGame validation', () => {
+  it('validates common event triggers and calls while allowing call cycles', () => {
+    const files = sourceFiles();
+    (files.events as any).commonEvents = {
+      first: { name: 'First', trigger: { type: 'autorun', switchId: 'questAccepted' }, contents: [{ type: 'callCommonEvent', id: 'second' }] },
+      second: { name: 'Second', trigger: { type: 'none' }, contents: [{ type: 'callCommonEvent', id: 'first' }] },
+    };
+    expect(parseSourceGame(files).success).toBe(true);
+
+    (files.events as any).commonEvents.second.contents[0].id = 'missing';
+    const missing = parseSourceGame(files);
+    expect(missing.success).toBe(false);
+    if (!missing.success) expect(missing.issues.some(issue => issue.message.includes('Unknown common event'))).toBe(true);
+  });
+
+  it('rejects map-event targets inside common events', () => {
+    const files = sourceFiles();
+    (files.events as any).commonEvents = {
+      invalid: { name: 'Invalid', trigger: { type: 'none' }, contents: [{ type: 'movementRoute', target: { kind: 'thisEvent' }, route: { commands: [], repeat: false, skippable: false, wait: true } }] },
+    };
+    const result = parseSourceGame(files);
+    expect(result.success).toBe(false);
+    if (!result.success) expect(result.issues.some(issue => issue.message.includes('only target the player'))).toBe(true);
+  });
   it('validates type IDs, counters, and equipment type references', () => {
     const duplicate = sourceFiles();
     (duplicate.types as any).elements = { nextId: 2, entries: [{ id: 1, name: 'Fire' }, { id: 1, name: 'Ice' }] };

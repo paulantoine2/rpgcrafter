@@ -1,6 +1,6 @@
 import { Fragment, useEffect, useRef, useState, type ReactNode, type RefObject } from 'react';
 import type { Condition, ContentIssue, EventCommand, MapEvent, MapEventPage, MovementCommand, MovementRoute, SourceGame, SwitchOperand, TeleportMapSource, TeleportNumberSource, VariableComparison, VariableConditionOperand, VariableOperand, VariableOperation } from '@rpgcrafter/game-schema';
-import { ArrowDown, ArrowUp, Asterisk, Bell, BringToFront, ChevronsUpDown, Clock3, Copy, Divide, Equal, Footprints, GitBranch, GitFork, GripVertical, Hand, Hash, HeartPulse, ImageIcon, Layers2, MapPin, MessageSquare, Minus, MousePointerClick, Package, PackageMinus, PackagePlus, Percent, Play, Plus, Save, Search, SendToBack, Settings2, Sparkles, ToggleLeft, Trash2, X, type LucideIcon } from 'lucide-react';
+import { ArrowDown, ArrowUp, Asterisk, Bell, BringToFront, ChevronsUpDown, Clock3, Copy, Divide, Equal, Footprints, GitBranch, GitFork, GripVertical, Hand, Hash, HeartPulse, ImageIcon, Layers2, MapPin, MessageSquare, Minus, MousePointerClick, Package, PackageMinus, PackagePlus, Percent, Play, Plus, Save, Search, SendToBack, Settings2, Sparkles, ToggleLeft, Trash2, Workflow, X, type LucideIcon } from 'lucide-react';
 import { Popover } from '@base-ui/react/popover';
 import { Button } from '@/components/ui/button';
 import { Attachment, AttachmentAction, AttachmentActions, AttachmentContent, AttachmentDescription, AttachmentMedia, AttachmentTitle, AttachmentTrigger } from '@/components/ui/attachment';
@@ -40,7 +40,7 @@ type Props = {
 type ConditionActions = Pick<Props, 'onCreateSwitch' | 'onCreateVariable'>;
 
 const commandGroups: { label: string; types: EventCommand['type'][] }[] = [
-  { label: 'Flow & state', types: ['conditional', 'wait', 'setSwitch', 'setVariable', 'save'] },
+  { label: 'Flow & state', types: ['conditional', 'wait', 'callCommonEvent', 'setSwitch', 'setVariable', 'save'] },
   { label: 'Dialogue & feedback', types: ['dialogue', 'toast'] },
   { label: 'Player & inventory', types: ['giveItem', 'removeItem', 'unlockSkill', 'healPlayer'] },
   { label: 'Movement & world', types: ['movementRoute', 'teleport'] },
@@ -50,6 +50,7 @@ const commandTypeLabels: Record<EventCommand['type'], string> = {
   conditional: 'Conditional branch',
   movementRoute: 'Movement route',
   wait: 'Wait',
+  callCommonEvent: 'Call Common Event',
   setSwitch: 'Set switch',
   setVariable: 'Set variable',
   giveItem: 'Give item',
@@ -65,6 +66,7 @@ const commandTypeIcons: Record<EventCommand['type'], LucideIcon> = {
   conditional: GitBranch,
   movementRoute: Footprints,
   wait: Clock3,
+  callCommonEvent: Workflow,
   setSwitch: ToggleLeft,
   setVariable: Hash,
   giveItem: PackagePlus,
@@ -154,6 +156,7 @@ function moveToInsertionIndex<T>(items: T[], fromIndex: number, insertionIndex: 
 function hasUnresolvedCommandReference(game: SourceGame, command: EventCommand): boolean {
   if (command.type === 'setSwitch') return !game.initialState.switches[command.id];
   if (command.type === 'setVariable') return !game.initialState.variables[command.id];
+  if (command.type === 'callCommonEvent') return !game.events.commonEvents[command.id];
   if (command.type === 'conditional') return [...command.thenCommands, ...(command.elseCommands || [])].some(child => hasUnresolvedCommandReference(game, child));
   if (command.type === 'dialogue') return (command.choices || []).some(choice => choice.commands.some(child => hasUnresolvedCommandReference(game, child)));
   return false;
@@ -256,7 +259,7 @@ function NewSwitchPopover({ anchor, onCreate }: { anchor: RefObject<HTMLDivEleme
   </Popover.Root>;
 }
 
-function SwitchPicker({ game, value, equals = true, comparison, onChange, onCreate, autoOpen = false, onAutoOpen, showIcon = true, showValue = true, anchorToInspector = true }: { game: SourceGame; value: string; equals?: boolean; comparison?: string; onChange: (id: string) => void; onCreate: (name: string) => string; autoOpen?: boolean; onAutoOpen?: () => void; showIcon?: boolean; showValue?: boolean; anchorToInspector?: boolean }) {
+export function SwitchPicker({ game, value, equals = true, comparison, onChange, onCreate, autoOpen = false, onAutoOpen, showIcon = true, showValue = true, anchorToInspector = true }: { game: SourceGame; value: string; equals?: boolean; comparison?: string; onChange: (id: string) => void; onCreate: (name: string) => string; autoOpen?: boolean; onAutoOpen?: () => void; showIcon?: boolean; showValue?: boolean; anchorToInspector?: boolean }) {
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState('');
   const triggerRef = useRef<HTMLButtonElement>(null);
@@ -480,7 +483,7 @@ function ConditionsEditor({ game, mapId, value, onChange, onCreateSwitch, onCrea
   </div>;
 }
 
-function defaultCommand(type: EventCommand['type'], game: SourceGame): EventCommand {
+function defaultCommand(type: EventCommand['type'], game: SourceGame, allowMapEventTargets = true): EventCommand {
   const gameSwitch = Object.keys(game.initialState.switches)[0] || '';
   const variable = Object.keys(game.initialState.variables)[0] || '';
   const item = Object.keys(game.items)[0] || '';
@@ -495,8 +498,9 @@ function defaultCommand(type: EventCommand['type'], game: SourceGame): EventComm
   if (type === 'healPlayer') return { type, amount: 10 };
   if (type === 'toast') return { type, text: 'Notification' };
   if (type === 'teleport') return { type, destination: { map: { kind: 'constant', mapId }, x: { kind: 'constant', value: 0 }, y: { kind: 'constant', value: 0 } }, direction: 'retain', transition: 'instant' };
-  if (type === 'movementRoute') return { type, target: { kind: 'thisEvent' }, route: { commands: [], repeat: false, skippable: false, wait: true } };
+  if (type === 'movementRoute') return { type, target: { kind: allowMapEventTargets ? 'thisEvent' : 'player' }, route: { commands: [], repeat: false, skippable: false, wait: true } };
   if (type === 'wait') return { type, duration: 0.5 };
+  if (type === 'callCommonEvent') return { type, id: Object.keys(game.events.commonEvents)[0] || '' };
   return { type: 'save' };
 }
 
@@ -585,7 +589,7 @@ function MovementRouteEditor({ value, onChange, showWait = true }: { value: Move
   </div>;
 }
 
-function ConditionalConditionFields({ game, mapId, condition, onChange, conditionActions }: { game: SourceGame; mapId: string; condition: Condition; onChange: (condition: Condition) => void; conditionActions: ConditionActions }) {
+function ConditionalConditionFields({ game, mapId, condition, onChange, conditionActions, allowMapEventTargets = true }: { game: SourceGame; mapId: string; condition: Condition; onChange: (condition: Condition) => void; conditionActions: ConditionActions; allowMapEventTargets?: boolean }) {
   const conditionTypeLabels = { switch: 'Switch', variable: 'Variable', item: 'Item' } as const;
   return <div className="space-y-3">
     <Field label="Condition type">
@@ -602,7 +606,7 @@ function ConditionalConditionFields({ game, mapId, condition, onChange, conditio
         <VariablePicker game={game} condition={condition} onChange={id => onChange({ ...condition, id })} onCreate={conditionActions.onCreateVariable} showIcon={false} showComparison={false} anchorToInspector={false} />
       </Field>
       <ComparisonTabs value={condition.operator} onChange={operator => onChange({ ...condition, operator })} />
-      <VariableConditionOperandFields game={game} mapId={mapId} value={condition.operand} onChange={operand => onChange({ ...condition, operand })} conditionActions={conditionActions} />
+      <VariableConditionOperandFields game={game} mapId={mapId} value={condition.operand} onChange={operand => onChange({ ...condition, operand })} conditionActions={conditionActions} allowMapEventTargets={allowMapEventTargets} />
     </>}
     {condition.kind === 'item' && <>
       <Field label="Item">
@@ -668,7 +672,7 @@ function SwitchOperandFields({ game, value, onChange, conditionActions }: { game
   </div>;
 }
 
-function VariableOperandFields({ game, mapId, value, onChange, conditionActions, allowRandom = true }: { game: SourceGame; mapId: string; value: VariableOperand; onChange: (operand: VariableOperand) => void; conditionActions: ConditionActions; allowRandom?: boolean }) {
+function VariableOperandFields({ game, mapId, value, onChange, conditionActions, allowRandom = true, allowMapEventTargets = true }: { game: SourceGame; mapId: string; value: VariableOperand; onChange: (operand: VariableOperand) => void; conditionActions: ConditionActions; allowRandom?: boolean; allowMapEventTargets?: boolean }) {
   const itemIds = Object.keys(game.items);
   const eventIds = game.maps[mapId].events.map(event => event.id);
   const data = value.kind === 'gameData' ? value.data : undefined;
@@ -683,13 +687,13 @@ function VariableOperandFields({ game, mapId, value, onChange, conditionActions,
       <Field label="Game data"><EnumSelect value={data.kind} values={['itemAmount', 'playerStat', 'mapId', 'characterCoordinate'] as const} labels={{ itemAmount: 'Item quantity', playerStat: 'Player stat', mapId: 'Current map ID', characterCoordinate: 'Character coordinate' }} ariaLabel="Variable game data" onChange={kind => onChange({ kind: 'gameData', data: kind === 'itemAmount' ? { kind, itemId: itemIds[0] || '' } : kind === 'playerStat' ? { kind, stat: 'hp' } : kind === 'mapId' ? { kind } : { kind, target: { kind: 'player' }, axis: 'x' } })} /></Field>
       {data.kind === 'itemAmount' && <Field label="Item"><EnumSelect value={data.itemId} values={itemIds} labels={Object.fromEntries(Object.entries(game.items).map(([id, item]) => [id, item.name]))} ariaLabel="Quantity item" onChange={itemId => onChange({ kind: 'gameData', data: { kind: 'itemAmount', itemId } })} /></Field>}
       {data.kind === 'playerStat' && <Field label="Stat"><EnumSelect value={data.stat} values={['hp', 'maxHp', 'level', 'xp'] as const} labels={{ hp: 'HP', maxHp: 'Maximum HP', level: 'Level', xp: 'XP' }} ariaLabel="Player stat" onChange={stat => onChange({ kind: 'gameData', data: { kind: 'playerStat', stat } })} /></Field>}
-      {data.kind === 'characterCoordinate' && <div className="grid grid-cols-[1fr_72px] gap-2"><Field label="Character"><EnumSelect value={targetValue} values={['player', 'thisEvent', ...eventIds.map(id => `event:${id}`)]} labels={{ player: 'Player', thisEvent: 'This event' }} ariaLabel="Coordinate character" onChange={nextValue => onChange({ kind: 'gameData', data: { ...data, target: nextValue === 'player' ? { kind: 'player' } : nextValue === 'thisEvent' ? { kind: 'thisEvent' } : { kind: 'event', eventId: nextValue.slice(6) } } })} /></Field><Field label="Axis"><EnumSelect value={data.axis} values={['x', 'y'] as const} labels={{ x: 'X', y: 'Y' }} ariaLabel="Coordinate axis" onChange={axis => onChange({ kind: 'gameData', data: { ...data, axis } })} /></Field></div>}
+      {data.kind === 'characterCoordinate' && <div className="grid grid-cols-[1fr_72px] gap-2"><Field label="Character"><EnumSelect value={allowMapEventTargets ? targetValue : 'player'} values={allowMapEventTargets ? ['player', 'thisEvent', ...eventIds.map(id => `event:${id}`)] : ['player']} labels={{ player: 'Player', thisEvent: 'This event' }} ariaLabel="Coordinate character" onChange={nextValue => onChange({ kind: 'gameData', data: { ...data, target: nextValue === 'player' ? { kind: 'player' } : nextValue === 'thisEvent' ? { kind: 'thisEvent' } : { kind: 'event', eventId: nextValue.slice(6) } } })} /></Field><Field label="Axis"><EnumSelect value={data.axis} values={['x', 'y'] as const} labels={{ x: 'X', y: 'Y' }} ariaLabel="Coordinate axis" onChange={axis => onChange({ kind: 'gameData', data: { ...data, axis } })} /></Field></div>}
     </>}
   </div>;
 }
 
-function VariableConditionOperandFields({ game, mapId, value, onChange, conditionActions }: { game: SourceGame; mapId: string; value: VariableConditionOperand; onChange: (operand: VariableConditionOperand) => void; conditionActions: ConditionActions }) {
-  return <VariableOperandFields game={game} mapId={mapId} value={value} allowRandom={false} conditionActions={conditionActions} onChange={operand => {
+function VariableConditionOperandFields({ game, mapId, value, onChange, conditionActions, allowMapEventTargets = true }: { game: SourceGame; mapId: string; value: VariableConditionOperand; onChange: (operand: VariableConditionOperand) => void; conditionActions: ConditionActions; allowMapEventTargets?: boolean }) {
+  return <VariableOperandFields game={game} mapId={mapId} value={value} allowRandom={false} allowMapEventTargets={allowMapEventTargets} conditionActions={conditionActions} onChange={operand => {
     if (operand.kind !== 'random') onChange(operand);
   }} />;
 }
@@ -702,11 +706,11 @@ function SetSwitchFields({ game, action, onChange, conditionActions, autoOpenMis
   </div>;
 }
 
-function SetVariableFields({ game, mapId, action, onChange, conditionActions, autoOpenMissingReference, onAutoOpen }: { game: SourceGame; mapId: string; action: SetVariableCommand; onChange: (command: SetVariableCommand) => void; conditionActions: ConditionActions; autoOpenMissingReference: boolean; onAutoOpen: () => void }) {
+function SetVariableFields({ game, mapId, action, onChange, conditionActions, autoOpenMissingReference, onAutoOpen, allowMapEventTargets = true }: { game: SourceGame; mapId: string; action: SetVariableCommand; onChange: (command: SetVariableCommand) => void; conditionActions: ConditionActions; autoOpenMissingReference: boolean; onAutoOpen: () => void; allowMapEventTargets?: boolean }) {
   return <div className="space-y-3">
     <Field label="Variable"><VariablePicker game={game} condition={{ kind: 'variable', id: action.id, operator: 'equal', operand: { kind: 'constant', value: 0 } }} onChange={id => onChange({ ...action, id })} onCreate={conditionActions.onCreateVariable} autoOpen={autoOpenMissingReference && !game.initialState.variables[action.id]} onAutoOpen={onAutoOpen} showIcon={false} showComparison={false} anchorToInspector={false} /></Field>
     <OperationTabs value={action.operation} operations={variableOperations} label="Variable operation" onChange={operation => onChange({ ...action, operation })} />
-    <VariableOperandFields game={game} mapId={mapId} value={action.operand} onChange={operand => onChange({ ...action, operand })} conditionActions={conditionActions} />
+    <VariableOperandFields game={game} mapId={mapId} value={action.operand} onChange={operand => onChange({ ...action, operand })} conditionActions={conditionActions} allowMapEventTargets={allowMapEventTargets} />
   </div>;
 }
 
@@ -716,7 +720,7 @@ type CommandAutoOpenProps = {
   onCommandAdded?: (command: EventCommand) => void;
 };
 
-function CommandFields({ game, mapId, command, onChange, conditionalDepth, conditionActions, autoOpenCommand, onAutoOpenCommand, onCommandAdded }: { game: SourceGame; mapId: string; command: EventCommand; onChange: (command: EventCommand) => void; conditionalDepth: number; conditionActions: ConditionActions } & CommandAutoOpenProps) {
+function CommandFields({ game, mapId, command, onChange, conditionalDepth, conditionActions, allowMapEventTargets, autoOpenCommand, onAutoOpenCommand, onCommandAdded }: { game: SourceGame; mapId: string; command: EventCommand; onChange: (command: EventCommand) => void; conditionalDepth: number; conditionActions: ConditionActions; allowMapEventTargets: boolean } & CommandAutoOpenProps) {
   const [autoOpenMissingReference, setAutoOpenMissingReference] = useState(true);
   const action = command;
   if (action.type === 'dialogue') return <div className="space-y-2">
@@ -725,14 +729,14 @@ function CommandFields({ game, mapId, command, onChange, conditionalDepth, condi
     <div className="space-y-2 border-l-2 border-primary/25 pl-2">
       {(action.choices || []).map((choice, index) => <div key={index} className="space-y-2 border bg-background p-2">
         <div className="flex gap-2"><Input value={choice.label} placeholder="Choice label" onChange={event => onChange({ ...action, choices: action.choices!.map((item, itemIndex) => itemIndex === index ? { ...item, label: event.target.value } : item) })} /><IconButtonTooltip label="Remove choice"><Button variant="ghost" size="icon-sm" aria-label="Remove choice" onClick={() => onChange({ ...action, choices: action.choices!.filter((_, itemIndex) => itemIndex !== index) })}><Trash2 /></Button></IconButtonTooltip></div>
-        <CommandsEditor game={game} mapId={mapId} value={choice.commands} conditionalDepth={conditionalDepth} conditionActions={conditionActions} autoOpenCommand={autoOpenCommand} onAutoOpenCommand={onAutoOpenCommand} onCommandAdded={onCommandAdded} onChange={commands => onChange({ ...action, choices: action.choices!.map((item, itemIndex) => itemIndex === index ? { ...item, commands } : item) })} />
+        <CommandsEditor game={game} mapId={mapId} value={choice.commands} conditionalDepth={conditionalDepth} conditionActions={conditionActions} allowMapEventTargets={allowMapEventTargets} autoOpenCommand={autoOpenCommand} onAutoOpenCommand={onAutoOpenCommand} onCommandAdded={onCommandAdded} onChange={commands => onChange({ ...action, choices: action.choices!.map((item, itemIndex) => itemIndex === index ? { ...item, commands } : item) })} />
       </div>)}
       <Button variant="outline" size="sm" className="w-full" onClick={() => onChange({ ...action, choices: [...(action.choices || []), { label: 'Choice', commands: [] }] })}><Plus /> Add choice</Button>
     </div>
   </div>;
   if (action.type === 'conditional') {
     return <div className="space-y-3">
-      <ConditionalConditionFields game={game} mapId={mapId} condition={action.condition} conditionActions={conditionActions} onChange={condition => onChange({ ...action, condition })} />
+      <ConditionalConditionFields game={game} mapId={mapId} condition={action.condition} conditionActions={conditionActions} allowMapEventTargets={allowMapEventTargets} onChange={condition => onChange({ ...action, condition })} />
       <label className="flex items-center gap-2 text-xs"><Checkbox checked={Boolean(action.elseCommands)} onCheckedChange={enabled => {
         if (enabled) onChange({ ...action, elseCommands: [] });
         else { const next = { ...action }; delete next.elseCommands; onChange(next); }
@@ -740,11 +744,12 @@ function CommandFields({ game, mapId, command, onChange, conditionalDepth, condi
     </div>;
   }
   if (action.type === 'setSwitch') return <SetSwitchFields game={game} action={action} onChange={onChange} conditionActions={conditionActions} autoOpenMissingReference={autoOpenMissingReference} onAutoOpen={() => setAutoOpenMissingReference(false)} />;
-  if (action.type === 'setVariable') return <SetVariableFields game={game} mapId={mapId} action={action} onChange={onChange} conditionActions={conditionActions} autoOpenMissingReference={autoOpenMissingReference} onAutoOpen={() => setAutoOpenMissingReference(false)} />;
+  if (action.type === 'setVariable') return <SetVariableFields game={game} mapId={mapId} action={action} onChange={onChange} conditionActions={conditionActions} allowMapEventTargets={allowMapEventTargets} autoOpenMissingReference={autoOpenMissingReference} onAutoOpen={() => setAutoOpenMissingReference(false)} />;
   if (action.type === 'giveItem' || action.type === 'removeItem') return <div className="grid grid-cols-[1fr_88px] gap-2"><EnumSelect value={action.id} values={Object.keys(game.items)} onChange={id => onChange({ ...action, id })} /><NumberInput value={action.amount ?? 1} min={1} onChange={amount => onChange({ ...action, amount })} /></div>;
   if (action.type === 'unlockSkill') return <EnumSelect value={action.id} values={Object.keys(game.skills)} onChange={id => onChange({ ...action, id })} />;
   if (action.type === 'healPlayer') return <NumberInput value={action.amount} onChange={amount => onChange({ ...action, amount })} />;
   if (action.type === 'toast') return <Textarea value={action.text} onChange={event => onChange({ ...action, text: event.target.value })} />;
+  if (action.type === 'callCommonEvent') return <Field label="Common event"><EnumSelect value={action.id} values={Object.keys(game.events.commonEvents)} labels={Object.fromEntries(Object.entries(game.events.commonEvents).map(([id, commonEvent]) => [id, commonEvent.name]))} ariaLabel="Common event" onChange={id => onChange({ ...action, id })} /></Field>;
   if (action.type === 'teleport') return <div className="space-y-3">
     <TeleportMapField game={game} value={action.destination.map} onChange={map => onChange({ ...action, destination: { ...action.destination, map } })} />
     <TeleportNumberField game={game} label="X" value={action.destination.x} onChange={x => onChange({ ...action, destination: { ...action.destination, x } })} />
@@ -753,8 +758,8 @@ function CommandFields({ game, mapId, command, onChange, conditionalDepth, condi
   </div>;
   if (action.type === 'movementRoute') {
     const targetValue = action.target.kind === 'event' ? `event:${action.target.eventId}` : action.target.kind;
-    const targetValues = ['player', 'thisEvent', ...game.maps[mapId].events.map(event => `event:${event.id}`)] as string[];
-    return <div className="space-y-3"><Field label="Target"><EnumSelect value={targetValue} values={targetValues} labels={{ player: 'Player', thisEvent: 'This event' }} onChange={value => onChange({ ...action, target: value === 'player' ? { kind: 'player' } : value === 'thisEvent' ? { kind: 'thisEvent' } : { kind: 'event', eventId: value.slice(6) } })} /></Field><MovementRouteEditor value={action.route} onChange={route => onChange({ ...action, route })} /></div>;
+    const targetValues = allowMapEventTargets ? ['player', 'thisEvent', ...game.maps[mapId].events.map(event => `event:${event.id}`)] : ['player'];
+    return <div className="space-y-3"><Field label="Target"><EnumSelect value={targetValue} values={targetValues} labels={{ player: 'Player', thisEvent: 'This event' }} ariaLabel="Movement target" onChange={value => onChange({ ...action, target: value === 'player' ? { kind: 'player' } : value === 'thisEvent' ? { kind: 'thisEvent' } : { kind: 'event', eventId: value.slice(6) } })} /></Field><MovementRouteEditor value={action.route} onChange={route => onChange({ ...action, route })} /></div>;
   }
   if (action.type === 'wait') return <Field label="Seconds"><NumberInput value={action.duration} min={0} step={0.1} onChange={duration => onChange({ ...action, duration })} /></Field>;
   return <p className="text-xs text-muted-foreground">No parameters.</p>;
@@ -807,10 +812,11 @@ function commandRowContent(game: SourceGame, command: EventCommand): { label: st
   }
   if (command.type === 'movementRoute') return { label: 'Move', value: command.target.kind === 'player' ? 'Player' : command.target.kind === 'thisEvent' ? 'This event' : command.target.eventId };
   if (command.type === 'wait') return { label: 'Wait', value: `${command.duration}s` };
+  if (command.type === 'callCommonEvent') return { label: 'Call', value: game.events.commonEvents[command.id]?.name || command.id || 'Choose a common event' };
   return { label: 'Save' };
 }
 
-function AddCommandMenu({ game, onAdd, conditionalDepth = 0 }: { game: SourceGame; onAdd: (command: EventCommand) => void; conditionalDepth?: number }) {
+function AddCommandMenu({ game, onAdd, conditionalDepth = 0, allowMapEventTargets = true }: { game: SourceGame; onAdd: (command: EventCommand) => void; conditionalDepth?: number; allowMapEventTargets?: boolean }) {
   const availableGroups = commandGroups.map(group => ({
     ...group,
     types: group.types.filter(type => type !== 'conditional' || conditionalDepth < 3),
@@ -824,7 +830,7 @@ function AddCommandMenu({ game, onAdd, conditionalDepth = 0 }: { game: SourceGam
           <DropdownMenuLabel>{group.label}</DropdownMenuLabel>
           {group.types.map(type => {
             const CommandIcon = commandTypeIcons[type];
-            return <DropdownMenuItem key={type} onClick={() => onAdd(defaultCommand(type, game))}><CommandIcon aria-hidden="true" />{commandTypeLabels[type]}</DropdownMenuItem>;
+            return <DropdownMenuItem key={type} onClick={() => onAdd(defaultCommand(type, game, allowMapEventTargets))}><CommandIcon aria-hidden="true" />{commandTypeLabels[type]}</DropdownMenuItem>;
           })}
         </DropdownMenuGroup>
       </Fragment>)}
@@ -832,7 +838,7 @@ function AddCommandMenu({ game, onAdd, conditionalDepth = 0 }: { game: SourceGam
   </DropdownMenu>;
 }
 
-function CommandSettings({ game, mapId, command, onChange, conditionalDepth, conditionActions, autoOpen = false, onAutoOpen, autoOpenCommand, onAutoOpenCommand, onCommandAdded }: { game: SourceGame; mapId: string; command: EventCommand; onChange: (command: EventCommand) => void; conditionalDepth: number; conditionActions: ConditionActions; autoOpen?: boolean; onAutoOpen?: () => void } & CommandAutoOpenProps) {
+function CommandSettings({ game, mapId, command, onChange, conditionalDepth, conditionActions, allowMapEventTargets, autoOpen = false, onAutoOpen, autoOpenCommand, onAutoOpenCommand, onCommandAdded }: { game: SourceGame; mapId: string; command: EventCommand; onChange: (command: EventCommand) => void; conditionalDepth: number; conditionActions: ConditionActions; allowMapEventTargets: boolean; autoOpen?: boolean; onAutoOpen?: () => void } & CommandAutoOpenProps) {
   const [open, setOpen] = useState(false);
   const triggerRef = useRef<HTMLButtonElement>(null);
   const CommandIcon = commandTypeIcons[command.type];
@@ -856,7 +862,7 @@ function CommandSettings({ game, mapId, command, onChange, conditionalDepth, con
             <SectionHeaderActions><IconButtonTooltip label="Close command settings"><Button type="button" variant="ghost" size="icon-sm" aria-label="Close command settings" onClick={() => setOpen(false)}><X /></Button></IconButtonTooltip></SectionHeaderActions>
           </SectionHeader>
           <div className="space-y-3 p-3">
-            <CommandFields game={game} mapId={mapId} command={command} conditionalDepth={conditionalDepth} conditionActions={conditionActions} autoOpenCommand={autoOpenCommand} onAutoOpenCommand={onAutoOpenCommand} onCommandAdded={onCommandAdded} onChange={onChange} />
+            <CommandFields game={game} mapId={mapId} command={command} conditionalDepth={conditionalDepth} conditionActions={conditionActions} allowMapEventTargets={allowMapEventTargets} autoOpenCommand={autoOpenCommand} onAutoOpenCommand={onAutoOpenCommand} onCommandAdded={onCommandAdded} onChange={onChange} />
           </div>
         </Popover.Popup>
       </Popover.Positioner>
@@ -864,7 +870,7 @@ function CommandSettings({ game, mapId, command, onChange, conditionalDepth, con
   </Popover.Root>;
 }
 
-function CommandsEditor({ game, mapId, value, onChange, conditionalDepth = 0, conditionActions, showAddControl = true, autoOpenCommand, onAutoOpenCommand, onCommandAdded }: { game: SourceGame; mapId: string; value: EventCommand[]; onChange: (value: EventCommand[]) => void; conditionalDepth?: number; conditionActions: ConditionActions; showAddControl?: boolean } & CommandAutoOpenProps) {
+function CommandsEditor({ game, mapId, value, onChange, conditionalDepth = 0, conditionActions, showAddControl = true, allowMapEventTargets = true, autoOpenCommand, onAutoOpenCommand, onCommandAdded }: { game: SourceGame; mapId: string; value: EventCommand[]; onChange: (value: EventCommand[]) => void; conditionalDepth?: number; conditionActions: ConditionActions; showAddControl?: boolean; allowMapEventTargets?: boolean } & CommandAutoOpenProps) {
   const [draggedIndex, setDraggedIndex] = useState<number | null>(null);
   const [dropInsertionIndex, setDropInsertionIndex] = useState<number | null>(null);
   const [draftValue, setDraftValue] = useState<EventCommand[] | null>(null);
@@ -942,24 +948,38 @@ function CommandsEditor({ game, mapId, value, onChange, conditionalDepth = 0, co
             changeValue(move(editorValue, index, event.key === 'ArrowUp' ? -1 : 1));
           }}
         ><GripVertical /></Button>
-        <CommandSettings game={game} mapId={mapId} command={command} conditionalDepth={conditionalDepth} conditionActions={conditionActions} autoOpen={autoOpenCommand === command} onAutoOpen={onAutoOpenCommand} autoOpenCommand={autoOpenCommand} onAutoOpenCommand={onAutoOpenCommand} onCommandAdded={onCommandAdded} onChange={next => update(index, next)} />
+        <CommandSettings game={game} mapId={mapId} command={command} conditionalDepth={conditionalDepth} conditionActions={conditionActions} allowMapEventTargets={allowMapEventTargets} autoOpen={autoOpenCommand === command} onAutoOpen={onAutoOpenCommand} autoOpenCommand={autoOpenCommand} onAutoOpenCommand={onAutoOpenCommand} onCommandAdded={onCommandAdded} onChange={next => update(index, next)} />
         <IconButtonTooltip label={`Remove ${command.type} command`}><Button type="button" variant="ghost" size="icon-sm" className="-mr-1 shrink-0" onClick={() => changeValue(editorValue.filter((_, itemIndex) => itemIndex !== index))} aria-label={`Remove ${command.type} command`}><Minus /></Button></IconButtonTooltip>
       </div>
       {command.type === 'conditional' && <div className="ml-3 space-y-2">
         <div className="border-l-2 border-green-500/70 pl-2">
-          <div data-slot="conditional-branch-header" className="flex h-8 items-center justify-between text-xs font-normal"><span>Then</span><div className="-mr-1"><AddCommandMenu game={game} conditionalDepth={conditionalDepth + 1} onAdd={nextCommand => { onCommandAdded?.(nextCommand); update(index, { ...command, thenCommands: [...command.thenCommands, nextCommand] }); }} /></div></div>
-          <div><CommandsEditor game={game} mapId={mapId} value={command.thenCommands} conditionalDepth={conditionalDepth + 1} conditionActions={conditionActions} showAddControl={false} autoOpenCommand={autoOpenCommand} onAutoOpenCommand={onAutoOpenCommand} onCommandAdded={onCommandAdded} onChange={thenCommands => update(index, { ...command, thenCommands })} /></div>
+          <div data-slot="conditional-branch-header" className="flex h-8 items-center justify-between text-xs font-normal"><span>Then</span><div className="-mr-1"><AddCommandMenu game={game} conditionalDepth={conditionalDepth + 1} allowMapEventTargets={allowMapEventTargets} onAdd={nextCommand => { onCommandAdded?.(nextCommand); update(index, { ...command, thenCommands: [...command.thenCommands, nextCommand] }); }} /></div></div>
+          <div><CommandsEditor game={game} mapId={mapId} value={command.thenCommands} conditionalDepth={conditionalDepth + 1} conditionActions={conditionActions} showAddControl={false} allowMapEventTargets={allowMapEventTargets} autoOpenCommand={autoOpenCommand} onAutoOpenCommand={onAutoOpenCommand} onCommandAdded={onCommandAdded} onChange={thenCommands => update(index, { ...command, thenCommands })} /></div>
         </div>
         {command.elseCommands && <div className="border-l-2 border-red-500/70 pl-2">
-          <div data-slot="conditional-branch-header" className="flex h-8 items-center justify-between text-xs font-normal"><span>Else</span><div className="-mr-1"><AddCommandMenu game={game} conditionalDepth={conditionalDepth + 1} onAdd={nextCommand => { onCommandAdded?.(nextCommand); update(index, { ...command, elseCommands: [...command.elseCommands!, nextCommand] }); }} /></div></div>
-          <div><CommandsEditor game={game} mapId={mapId} value={command.elseCommands} conditionalDepth={conditionalDepth + 1} conditionActions={conditionActions} showAddControl={false} autoOpenCommand={autoOpenCommand} onAutoOpenCommand={onAutoOpenCommand} onCommandAdded={onCommandAdded} onChange={elseCommands => update(index, { ...command, elseCommands })} /></div>
+          <div data-slot="conditional-branch-header" className="flex h-8 items-center justify-between text-xs font-normal"><span>Else</span><div className="-mr-1"><AddCommandMenu game={game} conditionalDepth={conditionalDepth + 1} allowMapEventTargets={allowMapEventTargets} onAdd={nextCommand => { onCommandAdded?.(nextCommand); update(index, { ...command, elseCommands: [...command.elseCommands!, nextCommand] }); }} /></div></div>
+          <div><CommandsEditor game={game} mapId={mapId} value={command.elseCommands} conditionalDepth={conditionalDepth + 1} conditionActions={conditionActions} showAddControl={false} allowMapEventTargets={allowMapEventTargets} autoOpenCommand={autoOpenCommand} onAutoOpenCommand={onAutoOpenCommand} onCommandAdded={onCommandAdded} onChange={elseCommands => update(index, { ...command, elseCommands })} /></div>
         </div>}
       </div>}
       </div>
     </Fragment>)}
     {editorValue.length > 0 && dropSeparator(editorValue.length)}
-    {showAddControl && <div className="flex justify-end"><AddCommandMenu game={game} conditionalDepth={conditionalDepth} onAdd={command => { onCommandAdded?.(command); changeValue([...editorValue, command]); }} /></div>}
+    {showAddControl && <div className="flex justify-end"><AddCommandMenu game={game} conditionalDepth={conditionalDepth} allowMapEventTargets={allowMapEventTargets} onAdd={command => { onCommandAdded?.(command); changeValue([...editorValue, command]); }} /></div>}
   </div>;
+}
+
+export function EventCommandsEditor({ game, value, onChange, onCreateSwitch, onCreateVariable, allowMapEventTargets = true }: { game: SourceGame; value: EventCommand[]; onChange: (value: EventCommand[]) => void; onCreateSwitch: (name: string) => string; onCreateVariable: (name: string) => string; allowMapEventTargets?: boolean }) {
+  const [autoOpenCommand, setAutoOpenCommand] = useState<EventCommand | null>(null);
+  const [draftValue, setDraftValue] = useState<EventCommand[] | null>(null);
+  const mapId = Object.keys(game.maps)[0];
+  const editorValue = draftValue || value;
+  return <Section first title="Contents" actions={<AddCommandMenu game={game} allowMapEventTargets={allowMapEventTargets} onAdd={command => {
+    setAutoOpenCommand(command);
+    const nextValue = [...editorValue, command];
+    if (hasUnresolvedCommandReferences(game, nextValue)) setDraftValue(nextValue); else onChange(nextValue);
+  }} />}>
+    <CommandsEditor game={game} mapId={mapId} value={editorValue} onChange={nextValue => { setDraftValue(null); onChange(nextValue); }} conditionActions={{ onCreateSwitch, onCreateVariable }} showAddControl={false} allowMapEventTargets={allowMapEventTargets} autoOpenCommand={autoOpenCommand} onAutoOpenCommand={() => setAutoOpenCommand(null)} onCommandAdded={setAutoOpenCommand} />
+  </Section>;
 }
 
 function defaultPage(): MapEventPage {

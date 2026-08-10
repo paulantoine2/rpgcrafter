@@ -25,6 +25,7 @@ function Harness({ emptySwitches = false, emptyVariables = false, withSprite = f
     reputation: { name: 'Reputation', initialValue: 0 },
   });
   project.game.initialState.variables = variables;
+  project.game.events.commonEvents.intro = { name: 'Intro', trigger: { type: 'none' }, contents: [] };
   const [event, setEvent] = useState<MapEvent>(() => {
     const created = createMapEventAt(project.game, 'map-1', { x: 1, y: 1, planeId: 'plane-1' });
     created.pages[0].contents = structuredClone(initialContents);
@@ -59,6 +60,15 @@ function Harness({ emptySwitches = false, emptyVariables = false, withSprite = f
 }
 
 describe('EventInspector pages', () => {
+  it('adds a Call Common Event command', async () => {
+    const onEventChange = vi.fn();
+    render(<Harness onEventChange={onEventChange} />);
+    await userEvent.click(screen.getByRole('button', { name: 'Add command' }));
+    await userEvent.click(await screen.findByRole('menuitem', { name: 'Call Common Event' }));
+    expect(screen.getByRole('button', { name: 'Call Common Event command settings' })).toHaveTextContent('Intro');
+    expect(onEventChange.mock.calls.at(-1)?.[0].pages[0].contents[0]).toEqual({ type: 'callCommonEvent', id: 'intro' });
+  });
+
   it('uses the sidebar theme colors', () => {
     const { container } = render(<Harness />);
 

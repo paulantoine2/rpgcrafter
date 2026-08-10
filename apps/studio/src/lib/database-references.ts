@@ -1,6 +1,6 @@
 import type { Condition, EventCommand, SourceGame, SwitchOperand, VariableOperand } from '@rpgcrafter/game-schema';
 
-export type DatabaseEntryKind = 'item' | 'skill' | 'switch' | 'variable' | 'equipmentType';
+export type DatabaseEntryKind = 'item' | 'skill' | 'switch' | 'variable' | 'equipmentType' | 'commonEvent';
 export type DatabaseReference = { path: string; label: string };
 
 export function findDatabaseReferences(game: SourceGame, kind: DatabaseEntryKind, id: string): DatabaseReference[] {
@@ -37,6 +37,7 @@ export function findDatabaseReferences(game: SourceGame, kind: DatabaseEntryKind
     if (kind === 'skill' && command.type === 'unlockSkill' && command.id === id) add(commandPath, label);
     if (kind === 'switch' && command.type === 'setSwitch' && command.id === id) add(commandPath, label);
     if (kind === 'variable' && command.type === 'setVariable' && command.id === id) add(commandPath, label);
+    if (kind === 'commonEvent' && command.type === 'callCommonEvent' && command.id === id) add(commandPath, label);
     if (command.type === 'setSwitch' && command.operation === 'set') visitSwitchOperand(command.operand, `${commandPath}.operand`, label);
     if (command.type === 'setVariable') visitVariableOperand(command.operand, `${commandPath}.operand`, label);
     if (command.type === 'conditional') {
@@ -56,7 +57,7 @@ export function findDatabaseReferences(game: SourceGame, kind: DatabaseEntryKind
     if (game.actors.player.primaryAttack === id) add('actors.player.primaryAttack', 'Player primary attack');
     for (const [slot, skillId] of Object.entries(game.actors.player.skillSlots)) if (skillId === id) add(`actors.player.skillSlots.${slot}`, `Player skill slot ${slot}`);
     game.actors.player.unlockedSkills.forEach((skillId, index) => { if (skillId === id) add(`actors.player.unlockedSkills[${index}]`, 'Player unlocked skills'); });
-  } else {
+  } else if (kind === 'item') {
     if (id in (game.initialState.inventory || {})) add(`initialState.inventory.${id}`, 'Initial inventory');
     for (const [slot, itemId] of Object.entries(game.initialState.equipment || {})) if (itemId === id) add(`initialState.equipment.${slot}`, `Initial equipment slot ${slot}`);
   }
@@ -70,6 +71,11 @@ export function findDatabaseReferences(game: SourceGame, kind: DatabaseEntryKind
     }));
   }
   for (const [enemyId, enemy] of Object.entries(game.enemies)) if (enemy.onDefeated) visitCommands(enemy.onDefeated, `enemies.${enemyId}.onDefeated`, `${enemy.name} · on defeated`);
+  for (const [commonEventId, commonEvent] of Object.entries(game.events.commonEvents)) {
+    const label = `Common Event · ${commonEvent.name}`;
+    if (kind === 'switch' && commonEvent.trigger.type !== 'none' && commonEvent.trigger.switchId === id) add(`events.commonEvents.${commonEventId}.trigger.switchId`, label);
+    visitCommands(commonEvent.contents, `events.commonEvents.${commonEventId}.contents`, label);
+  }
 
   return references;
 }

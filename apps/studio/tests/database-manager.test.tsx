@@ -13,6 +13,7 @@ function setupGame() {
   };
   game.initialState.variables.score = { name: 'Score', initialValue: 0 };
   game.initialState.switches['door-open'] = { name: 'Door open', initialValue: false };
+  game.events.commonEvents.intro = { name: 'Intro', trigger: { type: 'none' }, contents: [] };
   game.maps['map-1'].events.push({
     id: 'score-event', position: { x: 1, y: 1, planeId: 'plane-1' }, pages: [{
       movement: { type: 'fixed', speed: 3, frequency: 3, route: [] },
@@ -29,8 +30,9 @@ function props(overrides: Partial<ComponentProps<typeof DatabaseManager>> = {}):
     game: setupGame(),
     onCreateItem: vi.fn(() => 'new-item'), onUpdateItem: vi.fn(), onDuplicateItem: vi.fn(() => 'item-copy'), onDeleteItem: vi.fn(),
     onCreateSkill: vi.fn(() => 'new-skill'), onUpdateSkill: vi.fn(), onDuplicateSkill: vi.fn(() => 'skill-copy'), onDeleteSkill: vi.fn(),
+    onCreateCommonEvent: vi.fn(() => 'new-common-event'), onUpdateCommonEvent: vi.fn(), onDuplicateCommonEvent: vi.fn(() => 'common-event-copy'), onDeleteCommonEvent: vi.fn(),
     onCreateType: vi.fn(() => 1), onRenameType: vi.fn(), onDeleteType: vi.fn(),
-    onRenameVariable: vi.fn(), onRenameSwitch: vi.fn(),
+    onRenameVariable: vi.fn(), onRenameSwitch: vi.fn(), onCreateSwitch: vi.fn(() => 'new-switch'), onCreateVariable: vi.fn(() => 'new-variable'),
     assetUrls: {}, onImportLocal: vi.fn(), onUpdate: vi.fn(), onChangeTerrainCollision: vi.fn(),
     ...overrides,
   };
@@ -67,6 +69,19 @@ describe('DatabaseManager', () => {
     await userEvent.click(within(screen.getByRole('navigation', { name: 'Database sections' })).getByRole('button', { name: 'Tilesets' }));
     expect(screen.getByText('Project tilesets')).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Import PNG' })).toBeInTheDocument();
+  });
+
+  it('creates and edits common events with the shared command editor', async () => {
+    const values = props();
+    render(<DatabaseManager {...values} />);
+    const menu = screen.getByRole('navigation', { name: 'Database sections' });
+    await userEvent.click(within(menu).getByRole('button', { name: 'Common Events' }));
+    expect(screen.getByRole('list', { name: 'Common Events' })).toBeInTheDocument();
+    expect(screen.getByRole('textbox', { name: 'Common event name' })).toHaveValue('Intro');
+    await userEvent.click(screen.getByRole('button', { name: 'Create common event' }));
+    await userEvent.type(screen.getByRole('textbox', { name: 'New entry name' }), 'Parallel clock');
+    await userEvent.click(screen.getByRole('button', { name: /^Create$/ }));
+    expect(values.onCreateCommonEvent).toHaveBeenCalledWith('Parallel clock');
   });
 
   it('renames system entries and lists their usages', async () => {

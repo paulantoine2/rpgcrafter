@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState, type CSSProperties, type ReactNode } from 'react';
-import type { Item, Skill, SourceGame, TypeCategory, TypeDefinition } from '@rpgcrafter/game-schema';
-import { Copy, Database, Images, Package, Plus, Search, Tags, ToggleLeft, Trash2, Variable, WandSparkles, X } from 'lucide-react';
+import type { CommonEvent, Item, Skill, SourceGame, TypeCategory, TypeDefinition } from '@rpgcrafter/game-schema';
+import { Copy, Database, Images, Package, Plus, Search, Tags, ToggleLeft, Trash2, Variable, WandSparkles, Workflow, X } from 'lucide-react';
+import { EventCommandsEditor, SwitchPicker } from '@/components/event-inspector';
 import { ProjectTilesetManager, type ProjectTilesetManagerProps } from '@/components/asset-manager-dialog';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
 import { Button } from '@/components/ui/button';
@@ -12,8 +13,8 @@ import { Sidebar, SidebarContent, SidebarGroup, SidebarGroupContent, SidebarGrou
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { findDatabaseReferences, type DatabaseEntryKind, type DatabaseReference } from '@/lib/database-references';
 
-type DatabaseSection = 'tilesets' | 'items' | 'skills' | 'types' | 'variables' | 'switches';
-type DeletableDatabaseEntryKind = Extract<DatabaseEntryKind, 'item' | 'skill'>;
+type DatabaseSection = 'tilesets' | 'items' | 'skills' | 'commonEvents' | 'types' | 'variables' | 'switches';
+type DeletableDatabaseEntryKind = Extract<DatabaseEntryKind, 'item' | 'skill' | 'commonEvent'>;
 type PendingDelete = { kind: DeletableDatabaseEntryKind; id: string; name: string; references: DatabaseReference[] };
 type DatabaseListEntry = { name: string; type?: string; initialValue?: boolean | number };
 
@@ -27,14 +28,20 @@ export type DatabaseManagerProps = {
   onUpdateSkill: (id: string, skill: Skill) => void;
   onDuplicateSkill: (id: string) => string;
   onDeleteSkill: (id: string) => void;
+  onCreateCommonEvent: (name: string) => string;
+  onUpdateCommonEvent: (id: string, commonEvent: CommonEvent) => void;
+  onDuplicateCommonEvent: (id: string) => string;
+  onDeleteCommonEvent: (id: string) => void;
   onCreateType: (category: TypeCategory, name: string) => number;
   onRenameType: (category: TypeCategory, id: number, name: string) => void;
   onDeleteType: (category: TypeCategory, id: number) => void;
   onRenameVariable: (id: string, name: string) => void;
   onRenameSwitch: (id: string, name: string) => void;
+  onCreateSwitch: (name: string) => string;
+  onCreateVariable: (name: string) => string;
 } & Omit<ProjectTilesetManagerProps, 'game'>;
 
-const sectionLabels: Record<DatabaseSection, string> = { tilesets: 'Tilesets', items: 'Items', skills: 'Skills', types: 'Types', variables: 'Variables', switches: 'Switches' };
+const sectionLabels: Record<DatabaseSection, string> = { tilesets: 'Tilesets', items: 'Items', skills: 'Skills', commonEvents: 'Common Events', types: 'Types', variables: 'Variables', switches: 'Switches' };
 const typeCategoryLabels: Record<TypeCategory, string> = { elements: 'Elements', skills: 'Skill Types', weapons: 'Weapon Types', armors: 'Armor Types', equipment: 'Equipment Types' };
 const typeCategories = Object.keys(typeCategoryLabels) as TypeCategory[];
 
@@ -42,6 +49,7 @@ function getSectionEntries(game: SourceGame, section: DatabaseSection): Record<s
   if (section === 'tilesets') return game.tilesets;
   if (section === 'items') return game.items;
   if (section === 'skills') return game.skills;
+  if (section === 'commonEvents') return game.events.commonEvents;
   if (section === 'variables') return game.initialState.variables;
   if (section === 'types') return {};
   return game.initialState.switches;
@@ -136,6 +144,38 @@ function SkillForm({ id, skill, onChange }: { id: string; skill: Skill; onChange
   </EditorForm>;
 }
 
+function CommonEventForm({ id, commonEvent, game, onChange, onCreateSwitch, onCreateVariable }: { id: string; commonEvent: CommonEvent; game: SourceGame; onChange: (commonEvent: CommonEvent) => void; onCreateSwitch: (name: string) => string; onCreateVariable: (name: string) => string }) {
+  const [pendingTriggerType, setPendingTriggerType] = useState<'autorun' | 'parallel' | null>(null);
+  const [autoOpenTriggerSwitch, setAutoOpenTriggerSwitch] = useState(false);
+  useEffect(() => { setPendingTriggerType(null); setAutoOpenTriggerSwitch(false); }, [id]);
+  const triggerType = pendingTriggerType || commonEvent.trigger.type;
+  const switchId = commonEvent.trigger.type === 'none' ? '' : commonEvent.trigger.switchId;
+  const changeTrigger = (type: CommonEvent['trigger']['type']) => {
+    if (type === 'none') {
+      setPendingTriggerType(null);
+      onChange({ ...commonEvent, trigger: { type } });
+      return;
+    }
+    const nextSwitchId = switchId || Object.keys(game.initialState.switches)[0] || '';
+    if (!nextSwitchId) {
+      setPendingTriggerType(type);
+      setAutoOpenTriggerSwitch(true);
+      return;
+    }
+    setPendingTriggerType(null);
+    onChange({ ...commonEvent, trigger: { type, switchId: nextSwitchId } });
+  };
+  return <div className="min-h-0 flex-1 overflow-y-auto">
+    <div className="mx-auto grid max-w-2xl gap-5 p-8 pb-4">
+      <div className="flex items-center gap-3 border-b pb-5"><div className="grid size-10 shrink-0 place-items-center rounded-md bg-primary/10 text-primary"><Workflow className="size-5" /></div><div className="min-w-0"><h2 className="truncate text-base font-semibold">{commonEvent.name}</h2><p className="font-mono text-[10px] text-muted-foreground">{id}</p></div></div>
+      <Field label="Name"><BufferedTextInput value={commonEvent.name} ariaLabel="Common event name" onCommit={name => onChange({ ...commonEvent, name })} /></Field>
+      <Field label="Trigger"><TypeSelect value={triggerType} values={['none', 'autorun', 'parallel']} labels={{ none: 'None', autorun: 'Autorun', parallel: 'Parallel' }} ariaLabel="Common event trigger" onChange={changeTrigger} /></Field>
+      {triggerType !== 'none' && <Field label="Switch"><SwitchPicker game={game} value={switchId} onChange={nextSwitchId => { setPendingTriggerType(null); onChange({ ...commonEvent, trigger: { type: triggerType, switchId: nextSwitchId } }); }} onCreate={onCreateSwitch} autoOpen={autoOpenTriggerSwitch} onAutoOpen={() => setAutoOpenTriggerSwitch(false)} showIcon={false} showValue={false} anchorToInspector={false} /></Field>}
+    </div>
+    <div className="mx-auto max-w-2xl pb-8"><EventCommandsEditor key={id} game={game} value={commonEvent.contents} onChange={contents => onChange({ ...commonEvent, contents })} onCreateSwitch={onCreateSwitch} onCreateVariable={onCreateVariable} allowMapEventTargets={false} /></div>
+  </div>;
+}
+
 function EditorForm({ title, id, icon, children }: { title: string; id: string; icon: ReactNode; children: ReactNode }) {
   return <div className="min-h-0 flex-1 overflow-y-auto"><div className="mx-auto grid max-w-2xl gap-6 p-8"><div className="flex items-center gap-3 border-b pb-5"><div className="grid size-10 shrink-0 place-items-center rounded-md bg-primary/10 text-primary [&_svg]:size-5">{icon}</div><div className="min-w-0"><h2 className="truncate text-base font-semibold">{title}</h2><p className="font-mono text-[10px] text-muted-foreground">{id}</p></div></div><div className="grid gap-5">{children}</div></div></div>;
 }
@@ -216,8 +256,8 @@ function TypesSection({ game, onCreateType, onRenameType, onDeleteType }: Pick<D
 export function DatabaseManager(props: DatabaseManagerProps) {
   const { game } = props;
   const [section, setSection] = useState<DatabaseSection>('items');
-  const [queries, setQueries] = useState<Record<DatabaseSection, string>>({ tilesets: '', items: '', skills: '', types: '', variables: '', switches: '' });
-  const [selectedIds, setSelectedIds] = useState<Record<DatabaseSection, string>>({ tilesets: Object.keys(game.tilesets)[0] || '', items: Object.keys(game.items)[0] || '', skills: Object.keys(game.skills)[0] || '', types: '', variables: Object.keys(game.initialState.variables)[0] || '', switches: Object.keys(game.initialState.switches)[0] || '' });
+  const [queries, setQueries] = useState<Record<DatabaseSection, string>>({ tilesets: '', items: '', skills: '', commonEvents: '', types: '', variables: '', switches: '' });
+  const [selectedIds, setSelectedIds] = useState<Record<DatabaseSection, string>>({ tilesets: Object.keys(game.tilesets)[0] || '', items: Object.keys(game.items)[0] || '', skills: Object.keys(game.skills)[0] || '', commonEvents: Object.keys(game.events.commonEvents)[0] || '', types: '', variables: Object.keys(game.initialState.variables)[0] || '', switches: Object.keys(game.initialState.switches)[0] || '' });
   const [createOpen, setCreateOpen] = useState(false);
   const [newName, setNewName] = useState('');
   const [newItemType, setNewItemType] = useState<Item['type']>('consumable');
@@ -235,34 +275,35 @@ export function DatabaseManager(props: DatabaseManagerProps) {
       if (!game.tilesets[next.tilesets]) next.tilesets = Object.keys(game.tilesets)[0] || '';
       if (!game.items[next.items]) next.items = Object.keys(game.items)[0] || '';
       if (!game.skills[next.skills]) next.skills = Object.keys(game.skills)[0] || '';
+      if (!game.events.commonEvents[next.commonEvents]) next.commonEvents = Object.keys(game.events.commonEvents)[0] || '';
       if (!game.initialState.variables[next.variables]) next.variables = Object.keys(game.initialState.variables)[0] || '';
       if (!game.initialState.switches[next.switches]) next.switches = Object.keys(game.initialState.switches)[0] || '';
-      return next.tilesets === current.tilesets && next.items === current.items && next.skills === current.skills && next.variables === current.variables && next.switches === current.switches ? current : next;
+      return next.tilesets === current.tilesets && next.items === current.items && next.skills === current.skills && next.commonEvents === current.commonEvents && next.variables === current.variables && next.switches === current.switches ? current : next;
     });
-  }, [game.initialState.switches, game.initialState.variables, game.items, game.skills, game.tilesets]);
+  }, [game.events.commonEvents, game.initialState.switches, game.initialState.variables, game.items, game.skills, game.tilesets]);
 
   const create = () => {
     const name = newName.trim();
     if (!name) return;
-    if (section !== 'items' && section !== 'skills') return;
-    const id = section === 'items' ? props.onCreateItem(name, newItemType) : props.onCreateSkill(name, newSkillType);
+    if (section !== 'items' && section !== 'skills' && section !== 'commonEvents') return;
+    const id = section === 'items' ? props.onCreateItem(name, newItemType) : section === 'skills' ? props.onCreateSkill(name, newSkillType) : props.onCreateCommonEvent(name);
     setSelectedIds(current => ({ ...current, [section]: id }));
     setCreateOpen(false);
     setNewName('');
   };
   const duplicate = () => {
-    if (!selectedId || section !== 'items' && section !== 'skills') return;
-    const id = section === 'items' ? props.onDuplicateItem(selectedId) : props.onDuplicateSkill(selectedId);
+    if (!selectedId || section !== 'items' && section !== 'skills' && section !== 'commonEvents') return;
+    const id = section === 'items' ? props.onDuplicateItem(selectedId) : section === 'skills' ? props.onDuplicateSkill(selectedId) : props.onDuplicateCommonEvent(selectedId);
     setSelectedIds(current => ({ ...current, [section]: id }));
   };
   const requestDelete = () => {
-    if (!selected || section !== 'items' && section !== 'skills') return;
-    const kind = section === 'items' ? 'item' : 'skill';
+    if (!selected || section !== 'items' && section !== 'skills' && section !== 'commonEvents') return;
+    const kind = section === 'items' ? 'item' : section === 'skills' ? 'skill' : 'commonEvent';
     setPendingDelete({ kind, id: selectedId, name: selected.name, references: findDatabaseReferences(game, kind, selectedId) });
   };
   const confirmDelete = () => {
     if (!pendingDelete || pendingDelete.references.length) return;
-    if (pendingDelete.kind === 'item') props.onDeleteItem(pendingDelete.id); else props.onDeleteSkill(pendingDelete.id);
+    if (pendingDelete.kind === 'item') props.onDeleteItem(pendingDelete.id); else if (pendingDelete.kind === 'skill') props.onDeleteSkill(pendingDelete.id); else props.onDeleteCommonEvent(pendingDelete.id);
     setPendingDelete(null);
   };
 
@@ -271,11 +312,11 @@ export function DatabaseManager(props: DatabaseManagerProps) {
       <SidebarProvider className="min-h-0 w-auto" style={{ '--sidebar-width': '240px' } as CSSProperties}>
         <Sidebar collapsible="none" className="border-r" data-database-sidebar="sections">
           <SidebarContent><nav aria-label="Database sections">
-            {([{ label: 'Game', sections: ['items', 'skills'] }, { label: 'System', sections: ['tilesets', 'types', 'variables', 'switches'] }] as const).map(group => <SidebarGroup key={group.label}><SidebarGroupLabel>{group.label}</SidebarGroupLabel><SidebarGroupContent><SidebarMenu>
+            {([{ label: 'Game', sections: ['items', 'skills', 'commonEvents'] }, { label: 'System', sections: ['tilesets', 'types', 'variables', 'switches'] }] as const).map(group => <SidebarGroup key={group.label}><SidebarGroupLabel>{group.label}</SidebarGroupLabel><SidebarGroupContent><SidebarMenu>
               {group.sections.map(menuSection => {
                 const active = section === menuSection;
                 const count = sectionCount(game, menuSection);
-                const Icon = menuSection === 'tilesets' ? Images : menuSection === 'items' ? Package : menuSection === 'skills' ? WandSparkles : menuSection === 'types' ? Tags : menuSection === 'variables' ? Variable : ToggleLeft;
+                const Icon = menuSection === 'tilesets' ? Images : menuSection === 'items' ? Package : menuSection === 'skills' ? WandSparkles : menuSection === 'commonEvents' ? Workflow : menuSection === 'types' ? Tags : menuSection === 'variables' ? Variable : ToggleLeft;
                 return <SidebarMenuItem key={menuSection}><SidebarMenuButton isActive={active} aria-current={active ? 'page' : undefined} onClick={() => setSection(menuSection)}><Icon /><span>{sectionLabels[menuSection]}</span></SidebarMenuButton><SidebarMenuBadge>{count}</SidebarMenuBadge></SidebarMenuItem>;
               })}
             </SidebarMenu></SidebarGroupContent></SidebarGroup>)}
@@ -284,20 +325,20 @@ export function DatabaseManager(props: DatabaseManagerProps) {
       </SidebarProvider>
       {section === 'tilesets' ? <div className="col-span-2 min-h-0"><ProjectTilesetManager game={game} assetUrls={props.assetUrls} onImportLocal={props.onImportLocal} onUpdate={props.onUpdate} onChangeTerrainCollision={props.onChangeTerrainCollision} /></div> : section === 'types' ? <TypesSection game={game} onCreateType={props.onCreateType} onRenameType={props.onRenameType} onDeleteType={props.onDeleteType} /> : <><SidebarProvider className="min-h-0 w-auto" style={{ '--sidebar-width': '384px' } as CSSProperties}>
         <Sidebar collapsible="none" className="border-r" data-database-sidebar="entries">
-          <SidebarHeader className="border-b"><div className="flex h-8 items-center gap-2"><span className="min-w-0 flex-1 text-xs font-semibold">{sectionLabels[section]}</span>{(section === 'items' || section === 'skills') && <Button type="button" size="icon-sm" aria-label={`Create ${section === 'items' ? 'item' : 'skill'}`} onClick={() => setCreateOpen(true)}><Plus /></Button>}</div><div className="relative"><Search className="pointer-events-none absolute top-1/2 left-2 size-3.5 -translate-y-1/2 text-muted-foreground" /><SidebarInput type="search" className="pl-7" aria-label={`Search ${section}`} placeholder={`Search ${section}…`} value={query} onChange={event => setQueries(current => ({ ...current, [section]: event.target.value }))} /></div></SidebarHeader>
+          <SidebarHeader className="border-b"><div className="flex h-8 items-center gap-2"><span className="min-w-0 flex-1 text-xs font-semibold">{sectionLabels[section]}</span>{(section === 'items' || section === 'skills' || section === 'commonEvents') && <Button type="button" size="icon-sm" aria-label={`Create ${section === 'items' ? 'item' : section === 'skills' ? 'skill' : 'common event'}`} onClick={() => setCreateOpen(true)}><Plus /></Button>}</div><div className="relative"><Search className="pointer-events-none absolute top-1/2 left-2 size-3.5 -translate-y-1/2 text-muted-foreground" /><SidebarInput type="search" className="pl-7" aria-label={`Search ${section}`} placeholder={`Search ${section}…`} value={query} onChange={event => setQueries(current => ({ ...current, [section]: event.target.value }))} /></div></SidebarHeader>
           <SidebarContent>{visibleEntries.length ? <SidebarGroup><SidebarGroupContent><SidebarMenu role="list" aria-label={sectionLabels[section]}>{visibleEntries.map(([id, entry]) => <SidebarMenuItem key={id} role="listitem"><SidebarMenuButton isActive={id === selectedId} aria-current={id === selectedId ? 'true' : undefined} onClick={() => setSelectedIds(current => ({ ...current, [section]: id }))}><span className="truncate">{entry.name}</span></SidebarMenuButton></SidebarMenuItem>)}</SidebarMenu></SidebarGroupContent></SidebarGroup> : <div className="grid min-h-0 flex-1 place-items-center p-6 text-center text-xs text-muted-foreground">{query ? `No ${section} match your search.` : `No ${section} yet.`}</div>}</SidebarContent>
         </Sidebar>
       </SidebarProvider>
       <section className="flex min-h-0 flex-col bg-background">
         {selected ? <>
-          {(section === 'items' || section === 'skills') && <div className="flex h-12 shrink-0 items-center justify-end gap-1 border-b px-4"><Button type="button" variant="outline" size="sm" onClick={duplicate}><Copy />Duplicate</Button><Button type="button" variant="ghost" size="sm" className="text-destructive hover:text-destructive" onClick={requestDelete}><Trash2 />Delete</Button></div>}
-          {section === 'items' ? <ItemForm id={selectedId} item={selected as Item} game={game} onChange={item => props.onUpdateItem(selectedId, item)} /> : section === 'skills' ? <SkillForm id={selectedId} skill={selected as Skill} onChange={skill => props.onUpdateSkill(selectedId, skill)} /> : <SystemEntryForm id={selectedId} kind={section === 'variables' ? 'variable' : 'switch'} game={game} onRename={name => section === 'variables' ? props.onRenameVariable(selectedId, name) : props.onRenameSwitch(selectedId, name)} />}
-        </> : <div className="grid size-full place-items-center p-8 text-center"><div><Database className="mx-auto mb-3 size-8 text-muted-foreground" /><h2 className="text-sm font-semibold">No {section} to edit</h2><p className="mt-1 text-xs text-muted-foreground">{section === 'items' || section === 'skills' ? 'Create one to start building your game database.' : `No ${section} are configured for this project.`}</p>{(section === 'items' || section === 'skills') && <Button className="mt-4" size="sm" onClick={() => setCreateOpen(true)}><Plus />Create {section === 'items' ? 'item' : 'skill'}</Button>}</div></div>}
+          {(section === 'items' || section === 'skills' || section === 'commonEvents') && <div className="flex h-12 shrink-0 items-center justify-end gap-1 border-b px-4"><Button type="button" variant="outline" size="sm" onClick={duplicate}><Copy />Duplicate</Button><Button type="button" variant="ghost" size="sm" className="text-destructive hover:text-destructive" onClick={requestDelete}><Trash2 />Delete</Button></div>}
+          {section === 'items' ? <ItemForm id={selectedId} item={selected as Item} game={game} onChange={item => props.onUpdateItem(selectedId, item)} /> : section === 'skills' ? <SkillForm id={selectedId} skill={selected as Skill} onChange={skill => props.onUpdateSkill(selectedId, skill)} /> : section === 'commonEvents' ? <CommonEventForm id={selectedId} commonEvent={selected as CommonEvent} game={game} onChange={commonEvent => props.onUpdateCommonEvent(selectedId, commonEvent)} onCreateSwitch={props.onCreateSwitch} onCreateVariable={props.onCreateVariable} /> : <SystemEntryForm id={selectedId} kind={section === 'variables' ? 'variable' : 'switch'} game={game} onRename={name => section === 'variables' ? props.onRenameVariable(selectedId, name) : props.onRenameSwitch(selectedId, name)} />}
+        </> : <div className="grid size-full place-items-center p-8 text-center"><div><Database className="mx-auto mb-3 size-8 text-muted-foreground" /><h2 className="text-sm font-semibold">No {section} to edit</h2><p className="mt-1 text-xs text-muted-foreground">{section === 'items' || section === 'skills' || section === 'commonEvents' ? 'Create one to start building your game database.' : `No ${section} are configured for this project.`}</p>{(section === 'items' || section === 'skills' || section === 'commonEvents') && <Button className="mt-4" size="sm" onClick={() => setCreateOpen(true)}><Plus />Create {section === 'items' ? 'item' : section === 'skills' ? 'skill' : 'common event'}</Button>}</div></div>}
       </section>
       </>}
     </div>
 
-    <Dialog open={createOpen} onOpenChange={open => { setCreateOpen(open); if (!open) setNewName(''); }}><DialogContent><DialogHeader><DialogTitle>Create {section === 'items' ? 'item' : 'skill'}</DialogTitle><DialogDescription>The technical ID is generated from the name and remains stable.</DialogDescription></DialogHeader><div className="grid gap-4"><Field label="Name"><Input autoFocus aria-label="New entry name" value={newName} onChange={event => setNewName(event.target.value)} onKeyDown={event => { if (event.key === 'Enter') create(); }} /></Field><Field label="Type">{section === 'items' ? <TypeSelect value={newItemType} values={['quest', 'consumable', 'equipment']} labels={{ quest: 'Quest', consumable: 'Consumable', equipment: 'Equipment' }} ariaLabel="New item type" onChange={setNewItemType} /> : <TypeSelect value={newSkillType} values={['melee', 'projectile', 'area']} labels={{ melee: 'Melee', projectile: 'Projectile', area: 'Area' }} ariaLabel="New skill type" onChange={setNewSkillType} />}</Field></div><DialogFooter><Button variant="outline" onClick={() => setCreateOpen(false)}>Cancel</Button><Button disabled={!newName.trim()} onClick={create}>Create</Button></DialogFooter></DialogContent></Dialog>
+    <Dialog open={createOpen} onOpenChange={open => { setCreateOpen(open); if (!open) setNewName(''); }}><DialogContent><DialogHeader><DialogTitle>Create {section === 'items' ? 'item' : section === 'skills' ? 'skill' : 'common event'}</DialogTitle><DialogDescription>The technical ID is generated from the name and remains stable.</DialogDescription></DialogHeader><div className="grid gap-4"><Field label="Name"><Input autoFocus aria-label="New entry name" value={newName} onChange={event => setNewName(event.target.value)} onKeyDown={event => { if (event.key === 'Enter') create(); }} /></Field>{section !== 'commonEvents' && <Field label="Type">{section === 'items' ? <TypeSelect value={newItemType} values={['quest', 'consumable', 'equipment']} labels={{ quest: 'Quest', consumable: 'Consumable', equipment: 'Equipment' }} ariaLabel="New item type" onChange={setNewItemType} /> : <TypeSelect value={newSkillType} values={['melee', 'projectile', 'area']} labels={{ melee: 'Melee', projectile: 'Projectile', area: 'Area' }} ariaLabel="New skill type" onChange={setNewSkillType} />}</Field>}</div><DialogFooter><Button variant="outline" onClick={() => setCreateOpen(false)}>Cancel</Button><Button disabled={!newName.trim()} onClick={create}>Create</Button></DialogFooter></DialogContent></Dialog>
 
     <AlertDialog open={Boolean(pendingDelete)} onOpenChange={open => { if (!open) setPendingDelete(null); }}><AlertDialogContent className={pendingDelete?.references.length ? 'max-w-lg sm:max-w-lg' : undefined}><AlertDialogHeader><AlertDialogTitle>{pendingDelete?.references.length ? `Cannot delete ${pendingDelete.name}` : `Delete ${pendingDelete?.name}?`}</AlertDialogTitle><AlertDialogDescription>{pendingDelete?.references.length ? 'This entry is still used by the game. Remove these references before deleting it.' : 'This removes the entry from the project database. This action cannot be undone.'}</AlertDialogDescription></AlertDialogHeader>{Boolean(pendingDelete?.references.length) && <div className="max-h-64 overflow-y-auto rounded-md border bg-muted/20 p-2">{pendingDelete!.references.map((reference, index) => <div key={`${reference.path}:${index}`} className="border-b px-2 py-2 last:border-b-0"><div className="text-xs font-medium">{reference.label}</div><div className="mt-0.5 break-all font-mono text-[9px] text-muted-foreground">{reference.path}</div></div>)}</div>}<AlertDialogFooter>{pendingDelete?.references.length ? <AlertDialogCancel>Close</AlertDialogCancel> : <><AlertDialogCancel>Cancel</AlertDialogCancel><AlertDialogAction variant="destructive" onClick={confirmDelete}>Delete</AlertDialogAction></>}</AlertDialogFooter></AlertDialogContent></AlertDialog>
   </div>;

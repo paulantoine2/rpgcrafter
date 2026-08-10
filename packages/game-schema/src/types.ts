@@ -46,7 +46,19 @@ export type EventCommand =
   | { type: 'teleport'; destination: { map: TeleportMapSource; x: TeleportNumberSource; y: TeleportNumberSource }; direction: TeleportDirection; transition: TeleportTransition }
   | { type: 'movementRoute'; target: MovementTarget; route: MovementRoute }
   | { type: 'wait'; duration: number }
+  | { type: 'callCommonEvent'; id: string }
   | { type: 'save' };
+
+export type CommonEventTrigger =
+  | { type: 'none' }
+  | { type: 'autorun'; switchId: string }
+  | { type: 'parallel'; switchId: string };
+
+export type CommonEvent = {
+  name: string;
+  trigger: CommonEventTrigger;
+  contents: EventCommand[];
+};
 
 export type MapEventTrigger =
   | { type: 'actionButton'; radius: number }
@@ -252,7 +264,7 @@ export type Manifest = { schemaVersion: string; engineRange: string; gameId: str
 export type PlayerDefinition = { id: string; name: string; start: PlanePosition; stats: { maxHp: number; level: number; xp: number }; primaryAttack: string; skillSlots: Record<string, string>; unlockedSkills: string[] };
 export type Objective = { conditions?: Condition[]; text: string };
 export type InitialState = { switches: Record<string, SwitchDefinition>; variables: Record<string, VariableDefinition>; quests: Record<string, string>; inventory?: Record<string, number>; equipment?: Record<string, string | null> };
-export type EventData = { objectives: Objective[] };
+export type EventData = { objectives: Objective[]; commonEvents: Record<string, CommonEvent> };
 
 /** The exact authoring representation. Every coordinate remains in tile units. */
 export type SourceGame = {

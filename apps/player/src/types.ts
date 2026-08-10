@@ -1,7 +1,7 @@
 export * from '@rpgcrafter/game-schema';
 
 import type {
-  EnemyTemplate, GameMap, GameTypes, InitialState, Item, Manifest, Objective,
+  CommonEvent, EnemyTemplate, GameMap, GameTypes, InitialState, Item, Manifest, Objective,
   NavigationGraph, PlayerDefinition, QuestDefinition, Skill, TilesetDefinition, UiDefinition,
 } from '@rpgcrafter/game-schema';
 
@@ -19,6 +19,7 @@ export type LoadedGame = {
   ui: UiDefinition;
   player: PlayerDefinition;
   objectives: Objective[];
+  commonEvents: Record<string, CommonEvent>;
   initialState: InitialState;
   /** Precomputed from authoring coordinates; cells and edges use tile coordinates. */
   navigation: Record<string, NavigationGraph>;

@@ -80,7 +80,7 @@ describe('V0.4 migration', () => {
     const result = parseSourceGame(legacy);
     expect(result.success).toBe(true);
     if (!result.success) return;
-    expect(result.data.manifest.schemaVersion).toBe('0.12');
+    expect(result.data.manifest.schemaVersion).toBe('0.13');
     expect(result.data.maps.village.planes).toEqual([{ id: 'plane-1', name: 'Plan 1', order: 0, surfaceLayerId: 'surface', surfaceCoverage: 'bounds' }]);
     expect(result.data.maps.village.blockedRegions[0].planeId).toBe('plane-1');
     expect(result.data.actors.player.start.planeId).toBe('plane-1');
@@ -124,7 +124,7 @@ describe('V0.6 event-page migration', () => {
     expect(mayor.pages).toHaveLength(4);
     expect(mayor.pages[0].conditions).toEqual([{ kind: 'switch', id: 'questAccepted', operand: { kind: 'constant', value: false } }]);
     expect(mayor.pages[0].contents[0].type).toBe('dialogue');
-    expect(result.data.events).toEqual({ objectives: expect.any(Array) });
+    expect(result.data.events).toEqual({ objectives: expect.any(Array), commonEvents: {} });
     expect(result.data.initialState.switches.keyChestOpened).toEqual({ name: 'Key Chest Opened', initialValue: false });
     expect(Object.values(result.data.maps).flatMap(map => map.events).flatMap(event => event.pages).flatMap(page => page.conditions || []).some(condition => condition.kind === 'switch')).toBe(true);
   });
@@ -241,7 +241,7 @@ describe('V0.9 migration', () => {
 
     expect(result.success).toBe(true);
     if (!result.success) return;
-    expect(result.data.manifest).toMatchObject({ schemaVersion: '0.12', engineRange: '>=0.12 <0.13' });
+    expect(result.data.manifest).toMatchObject({ schemaVersion: '0.13', engineRange: '>=0.13 <0.14' });
     const dialogue = result.data.maps.village.events[0].pages[0].contents[0];
     expect(dialogue).toMatchObject({ choices: [{ commands: [{
       thenCommands: [{ type: 'setSwitch', id: 'questAccepted', operation: 'set', operand: { kind: 'constant', value: false } }],
@@ -272,7 +272,7 @@ describe('V0.10 migration', () => {
 
     expect(result.success).toBe(true);
     if (!result.success) return;
-    expect(result.data.manifest).toMatchObject({ schemaVersion: '0.12', engineRange: '>=0.12 <0.13' });
+    expect(result.data.manifest).toMatchObject({ schemaVersion: '0.13', engineRange: '>=0.13 <0.14' });
     expect(result.data.maps.village.events[0].pages[0].conditions).toEqual([{ kind: 'variable', id: 'score', operator: 'greaterThanOrEqual', operand: { kind: 'constant', value: 3 } }]);
     expect(result.data.maps.village.events[0].pages[0].contents[0]).toMatchObject({ condition: { kind: 'switch', id: 'questAccepted', operand: { kind: 'constant', value: false } } });
     expect(result.data.enemies.slime.onDefeated?.[0]).toMatchObject({ condition: { kind: 'variable', id: 'score', operator: 'equal', operand: { kind: 'constant', value: 5 } } });
@@ -301,7 +301,7 @@ describe('V0.11 migration', () => {
 
     expect(result.success).toBe(true);
     if (!result.success) return;
-    expect(result.data.manifest).toMatchObject({ schemaVersion: '0.12', engineRange: '>=0.12 <0.13' });
+    expect(result.data.manifest).toMatchObject({ schemaVersion: '0.13', engineRange: '>=0.13 <0.14' });
     expect(result.data.types.equipment).toEqual({
       nextId: 5,
       entries: [
@@ -312,5 +312,24 @@ describe('V0.11 migration', () => {
     expect(result.data.items['item.orphan-charm'].equipmentTypeId).toBe(4);
     expect(result.data.initialState.equipment).toEqual({ '1': 'item.hero-sword', '2': 'item.leather-cloak', '3': null });
     expect(result.data.ui).not.toHaveProperty('equipmentSlots');
+  });
+});
+
+describe('V0.12 migration', () => {
+  it('adds an empty common event catalog', () => {
+    const files = {
+      manifest: read('manifest.json'), tilesets: read('tilesets.json'), maps: read('maps.json'), actors: read('actors.json'), enemies: read('enemies.json'),
+      skills: read('skills.json'), items: read('items.json'), quests: read('quests.json'), types: read('types.json'), ui: read('ui.json'), events: read('events.json'), initialState: read('initial-state.json'),
+    } as SourceGameFiles;
+    (files.manifest as any).schemaVersion = '0.12';
+    (files.manifest as any).engineRange = '>=0.12 <0.13';
+    delete (files.events as any).commonEvents;
+
+    const result = parseSourceGame(files);
+
+    expect(result.success).toBe(true);
+    if (!result.success) return;
+    expect(result.data.manifest).toMatchObject({ schemaVersion: '0.13', engineRange: '>=0.13 <0.14' });
+    expect(result.data.events.commonEvents).toEqual({});
   });
 });

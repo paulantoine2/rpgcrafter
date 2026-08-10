@@ -132,7 +132,7 @@ describe('IndexedDB draft repository', () => {
 
     const legacyRepository = createDraftRepository({ factory, databaseName });
     const reopened = await legacyRepository.openProject(projectId);
-    expect(reopened?.game.manifest.schemaVersion).toBe('0.12');
+    expect(reopened?.game.manifest.schemaVersion).toBe('0.13');
     expect(reopened?.game.types.equipment.entries[0]).toEqual({ id: 1, name: 'Weapon' });
     expect(reopened?.game.items['item.hero-sword'].equipmentTypeId).toBe(1);
   });

@@ -132,14 +132,14 @@ function safeId(value: string) {
 export function createEmptyProject(title: string, requestedId?: string): ProjectBundle {
   const gameId = `game.${safeId(requestedId || title)}`;
   const game = assertSourceGame({
-    manifest: { schemaVersion: '0.12', engineRange: '>=0.12 <0.13', gameId, version: '0.1.0', nextMapNumericId: 2, entryPoint: { mapId: 'map-1', spawnId: 'spawn-1' }, title, contentRating: 'all' },
+    manifest: { schemaVersion: '0.13', engineRange: '>=0.13 <0.14', gameId, version: '0.1.0', nextMapNumericId: 2, entryPoint: { mapId: 'map-1', spawnId: 'spawn-1' }, title, contentRating: 'all' },
     tilesets: {},
     maps: { 'map-1': createDefaultMap('map-1', 1, 'Map 1', 20, 15) },
     actors: { player: { id: 'player', name: 'Player', start: { x: 1.5, y: 1.5, planeId: 'plane-1' }, stats: { maxHp: 100, level: 1, xp: 0 }, primaryAttack: 'basic-attack', skillSlots: {}, unlockedSkills: ['basic-attack'] } },
     enemies: {}, skills: { 'basic-attack': { name: 'Basic attack', type: 'melee', damage: 10, cooldown: 0.4, range: 1 } }, items: {}, quests: {},
     types: createDefaultGameTypes(),
     ui: { theme: { fontFamily: 'sans-serif', pageBackground: '#0b1020', panel: '#172033', panelBorder: '#334155', text: '#f8fafc', accent: '#6ee7b7', health: '#ef4444' }, hud: { slots: ['health', 'level'] }, pauseMenu: { title: title, tabs: [{ id: 'status', label: 'Status' }] } },
-    events: { objectives: [] }, initialState: { switches: {}, variables: {}, quests: {}, inventory: {}, equipment: {} },
+    events: { objectives: [], commonEvents: {} }, initialState: { switches: {}, variables: {}, quests: {}, inventory: {}, equipment: {} },
   });
   return { game, assets: {} };
 }

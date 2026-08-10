@@ -4,6 +4,7 @@ import { MapEventRuntime, teleportDisposition, type RuntimeEvent } from './event
 import { EventMovementRuntime } from './event-movement.js';
 import { conditionsMet as evaluateConditions } from './conditions.js';
 import { conditionalCommands } from './conditional.js';
+import { CommonEventRuntime, commonEventCallDepthWarning } from './common-event-runtime.js';
 import { PixiRenderer } from './pixi-renderer.js';
 import { resolveTeleport, runTeleportFade, teleportFacing } from './teleport.js';
 import { resolveSetSwitch, resolveSetVariable, type StateOperandContext } from './state-commands.js';
@@ -32,13 +33,15 @@ void (async () => {
     pageIndex?: number;
     commands: EventCommand[];
     index: number;
+    returnStack: Array<{ commands: EventCommand[]; index: number }>;
+    callStack: string[];
     waitRemaining: number;
     blocked: boolean;
     parallel: boolean;
     autorun: boolean;
     revision: number;
   };
-  let content: LoadedGame, game: any, renderer: Renderer, eventRuntime: MapEventRuntime, movementRuntime: EventMovementRuntime, visitRevision = 0, dialogue: { choices: Array<{ label: string; commands: EventCommand[] }>; choiceIndex: number; process?: CommandProcess } | null = null, paused = false, transitioning = false, pauseTabIndex = 0, inventorySelection = 0, lastTime = performance.now(), toastTimer = 0, showTileGrid = false, playerMoving = false, playerAnimationTime = 0;
+  let content: LoadedGame, game: any, renderer: Renderer, eventRuntime: MapEventRuntime, commonEventRuntime: CommonEventRuntime, movementRuntime: EventMovementRuntime, visitRevision = 0, dialogue: { choices: Array<{ label: string; commands: EventCommand[] }>; choiceIndex: number; process?: CommandProcess } | null = null, paused = false, transitioning = false, pauseTabIndex = 0, inventorySelection = 0, lastTime = performance.now(), toastTimer = 0, showTileGrid = false, playerMoving = false, playerAnimationTime = 0;
   const eventProcesses = new Map<string, CommandProcess>();
   let facing = { x: 0, y: 1 };
   const cooldowns: Record<string, number> = {};
@@ -155,7 +158,7 @@ void (async () => {
     closeDialogue();
   }
   function moveDialogueChoice(delta: number) { if (!dialogue?.choices.length) return; dialogue.choiceIndex = (dialogue.choiceIndex + delta + dialogue.choices.length) % dialogue.choices.length; (ui.choices.children[dialogue.choiceIndex] as HTMLButtonElement | undefined)?.focus(); }
-  function startProcess(key: string, commands: EventCommand[], options: { eventId?: string; pageIndex?: number; parallel?: boolean; autorun?: boolean } = {}) {
+  function startProcess(key: string, commands: EventCommand[], options: { eventId?: string; pageIndex?: number; parallel?: boolean; autorun?: boolean; commonEventId?: string } = {}) {
     if (eventProcesses.has(key)) return false;
     const process: CommandProcess = {
       key,
@@ -163,6 +166,8 @@ void (async () => {
       pageIndex: options.pageIndex,
       commands: [...commands],
       index: 0,
+      returnStack: [],
+      callStack: options.commonEventId ? [options.commonEventId] : [],
       waitRemaining: 0,
       blocked: false,
       parallel: options.parallel ?? false,
@@ -185,7 +190,14 @@ void (async () => {
     }
     if (process.blocked) return;
     let steps = 0;
-    while (process.index < process.commands.length && steps < 100) {
+    while ((process.index < process.commands.length || process.returnStack.length) && steps < 100) {
+      if (process.index >= process.commands.length) {
+        const frame = process.returnStack.pop()!;
+        process.commands = frame.commands;
+        process.index = frame.index;
+        process.callStack.pop();
+        continue;
+      }
       steps += 1;
       const command = process.commands[process.index++];
       if (command.type === 'dialogue') {
@@ -195,9 +207,13 @@ void (async () => {
       }
       if (command.type === 'conditional') process.commands.splice(process.index, 0, ...conditionalCommands(command, stateOperandContext(process.eventId)));
       if (command.type === 'setSwitch') {
+        const previous = Boolean(game.switches[command.id]);
         const value = resolveSetSwitch(command, game.switches[command.id], stateOperandContext(process.eventId));
         if (value === undefined) console.warn('Set switch ignored because its operand could not be resolved.', command);
-        else game.switches[command.id] = value;
+        else {
+          game.switches[command.id] = value;
+          commonEventRuntime.notifySwitchChange(command.id, previous, value);
+        }
       }
       if (command.type === 'setVariable') {
         const value = resolveSetVariable(command, game.variables[command.id], stateOperandContext(process.eventId));
@@ -247,13 +263,38 @@ void (async () => {
           return refreshHud();
         }
       }
+      if (command.type === 'callCommonEvent') {
+        const commonEvent = content.commonEvents[command.id];
+        const depthWarning = commonEventCallDepthWarning(process.callStack, command.id);
+        if (!commonEvent) console.warn(`Call common event ignored because it does not exist: ${command.id}`);
+        else if (depthWarning) {
+          console.warn(depthWarning);
+          return finishProcess(process);
+        } else {
+          process.returnStack.push({ commands: process.commands, index: process.index });
+          process.commands = [...commonEvent.contents];
+          process.index = 0;
+          process.callStack.push(command.id);
+        }
+      }
       if (command.type === 'save') saveSilently();
     }
-    if (process.index >= process.commands.length) finishProcess(process);
+    if (process.index >= process.commands.length && !process.returnStack.length) finishProcess(process);
     else refreshHud();
   }
   function updateProcesses(dt: number) {
     for (const process of [...eventProcesses.values()]) advanceProcess(process, dt);
+  }
+  function startReadyCommonEvents() {
+    const canStartAutorun = ![...eventProcesses.values()].some(process => !process.parallel);
+    for (const activation of commonEventRuntime.takeReady(canStartAutorun)) {
+      const commonEvent = content.commonEvents[activation.commonEventId];
+      startProcess(`common:${activation.sequence}`, commonEvent.contents, {
+        parallel: activation.mode === 'parallel',
+        autorun: activation.mode === 'autorun',
+        commonEventId: activation.commonEventId,
+      });
+    }
   }
   function executeCommands(commands: EventCommand[], currentEventId?: string) {
     startProcess(`manual:${crypto.randomUUID()}`, commands, { eventId: currentEventId });
@@ -428,6 +469,7 @@ void (async () => {
     if (toastTimer > 0 && (toastTimer -= dt) <= 0) ui.toast.classList.add('hidden');
     if (paused || transitioning || document.hidden) { playerAnimationTime = 0; return; }
     updateProcesses(dt);
+    startReadyCommonEvents();
     let events = activeEvents();
     const activePages = new Map(events.map(event => [event.id, event.pageIndex]));
     for (const process of [...eventProcesses.values()]) {
@@ -517,5 +559,5 @@ void (async () => {
   window.addEventListener('keyup', event => keys.delete(event.code));
   window.addEventListener('blur', () => keys.clear());
   document.addEventListener('visibilitychange', () => { if (document.hidden) keys.clear(); });
-  try { content = await loadGameContent(); renderer = await PixiRenderer.create(canvas, content.tilesets, content.assetUrls, Object.values(content.maps)); applyTheme(); document.title = `${content.manifest.title}${studioPreview ? ' — Aperçu Studio' : ''}`; document.querySelector('h1')!.textContent = content.manifest.title; game = loadGame(); initializeEventRuntime(); refreshHud(); if (studioPreview) showToast('Aperçu Studio'); requestAnimationFrame(frame); window.addEventListener('pagehide', () => renderer.destroy(), { once: true }); } catch (error) { console.error(error); ui.speaker.textContent = 'Erreur de chargement'; ui.text.textContent = error instanceof Error ? error.message : 'Le package de jeu ne peut pas être chargé.'; ui.choices.innerHTML = ''; document.querySelector<HTMLElement>('.continue-hint')!.style.display = 'none'; ui.dialogue.classList.remove('hidden'); }
+  try { content = await loadGameContent(); renderer = await PixiRenderer.create(canvas, content.tilesets, content.assetUrls, Object.values(content.maps)); applyTheme(); document.title = `${content.manifest.title}${studioPreview ? ' — Aperçu Studio' : ''}`; document.querySelector('h1')!.textContent = content.manifest.title; game = loadGame(); commonEventRuntime = new CommonEventRuntime(content.commonEvents); initializeEventRuntime(); refreshHud(); if (studioPreview) showToast('Aperçu Studio'); requestAnimationFrame(frame); window.addEventListener('pagehide', () => renderer.destroy(), { once: true }); } catch (error) { console.error(error); ui.speaker.textContent = 'Erreur de chargement'; ui.text.textContent = error instanceof Error ? error.message : 'Le package de jeu ne peut pas être chargé.'; ui.choices.innerHTML = ''; document.querySelector<HTMLElement>('.continue-hint')!.style.display = 'none'; ui.dialogue.classList.remove('hidden'); }
 })();

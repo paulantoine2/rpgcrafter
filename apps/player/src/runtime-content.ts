@@ -79,6 +79,10 @@ export function sourceGameToLoadedGame(source: SourceGame): LoadedGame {
     ui: source.ui,
     player,
     objectives: source.events.objectives,
+    commonEvents: Object.fromEntries(Object.entries(source.events.commonEvents).map(([id, commonEvent]) => [id, {
+      ...commonEvent,
+      contents: normalizeCommands(commonEvent.contents, source.maps),
+    }])),
     initialState: source.initialState,
     navigation,
   };
