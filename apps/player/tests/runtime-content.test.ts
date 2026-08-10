@@ -11,7 +11,7 @@ describe('sourceGameToLoadedGame', () => {
   it('normalizes spatial values exactly once for the Player', () => {
     const source = assertSourceGame({
       manifest: read('manifest.json'), tilesets: read('tilesets.json'), maps: read('maps.json'), actors: read('actors.json'), enemies: read('enemies.json'),
-      skills: read('skills.json'), items: read('items.json'), quests: read('quests.json'), ui: read('ui.json'),
+      skills: read('skills.json'), items: read('items.json'), quests: read('quests.json'), types: read('types.json'), ui: read('ui.json'),
       events: read('events.json'), initialState: read('initial-state.json'),
     });
     source.maps.village.tileLayers = [
@@ -32,7 +32,7 @@ describe('sourceGameToLoadedGame', () => {
   it('keeps teleport tile sources intact in conditional branches', () => {
     const source = assertSourceGame({
       manifest: read('manifest.json'), tilesets: read('tilesets.json'), maps: read('maps.json'), actors: read('actors.json'), enemies: read('enemies.json'),
-      skills: read('skills.json'), items: read('items.json'), quests: read('quests.json'), ui: read('ui.json'),
+      skills: read('skills.json'), items: read('items.json'), quests: read('quests.json'), types: read('types.json'), ui: read('ui.json'),
       events: read('events.json'), initialState: read('initial-state.json'),
     });
     source.maps.village.events[0].pages[0].contents = [{

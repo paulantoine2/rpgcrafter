@@ -2,6 +2,6 @@
   "item.sanctuary-key": { "name": "Sanctuary Key", "type": "quest" },
   "item.crystal-heart": { "name": "Crystal Heart", "type": "quest" },
   "item.potion": { "name": "Healing Potion", "type": "consumable", "healing": 30 },
-  "item.hero-sword": { "name": "Traveler's Sword", "type": "equipment", "equipmentSlot": "weapon", "stats": { "attack": 4 } },
-  "item.leather-cloak": { "name": "Leather Cloak", "type": "equipment", "equipmentSlot": "armor", "stats": { "defense": 2 } }
+  "item.hero-sword": { "name": "Traveler's Sword", "type": "equipment", "equipmentTypeId": 1, "stats": { "attack": 4 } },
+  "item.leather-cloak": { "name": "Leather Cloak", "type": "equipment", "equipmentTypeId": 4, "stats": { "defense": 2 } }
 }

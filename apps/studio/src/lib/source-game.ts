@@ -1,4 +1,4 @@
-import { assertSourceGame, parseSourceGame, type SourceGame, type SourceGameFiles, type SourceGameResult, type TilesetDefinition } from '@rpgcrafter/game-schema';
+import { assertSourceGame, createDefaultGameTypes, parseSourceGame, type SourceGame, type SourceGameFiles, type SourceGameResult, type TilesetDefinition } from '@rpgcrafter/game-schema';
 import { strFromU8, strToU8, unzipSync, zipSync } from 'fflate';
 import type { ProjectAssets } from '@/lib/draft-storage';
 import { createDefaultMap } from '@/lib/default-map';
@@ -13,7 +13,7 @@ const bundledSpriteImages = import.meta.glob<string>('../../../../assets/sprites
 const documentFiles = {
   'manifest.json': 'manifest', 'tilesets.json': 'tilesets', 'maps.json': 'maps', 'actors.json': 'actors',
   'enemies.json': 'enemies', 'skills.json': 'skills', 'items.json': 'items', 'quests.json': 'quests',
-  'ui.json': 'ui', 'events.json': 'events', 'initial-state.json': 'initialState',
+  'types.json': 'types', 'ui.json': 'ui', 'events.json': 'events', 'initial-state.json': 'initialState',
 } as const satisfies Record<string, keyof SourceGameFiles>;
 
 export type ProjectBundle = { game: SourceGame; assets: ProjectAssets };
@@ -100,7 +100,7 @@ async function bundledSpriteBlob(image: string) {
 export function sourceGameFiles(game: SourceGame): SourceGameFiles {
   return {
     manifest: game.manifest, tilesets: game.tilesets, maps: game.maps, actors: game.actors, enemies: game.enemies,
-    skills: game.skills, items: game.items, quests: game.quests, ui: game.ui, events: game.events, initialState: game.initialState,
+    skills: game.skills, items: game.items, quests: game.quests, types: game.types, ui: game.ui, events: game.events, initialState: game.initialState,
   };
 }
 
@@ -132,12 +132,13 @@ function safeId(value: string) {
 export function createEmptyProject(title: string, requestedId?: string): ProjectBundle {
   const gameId = `game.${safeId(requestedId || title)}`;
   const game = assertSourceGame({
-    manifest: { schemaVersion: '0.11', engineRange: '>=0.11 <0.12', gameId, version: '0.1.0', nextMapNumericId: 2, entryPoint: { mapId: 'map-1', spawnId: 'spawn-1' }, title, contentRating: 'all' },
+    manifest: { schemaVersion: '0.12', engineRange: '>=0.12 <0.13', gameId, version: '0.1.0', nextMapNumericId: 2, entryPoint: { mapId: 'map-1', spawnId: 'spawn-1' }, title, contentRating: 'all' },
     tilesets: {},
     maps: { 'map-1': createDefaultMap('map-1', 1, 'Map 1', 20, 15) },
     actors: { player: { id: 'player', name: 'Player', start: { x: 1.5, y: 1.5, planeId: 'plane-1' }, stats: { maxHp: 100, level: 1, xp: 0 }, primaryAttack: 'basic-attack', skillSlots: {}, unlockedSkills: ['basic-attack'] } },
     enemies: {}, skills: { 'basic-attack': { name: 'Basic attack', type: 'melee', damage: 10, cooldown: 0.4, range: 1 } }, items: {}, quests: {},
-    ui: { theme: { fontFamily: 'sans-serif', pageBackground: '#0b1020', panel: '#172033', panelBorder: '#334155', text: '#f8fafc', accent: '#6ee7b7', health: '#ef4444' }, hud: { slots: ['health', 'level'] }, pauseMenu: { title: title, tabs: [{ id: 'status', label: 'Status' }] }, equipmentSlots: [] },
+    types: createDefaultGameTypes(),
+    ui: { theme: { fontFamily: 'sans-serif', pageBackground: '#0b1020', panel: '#172033', panelBorder: '#334155', text: '#f8fafc', accent: '#6ee7b7', health: '#ef4444' }, hud: { slots: ['health', 'level'] }, pauseMenu: { title: title, tabs: [{ id: 'status', label: 'Status' }] } },
     events: { objectives: [] }, initialState: { switches: {}, variables: {}, quests: {}, inventory: {}, equipment: {} },
   });
   return { game, assets: {} };
@@ -149,6 +150,7 @@ export async function openProjectArchive(file: Blob): Promise<ProjectBundle> {
   const source: Partial<SourceGameFiles> = {};
   for (const [fileName, key] of Object.entries(documentFiles)) {
     const bytes = files[fileName];
+    if (!bytes && fileName === 'types.json') continue;
     if (!bytes) throw new Error(`Project package is missing ${fileName}.`);
     try { source[key] = JSON.parse(strFromU8(bytes)); } catch { throw new Error(`${fileName} is not valid JSON.`); }
   }

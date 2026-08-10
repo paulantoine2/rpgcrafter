@@ -17,7 +17,7 @@ function Harness({ emptySwitches = false, emptyVariables = false, withSprite = f
   project.game.initialState.switches = switches;
   const [items, setItems] = useState<SourceGame['items']>({
     potion: { name: 'Potion', type: 'consumable', healing: 25 },
-    'silver-sword': { name: 'Silver Sword', type: 'equipment', equipmentSlot: 'weapon' },
+    'silver-sword': { name: 'Silver Sword', type: 'equipment', equipmentTypeId: 1 },
   });
   project.game.items = items;
   const [variables, setVariables] = useState<SourceGame['initialState']['variables']>(emptyVariables ? {} : {

@@ -3,7 +3,7 @@ import { parseSourceGame, type SourceGame, type SourceGameFiles } from '@rpgcraf
 export const DRAFT_DATABASE_NAME = 'rpgcrafter-studio';
 export const DRAFT_DOCUMENTS = [
   'manifest.json', 'tilesets.json', 'maps.json', 'actors.json', 'enemies.json', 'skills.json',
-  'items.json', 'quests.json', 'ui.json', 'events.json', 'initial-state.json',
+  'items.json', 'quests.json', 'types.json', 'ui.json', 'events.json', 'initial-state.json',
 ] as const;
 
 export type DraftDocumentName = typeof DRAFT_DOCUMENTS[number];
@@ -44,6 +44,7 @@ const DOCUMENT_KEYS: Record<DraftDocumentName, keyof SourceGameFiles> = {
   'skills.json': 'skills',
   'items.json': 'items',
   'quests.json': 'quests',
+  'types.json': 'types',
   'ui.json': 'ui',
   'events.json': 'events',
   'initial-state.json': 'initialState',
@@ -56,7 +57,7 @@ export function draftProjectId(game: SourceGame) {
 function sourceFiles(game: SourceGame): SourceGameFiles {
   return {
     manifest: game.manifest, tilesets: game.tilesets, maps: game.maps, actors: game.actors, enemies: game.enemies,
-    skills: game.skills, items: game.items, quests: game.quests, ui: game.ui,
+    skills: game.skills, items: game.items, quests: game.quests, types: game.types, ui: game.ui,
     events: game.events, initialState: game.initialState,
   };
 }
@@ -153,7 +154,8 @@ export function createDraftRepository(options: DraftRepositoryOptions = {}) {
     }
     const records = await requestResult(transaction.objectStore('documents').index('projectId').getAll(id)) as DocumentRecord[];
     await transactionDone(transaction);
-    if (records.length !== DRAFT_DOCUMENTS.length) return null;
+    const recordNames = new Set(records.map(record => record.name));
+    if (DRAFT_DOCUMENTS.some(name => name !== 'types.json' && !recordNames.has(name))) return null;
     const files = sourceFiles(source) as Record<keyof SourceGameFiles, unknown>;
     for (const record of records) files[DOCUMENT_KEYS[record.name]] = record.value;
     const result = parseSourceGame(files as unknown as SourceGameFiles);
@@ -197,7 +199,8 @@ export function createDraftRepository(options: DraftRepositoryOptions = {}) {
     const documentRecords = await requestResult(transaction.objectStore('documents').index('projectId').getAll(id)) as DocumentRecord[];
     const assetRecords = await requestResult(transaction.objectStore('assets').index('projectId').getAll(id)) as AssetRecord[];
     await transactionDone(transaction);
-    if (documentRecords.length !== DRAFT_DOCUMENTS.length) return null;
+    const documentNames = new Set(documentRecords.map(record => record.name));
+    if (DRAFT_DOCUMENTS.some(name => name !== 'types.json' && !documentNames.has(name))) return null;
     const files: Partial<SourceGameFiles> = {};
     for (const record of documentRecords) files[DOCUMENT_KEYS[record.name]] = record.value;
     const parsed = parseSourceGame(files as SourceGameFiles);

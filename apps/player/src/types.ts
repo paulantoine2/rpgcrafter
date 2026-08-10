@@ -1,7 +1,7 @@
 export * from '@rpgcrafter/game-schema';
 
 import type {
-  EnemyTemplate, GameMap, InitialState, Item, Manifest, Objective,
+  EnemyTemplate, GameMap, GameTypes, InitialState, Item, Manifest, Objective,
   NavigationGraph, PlayerDefinition, QuestDefinition, Skill, TilesetDefinition, UiDefinition,
 } from '@rpgcrafter/game-schema';
 
@@ -15,6 +15,7 @@ export type LoadedGame = {
   skills: Record<string, Skill>;
   items: Record<string, Item>;
   quests: Record<string, QuestDefinition>;
+  types: GameTypes;
   ui: UiDefinition;
   player: PlayerDefinition;
   objectives: Objective[];

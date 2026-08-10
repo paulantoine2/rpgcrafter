@@ -11,11 +11,11 @@ async function readJson(file: string): Promise<unknown> {
 }
 
 export async function loadReferenceGame(): Promise<LoadedGame> {
-  const [manifest, tilesets, maps, enemies, actors, skills, items, quests, ui, eventData, initialState] = await Promise.all([
+  const [manifest, tilesets, maps, enemies, actors, skills, items, quests, types, ui, eventData, initialState] = await Promise.all([
     readJson('manifest.json'), readJson('tilesets.json'), readJson('maps.json'), readJson('enemies.json'), readJson('actors.json'), readJson('skills.json'),
-    readJson('items.json'), readJson('quests.json'), readJson('ui.json'), readJson('events.json'), readJson('initial-state.json')
+    readJson('items.json'), readJson('quests.json'), readJson('types.json'), readJson('ui.json'), readJson('events.json'), readJson('initial-state.json')
   ]);
-  const source = assertSourceGame({ manifest, tilesets, maps, enemies, actors, skills, items, quests, ui, events: eventData, initialState });
+  const source = assertSourceGame({ manifest, tilesets, maps, enemies, actors, skills, items, quests, types, ui, events: eventData, initialState });
   const loaded = sourceGameToLoadedGame(source);
   loaded.assetUrls = Object.fromEntries(Object.values(source.tilesets).map(tileset => [tileset.image, new URL(tileset.image, new URL('/reference-game/', window.location.origin)).href]));
   for (const image of new Set(Object.values(source.maps).flatMap(map => map.events.flatMap(event => event.pages.flatMap(page => page.sprite ? [page.sprite.image] : []))))) {

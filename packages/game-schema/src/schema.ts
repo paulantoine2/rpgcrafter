@@ -1,6 +1,6 @@
 import { z } from 'zod';
 import type {
-  AutonomousMovement, Condition, ContentIssue, EnemyTemplate, EventCommand, EventOptions, GameMap, InitialState, Item, Manifest,
+  AutonomousMovement, Condition, ContentIssue, EnemyTemplate, EventCommand, EventOptions, GameMap, GameTypes, InitialState, Item, Manifest,
   MapEventPage, MapEventTrigger, MapEventSprite, Objective, PlayerDefinition, QuestDefinition,
   Skill, SourceGame, SourceGameFiles, SourceGameResult, TilesetDefinition, UiDefinition, MovementCommand,
   MovementTarget, MovementRoute,
@@ -9,7 +9,7 @@ import type {
 import { CANONICAL_AUTOTILE_MASKS, canonicalizeAutotileMask } from './autotile.js';
 import { migrateSourceGameFiles } from './migration.js';
 
-export const ENGINE_VERSION = '0.11.0';
+export const ENGINE_VERSION = '0.12.0';
 
 const Id = z.string().min(1);
 const FiniteNumber = z.number().finite();
@@ -273,13 +273,23 @@ const PlayerSchema: z.ZodType<PlayerDefinition> = z.object({
   primaryAttack: Id, skillSlots: z.record(Id, Id), unlockedSkills: z.array(Id),
 }).strict();
 const SkillSchema: z.ZodType<Skill> = z.object({ name: Id, type: z.enum(['melee', 'projectile', 'area']), damage: FiniteNumber, cooldown: FiniteNumber, range: FiniteNumber.optional(), projectileSpeed: FiniteNumber.optional(), color: Id.optional() }).strict();
-const ItemSchema: z.ZodType<Item> = z.object({ name: Id, type: z.enum(['quest', 'consumable', 'equipment']), healing: FiniteNumber.optional(), equipmentSlot: Id.optional(), stats: z.record(Id, FiniteNumber).optional() }).strict();
+const ItemSchema: z.ZodType<Item> = z.object({ name: Id, type: z.enum(['quest', 'consumable', 'equipment']), healing: FiniteNumber.optional(), equipmentTypeId: z.number().int().positive().optional(), stats: z.record(Id, FiniteNumber).optional() }).strict();
 const QuestSchema: z.ZodType<QuestDefinition> = z.object({ name: Id, states: z.array(Id).min(1), reward: z.object({ story: Id }).strict().optional() }).strict();
+const TypeCatalogSchema = z.object({
+  nextId: z.number().int().positive(),
+  entries: z.array(z.object({ id: z.number().int().positive(), name: Id }).strict()),
+}).strict();
+const GameTypesSchema: z.ZodType<GameTypes> = z.object({
+  elements: TypeCatalogSchema,
+  skills: TypeCatalogSchema,
+  weapons: TypeCatalogSchema,
+  armors: TypeCatalogSchema,
+  equipment: TypeCatalogSchema,
+}).strict();
 const UiSchema: z.ZodType<UiDefinition> = z.object({
   theme: z.object({ fontFamily: Id, pageBackground: Id, panel: Id, panelBorder: Id, text: Id, accent: Id, health: Id }).strict(),
   hud: z.object({ slots: z.array(Id) }).strict(),
   pauseMenu: z.object({ title: Id, tabs: z.array(z.object({ id: Id, label: Id }).strict()).min(1) }).strict(),
-  equipmentSlots: z.array(z.object({ id: Id, label: Id }).strict()),
 }).strict();
 const ObjectiveSchema: z.ZodType<Objective> = z.object({ conditions: z.array(ConditionSchema).optional(), text: Id }).strict();
 const InitialStateSchema: z.ZodType<InitialState> = z.object({
@@ -315,7 +325,7 @@ function engineSupports(range: string) {
 function validateReferences(game: SourceGame): ContentIssue[] {
   const issues: ContentIssue[] = [];
   const issue = (path: string, message: string) => issues.push({ path, message });
-  const { maps, tilesets, enemies, skills, items, quests, events, initialState, actors, manifest, ui } = game;
+  const { maps, tilesets, enemies, skills, items, quests, types, events, initialState, actors, manifest } = game;
   const player = actors.player;
   const directions = {
     north: { x: 0, y: -1, opposite: 'south' }, east: { x: 1, y: 0, opposite: 'west' },
@@ -375,7 +385,13 @@ function validateReferences(game: SourceGame): ContentIssue[] {
   for (const skillId of [...Object.values(player.skillSlots), ...player.unlockedSkills]) if (!skills[skillId]) issue('actors.player', `Unknown skill: ${skillId}`);
   for (const [questId, state] of Object.entries(initialState.quests)) if (!quests[questId]?.states.includes(state)) issue('initialState.quests', `Unknown quest or state: ${questId}`);
   for (const [itemId, amount] of Object.entries(initialState.inventory || {})) if (!items[itemId] || amount < 0) issue('initialState.inventory', `Invalid item: ${itemId}`);
-  for (const [slot, itemId] of Object.entries(initialState.equipment || {})) if (itemId && (!items[itemId] || items[itemId].equipmentSlot !== slot)) issue('initialState.equipment', `Invalid equipment: ${slot}`);
+  const equipmentTypeIds = new Set(types.equipment.entries.map(entry => entry.id));
+  for (const [typeId, itemId] of Object.entries(initialState.equipment || {})) {
+    const numericTypeId = Number(typeId);
+    if (!Number.isInteger(numericTypeId) || !equipmentTypeIds.has(numericTypeId)) issue(`initialState.equipment.${typeId}`, `Unknown equipment type: ${typeId}`);
+    else if (itemId && (!items[itemId] || items[itemId].equipmentTypeId !== numericTypeId)) issue(`initialState.equipment.${typeId}`, `Invalid equipment: ${typeId}`);
+  }
+  for (const [itemId, item] of Object.entries(items)) if (item.equipmentTypeId !== undefined && !equipmentTypeIds.has(item.equipmentTypeId)) issue(`items.${itemId}.equipmentTypeId`, `Unknown equipment type: ${item.equipmentTypeId}`);
 
   const validateSwitchOperand = (operand: SwitchOperand, target: string) => {
     if (operand.kind === 'switch' && !(operand.switchId in initialState.switches)) issue(`${target}.switchId`, `Unknown switch: ${operand.switchId}`);
@@ -553,7 +569,15 @@ function validateReferences(game: SourceGame): ContentIssue[] {
   const highestMapNumericId = Math.max(0, ...mapNumericIds);
   if (manifest.nextMapNumericId <= highestMapNumericId) issue('manifest.nextMapNumericId', 'Must be greater than every numeric map id');
   events.objectives.forEach((objective, index) => validateConditions(objective.conditions || [], `events.objectives[${index}].conditions`));
-  if (ui.equipmentSlots.some(slot => !slot.id)) issue('ui.equipmentSlots', 'Empty slot id');
+  for (const [category, catalog] of Object.entries(types)) {
+    const ids = new Set<number>();
+    for (const entry of catalog.entries) {
+      if (ids.has(entry.id)) issue(`types.${category}.entries`, `Duplicate type id: ${entry.id}`);
+      ids.add(entry.id);
+    }
+    const highestId = Math.max(0, ...ids);
+    if (catalog.nextId <= highestId) issue(`types.${category}.nextId`, 'Must be greater than every type id');
+  }
   return issues;
 }
 
@@ -563,7 +587,7 @@ export function parseSourceGame(files: SourceGameFiles): SourceGameResult {
     ['manifest', ManifestSchema, files.manifest], ['tilesets', z.record(Id, TilesetSchema), files.tilesets], ['maps', z.record(Id, MapSchema), files.maps],
     ['actors', ActorsSchema, files.actors], ['enemies', z.record(Id, EnemySchema), files.enemies],
     ['skills', z.record(Id, SkillSchema), files.skills], ['items', z.record(Id, ItemSchema), files.items],
-    ['quests', z.record(Id, QuestSchema), files.quests], ['ui', UiSchema, files.ui],
+    ['quests', z.record(Id, QuestSchema), files.quests], ['types', GameTypesSchema, files.types], ['ui', UiSchema, files.ui],
     ['events', EventsSchema, files.events], ['initialState', InitialStateSchema, files.initialState],
   ] as const;
   const parsed: Record<string, unknown> = {};
@@ -575,7 +599,7 @@ export function parseSourceGame(files: SourceGameFiles): SourceGameResult {
   }
   if (issues.length) return { success: false, issues };
   const game = parsed as SourceGame;
-  if (game.manifest.schemaVersion !== '0.11') issues.push({ path: 'manifest.schemaVersion', message: `Unsupported schema version: ${game.manifest.schemaVersion}` });
+  if (game.manifest.schemaVersion !== '0.12') issues.push({ path: 'manifest.schemaVersion', message: `Unsupported schema version: ${game.manifest.schemaVersion}` });
   if (!engineSupports(game.manifest.engineRange)) issues.push({ path: 'manifest.engineRange', message: `Player ${ENGINE_VERSION} is incompatible with ${game.manifest.engineRange}` });
   issues.push(...validateReferences(game));
   return issues.length ? { success: false, issues } : { success: true, data: game, issues: [] };

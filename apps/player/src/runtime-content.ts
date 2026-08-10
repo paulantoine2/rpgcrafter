@@ -75,6 +75,7 @@ export function sourceGameToLoadedGame(source: SourceGame): LoadedGame {
     skills: source.skills,
     items: source.items,
     quests: source.quests,
+    types: source.types,
     ui: source.ui,
     player,
     objectives: source.events.objectives,

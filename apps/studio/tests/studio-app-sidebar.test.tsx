@@ -18,6 +18,7 @@ function props(overrides: Partial<ComponentProps<typeof StudioAppSidebar>> = {})
     onCloseProject: vi.fn(),
     onSelectMaps: vi.fn(),
     onSelectAssets: vi.fn(),
+    onSelectDatabase: vi.fn(),
     ...overrides,
   };
 }
@@ -28,7 +29,8 @@ describe('StudioAppSidebar', () => {
     expect(screen.getByRole('complementary', { name: 'Studio navigation' })).toHaveClass('w-12', 'bg-sidebar', 'text-sidebar-foreground');
     expect(screen.getByRole('button', { name: 'RPG Crafter menu' })).not.toHaveAttribute('aria-pressed');
     const buttons = within(screen.getByRole('navigation', { name: 'Studio tabs' })).getAllByRole('button');
-    expect(buttons.map(button => button.getAttribute('aria-label'))).toEqual(['Maps', 'Assets']);
+    expect(buttons.map(button => button.getAttribute('aria-label'))).toEqual(['Maps', 'Assets', 'Database']);
+    expect(screen.getByRole('button', { name: 'Assets' }).querySelector('.lucide-circle-plus')).toBeInTheDocument();
   });
 
   it('opens the project actions from the RPG Crafter logo', async () => {
@@ -44,6 +46,19 @@ describe('StudioAppSidebar', () => {
     render(<TooltipProvider><StudioAppSidebar {...props({ onSelectAssets })} /></TooltipProvider>);
     await userEvent.click(screen.getByRole('button', { name: 'Assets' }));
     expect(onSelectAssets).toHaveBeenCalledOnce();
+  });
+
+  it('opens Database from the third icon', async () => {
+    const onSelectDatabase = vi.fn();
+    render(<TooltipProvider><StudioAppSidebar {...props({ onSelectDatabase })} /></TooltipProvider>);
+    await userEvent.click(screen.getByRole('button', { name: 'Database' }));
+    expect(onSelectDatabase).toHaveBeenCalledOnce();
+  });
+
+  it('disables project tabs when no project is open', () => {
+    render(<TooltipProvider><StudioAppSidebar {...props({ hasProject: false })} /></TooltipProvider>);
+    expect(screen.getByRole('button', { name: 'Assets' })).toBeDisabled();
+    expect(screen.getByRole('button', { name: 'Database' })).toBeDisabled();
   });
 
   it('uses the navigation icons as tabs', async () => {

@@ -1,4 +1,4 @@
-import { FilePlus2, FolderOpen, Images, MapPinned, RotateCcw, Save, Upload } from 'lucide-react';
+import { CirclePlus, Database, FilePlus2, FolderOpen, MapPinned, RotateCcw, Save, Upload } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuShortcut, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { IconButtonTooltip } from '@/components/ui/tooltip';
@@ -22,10 +22,11 @@ export function StudioAppSidebar({
   onCloseProject,
   onSelectMaps,
   onSelectAssets,
+  onSelectDatabase,
 }: {
   hasProject: boolean;
   canExport: boolean;
-  activeTab: 'maps' | 'assets';
+  activeTab: 'maps' | 'assets' | 'database';
   onNewProject: () => void;
   onOpenProject: () => void;
   onSaveDraft: () => void;
@@ -34,6 +35,7 @@ export function StudioAppSidebar({
   onCloseProject: () => void;
   onSelectMaps: () => void;
   onSelectAssets: () => void;
+  onSelectDatabase: () => void;
 }) {
   return <aside className="flex w-12 shrink-0 flex-col items-center border-r bg-sidebar py-1 text-sidebar-foreground" aria-label="Studio navigation">
     <div className="mb-1 border-b pb-1">
@@ -57,7 +59,10 @@ export function StudioAppSidebar({
         <Button type="button" variant={activeTab === 'maps' ? 'default' : 'ghost'} size="icon-lg" className="rounded-md" aria-label="Maps" aria-pressed={activeTab === 'maps'} onClick={onSelectMaps}><MapPinned /></Button>
       </IconButtonTooltip>
       <IconButtonTooltip label="Assets">
-        <Button type="button" variant={activeTab === 'assets' ? 'default' : 'ghost'} size="icon-lg" className="rounded-md" disabled={!hasProject} aria-label="Assets" aria-pressed={activeTab === 'assets'} onClick={onSelectAssets}><Images /></Button>
+        <Button type="button" variant={activeTab === 'assets' ? 'default' : 'ghost'} size="icon-lg" className="rounded-md" disabled={!hasProject} aria-label="Assets" aria-pressed={activeTab === 'assets'} onClick={onSelectAssets}><CirclePlus /></Button>
+      </IconButtonTooltip>
+      <IconButtonTooltip label="Database">
+        <Button type="button" variant={activeTab === 'database' ? 'default' : 'ghost'} size="icon-lg" className="rounded-md" disabled={!hasProject} aria-label="Database" aria-pressed={activeTab === 'database'} onClick={onSelectDatabase}><Database /></Button>
       </IconButtonTooltip>
     </nav>
   </aside>;

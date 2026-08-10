@@ -7,7 +7,7 @@ const root = resolve(process.cwd(), '../../content/reference-game');
 const read = (name: string) => JSON.parse(readFileSync(resolve(root, name), 'utf8'));
 const source = () => ({
   manifest: read('manifest.json'), tilesets: read('tilesets.json'), maps: read('maps.json'), actors: read('actors.json'), enemies: read('enemies.json'),
-  skills: read('skills.json'), items: read('items.json'), quests: read('quests.json'), ui: read('ui.json'),
+  skills: read('skills.json'), items: read('items.json'), quests: read('quests.json'), types: read('types.json'), ui: read('ui.json'),
   events: read('events.json'), initialState: read('initial-state.json'),
 });
 

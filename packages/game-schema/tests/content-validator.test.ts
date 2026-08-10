@@ -9,12 +9,32 @@ const read = (name: string) => JSON.parse(readFileSync(resolve(root, name), 'utf
 function sourceFiles(): SourceGameFiles {
   return {
     manifest: read('manifest.json'), tilesets: read('tilesets.json'), maps: read('maps.json'), actors: read('actors.json'), enemies: read('enemies.json'),
-    skills: read('skills.json'), items: read('items.json'), quests: read('quests.json'), ui: read('ui.json'),
+    skills: read('skills.json'), items: read('items.json'), quests: read('quests.json'), types: read('types.json'), ui: read('ui.json'),
     events: read('events.json'), initialState: read('initial-state.json'),
   };
 }
 
 describe('SourceGame validation', () => {
+  it('validates type IDs, counters, and equipment type references', () => {
+    const duplicate = sourceFiles();
+    (duplicate.types as any).elements = { nextId: 2, entries: [{ id: 1, name: 'Fire' }, { id: 1, name: 'Ice' }] };
+    const duplicateResult = parseSourceGame(duplicate);
+    expect(duplicateResult.success).toBe(false);
+    if (!duplicateResult.success) expect(duplicateResult.issues.some(issue => issue.message.includes('Duplicate type id'))).toBe(true);
+
+    const invalidCounter = sourceFiles();
+    (invalidCounter.types as any).equipment.nextId = 3;
+    const counterResult = parseSourceGame(invalidCounter);
+    expect(counterResult.success).toBe(false);
+    if (!counterResult.success) expect(counterResult.issues.some(issue => issue.path === 'types.equipment.nextId')).toBe(true);
+
+    const unknownType = sourceFiles();
+    (unknownType.items as any)['item.hero-sword'].equipmentTypeId = 999;
+    const referenceResult = parseSourceGame(unknownType);
+    expect(referenceResult.success).toBe(false);
+    if (!referenceResult.success) expect(referenceResult.issues.some(issue => issue.path === 'items.item.hero-sword.equipmentTypeId')).toBe(true);
+  });
+
   it('keeps authored coordinates in tile units', () => {
     const result = parseSourceGame(sourceFiles());
     expect(result.success).toBe(true);

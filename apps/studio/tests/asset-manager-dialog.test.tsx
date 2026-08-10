@@ -2,7 +2,7 @@ import { fireEvent, render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, expect, it, vi } from 'vitest';
 import type { SourceGame, TilesetDefinition } from '@rpgcrafter/game-schema';
-import { AssetManager, AssetManagerDialog, type LibrarySprite, type LibraryTileset } from '../src/components/asset-manager-dialog';
+import { AssetLibrary, ProjectTilesetManager, type LibrarySprite, type LibraryTileset } from '../src/components/asset-manager-dialog';
 
 const grid: TilesetDefinition = {
   id: 'decor', name: 'Decor', category: 'Nature', kind: 'grid', image: 'tilesets/decor.png', tileSize: 48, columns: 2, rows: 1,
@@ -53,22 +53,18 @@ function props(overrides: Record<string, unknown> = {}) {
   };
 }
 
-describe('AssetManagerDialog obstacle editor', () => {
-  it('uses the editor sidebar layout without a page banner', async () => {
-    const onPlay = vi.fn();
-    render(<AssetManager {...props()} canPlay onPlay={onPlay} />);
-    expect(screen.queryByRole('heading', { name: 'Asset Manager' })).not.toBeInTheDocument();
-    expect(screen.queryByText('Manage project assets, inspect tileset pixels, and edit their default collisions.')).not.toBeInTheDocument();
-    expect(screen.getByText('Project tilesets').closest('[data-slot="asset-manager-sidebar"]')).toHaveClass('bg-sidebar', 'text-sidebar-foreground', 'border-r');
-    expect(screen.getByText('Test Project')).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: 'Play' })).toBeEnabled();
-    await userEvent.click(screen.getByRole('button', { name: 'Play' }));
-    expect(onPlay).toHaveBeenCalledOnce();
+describe('Asset library and project tileset editor', () => {
+  it('shows the asset library as a standalone page', () => {
+    const values = props();
+    render(<AssetLibrary game={values.game} assetUrls={values.assetUrls} library={values.library} sprites={values.sprites} bundles={values.bundles} onImport={values.onImportLibrary} onImportSprite={values.onImportSprite} onImportBundle={values.onImportLibraryBundle} />);
+    expect(screen.getByRole('heading', { name: 'Asset Library' })).toBeInTheDocument();
+    expect(screen.queryByText('Project tilesets')).not.toBeInTheDocument();
+    expect(screen.getByRole('tab', { name: 'Tilesets' })).toHaveAttribute('aria-selected', 'true');
   });
 
   it('shows the selected tileset at actual size and toggles whole-cell collisions', async () => {
     const onChangeTerrainCollision = vi.fn();
-    render(<AssetManagerDialog {...props({ onChangeTerrainCollision })} />);
+    render(<ProjectTilesetManager {...props({ onChangeTerrainCollision })} />);
     expect(screen.getByRole('list', { name: 'Project tilesets' })).toHaveClass('space-y-1', 'px-2', 'py-1');
     expect(screen.getByRole('button', { name: /Decor/ })).toHaveClass('rounded-md', 'py-0.5', 'bg-sidebar-accent');
     expect(screen.getByRole('img', { name: 'Decor source' })).toBeInTheDocument();
@@ -80,7 +76,7 @@ describe('AssetManagerDialog obstacle editor', () => {
 
   it('converts a blocked cell to the nearest edge with the Edge tool', async () => {
     const onChangeTerrainCollision = vi.fn();
-    render(<AssetManagerDialog {...props({ onChangeTerrainCollision })} />);
+    render(<ProjectTilesetManager {...props({ onChangeTerrainCollision })} />);
     await userEvent.click(screen.getByRole('button', { name: 'Edge obstacle' }));
     const trunk = screen.getByRole('gridcell', { name: 'Trunk obstacle: blockCell' });
     expect(trunk.querySelector('[data-obstacle-cell]')).toBeInTheDocument();
@@ -91,7 +87,7 @@ describe('AssetManagerDialog obstacle editor', () => {
 
   it('treats Edge as one auto-tiled boundary toggle for A2 terrains', async () => {
     const onChangeTerrainCollision = vi.fn();
-    render(<AssetManagerDialog {...props({ onChangeTerrainCollision })} />);
+    render(<ProjectTilesetManager {...props({ onChangeTerrainCollision })} />);
     await userEvent.click(screen.getByRole('button', { name: 'CliffsNature · A2' }));
     const cliff = screen.getByRole('gridcell', { name: 'Cliff obstacle: edges' });
     expect(screen.getByRole('img', { name: 'Cliffs source' })).toBeInTheDocument();
@@ -102,12 +98,10 @@ describe('AssetManagerDialog obstacle editor', () => {
     expect(onChangeTerrainCollision).toHaveBeenCalledWith('cliffs', 'cliff', { kind: 'none' });
   });
 
-  it('opens the library in a separate dialog and preserves configured collisions', async () => {
+  it('imports from the library and preserves configured collisions', async () => {
     const onImportLibrary = vi.fn();
     const values = props({ onImportLibrary });
-    render(<AssetManagerDialog {...values} />);
-    await userEvent.click(screen.getByRole('button', { name: 'Open Assets Library' }));
-    expect(screen.getByRole('dialog', { name: 'Assets Library' })).toBeInTheDocument();
+    render(<AssetLibrary game={values.game} assetUrls={values.assetUrls} library={values.library} sprites={values.sprites} bundles={values.bundles} onImport={values.onImportLibrary} onImportSprite={values.onImportSprite} onImportBundle={values.onImportLibraryBundle} />);
     expect(screen.getByText('Tileset')).toBeInTheDocument();
     expect(screen.getByText('Bundle · Starter Pack')).toBeInTheDocument();
     expect(screen.getByText('sci-fi')).toBeInTheDocument();
@@ -119,8 +113,7 @@ describe('AssetManagerDialog obstacle editor', () => {
   it('switches to Bundles and imports every remaining asset in a bundle', async () => {
     const onImportLibraryBundle = vi.fn();
     const values = props({ onImportLibraryBundle });
-    render(<AssetManagerDialog {...values} />);
-    await userEvent.click(screen.getByRole('button', { name: 'Open Assets Library' }));
+    render(<AssetLibrary game={values.game} assetUrls={values.assetUrls} library={values.library} sprites={values.sprites} bundles={values.bundles} onImport={values.onImportLibrary} onImportSprite={values.onImportSprite} onImportBundle={values.onImportLibraryBundle} />);
     expect(screen.getByRole('tab', { name: 'Tilesets' })).toHaveAttribute('aria-selected', 'true');
     await userEvent.click(screen.getByRole('tab', { name: 'Bundles' }));
     expect(screen.getByRole('tabpanel', { name: 'Bundles' })).toBeInTheDocument();
@@ -131,8 +124,7 @@ describe('AssetManagerDialog obstacle editor', () => {
 
   it('searches assets by tag, type, and parent bundle', async () => {
     const values = props();
-    render(<AssetManagerDialog {...values} />);
-    await userEvent.click(screen.getByRole('button', { name: 'Open Assets Library' }));
+    render(<AssetLibrary game={values.game} assetUrls={values.assetUrls} library={values.library} sprites={values.sprites} bundles={values.bundles} onImport={values.onImportLibrary} onImportSprite={values.onImportSprite} onImportBundle={values.onImportLibraryBundle} />);
     const search = screen.getByRole('searchbox', { name: 'Search assets' });
     await userEvent.type(search, 'sci-fi');
     expect(screen.getByText('Library Decor')).toBeInTheDocument();
@@ -147,8 +139,8 @@ describe('AssetManagerDialog obstacle editor', () => {
       layout: { characterColumns: 4, characterRows: 2, characterCount: 8, patterns: 3, directions: ['down', 'left', 'right', 'up'], frameWidth: 48, frameHeight: 48, objectAligned: false },
     };
     const onImportSprite = vi.fn();
-    render(<AssetManagerDialog {...props({ sprites: [sprite], onImportSprite })} />);
-    await userEvent.click(screen.getByRole('button', { name: 'Open Assets Library' }));
+    const values = props({ sprites: [sprite], onImportSprite });
+    render(<AssetLibrary game={values.game} assetUrls={values.assetUrls} library={values.library} sprites={values.sprites} bundles={values.bundles} onImport={values.onImportLibrary} onImportSprite={values.onImportSprite} onImportBundle={values.onImportLibraryBundle} />);
     await userEvent.click(screen.getByRole('tab', { name: 'Sprites' }));
     expect(screen.getByText('Actor 1')).toBeInTheDocument();
     expect(screen.getByText('8 characters · 48×48px frames')).toBeInTheDocument();
@@ -158,7 +150,7 @@ describe('AssetManagerDialog obstacle editor', () => {
 
   it('opens import and metadata forms in separate dialogs', async () => {
     const onUpdate = vi.fn();
-    render(<AssetManagerDialog {...props({ onUpdate })} />);
+    render(<ProjectTilesetManager {...props({ onUpdate })} />);
     await userEvent.click(screen.getByRole('button', { name: 'Import PNG' }));
     expect(screen.getByRole('dialog', { name: 'Import a local PNG' })).toBeInTheDocument();
     await userEvent.click(screen.getByRole('button', { name: 'Cancel' }));

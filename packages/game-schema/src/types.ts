@@ -225,15 +225,28 @@ export type EnemyTemplate = {
 };
 
 export type Skill = { name: string; type: 'melee' | 'projectile' | 'area'; damage: number; cooldown: number; range?: number; projectileSpeed?: number; color?: string };
-export type Item = { name: string; type: 'quest' | 'consumable' | 'equipment'; healing?: number; equipmentSlot?: string; stats?: Record<string, number> };
+export type Item = { name: string; type: 'quest' | 'consumable' | 'equipment'; healing?: number; equipmentTypeId?: number; stats?: Record<string, number> };
 export type QuestDefinition = { name: string; states: string[]; reward?: { story: string } };
 export type SwitchDefinition = { name: string; initialValue: boolean };
 export type VariableDefinition = { name: string; initialValue: number };
+export type TypeDefinition = { id: number; name: string };
+export type TypeCatalog = { nextId: number; entries: TypeDefinition[] };
+export type TypeCategory = 'elements' | 'skills' | 'weapons' | 'armors' | 'equipment';
+export type GameTypes = Record<TypeCategory, TypeCatalog>;
+export function createDefaultGameTypes(): GameTypes {
+  const catalog = (names: string[]): TypeCatalog => ({ nextId: names.length + 1, entries: names.map((name, index) => ({ id: index + 1, name })) });
+  return {
+    elements: catalog(['Physical', 'Fire', 'Ice', 'Thunder', 'Water', 'Earth', 'Wind', 'Light', 'Darkness']),
+    skills: catalog(['Magic', 'Special']),
+    weapons: catalog(['Dagger', 'Sword', 'Flail', 'Axe', 'Whip', 'Staff', 'Bow', 'Crossbow', 'Gun', 'Claw', 'Glove', 'Spear']),
+    armors: catalog(['General Armor', 'Magic Armor', 'Light Armor', 'Heavy Armor', 'Small Shield', 'Large Shield']),
+    equipment: catalog(['Weapon', 'Shield', 'Head', 'Body', 'Accessory']),
+  };
+}
 export type UiDefinition = {
   theme: { fontFamily: string; pageBackground: string; panel: string; panelBorder: string; text: string; accent: string; health: string };
   hud: { slots: string[] };
   pauseMenu: { title: string; tabs: Array<{ id: string; label: string }> };
-  equipmentSlots: Array<{ id: string; label: string }>;
 };
 export type Manifest = { schemaVersion: string; engineRange: string; gameId: string; version: string; nextMapNumericId: number; entryPoint: { mapId: string; spawnId: string }; title: string; contentRating: string };
 export type PlayerDefinition = { id: string; name: string; start: PlanePosition; stats: { maxHp: number; level: number; xp: number }; primaryAttack: string; skillSlots: Record<string, string>; unlockedSkills: string[] };
@@ -251,6 +264,7 @@ export type SourceGame = {
   skills: Record<string, Skill>;
   items: Record<string, Item>;
   quests: Record<string, QuestDefinition>;
+  types: GameTypes;
   ui: UiDefinition;
   events: EventData;
   initialState: InitialState;
@@ -265,6 +279,7 @@ export type SourceGameFiles = {
   skills: unknown;
   items: unknown;
   quests: unknown;
+  types: unknown;
   ui: unknown;
   events: unknown;
   initialState: unknown;

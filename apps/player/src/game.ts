@@ -21,7 +21,7 @@ void (async () => {
   };
   const keys = new Set<string>();
   const studioPreview = isStudioPreview();
-  const SAVE_SCHEMA = '0.8';
+  const SAVE_SCHEMA = '0.9';
   const VIEW_WIDTH = 960, VIEW_HEIGHT = 540;
   // Keep a small clearance inside one-tile-wide (48 px) passages.
   const PLAYER_RADIUS = 20;
@@ -281,9 +281,10 @@ void (async () => {
     if (tab.id === 'settings') ui.pauseContent.innerHTML = '<h2>Options</h2><p>Les réglages d’accessibilité, audio et affichage seront fournis par le Player.</p>';
   }
   function inventoryEntries() { return Object.entries(game.inventory).filter(([, amount]) => Number(amount) > 0) as Array<[string, number]>; }
-  function renderInventory() { const entries = inventoryEntries(); ui.pauseContent.innerHTML = `<h2>Inventaire</h2><ul class="pause-list">${entries.map(([id, amount], index) => { const item = content.items[id]; const hint = item?.type === 'equipment' ? `Entrée : équiper (${item.equipmentSlot})` : item?.type === 'consumable' ? 'Entrée : utiliser' : item?.type || ''; return `<li class="${index === inventorySelection ? 'selected' : ''}"><strong>${item?.name || id}</strong> ×${amount}<br><small>${hint}</small></li>`; }).join('') || '<li>Inventaire vide.</li>'}</ul>`; }
-  function renderEquipment() { ui.pauseContent.innerHTML = `<h2>Équipement</h2><ul class="pause-list">${content.ui.equipmentSlots.map(slot => { const id = game.equipment[slot.id]; return `<li><strong>${slot.label}</strong><br><small>${id ? content.items[id]?.name || id : 'Aucun équipement'}</small></li>`; }).join('')}</ul>`; }
-  function equipSelectedItem() { const [id] = inventoryEntries()[inventorySelection] || []; const item = content.items[id]; if (!item?.equipmentSlot) return; game.equipment[item.equipmentSlot] = id; saveSilently(); showToast(`${item.name} équipé`); renderPause(); }
+  function equipmentTypeName(typeId: number | undefined) { return content.types.equipment.entries.find(type => type.id === typeId)?.name || ''; }
+  function renderInventory() { const entries = inventoryEntries(); ui.pauseContent.innerHTML = `<h2>Inventaire</h2><ul class="pause-list">${entries.map(([id, amount], index) => { const item = content.items[id]; const hint = item?.type === 'equipment' ? `Entrée : équiper (${equipmentTypeName(item.equipmentTypeId)})` : item?.type === 'consumable' ? 'Entrée : utiliser' : item?.type || ''; return `<li class="${index === inventorySelection ? 'selected' : ''}"><strong>${item?.name || id}</strong> ×${amount}<br><small>${hint}</small></li>`; }).join('') || '<li>Inventaire vide.</li>'}</ul>`; }
+  function renderEquipment() { ui.pauseContent.innerHTML = `<h2>Équipement</h2><ul class="pause-list">${content.types.equipment.entries.map(type => { const id = game.equipment[String(type.id)]; return `<li><strong>${type.name}</strong><br><small>${id ? content.items[id]?.name || id : 'Aucun équipement'}</small></li>`; }).join('')}</ul>`; }
+  function equipSelectedItem() { const [id] = inventoryEntries()[inventorySelection] || []; const item = content.items[id]; if (!item?.equipmentTypeId) return; game.equipment[String(item.equipmentTypeId)] = id; saveSilently(); showToast(`${item.name} équipé`); renderPause(); }
   function useSelectedItem() { const [id, amount] = inventoryEntries()[inventorySelection] || []; const item = content.items[id]; if (!item || amount < 1 || item.type !== 'consumable') return; game.inventory[id] -= 1; if (item.healing) game.player.hp = Math.min(game.player.maxHp, game.player.hp + item.healing); saveSilently(); showToast(`${item.name} utilisé`); renderPause(); }
   function activateSelectedItem() { const [id] = inventoryEntries()[inventorySelection] || []; if (content.items[id]?.type === 'equipment') equipSelectedItem(); else useSelectedItem(); }
   function handlePauseKey(event: KeyboardEvent) { const tabs = content.ui.pauseMenu.tabs; if (event.code === 'Escape') return closePause(); if (event.code === 'ArrowLeft' || event.code === 'ArrowRight') { pauseTabIndex = (pauseTabIndex + (event.code === 'ArrowRight' ? 1 : -1) + tabs.length) % tabs.length; inventorySelection = 0; return renderPause(); } if (tabs[pauseTabIndex].id === 'inventory' && (event.code === 'ArrowUp' || event.code === 'ArrowDown')) { const count = inventoryEntries().length || 1; inventorySelection = (inventorySelection + (event.code === 'ArrowDown' ? 1 : -1) + count) % count; return renderPause(); } if (tabs[pauseTabIndex].id === 'inventory' && (event.code === 'Enter' || event.code === 'Space')) activateSelectedItem(); }

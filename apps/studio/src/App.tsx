@@ -1,17 +1,18 @@
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { DIRECTION_OFFSETS, buildNavigationGraph, navigationCellKey, navigationEdgeKey, navigationHasCell } from '@rpgcrafter/game-schema';
-import type { Direction, GameMap, MapEvent, RenderPhase, SourceGame, SurfaceCoverage, TerrainCollision, Vec2 } from '@rpgcrafter/game-schema';
+import type { Direction, GameMap, Item, MapEvent, RenderPhase, Skill, SourceGame, SurfaceCoverage, TerrainCollision, TypeCategory, Vec2 } from '@rpgcrafter/game-schema';
 import { Contrast, FolderOpen, Grid3X3, Maximize2, Minus, Plus, Upload } from 'lucide-react';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { EventInspector } from '@/components/event-inspector';
-import { AssetManager, type LibraryBundle, type LibrarySprite, type LibraryTileset } from '@/components/asset-manager-dialog';
+import { AssetLibrary, type LibraryBundle, type LibrarySprite, type LibraryTileset } from '@/components/asset-manager-dialog';
 import { MapCanvas, type MapCanvasHandle } from '@/components/map-canvas';
 import { StudioSidebar, type DrawingTool, type EditorMode, type NavigationPaintMode, type SelectedTerrain } from '@/components/studio-sidebar';
 import { StudioToolbar, type EventTool } from '@/components/studio-toolbar';
 import { StudioAppSidebar } from '@/components/studio-app-sidebar';
+import { DatabaseManager } from '@/components/database-manager';
 import { SectionHeader, SectionHeaderActions } from '@/components/sidebar-section';
 import { ResizablePanel, ResizablePanelGroup } from '@/components/ui/resizable';
 import { IconButtonTooltip } from '@/components/ui/tooltip';
@@ -19,7 +20,7 @@ import { clearDraft, createEmptyProject, draftProjectId, exportGamePackage, list
 import { createTilesetDefinition, pngDimensions, tilesetConfigurationBlob, tilesetConfigurationPath, uniqueAssetId, type TilesetImportFormat } from '@/lib/tileset-import';
 import { clearNavigationOverridesForCells, editTerrainLayer, editTerrainPlacementsLayer, floodFillCells, terrainBrushPlacements } from '@/lib/editor-geometry';
 import { createMapEventAt, renameMapEvent } from '@/lib/editor-events';
-import { readStudioLocation, studioLocationUrl } from '@/lib/studio-location';
+import { readStudioLocation, studioLocationUrl, type StudioTab } from '@/lib/studio-location';
 import { createDefaultMap } from '@/lib/default-map';
 import { editorShortcut } from '@/lib/editor-shortcuts';
 import { moveMapInHierarchy, type MapDropPosition } from '@/lib/map-hierarchy';
@@ -28,8 +29,6 @@ import { defaultTerrainSelection, terrainSelectionExists } from '@/lib/tile-pale
 type SaveState = 'idle' | 'unsaved' | 'saving' | 'saved' | 'error';
 type DrawingHistoryState = Pick<GameMap, 'tileLayers' | 'navigationOverrides'>;
 type DrawingHistoryEntry = { mapId: string; before: DrawingHistoryState; after: DrawingHistoryState };
-type StudioTab = 'maps' | 'assets';
-
 export default function App() {
   const initialLocationRef = useRef(readStudioLocation(window.location.search));
   const [game, setGame] = useState<SourceGame | null>(null);
@@ -62,7 +61,7 @@ export default function App() {
   const [openDialog, setOpenDialog] = useState(false);
   const [newProjectDialog, setNewProjectDialog] = useState(false);
   const [newProjectTitle, setNewProjectTitle] = useState('');
-  const [studioTab, setStudioTab] = useState<StudioTab>('maps');
+  const [studioTab, setStudioTab] = useState<StudioTab>(initialLocationRef.current.tab);
   const [revertDialog, setRevertDialog] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -147,9 +146,9 @@ export default function App() {
 
   useEffect(() => {
     if (!locationReady) return;
-    const nextUrl = studioLocationUrl(window.location.href, { projectId: game ? activeProjectParam : null, mapId: game ? selectedMapId : null, mode: editorMode });
+    const nextUrl = studioLocationUrl(window.location.href, { projectId: game ? activeProjectParam : null, mapId: game ? selectedMapId : null, mode: editorMode, tab: studioTab });
     window.history.replaceState(null, '', nextUrl);
-  }, [locationReady, game, activeProjectParam, selectedMapId, editorMode]);
+  }, [locationReady, game, activeProjectParam, selectedMapId, editorMode, studioTab]);
 
   const markDirty = (document: DraftDocumentName) => {
     editRevisionRef.current += 1;
@@ -731,6 +730,125 @@ export default function App() {
     return next;
   });
 
+  const createDatabaseItem = (name: string, type: Item['type']) => {
+    if (!game) return '';
+    const id = uniqueAssetId(name, Object.keys(game.items));
+    const item: Item = type === 'consumable'
+      ? { name, type, healing: 0 }
+      : type === 'equipment'
+        ? { name, type, equipmentTypeId: game.types.equipment.entries[0]?.id, stats: {} }
+        : { name, type };
+    setGame(current => {
+      if (!current || current.items[id]) return current;
+      markDirty('items.json');
+      return { ...current, items: { ...current.items, [id]: item } };
+    });
+    return id;
+  };
+
+  const updateDatabaseItem = (id: string, item: Item) => setGame(current => {
+    if (!current?.items[id] || JSON.stringify(current.items[id]) === JSON.stringify(item)) return current;
+    markDirty('items.json');
+    return { ...current, items: { ...current.items, [id]: structuredClone(item) } };
+  });
+
+  const duplicateDatabaseItem = (id: string) => {
+    const item = game?.items[id];
+    if (!game || !item) return '';
+    const name = `${item.name} Copy`;
+    const nextId = uniqueAssetId(name, Object.keys(game.items));
+    setGame(current => {
+      if (!current || current.items[nextId]) return current;
+      markDirty('items.json');
+      return { ...current, items: { ...current.items, [nextId]: { ...structuredClone(item), name } } };
+    });
+    return nextId;
+  };
+
+  const deleteDatabaseItem = (id: string) => setGame(current => {
+    if (!current?.items[id]) return current;
+    markDirty('items.json');
+    const next = structuredClone(current);
+    delete next.items[id];
+    return next;
+  });
+
+  const createDatabaseSkill = (name: string, type: Skill['type']) => {
+    if (!game) return '';
+    const id = uniqueAssetId(name, Object.keys(game.skills));
+    const skill: Skill = type === 'melee'
+      ? { name, type, damage: 0, cooldown: 0, range: 1 }
+      : type === 'projectile'
+        ? { name, type, damage: 0, cooldown: 0, projectileSpeed: 300, color: '#ffffff' }
+        : { name, type, damage: 0, cooldown: 0, range: 1, color: '#ffffff' };
+    setGame(current => {
+      if (!current || current.skills[id]) return current;
+      markDirty('skills.json');
+      return { ...current, skills: { ...current.skills, [id]: skill } };
+    });
+    return id;
+  };
+
+  const updateDatabaseSkill = (id: string, skill: Skill) => setGame(current => {
+    if (!current?.skills[id] || JSON.stringify(current.skills[id]) === JSON.stringify(skill)) return current;
+    markDirty('skills.json');
+    return { ...current, skills: { ...current.skills, [id]: structuredClone(skill) } };
+  });
+
+  const duplicateDatabaseSkill = (id: string) => {
+    const skill = game?.skills[id];
+    if (!game || !skill) return '';
+    const name = `${skill.name} Copy`;
+    const nextId = uniqueAssetId(name, Object.keys(game.skills));
+    setGame(current => {
+      if (!current || current.skills[nextId]) return current;
+      markDirty('skills.json');
+      return { ...current, skills: { ...current.skills, [nextId]: { ...structuredClone(skill), name } } };
+    });
+    return nextId;
+  };
+
+  const deleteDatabaseSkill = (id: string) => setGame(current => {
+    if (!current?.skills[id]) return current;
+    markDirty('skills.json');
+    const next = structuredClone(current);
+    delete next.skills[id];
+    return next;
+  });
+
+  const createDatabaseType = (category: TypeCategory, name: string) => {
+    const id = game?.types[category].nextId || 1;
+    setGame(current => {
+      const trimmedName = name.trim();
+      if (!current || !trimmedName || current.types[category].nextId !== id) return current;
+      markDirty('types.json');
+      const next = structuredClone(current);
+      next.types[category].entries.push({ id, name: trimmedName });
+      next.types[category].nextId = id + 1;
+      return next;
+    });
+    return id;
+  };
+
+  const renameDatabaseType = (category: TypeCategory, id: number, name: string) => setGame(current => {
+    const trimmedName = name.trim();
+    const entry = current?.types[category].entries.find(type => type.id === id);
+    if (!current || !entry || !trimmedName || entry.name === trimmedName) return current;
+    markDirty('types.json');
+    const next = structuredClone(current);
+    next.types[category].entries.find(type => type.id === id)!.name = trimmedName;
+    return next;
+  });
+
+  const deleteDatabaseType = (category: TypeCategory, id: number) => setGame(current => {
+    if (!current?.types[category].entries.some(type => type.id === id)) return current;
+    if (category === 'equipment' && (Object.values(current.items).some(item => item.equipmentTypeId === id) || String(id) in (current.initialState.equipment || {}))) return current;
+    markDirty('types.json');
+    const next = structuredClone(current);
+    next.types[category].entries = next.types[category].entries.filter(type => type.id !== id);
+    return next;
+  });
+
   const renameEvent = (eventId: string, nextId: string) => {
     const trimmedId = nextId.trim();
     if (!game || !trimmedId || trimmedId === eventId || game.maps[selectedMapId]?.events.some(event => event.id === trimmedId)) return;
@@ -1005,12 +1123,13 @@ export default function App() {
       onCloseProject={closeProject}
       onSelectMaps={() => setStudioTab('maps')}
       onSelectAssets={() => setStudioTab('assets')}
+      onSelectDatabase={() => setStudioTab('database')}
     />
     <div className="flex min-w-0 flex-1 flex-col">
 
     {!game || !selectedMap ? <main className="flex min-h-0 flex-1 items-center justify-center bg-[radial-gradient(circle_at_center,var(--color-muted)_0,transparent_60%)]">
       <div className="max-w-sm border bg-card/80 p-8 text-center shadow-xl backdrop-blur"><FolderOpen className="mx-auto mb-4 size-8 text-primary" /><h1 className="text-base font-semibold">No project open</h1><p className="mt-2 text-xs leading-5 text-muted-foreground">Create an empty project or open an existing package.</p><div className="mt-5 flex justify-center gap-2"><Button size="sm" onClick={() => setNewProjectDialog(true)}>New project</Button><Button variant="outline" size="sm" onClick={() => setOpenDialog(true)}>Open…</Button></div></div>
-    </main> : studioTab === 'assets' ? <main className="min-h-0 flex-1"><AssetManager game={game} assetUrls={assetUrls} library={library} sprites={librarySprites} bundles={libraryBundles} onImportLibrary={importLibraryTileset} onImportSprite={importLibrarySprite} onImportLibraryBundle={importLibraryBundle} onImportLocal={importLocalTileset} onUpdate={updateTileset} onChangeTerrainCollision={changeTerrainCollision} canPlay={Boolean(validation?.success)} onPlay={playGame}/></main> : <main className="min-h-0 flex-1">
+    </main> : studioTab === 'database' ? <main className="min-h-0 flex-1"><DatabaseManager game={game} assetUrls={assetUrls} onImportLocal={importLocalTileset} onUpdate={updateTileset} onChangeTerrainCollision={changeTerrainCollision} onCreateItem={createDatabaseItem} onUpdateItem={updateDatabaseItem} onDuplicateItem={duplicateDatabaseItem} onDeleteItem={deleteDatabaseItem} onCreateSkill={createDatabaseSkill} onUpdateSkill={updateDatabaseSkill} onDuplicateSkill={duplicateDatabaseSkill} onDeleteSkill={deleteDatabaseSkill} onCreateType={createDatabaseType} onRenameType={renameDatabaseType} onDeleteType={deleteDatabaseType} onRenameVariable={renameVariable} onRenameSwitch={renameSwitch} /></main> : studioTab === 'assets' ? <main className="min-h-0 flex-1"><AssetLibrary game={game} assetUrls={assetUrls} library={library} sprites={librarySprites} bundles={libraryBundles} onImport={importLibraryTileset} onImportSprite={importLibrarySprite} onImportBundle={importLibraryBundle} /></main> : <main className="min-h-0 flex-1">
       <ResizablePanelGroup orientation="horizontal">
         <ResizablePanel defaultSize="384px" minSize="384px" maxSize="384px"><StudioSidebar game={game} assetUrls={assetUrls} map={selectedMap} selectedMapId={selectedMapId} selectedEventId={selectedEventId} mode={editorMode} selectedTerrain={selectedTerrain} activeLayerId={selectedLayerId} canPlay={Boolean(validation?.success)} onPlay={playGame} onSelectMap={selectMap} onCreateMap={createMap} onRenameMap={renameMap} onMoveMap={moveMap} onReorderMap={reorderMap} onResizeMap={resizeMap} onSelectEvent={setSelectedEventId} onRenameEvent={renameEvent} onSelectTerrain={setSelectedTerrain} onSelectLayer={selectLayer} onAddLayer={addLayer} onRenameLayer={renameLayer} onDeleteLayer={deleteLayer} onMoveLayer={moveLayer} onChangeLayerPlane={changeLayerPlane} onChangeLayerPhase={changeLayerPhase} onAddPlane={() => setNewPlaneDialog(true)} onRenamePlane={renamePlane} onMovePlane={movePlane} onDeletePlane={deletePlane} onChangeCoverage={changeCoverage} onChangeSurface={changeSurface} onDeleteConnection={deleteConnection} /></ResizablePanel>
         <ResizablePanel defaultSize="100%" minSize="400px"><div className="flex h-full min-h-0">
@@ -1036,7 +1155,7 @@ export default function App() {
     </main>}
     </div>
 
-    <Dialog open={openDialog} onOpenChange={setOpenDialog}><DialogContent><DialogHeader><DialogTitle>Open Project</DialogTitle><DialogDescription>Open a recent project, the bundled example, or an exported RPGCrafter ZIP.</DialogDescription></DialogHeader>{recentProjects.length > 0 && <div className="space-y-1"><div className="text-xs font-medium text-muted-foreground">Recent projects</div>{recentProjects.slice(0, 5).map(project => <button key={project.id} type="button" className="flex w-full items-center justify-between border px-3 py-2 text-left hover:bg-muted/30" onClick={() => void openRecent(project.id)}><span className="truncate text-sm">{project.title}</span><span className="text-[10px] text-muted-foreground">{project.gameVersion}</span></button>)}</div>}<button type="button" className="flex w-full items-center gap-3 border bg-muted/20 p-4 text-left outline-none hover:bg-muted/50 focus-visible:ring-2 focus-visible:ring-ring" onClick={() => void openReference()} disabled={loading}><div className="grid size-10 place-items-center bg-primary/15 text-primary"><FolderOpen /></div><span><span className="block text-sm font-medium">La Cloche des Brumes</span><span className="block text-xs text-muted-foreground">Bundled reference game · schema 0.11</span></span></button><label className="flex cursor-pointer items-center justify-center gap-2 border border-dashed p-4 text-sm hover:bg-muted/30"><Upload className="size-4"/>Choose project ZIP<Input className="sr-only" type="file" accept=".zip,application/zip" onChange={event => { const file = event.target.files?.[0]; if (file) void openArchive(file); }}/></label>{error && <pre className="max-h-36 overflow-auto whitespace-pre-wrap border border-destructive/40 bg-destructive/5 p-3 text-xs text-destructive">{error}</pre>}<DialogFooter><Button variant="outline" onClick={() => setOpenDialog(false)}>Cancel</Button></DialogFooter></DialogContent></Dialog>
+    <Dialog open={openDialog} onOpenChange={setOpenDialog}><DialogContent><DialogHeader><DialogTitle>Open Project</DialogTitle><DialogDescription>Open a recent project, the bundled example, or an exported RPGCrafter ZIP.</DialogDescription></DialogHeader>{recentProjects.length > 0 && <div className="space-y-1"><div className="text-xs font-medium text-muted-foreground">Recent projects</div>{recentProjects.slice(0, 5).map(project => <button key={project.id} type="button" className="flex w-full items-center justify-between border px-3 py-2 text-left hover:bg-muted/30" onClick={() => void openRecent(project.id)}><span className="truncate text-sm">{project.title}</span><span className="text-[10px] text-muted-foreground">{project.gameVersion}</span></button>)}</div>}<button type="button" className="flex w-full items-center gap-3 border bg-muted/20 p-4 text-left outline-none hover:bg-muted/50 focus-visible:ring-2 focus-visible:ring-ring" onClick={() => void openReference()} disabled={loading}><div className="grid size-10 place-items-center bg-primary/15 text-primary"><FolderOpen /></div><span><span className="block text-sm font-medium">La Cloche des Brumes</span><span className="block text-xs text-muted-foreground">Bundled reference game · schema 0.12</span></span></button><label className="flex cursor-pointer items-center justify-center gap-2 border border-dashed p-4 text-sm hover:bg-muted/30"><Upload className="size-4"/>Choose project ZIP<Input className="sr-only" type="file" accept=".zip,application/zip" onChange={event => { const file = event.target.files?.[0]; if (file) void openArchive(file); }}/></label>{error && <pre className="max-h-36 overflow-auto whitespace-pre-wrap border border-destructive/40 bg-destructive/5 p-3 text-xs text-destructive">{error}</pre>}<DialogFooter><Button variant="outline" onClick={() => setOpenDialog(false)}>Cancel</Button></DialogFooter></DialogContent></Dialog>
     <Dialog open={newProjectDialog} onOpenChange={setNewProjectDialog}><DialogContent><DialogHeader><DialogTitle>New Project</DialogTitle><DialogDescription>The project starts with an empty map and no tilesets.</DialogDescription></DialogHeader><Input autoFocus value={newProjectTitle} placeholder="Project title" onChange={event => setNewProjectTitle(event.target.value)} onKeyDown={event => { if (event.key === 'Enter') void createProject(); }}/><DialogFooter><Button variant="outline" onClick={() => setNewProjectDialog(false)}>Cancel</Button><Button disabled={!newProjectTitle.trim()} onClick={() => void createProject()}>Create</Button></DialogFooter></DialogContent></Dialog>
     {selectedMap && <Dialog open={Boolean(pendingConnection)} onOpenChange={open => { if (!open) setPendingConnection(null); }}><DialogContent><DialogHeader><DialogTitle>Create plane connection</DialogTitle><DialogDescription>Choose the destination plane for this bidirectional passage.</DialogDescription></DialogHeader>{pendingConnection && <div className="space-y-3"><div className="border bg-muted/20 px-3 py-2 text-xs"><span className="font-medium">{selectedMap.planes.find(plane => plane.id === pendingConnection.sourcePlaneId)?.name}</span><span className="text-muted-foreground"> · cell {pendingConnection.x}, {pendingConnection.y} · {pendingConnection.edge} edge</span></div><label className="block space-y-1"><span className="text-xs font-medium">Destination plane</span><select autoFocus aria-label="Destination plane" className="h-9 w-full border bg-background px-2 text-sm outline-none focus-visible:ring-2 focus-visible:ring-ring" value={connectionDestinationPlaneId} onChange={event => setConnectionDestinationPlaneId(event.target.value)}>{[...selectedMap.planes].sort((a, b) => a.order - b.order).filter(plane => plane.id !== pendingConnection.sourcePlaneId).map(plane => <option key={plane.id} value={plane.id}>{plane.name}</option>)}</select></label></div>}<DialogFooter><Button variant="outline" onClick={() => setPendingConnection(null)}>Cancel</Button><Button disabled={!pendingConnection || !connectionDestinationPlaneId} onClick={() => { if (!pendingConnection) return; if (addConnection(connectionDestinationPlaneId, pendingConnection.x, pendingConnection.y, pendingConnection.edge, true, pendingConnection.sourcePlaneId)) setPendingConnection(null); }}>Create connection</Button></DialogFooter></DialogContent></Dialog>}
     <Dialog open={newPlaneDialog} onOpenChange={setNewPlaneDialog}><DialogContent><DialogHeader><DialogTitle>Create navigation plane</DialogTitle><DialogDescription>Choose any name that describes this gameplay surface. Names have no engine semantics.</DialogDescription></DialogHeader><Input autoFocus value={newPlaneName} placeholder="Plane name" onChange={event => setNewPlaneName(event.target.value)} onKeyDown={event => { if (event.key === 'Enter') addPlane(); }}/><DialogFooter><Button variant="outline" onClick={() => setNewPlaneDialog(false)}>Cancel</Button><Button disabled={!newPlaneName.trim()} onClick={addPlane}>Create</Button></DialogFooter></DialogContent></Dialog>

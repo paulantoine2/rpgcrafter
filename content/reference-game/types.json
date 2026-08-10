@@ -1,0 +1,44 @@
+{
+  "elements": {
+    "nextId": 10,
+    "entries": [
+      { "id": 1, "name": "Physical" },
+      { "id": 2, "name": "Fire" },
+      { "id": 3, "name": "Ice" },
+      { "id": 4, "name": "Thunder" },
+      { "id": 5, "name": "Water" },
+      { "id": 6, "name": "Earth" },
+      { "id": 7, "name": "Wind" },
+      { "id": 8, "name": "Light" },
+      { "id": 9, "name": "Darkness" }
+    ]
+  },
+  "skills": { "nextId": 3, "entries": [{ "id": 1, "name": "Magic" }, { "id": 2, "name": "Special" }] },
+  "weapons": {
+    "nextId": 13,
+    "entries": [
+      { "id": 1, "name": "Dagger" }, { "id": 2, "name": "Sword" }, { "id": 3, "name": "Flail" },
+      { "id": 4, "name": "Axe" }, { "id": 5, "name": "Whip" }, { "id": 6, "name": "Staff" },
+      { "id": 7, "name": "Bow" }, { "id": 8, "name": "Crossbow" }, { "id": 9, "name": "Gun" },
+      { "id": 10, "name": "Claw" }, { "id": 11, "name": "Glove" }, { "id": 12, "name": "Spear" }
+    ]
+  },
+  "armors": {
+    "nextId": 7,
+    "entries": [
+      { "id": 1, "name": "General Armor" }, { "id": 2, "name": "Magic Armor" },
+      { "id": 3, "name": "Light Armor" }, { "id": 4, "name": "Heavy Armor" },
+      { "id": 5, "name": "Small Shield" }, { "id": 6, "name": "Large Shield" }
+    ]
+  },
+  "equipment": {
+    "nextId": 6,
+    "entries": [
+      { "id": 1, "name": "Weapon" },
+      { "id": 2, "name": "Shield" },
+      { "id": 3, "name": "Head" },
+      { "id": 4, "name": "Body" },
+      { "id": 5, "name": "Accessory" }
+    ]
+  }
+}

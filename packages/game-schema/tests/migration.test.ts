@@ -54,7 +54,7 @@ describe('V0.4 migration', () => {
   it('creates one bounds plane and preserves legacy map behavior', () => {
     const files: SourceGameFiles = {
       manifest: read('manifest.json'), tilesets: read('tilesets.json'), maps: read('maps.json'), actors: read('actors.json'), enemies: read('enemies.json'),
-      skills: read('skills.json'), items: read('items.json'), quests: read('quests.json'), ui: read('ui.json'), events: read('events.json'), initialState: read('initial-state.json'),
+      skills: read('skills.json'), items: read('items.json'), quests: read('quests.json'), types: read('types.json'), ui: read('ui.json'), events: read('events.json'), initialState: read('initial-state.json'),
     };
     const legacy = toV06(files);
     legacy.manifest.schemaVersion = '0.4'; legacy.manifest.engineRange = '>=0.4 <0.5';
@@ -80,7 +80,7 @@ describe('V0.4 migration', () => {
     const result = parseSourceGame(legacy);
     expect(result.success).toBe(true);
     if (!result.success) return;
-    expect(result.data.manifest.schemaVersion).toBe('0.11');
+    expect(result.data.manifest.schemaVersion).toBe('0.12');
     expect(result.data.maps.village.planes).toEqual([{ id: 'plane-1', name: 'Plan 1', order: 0, surfaceLayerId: 'surface', surfaceCoverage: 'bounds' }]);
     expect(result.data.maps.village.blockedRegions[0].planeId).toBe('plane-1');
     expect(result.data.actors.player.start.planeId).toBe('plane-1');
@@ -91,7 +91,7 @@ describe('legacy event visual migration', () => {
   it('replaces visual metadata with a sprite reference', () => {
     const files = {
       manifest: read('manifest.json'), tilesets: read('tilesets.json'), maps: read('maps.json'), actors: read('actors.json'), enemies: read('enemies.json'),
-      skills: read('skills.json'), items: read('items.json'), quests: read('quests.json'), ui: read('ui.json'), events: read('events.json'), initialState: read('initial-state.json'),
+      skills: read('skills.json'), items: read('items.json'), quests: read('quests.json'), types: read('types.json'), ui: read('ui.json'), events: read('events.json'), initialState: read('initial-state.json'),
     } as SourceGameFiles;
     const legacy = toV06(files);
     const event = legacy.maps.village.events.find((item: any) => item.id === 'mayor');
@@ -113,7 +113,7 @@ describe('V0.6 event-page migration', () => {
   it('inlines scripts without reversing page priority', () => {
     const files = {
       manifest: read('manifest.json'), tilesets: read('tilesets.json'), maps: read('maps.json'), actors: read('actors.json'), enemies: read('enemies.json'),
-      skills: read('skills.json'), items: read('items.json'), quests: read('quests.json'), ui: read('ui.json'), events: read('events.json'), initialState: read('initial-state.json'),
+      skills: read('skills.json'), items: read('items.json'), quests: read('quests.json'), types: read('types.json'), ui: read('ui.json'), events: read('events.json'), initialState: read('initial-state.json'),
     } as SourceGameFiles;
     const legacy = toV06(files);
     const result = parseSourceGame(legacy);
@@ -134,7 +134,7 @@ describe('V0.7 draft migration', () => {
   it('preserves switches already saved in the V0.8 initial-state format', () => {
     const mixedDraft = {
       manifest: read('manifest.json'), tilesets: read('tilesets.json'), maps: read('maps.json'), actors: read('actors.json'), enemies: read('enemies.json'),
-      skills: read('skills.json'), items: read('items.json'), quests: read('quests.json'), ui: read('ui.json'), events: read('events.json'), initialState: read('initial-state.json'),
+      skills: read('skills.json'), items: read('items.json'), quests: read('quests.json'), types: read('types.json'), ui: read('ui.json'), events: read('events.json'), initialState: read('initial-state.json'),
     } as SourceGameFiles;
     (mixedDraft.manifest as any).schemaVersion = '0.7';
     (mixedDraft.manifest as any).engineRange = '>=0.7 <0.8';
@@ -153,7 +153,7 @@ describe('V0.7 draft migration', () => {
   it('adds an empty variable collection to projects that predate numeric variables', () => {
     const files = {
       manifest: read('manifest.json'), tilesets: read('tilesets.json'), maps: read('maps.json'), actors: read('actors.json'), enemies: read('enemies.json'),
-      skills: read('skills.json'), items: read('items.json'), quests: read('quests.json'), ui: read('ui.json'), events: read('events.json'), initialState: read('initial-state.json'),
+      skills: read('skills.json'), items: read('items.json'), quests: read('quests.json'), types: read('types.json'), ui: read('ui.json'), events: read('events.json'), initialState: read('initial-state.json'),
     } as SourceGameFiles;
     delete (files.initialState as any).variables;
 
@@ -166,7 +166,7 @@ describe('V0.7 draft migration', () => {
   it('removes obsolete quest-state commands from events, choices, and enemies', () => {
     const files = {
       manifest: read('manifest.json'), tilesets: read('tilesets.json'), maps: read('maps.json'), actors: read('actors.json'), enemies: read('enemies.json'),
-      skills: read('skills.json'), items: read('items.json'), quests: read('quests.json'), ui: read('ui.json'), events: read('events.json'), initialState: read('initial-state.json'),
+      skills: read('skills.json'), items: read('items.json'), quests: read('quests.json'), types: read('types.json'), ui: read('ui.json'), events: read('events.json'), initialState: read('initial-state.json'),
     } as SourceGameFiles;
     const obsolete = { type: 'setQuestState', id: 'quest.bell-of-mist', state: 'completed' };
     (files.maps as any).village.events[0].pages[0].contents.push(obsolete, {
@@ -191,7 +191,7 @@ describe('V0.8 migration', () => {
   it('assigns stable numeric map ids and migrates nested teleports', () => {
     const files = {
       manifest: read('manifest.json'), tilesets: read('tilesets.json'), maps: read('maps.json'), actors: read('actors.json'), enemies: read('enemies.json'),
-      skills: read('skills.json'), items: read('items.json'), quests: read('quests.json'), ui: read('ui.json'), events: read('events.json'), initialState: read('initial-state.json'),
+      skills: read('skills.json'), items: read('items.json'), quests: read('quests.json'), types: read('types.json'), ui: read('ui.json'), events: read('events.json'), initialState: read('initial-state.json'),
     } as SourceGameFiles;
     (files.manifest as any).schemaVersion = '0.8';
     (files.manifest as any).engineRange = '>=0.8 <0.9';
@@ -223,7 +223,7 @@ describe('V0.9 migration', () => {
   it('migrates fixed state values recursively in events and enemy commands', () => {
     const files = {
       manifest: read('manifest.json'), tilesets: read('tilesets.json'), maps: read('maps.json'), actors: read('actors.json'), enemies: read('enemies.json'),
-      skills: read('skills.json'), items: read('items.json'), quests: read('quests.json'), ui: read('ui.json'), events: read('events.json'), initialState: read('initial-state.json'),
+      skills: read('skills.json'), items: read('items.json'), quests: read('quests.json'), types: read('types.json'), ui: read('ui.json'), events: read('events.json'), initialState: read('initial-state.json'),
     } as SourceGameFiles;
     (files.manifest as any).schemaVersion = '0.9';
     (files.manifest as any).engineRange = '>=0.9 <0.10';
@@ -241,7 +241,7 @@ describe('V0.9 migration', () => {
 
     expect(result.success).toBe(true);
     if (!result.success) return;
-    expect(result.data.manifest).toMatchObject({ schemaVersion: '0.11', engineRange: '>=0.11 <0.12' });
+    expect(result.data.manifest).toMatchObject({ schemaVersion: '0.12', engineRange: '>=0.12 <0.13' });
     const dialogue = result.data.maps.village.events[0].pages[0].contents[0];
     expect(dialogue).toMatchObject({ choices: [{ commands: [{
       thenCommands: [{ type: 'setSwitch', id: 'questAccepted', operation: 'set', operand: { kind: 'constant', value: false } }],
@@ -255,7 +255,7 @@ describe('V0.10 migration', () => {
   it('migrates fixed switch and variable comparisons in every condition container', () => {
     const files = {
       manifest: read('manifest.json'), tilesets: read('tilesets.json'), maps: read('maps.json'), actors: read('actors.json'), enemies: read('enemies.json'),
-      skills: read('skills.json'), items: read('items.json'), quests: read('quests.json'), ui: read('ui.json'), events: read('events.json'), initialState: read('initial-state.json'),
+      skills: read('skills.json'), items: read('items.json'), quests: read('quests.json'), types: read('types.json'), ui: read('ui.json'), events: read('events.json'), initialState: read('initial-state.json'),
     } as SourceGameFiles;
     (files.manifest as any).schemaVersion = '0.10';
     (files.manifest as any).engineRange = '>=0.10 <0.11';
@@ -272,9 +272,45 @@ describe('V0.10 migration', () => {
 
     expect(result.success).toBe(true);
     if (!result.success) return;
-    expect(result.data.manifest).toMatchObject({ schemaVersion: '0.11', engineRange: '>=0.11 <0.12' });
+    expect(result.data.manifest).toMatchObject({ schemaVersion: '0.12', engineRange: '>=0.12 <0.13' });
     expect(result.data.maps.village.events[0].pages[0].conditions).toEqual([{ kind: 'variable', id: 'score', operator: 'greaterThanOrEqual', operand: { kind: 'constant', value: 3 } }]);
     expect(result.data.maps.village.events[0].pages[0].contents[0]).toMatchObject({ condition: { kind: 'switch', id: 'questAccepted', operand: { kind: 'constant', value: false } } });
     expect(result.data.enemies.slime.onDefeated?.[0]).toMatchObject({ condition: { kind: 'variable', id: 'score', operator: 'equal', operand: { kind: 'constant', value: 5 } } });
+  });
+});
+
+describe('V0.11 migration', () => {
+  it('moves equipment slots and every legacy reference into numeric equipment types', () => {
+    const files = {
+      manifest: read('manifest.json'), tilesets: read('tilesets.json'), maps: read('maps.json'), actors: read('actors.json'), enemies: read('enemies.json'),
+      skills: read('skills.json'), items: read('items.json'), quests: read('quests.json'), ui: read('ui.json'), events: read('events.json'), initialState: read('initial-state.json'),
+    } as unknown as SourceGameFiles;
+    (files.manifest as any).schemaVersion = '0.11';
+    (files.manifest as any).engineRange = '>=0.11 <0.12';
+    (files.ui as any).equipmentSlots = [
+      { id: 'weapon', label: 'Weapon' }, { id: 'armor', label: 'Armor' }, { id: 'accessory', label: 'Accessory' },
+    ];
+    (files.items as any)['item.hero-sword'].equipmentSlot = 'weapon';
+    delete (files.items as any)['item.hero-sword'].equipmentTypeId;
+    (files.items as any)['item.leather-cloak'].equipmentSlot = 'armor';
+    delete (files.items as any)['item.leather-cloak'].equipmentTypeId;
+    (files.items as any)['item.orphan-charm'] = { name: 'Orphan Charm', type: 'equipment', equipmentSlot: 'trinket', stats: {} };
+    (files.initialState as any).equipment = { weapon: 'item.hero-sword', armor: 'item.leather-cloak', accessory: null };
+
+    const result = parseSourceGame(files);
+
+    expect(result.success).toBe(true);
+    if (!result.success) return;
+    expect(result.data.manifest).toMatchObject({ schemaVersion: '0.12', engineRange: '>=0.12 <0.13' });
+    expect(result.data.types.equipment).toEqual({
+      nextId: 5,
+      entries: [
+        { id: 1, name: 'Weapon' }, { id: 2, name: 'Armor' }, { id: 3, name: 'Accessory' }, { id: 4, name: 'trinket' },
+      ],
+    });
+    expect(result.data.items['item.hero-sword'].equipmentTypeId).toBe(1);
+    expect(result.data.items['item.orphan-charm'].equipmentTypeId).toBe(4);
+    expect(result.data.initialState.equipment).toEqual({ '1': 'item.hero-sword', '2': 'item.leather-cloak', '3': null });
+    expect(result.data.ui).not.toHaveProperty('equipmentSlots');
   });
 });

@@ -406,6 +406,47 @@ function migrateV10(files: SourceGameFiles): SourceGameFiles {
   return next;
 }
 
+/** Adds reusable type catalogs and upgrades the V0.11 source model to V0.12. */
+function migrateV11(files: SourceGameFiles): SourceGameFiles {
+  const manifest = files.manifest as JsonObject | null;
+  if (!manifest || manifest.schemaVersion !== '0.11') return files;
+  const next = structuredClone(files) as SourceGameFiles;
+  const nextManifest = next.manifest as JsonObject;
+  nextManifest.schemaVersion = '0.12';
+  nextManifest.engineRange = '>=0.12 <0.13';
+
+  const ui = (next.ui || {}) as JsonObject;
+  const items = (next.items || {}) as Record<string, JsonObject>;
+  const initialState = (next.initialState || {}) as JsonObject;
+  const legacySlots = Array.isArray(ui.equipmentSlots) ? ui.equipmentSlots as JsonObject[] : [];
+  const hasLegacyEquipment = legacySlots.length > 0 || Object.values(items).some(item => typeof item.equipmentSlot === 'string');
+  if (next.types && !hasLegacyEquipment) return next;
+  const legacyNames = new Map<string, string>();
+  for (const slot of legacySlots) if (typeof slot.id === 'string' && slot.id) legacyNames.set(slot.id, typeof slot.label === 'string' && slot.label ? slot.label : slot.id);
+  for (const item of Object.values(items)) if (typeof item.equipmentSlot === 'string' && item.equipmentSlot && !legacyNames.has(item.equipmentSlot)) legacyNames.set(item.equipmentSlot, item.equipmentSlot);
+  for (const slotId of Object.keys((initialState.equipment || {}) as JsonObject)) if (slotId && !legacyNames.has(slotId)) legacyNames.set(slotId, slotId);
+
+  const equipmentEntries = [...legacyNames.entries()].map(([legacyId, name], index) => ({ legacyId, id: index + 1, name }));
+  const equipmentIds = new Map(equipmentEntries.map(entry => [entry.legacyId, entry.id]));
+  next.types = {
+    elements: { nextId: 1, entries: [] },
+    skills: { nextId: 1, entries: [] },
+    weapons: { nextId: 1, entries: [] },
+    armors: { nextId: 1, entries: [] },
+    equipment: { nextId: equipmentEntries.length + 1, entries: equipmentEntries.map(({ id, name }) => ({ id, name })) },
+  };
+  for (const item of Object.values(items)) {
+    if (typeof item.equipmentSlot === 'string') item.equipmentTypeId = equipmentIds.get(item.equipmentSlot);
+    delete item.equipmentSlot;
+  }
+  initialState.equipment = Object.fromEntries(Object.entries((initialState.equipment || {}) as JsonObject).flatMap(([legacyId, itemId]) => {
+    const typeId = equipmentIds.get(legacyId);
+    return typeId === undefined ? [] : [[String(typeId), itemId]];
+  }));
+  delete ui.equipmentSlots;
+  return next;
+}
+
 function ensureVariables(files: SourceGameFiles): SourceGameFiles {
   const initialState = files.initialState as JsonObject | null;
   if (!initialState || 'variables' in initialState) return files;
@@ -444,5 +485,5 @@ function removeQuestStateCommands(files: SourceGameFiles): SourceGameFiles {
 
 /** Migrates every supported legacy authoring shape to the current schema. */
 export function migrateSourceGameFiles(files: SourceGameFiles): SourceGameFiles {
-  return removeQuestStateCommands(ensureVariables(migrateV10(migrateV09(migrateV08(migrateV07(migrateV06(migrateEventVisuals(migrateV05(migrateV04(files))))))))));
+  return removeQuestStateCommands(ensureVariables(migrateV11(migrateV10(migrateV09(migrateV08(migrateV07(migrateV06(migrateEventVisuals(migrateV05(migrateV04(files)))))))))));
 }

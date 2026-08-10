@@ -1,6 +1,6 @@
 {
-  "schemaVersion": "0.11",
-  "engineRange": ">=0.11 <0.12",
+  "schemaVersion": "0.12",
+  "engineRange": ">=0.12 <0.13",
   "gameId": "game.bell-of-mist",
   "version": "0.7.0",
   "entryPoint": {
