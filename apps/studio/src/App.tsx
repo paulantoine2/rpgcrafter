@@ -1,22 +1,25 @@
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { DIRECTION_OFFSETS, buildNavigationGraph, navigationCellKey, navigationEdgeKey, navigationHasCell } from '@rpgcrafter/game-schema';
-import type { CommonEvent, Direction, GameMap, Item, MapEvent, RenderPhase, Skill, SourceGame, SurfaceCoverage, TerrainCollision, TypeCategory, Vec2 } from '@rpgcrafter/game-schema';
-import { Contrast, FolderOpen, Grid3X3, Maximize2, Minus, Plus, Upload } from 'lucide-react';
+import type { BattleBackground, CommonEvent, Direction, EnemyTemplate, GameMap, Item, MapEvent, RenderPhase, Skill, SourceGame, SurfaceCoverage, TerrainCollision, Troop, TypeCategory, Vec2 } from '@rpgcrafter/game-schema';
+import { Contrast, FolderOpen, Grid3X3, Maximize2, Minus, Plus, Swords, Upload } from 'lucide-react';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { EventInspector } from '@/components/event-inspector';
-import { AssetLibrary, type LibraryBundle, type LibrarySprite, type LibraryTileset } from '@/components/asset-manager-dialog';
+import { AssetLibrary, type LibraryBattleAsset, type LibraryBundle, type LibrarySprite, type LibraryTileset } from '@/components/asset-manager-dialog';
 import { MapCanvas, type MapCanvasHandle } from '@/components/map-canvas';
 import { StudioSidebar, type DrawingTool, type EditorMode, type NavigationPaintMode, type SelectedTerrain } from '@/components/studio-sidebar';
 import { StudioToolbar, type EventTool } from '@/components/studio-toolbar';
 import { StudioAppSidebar } from '@/components/studio-app-sidebar';
+import { ProjectHome } from '@/components/project-home';
+import { RpgMakerMzMenubar } from '@/components/rpg-maker-mz-menubar';
+import { RpgMakerMzSidebar } from '@/components/rpg-maker-mz-sidebar';
 import { DatabaseManager } from '@/components/database-manager';
 import { SectionHeader, SectionHeaderActions } from '@/components/sidebar-section';
 import { ResizablePanel, ResizablePanelGroup } from '@/components/ui/resizable';
 import { IconButtonTooltip } from '@/components/ui/tooltip';
-import { clearDraft, createEmptyProject, draftProjectId, exportGamePackage, listRecentProjects, loadBundledTilesetLibrary, loadReferenceProject, openProjectArchive, openRecentProject, restoreDraft, restoreProjectAssets, saveDraft, saveProjectAssets, validateSourceGame, type DraftDocumentName, type ProjectAssets, type ProjectBundle, type RecentProject } from '@/lib/source-game';
+import { clearDraft, createEmptyProject, draftProjectId, exportGamePackage, listRecentProjects, loadBundledTilesetLibrary, loadReferenceProject, loadTurnBasedReferenceProject, openProjectArchive, openRecentProject, restoreDraft, restoreProjectAssets, saveDraft, saveProjectAssets, validateSourceGame, type DraftDocumentName, type ProjectAssets, type ProjectBundle, type RecentProject } from '@/lib/source-game';
 import { createTilesetDefinition, pngDimensions, tilesetConfigurationBlob, tilesetConfigurationPath, uniqueAssetId, type TilesetImportFormat } from '@/lib/tileset-import';
 import { clearNavigationOverridesForCells, editTerrainLayer, editTerrainPlacementsLayer, floodFillCells, terrainBrushPlacements } from '@/lib/editor-geometry';
 import { createMapEventAt, renameMapEvent } from '@/lib/editor-events';
@@ -25,12 +28,16 @@ import { createDefaultMap } from '@/lib/default-map';
 import { editorShortcut } from '@/lib/editor-shortcuts';
 import { moveMapInHierarchy, type MapDropPosition } from '@/lib/map-hierarchy';
 import { defaultTerrainSelection, terrainSelectionExists } from '@/lib/tile-palette';
+import { applyStudioInterface, readStudioInterface, writeStudioInterface, type StudioInterface } from '@/lib/studio-interface';
 
 type SaveState = 'idle' | 'unsaved' | 'saving' | 'saved' | 'error';
 type DrawingHistoryState = Pick<GameMap, 'tileLayers' | 'navigationOverrides'>;
-type DrawingHistoryEntry = { mapId: string; before: DrawingHistoryState; after: DrawingHistoryState };
+type DrawingHistoryEntry = { mapId: number; before: DrawingHistoryState; after: DrawingHistoryState };
 export default function App() {
   const initialLocationRef = useRef(readStudioLocation(window.location.search));
+  const [studioInterface, setStudioInterface] = useState<StudioInterface>(() => readStudioInterface());
+  const [mzEventDialogOpen, setMzEventDialogOpen] = useState(false);
+  const [mzMapSettingsOpen, setMzMapSettingsOpen] = useState(false);
   const [game, setGame] = useState<SourceGame | null>(null);
   const [sourceGame, setSourceGame] = useState<SourceGame | null>(null);
   const [projectAssets, setProjectAssets] = useState<ProjectAssets>({});
@@ -38,16 +45,17 @@ export default function App() {
   const [assetUrlSource, setAssetUrlSource] = useState<ProjectAssets | null>(null);
   const [library, setLibrary] = useState<LibraryTileset[]>([]);
   const [librarySprites, setLibrarySprites] = useState<LibrarySprite[]>([]);
+  const [libraryBattleAssets, setLibraryBattleAssets] = useState<LibraryBattleAsset[]>([]);
   const [libraryBundles, setLibraryBundles] = useState<LibraryBundle[]>([]);
   const [recentProjects, setRecentProjects] = useState<RecentProject[]>([]);
-  const [selectedMapId, setSelectedMapId] = useState('');
-  const [selectedEventId, setSelectedEventId] = useState<string | null>(null);
+  const [selectedMapId, setSelectedMapId] = useState(0);
+  const [selectedEventId, setSelectedEventId] = useState<number | null>(null);
   const [selectedEventPageIndex, setSelectedEventPageIndex] = useState(0);
   const [editorMode, setEditorMode] = useState<EditorMode>(initialLocationRef.current.mode);
   const [activeProjectParam, setActiveProjectParam] = useState<string | null>(null);
   const [locationReady, setLocationReady] = useState(!initialLocationRef.current.projectId);
   const [selectedTerrain, setSelectedTerrain] = useState<SelectedTerrain | null>(null);
-  const [selectedLayerIds, setSelectedLayerIds] = useState<Record<string, string>>({});
+  const [selectedLayerIds, setSelectedLayerIds] = useState<Record<number, string>>({});
   const [navigationPaintMode, setNavigationPaintMode] = useState<NavigationPaintMode>('cell');
   const [pendingConnection, setPendingConnection] = useState<{ sourcePlaneId: string; x: number; y: number; edge: Direction } | null>(null);
   const [connectionDestinationPlaneId, setConnectionDestinationPlaneId] = useState('');
@@ -61,6 +69,7 @@ export default function App() {
   const [openDialog, setOpenDialog] = useState(false);
   const [newProjectDialog, setNewProjectDialog] = useState(false);
   const [newProjectTitle, setNewProjectTitle] = useState('');
+  const [newProjectCombatMode, setNewProjectCombatMode] = useState<SourceGame['manifest']['combatMode']>('turnBased');
   const [studioTab, setStudioTab] = useState<StudioTab>(initialLocationRef.current.tab);
   const [revertDialog, setRevertDialog] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -76,6 +85,18 @@ export default function App() {
   const projectSessionRef = useRef(0);
   const drawingUndoRef = useRef<DrawingHistoryEntry[]>([]);
   const drawingRedoRef = useRef<DrawingHistoryEntry[]>([]);
+
+  const changeStudioInterface = (value: StudioInterface) => {
+    setStudioInterface(value);
+    writeStudioInterface(value);
+    applyStudioInterface(value);
+    setMzEventDialogOpen(false);
+    setMzMapSettingsOpen(false);
+  };
+
+  useEffect(() => {
+    applyStudioInterface(studioInterface);
+  }, [studioInterface]);
 
   useEffect(() => {
     const urls = Object.fromEntries(Object.entries(projectAssets).map(([path, blob]) => [path, URL.createObjectURL(blob)]));
@@ -97,11 +118,14 @@ export default function App() {
       if (cancelled) return;
       const tilesets = catalog.tilesets.map(item => ({ ...item, kind: 'tileset' as const, url: URL.createObjectURL(item.blob) }));
       const sprites = catalog.sprites.map(item => ({ ...item, kind: 'sprite' as const, url: URL.createObjectURL(item.blob) }));
-      const assetsById = new Map<string, LibraryTileset | LibrarySprite>();
+      const battleAssets = catalog.battleAssets.map(item => ({ ...item, kind: 'battleAsset' as const, url: item.sourceUrl }));
+      const assetsById = new Map<string, LibraryTileset | LibrarySprite | LibraryBattleAsset>();
       for (const item of tilesets) assetsById.set(item.definition.id, item);
       for (const item of sprites) assetsById.set(item.id, item);
+      for (const item of battleAssets) assetsById.set(item.id, item);
       setLibrary(tilesets);
       setLibrarySprites(sprites);
+      setLibraryBattleAssets(battleAssets);
       setLibraryBundles(catalog.bundles.map(bundle => ({
         id: bundle.id,
         name: bundle.name,
@@ -115,7 +139,10 @@ export default function App() {
   useEffect(() => () => library.forEach(item => URL.revokeObjectURL(item.url)), [library]);
   useEffect(() => () => librarySprites.forEach(item => URL.revokeObjectURL(item.url)), [librarySprites]);
 
-  useEffect(() => { if (openDialog) void listRecentProjects().then(setRecentProjects).catch(() => setRecentProjects([])); }, [openDialog]);
+  useEffect(() => {
+    if (game && !openDialog) return;
+    void listRecentProjects().then(setRecentProjects).catch(() => setRecentProjects([]));
+  }, [game, openDialog]);
   useEffect(() => {
     requestAnimationFrame(() => mapCanvasRef.current?.fit());
     const timer = window.setTimeout(() => mapCanvasRef.current?.fit(), 260);
@@ -123,6 +150,7 @@ export default function App() {
   }, [editorMode, studioTab]);
 
   const validation = useMemo(() => game ? validateSourceGame(game) : null, [game]);
+  const hasOpenProject = Boolean(game);
   const selectedMap = game?.maps[selectedMapId];
   const preferredLayerId = selectedMap ? selectedLayerIds[selectedMapId] : undefined;
   const defaultLayerId = selectedMap ? [...selectedMap.planes].sort((a, b) => a.order - b.order)[0]?.surfaceLayerId : undefined;
@@ -146,9 +174,10 @@ export default function App() {
 
   useEffect(() => {
     if (!locationReady) return;
-    const nextUrl = studioLocationUrl(window.location.href, { projectId: game ? activeProjectParam : null, mapId: game ? selectedMapId : null, mode: editorMode, tab: studioTab });
+    const nextUrl = studioLocationUrl(window.location.href, { projectId: hasOpenProject ? activeProjectParam : null, mapId: hasOpenProject ? selectedMapId : null, mode: editorMode, tab: studioTab });
+    if (`${window.location.pathname}${window.location.search}${window.location.hash}` === nextUrl) return;
     window.history.replaceState(null, '', nextUrl);
-  }, [locationReady, game, activeProjectParam, selectedMapId, editorMode, studioTab]);
+  }, [locationReady, hasOpenProject, activeProjectParam, selectedMapId, editorMode, studioTab]);
 
   const markDirty = (document: DraftDocumentName) => {
     editRevisionRef.current += 1;
@@ -160,7 +189,7 @@ export default function App() {
     drawingRedoRef.current = [];
   };
 
-  const recordDrawingEdit = (mapId: string, before: DrawingHistoryState, after: DrawingHistoryState) => {
+  const recordDrawingEdit = (mapId: number, before: DrawingHistoryState, after: DrawingHistoryState) => {
     drawingUndoRef.current.push({ mapId, before: structuredClone(before), after: structuredClone(after) });
     drawingRedoRef.current = [];
   };
@@ -257,7 +286,7 @@ export default function App() {
     return () => window.removeEventListener('keydown', onKeyDown);
   }, [game, validation, projectAssets, editorMode, selectedMap, selectedMapId]);
 
-  const activateProject = async (bundle: ProjectBundle, options: { restore?: boolean; projectParam: string; mapId?: string | null; mode?: EditorMode } ) => {
+  const activateProject = async (bundle: ProjectBundle, options: { restore?: boolean; projectParam: string; mapId?: number | null; mode?: EditorMode } ) => {
     const { restore = true, projectParam, mapId: requestedMapId, mode = 'events' } = options;
     projectSessionRef.current += 1;
     dirtyDocumentsRef.current.clear();
@@ -271,7 +300,7 @@ export default function App() {
       const next = restored || structuredClone(source);
       const savedAssets = restore ? await restoreProjectAssets(next) : {};
       const nextAssets = { ...bundle.assets, ...savedAssets };
-      const mapId = requestedMapId && requestedMapId in next.maps ? requestedMapId : next.manifest.entryPoint.mapId in next.maps ? next.manifest.entryPoint.mapId : Object.keys(next.maps)[0];
+      const mapId = requestedMapId && requestedMapId in next.maps ? requestedMapId : next.manifest.entryPoint.mapId in next.maps ? next.manifest.entryPoint.mapId : Number(Object.keys(next.maps)[0]);
       if (!restore) { await saveDraft(next); await saveProjectAssets(next, nextAssets); }
       setSourceGame(structuredClone(source));
       setProjectAssets(nextAssets);
@@ -300,6 +329,12 @@ export default function App() {
     catch (reason) { setError(reason instanceof Error ? reason.message : 'The reference project could not be opened.'); }
     finally { setLoading(false); }
   };
+  const openTurnBasedReference = async () => {
+    setLoading(true); setError('');
+    try { await activateProject(await loadTurnBasedReferenceProject(), { projectParam: 'reference-turn-based' }); }
+    catch (reason) { setError(reason instanceof Error ? reason.message : 'The turn-based reference project could not be opened.'); }
+    finally { setLoading(false); }
+  };
 
   const openArchive = async (file: File) => {
     setLoading(true); setError('');
@@ -318,9 +353,10 @@ export default function App() {
     const title = newProjectTitle.trim();
     if (!title) return;
     setNewProjectDialog(false);
-    const bundle = createEmptyProject(title);
+    const bundle = createEmptyProject(title, undefined, newProjectCombatMode);
     await activateProject(bundle, { restore: false, projectParam: draftProjectId(bundle.game) });
     setNewProjectTitle('');
+    setNewProjectCombatMode('turnBased');
   };
 
   useEffect(() => {
@@ -330,7 +366,7 @@ export default function App() {
     let cancelled = false;
     void (async () => {
       try {
-        const bundle = projectParam === 'reference' ? await loadReferenceProject() : await openRecentProject(projectParam);
+        const bundle = projectParam === 'reference' ? await loadReferenceProject() : projectParam === 'reference-turn-based' ? await loadTurnBasedReferenceProject() : await openRecentProject(projectParam);
         if (cancelled) return;
         if (!bundle) throw new Error('The project stored in the URL is unavailable in this browser.');
         await activateProject(bundle, { restore: projectParam === 'reference', projectParam, mapId: requested.mapId, mode: requested.mode });
@@ -346,7 +382,7 @@ export default function App() {
     return () => { cancelled = true; };
   }, []);
 
-  const selectMap = (mapId: string) => {
+  const selectMap = (mapId: number) => {
     if (!game) return;
     setPendingConnection(null);
     setSelectedMapId(mapId);
@@ -356,20 +392,18 @@ export default function App() {
     requestAnimationFrame(() => mapCanvasRef.current?.fit());
   };
 
-  const createMap = (width: number, height: number, parentMapId?: string) => {
+  const createMap = (width: number, height: number, parentMapId?: number) => {
     if (!game) return;
-    const ids = new Set(Object.keys(game.maps));
-    let number = ids.size + 1;
-    while (ids.has(`map-${number}`)) number += 1;
-    const id = `map-${number}`;
+    const id = game.manifest.nextIds.maps;
     setGame(current => {
-      if (!current) return current;
+      if (!current || current.manifest.nextIds.maps !== id) return current;
       markDirty('maps.json');
       markDirty('manifest.json');
       const next = structuredClone(current);
-      const numericId = next.manifest.nextMapNumericId;
-      next.maps = { [id]: createDefaultMap(id, numericId, `Map ${number}`, width, height, parentMapId), ...next.maps };
-      next.manifest.nextMapNumericId = numericId + 1;
+      const map = createDefaultMap(id, `Map ${id}`, width, height, parentMapId);
+      map.order = Math.min(0, ...Object.values(next.maps).map(existing => existing.order ?? existing.id)) - 1;
+      next.maps = { ...next.maps, [id]: map };
+      next.manifest.nextIds.maps = id + 1;
       return next;
     });
     setSelectedMapId(id);
@@ -380,7 +414,7 @@ export default function App() {
     requestAnimationFrame(() => mapCanvasRef.current?.fit());
   };
 
-  const renameMap = (mapId: string, name: string) => {
+  const renameMap = (mapId: number, name: string) => {
     setGame(current => {
       const map = current?.maps[mapId];
       if (!current || !map || map.name === name) return current;
@@ -391,7 +425,7 @@ export default function App() {
     });
   };
 
-  const moveMap = (mapId: string, parentMapId: string | null) => {
+  const moveMap = (mapId: number, parentMapId: number | null) => {
     setGame(current => {
       const map = current?.maps[mapId];
       if (!current || !map || parentMapId === mapId || (parentMapId && !current.maps[parentMapId])) return current;
@@ -409,7 +443,7 @@ export default function App() {
     });
   };
 
-  const reorderMap = (mapId: string, targetMapId: string, position: MapDropPosition) => {
+  const reorderMap = (mapId: number, targetMapId: number, position: MapDropPosition) => {
     setGame(current => {
       if (!current) return current;
       const maps = moveMapInHierarchy(current.maps, mapId, targetMapId, position);
@@ -419,7 +453,7 @@ export default function App() {
     });
   };
 
-  const resizeMap = (mapId: string, width: number, height: number) => {
+  const resizeMap = (mapId: number, width: number, height: number) => {
     setGame(current => {
       const map = current?.maps[mapId];
       if (!current || !map || (map.bounds.w === width && map.bounds.h === height)) return current;
@@ -442,6 +476,12 @@ export default function App() {
     });
     if (mapId === selectedMapId) requestAnimationFrame(() => mapCanvasRef.current?.fit());
   };
+
+  const changeMapEncounters = (mapId: number, encounters: NonNullable<GameMap['encounters']>) => setGame(current => {
+    if (!current?.maps[mapId]) return current;
+    markDirty('maps.json');
+    const next = structuredClone(current); next.maps[mapId].encounters = encounters; return next;
+  });
 
   const selectLayer = (layerId: string) => {
     const layer = selectedMap?.tileLayers.find(item => item.id === layerId);
@@ -674,21 +714,23 @@ export default function App() {
   };
 
   const createSwitch = (name: string) => {
-    if (!game) return '';
+    if (!game) return 0;
     const trimmedName = name.trim();
-    if (!trimmedName) return '';
-    const id = uniqueAssetId(trimmedName, Object.keys(game.initialState.switches));
+    if (!trimmedName) return 0;
+    const id = game.manifest.nextIds.switches;
     setGame(current => {
-      if (!current || current.initialState.switches[id]) return current;
+      if (!current || current.manifest.nextIds.switches !== id) return current;
       markDirty('initial-state.json');
+      markDirty('manifest.json');
       const next = structuredClone(current);
       next.initialState.switches[id] = { name: trimmedName, initialValue: false };
+      next.manifest.nextIds.switches = id + 1;
       return next;
     });
     return id;
   };
 
-  const renameSwitch = (id: string, name: string) => setGame(current => {
+  const renameSwitch = (id: number, name: string) => setGame(current => {
     const trimmedName = name.trim();
     if (!current?.initialState.switches[id] || !trimmedName || current.initialState.switches[id].name === trimmedName) return current;
     markDirty('initial-state.json');
@@ -698,21 +740,23 @@ export default function App() {
   });
 
   const createVariable = (name: string) => {
-    if (!game) return '';
+    if (!game) return 0;
     const trimmedName = name.trim();
-    if (!trimmedName) return '';
-    const id = uniqueAssetId(trimmedName, Object.keys(game.initialState.variables));
+    if (!trimmedName) return 0;
+    const id = game.manifest.nextIds.variables;
     setGame(current => {
-      if (!current || current.initialState.variables[id]) return current;
+      if (!current || current.manifest.nextIds.variables !== id) return current;
       markDirty('initial-state.json');
+      markDirty('manifest.json');
       const next = structuredClone(current);
       next.initialState.variables[id] = { name: trimmedName, initialValue: 0 };
+      next.manifest.nextIds.variables = id + 1;
       return next;
     });
     return id;
   };
 
-  const renameVariable = (id: string, name: string) => setGame(current => {
+  const renameVariable = (id: number, name: string) => setGame(current => {
     const trimmedName = name.trim();
     if (!current?.initialState.variables[id] || !trimmedName || current.initialState.variables[id].name === trimmedName) return current;
     markDirty('initial-state.json');
@@ -721,7 +765,7 @@ export default function App() {
     return next;
   });
 
-  const renameItem = (id: string, name: string) => setGame(current => {
+  const renameItem = (id: number, name: string) => setGame(current => {
     const trimmedName = name.trim();
     if (!current?.items[id] || !trimmedName || current.items[id].name === trimmedName) return current;
     markDirty('items.json');
@@ -731,41 +775,49 @@ export default function App() {
   });
 
   const createDatabaseItem = (name: string, type: Item['type']) => {
-    if (!game) return '';
-    const id = uniqueAssetId(name, Object.keys(game.items));
+    if (!game) return 0;
+    const id = game.manifest.nextIds.items;
     const item: Item = type === 'consumable'
       ? { name, type, healing: 0 }
       : type === 'equipment'
         ? { name, type, equipmentTypeId: game.types.equipment.entries[0]?.id, stats: {} }
         : { name, type };
     setGame(current => {
-      if (!current || current.items[id]) return current;
+      if (!current || current.manifest.nextIds.items !== id) return current;
       markDirty('items.json');
-      return { ...current, items: { ...current.items, [id]: item } };
+      markDirty('manifest.json');
+      const next = structuredClone(current);
+      next.items[id] = item;
+      next.manifest.nextIds.items = id + 1;
+      return next;
     });
     return id;
   };
 
-  const updateDatabaseItem = (id: string, item: Item) => setGame(current => {
+  const updateDatabaseItem = (id: number, item: Item) => setGame(current => {
     if (!current?.items[id] || JSON.stringify(current.items[id]) === JSON.stringify(item)) return current;
     markDirty('items.json');
     return { ...current, items: { ...current.items, [id]: structuredClone(item) } };
   });
 
-  const duplicateDatabaseItem = (id: string) => {
+  const duplicateDatabaseItem = (id: number) => {
     const item = game?.items[id];
-    if (!game || !item) return '';
+    if (!game || !item) return 0;
     const name = `${item.name} Copy`;
-    const nextId = uniqueAssetId(name, Object.keys(game.items));
+    const nextId = game.manifest.nextIds.items;
     setGame(current => {
-      if (!current || current.items[nextId]) return current;
+      if (!current || current.manifest.nextIds.items !== nextId) return current;
       markDirty('items.json');
-      return { ...current, items: { ...current.items, [nextId]: { ...structuredClone(item), name } } };
+      markDirty('manifest.json');
+      const next = structuredClone(current);
+      next.items[nextId] = { ...structuredClone(item), name };
+      next.manifest.nextIds.items = nextId + 1;
+      return next;
     });
     return nextId;
   };
 
-  const deleteDatabaseItem = (id: string) => setGame(current => {
+  const deleteDatabaseItem = (id: number) => setGame(current => {
     if (!current?.items[id]) return current;
     markDirty('items.json');
     const next = structuredClone(current);
@@ -774,41 +826,49 @@ export default function App() {
   });
 
   const createDatabaseSkill = (name: string, type: Skill['type']) => {
-    if (!game) return '';
-    const id = uniqueAssetId(name, Object.keys(game.skills));
+    if (!game) return 0;
+    const id = game.manifest.nextIds.skills;
     const skill: Skill = type === 'melee'
       ? { name, type, damage: 0, cooldown: 0, range: 1 }
       : type === 'projectile'
         ? { name, type, damage: 0, cooldown: 0, projectileSpeed: 300, color: '#ffffff' }
         : { name, type, damage: 0, cooldown: 0, range: 1, color: '#ffffff' };
     setGame(current => {
-      if (!current || current.skills[id]) return current;
+      if (!current || current.manifest.nextIds.skills !== id) return current;
       markDirty('skills.json');
-      return { ...current, skills: { ...current.skills, [id]: skill } };
+      markDirty('manifest.json');
+      const next = structuredClone(current);
+      next.skills[id] = skill;
+      next.manifest.nextIds.skills = id + 1;
+      return next;
     });
     return id;
   };
 
-  const updateDatabaseSkill = (id: string, skill: Skill) => setGame(current => {
+  const updateDatabaseSkill = (id: number, skill: Skill) => setGame(current => {
     if (!current?.skills[id] || JSON.stringify(current.skills[id]) === JSON.stringify(skill)) return current;
     markDirty('skills.json');
     return { ...current, skills: { ...current.skills, [id]: structuredClone(skill) } };
   });
 
-  const duplicateDatabaseSkill = (id: string) => {
+  const duplicateDatabaseSkill = (id: number) => {
     const skill = game?.skills[id];
-    if (!game || !skill) return '';
+    if (!game || !skill) return 0;
     const name = `${skill.name} Copy`;
-    const nextId = uniqueAssetId(name, Object.keys(game.skills));
+    const nextId = game.manifest.nextIds.skills;
     setGame(current => {
-      if (!current || current.skills[nextId]) return current;
+      if (!current || current.manifest.nextIds.skills !== nextId) return current;
       markDirty('skills.json');
-      return { ...current, skills: { ...current.skills, [nextId]: { ...structuredClone(skill), name } } };
+      markDirty('manifest.json');
+      const next = structuredClone(current);
+      next.skills[nextId] = { ...structuredClone(skill), name };
+      next.manifest.nextIds.skills = nextId + 1;
+      return next;
     });
     return nextId;
   };
 
-  const deleteDatabaseSkill = (id: string) => setGame(current => {
+  const deleteDatabaseSkill = (id: number) => setGame(current => {
     if (!current?.skills[id]) return current;
     markDirty('skills.json');
     const next = structuredClone(current);
@@ -816,37 +876,126 @@ export default function App() {
     return next;
   });
 
-  const createCommonEvent = (name: string) => {
-    if (!game) return '';
-    const id = uniqueAssetId(name, Object.keys(game.events.commonEvents));
+  const createDatabaseEnemy = (name: string) => {
+    if (!game) return 0;
+    const id = game.manifest.nextIds.enemies;
     setGame(current => {
-      if (!current || current.events.commonEvents[id]) return current;
+      if (!current || current.manifest.nextIds.enemies !== id) return current;
+      markDirty('enemies.json'); markDirty('manifest.json');
+      const next = structuredClone(current);
+      next.enemies[id] = { name, color: '#8fc97a', stats: { maxHp: 100, attack: 10, defense: 0 }, rewards: { xp: 0 }, speed: 50, radius: 18, behavior: 'chase' };
+      next.manifest.nextIds.enemies = id + 1;
+      return next;
+    });
+    return id;
+  };
+  const updateDatabaseEnemy = (id: number, enemy: EnemyTemplate) => setGame(current => {
+    if (!current?.enemies[id] || JSON.stringify(current.enemies[id]) === JSON.stringify(enemy)) return current;
+    markDirty('enemies.json');
+    return { ...current, enemies: { ...current.enemies, [id]: structuredClone(enemy) } };
+  });
+  const duplicateDatabaseEnemy = (id: number) => {
+    const enemy = game?.enemies[id];
+    if (!game || !enemy) return 0;
+    const nextId = game.manifest.nextIds.enemies;
+    setGame(current => {
+      if (!current || current.manifest.nextIds.enemies !== nextId) return current;
+      markDirty('enemies.json'); markDirty('manifest.json');
+      const next = structuredClone(current);
+      next.enemies[nextId] = { ...structuredClone(enemy), name: `${enemy.name} Copy` };
+      next.manifest.nextIds.enemies = nextId + 1;
+      return next;
+    });
+    return nextId;
+  };
+  const deleteDatabaseEnemy = (id: number) => setGame(current => {
+    if (!current?.enemies[id]) return current;
+    markDirty('enemies.json');
+    const next = structuredClone(current); delete next.enemies[id]; return next;
+  });
+
+  const createTroop = (name: string) => {
+    if (!game) return 0;
+    const id = game.manifest.nextIds.troops;
+    setGame(current => {
+      if (!current || current.manifest.nextIds.troops !== id) return current;
+      markDirty('troops.json'); markDirty('manifest.json');
+      const next = structuredClone(current);
+      next.troops[id] = { name, members: [] };
+      next.manifest.nextIds.troops = id + 1;
+      return next;
+    });
+    return id;
+  };
+  const updateTroop = (id: number, troop: Troop) => setGame(current => {
+    if (!current?.troops[id] || JSON.stringify(current.troops[id]) === JSON.stringify(troop)) return current;
+    markDirty('troops.json');
+    return { ...current, troops: { ...current.troops, [id]: structuredClone(troop) } };
+  });
+  const duplicateTroop = (id: number) => {
+    const troop = game?.troops[id];
+    if (!game || !troop) return 0;
+    const nextId = game.manifest.nextIds.troops;
+    setGame(current => {
+      if (!current || current.manifest.nextIds.troops !== nextId) return current;
+      markDirty('troops.json'); markDirty('manifest.json');
+      const next = structuredClone(current);
+      next.troops[nextId] = { ...structuredClone(troop), name: `${troop.name} Copy` };
+      next.manifest.nextIds.troops = nextId + 1;
+      return next;
+    });
+    return nextId;
+  };
+  const deleteTroop = (id: number) => setGame(current => {
+    if (!current?.troops[id]) return current;
+    markDirty('troops.json');
+    const next = structuredClone(current); delete next.troops[id]; return next;
+  });
+  const updateDefaultBattleBackground = (background?: BattleBackground) => setGame(current => {
+    if (!current || JSON.stringify(current.ui.battle?.background) === JSON.stringify(background)) return current;
+    markDirty('ui.json');
+    return { ...current, ui: { ...current.ui, battle: background ? { background } : undefined } };
+  });
+
+  const createCommonEvent = (name: string) => {
+    if (!game) return 0;
+    const id = game.manifest.nextIds.commonEvents;
+    setGame(current => {
+      if (!current || current.manifest.nextIds.commonEvents !== id) return current;
       markDirty('events.json');
-      return { ...current, events: { ...current.events, commonEvents: { ...current.events.commonEvents, [id]: { name, trigger: { type: 'none' }, contents: [] } } } };
+      markDirty('manifest.json');
+      const next = structuredClone(current);
+      next.events.commonEvents[id] = { name, trigger: { type: 'none' }, contents: [] };
+      next.manifest.nextIds.commonEvents = id + 1;
+      return next;
     });
     return id;
   };
 
-  const updateCommonEvent = (id: string, commonEvent: CommonEvent) => setGame(current => {
+  const updateCommonEvent = (id: number, commonEvent: CommonEvent) => setGame(current => {
     if (!current?.events.commonEvents[id] || JSON.stringify(current.events.commonEvents[id]) === JSON.stringify(commonEvent)) return current;
     markDirty('events.json');
     return { ...current, events: { ...current.events, commonEvents: { ...current.events.commonEvents, [id]: commonEvent } } };
   });
 
-  const duplicateCommonEvent = (id: string) => {
+  const duplicateCommonEvent = (id: number) => {
     const commonEvent = game?.events.commonEvents[id];
-    if (!game || !commonEvent) return '';
+    if (!game || !commonEvent) return 0;
     const name = `${commonEvent.name} Copy`;
-    const nextId = uniqueAssetId(name, Object.keys(game.events.commonEvents));
+    const nextId = game.manifest.nextIds.commonEvents;
     setGame(current => {
-      if (!current || current.events.commonEvents[nextId]) return current;
+      if (!current || current.manifest.nextIds.commonEvents !== nextId) return current;
       markDirty('events.json');
-      return { ...current, events: { ...current.events, commonEvents: { ...current.events.commonEvents, [nextId]: { ...structuredClone(commonEvent), name } } } };
+      markDirty('manifest.json');
+      const next = structuredClone(current);
+      next.events.commonEvents[nextId] = { ...structuredClone(commonEvent), name };
+      next.manifest.nextIds.commonEvents = nextId + 1;
+      return next;
     });
     return nextId;
   };
 
-  const deleteCommonEvent = (id: string) => setGame(current => {
+  const deleteCommonEvent = (id: number) => setGame(current => {
     if (!current?.events.commonEvents[id]) return current;
     markDirty('events.json');
     const next = structuredClone(current);
@@ -887,21 +1036,19 @@ export default function App() {
     return next;
   });
 
-  const renameEvent = (eventId: string, nextId: string) => {
-    const trimmedId = nextId.trim();
-    if (!game || !trimmedId || trimmedId === eventId || game.maps[selectedMapId]?.events.some(event => event.id === trimmedId)) return;
+  const renameEvent = (eventId: number, name: string) => {
+    const trimmedName = name.trim();
+    if (!game || !trimmedName) return;
     setGame(current => {
       if (!current) return current;
-      const result = renameMapEvent(current, selectedMapId, eventId, trimmedId);
+      const result = renameMapEvent(current, selectedMapId, eventId, trimmedName);
       if (!result) return current;
       markDirty('maps.json');
-      if (result.enemiesChanged) markDirty('enemies.json');
-      return result.game;
+      return result;
     });
-    setSelectedEventId(current => current === eventId ? trimmedId : current);
   };
 
-  const moveEvent = (id: string, x: number, y: number) => {
+  const moveEvent = (id: number, x: number, y: number) => {
     setGame(current => {
       if (!current) return current;
       const event = current.maps[selectedMapId]?.events.find(item => item.id === id);
@@ -924,9 +1071,11 @@ export default function App() {
       markDirty('maps.json');
       const next = structuredClone(current);
       next.maps[selectedMapId].events.push(created);
+      next.maps[selectedMapId].nextEventId = created.id + 1;
       return next;
     });
     setSelectedEventId(created.id);
+    return created.id;
   };
 
   const placePlayerStart = (x: number, y: number, planeId: string) => {
@@ -1029,23 +1178,26 @@ export default function App() {
     setActiveProjectParam(null);
     setSourceGame(null);
     setProjectAssets({});
-    setSelectedMapId('');
+    setSelectedMapId(0);
     setSelectedLayerIds({});
     setSelectedTerrain(null);
     setSelectedEventId(null);
+    setMzEventDialogOpen(false);
+    setMzMapSettingsOpen(false);
     setStudioTab('maps');
     resetDrawingHistory();
     setSaveState('idle');
     setSaveError('');
   };
 
-  const playGame = () => {
+  const openPlayer = (battleTestTroopId?: number) => {
     if (!game || !validation?.success) return;
     void flushDraft();
     const configuredUrl = import.meta.env.VITE_PLAYER_URL || 'http://127.0.0.1:4173/';
     const playerUrl = new URL(configuredUrl, window.location.href);
     playerUrl.searchParams.set('studioPreview', '1');
     playerUrl.searchParams.set('studioOrigin', window.location.origin);
+    if (battleTestTroopId) playerUrl.searchParams.set('battleTest', String(battleTestTroopId));
     const playerWindow = window.open(playerUrl.href, '_blank');
     if (!playerWindow) {
       setPlayError('The Player could not be opened. Allow pop-ups for the Studio and try again.');
@@ -1063,6 +1215,8 @@ export default function App() {
       window.removeEventListener('message', onMessage);
     }, 1_000);
   };
+  const playGame = () => openPlayer();
+  const battleTest = (troopId: number) => openPlayer(troopId);
 
   const importTilesets = async (entries: Array<{ definition: SourceGame['tilesets'][string]; assets: ProjectAssets }>) => {
     if (!game) return;
@@ -1103,11 +1257,27 @@ export default function App() {
     await saveProjectAssets(game, importedAssets);
   };
   const importLibrarySprite = (asset: LibrarySprite) => importLibrarySprites([asset]);
+  const importLibraryBattleAssets = async (assets: LibraryBattleAsset[]) => {
+    if (!game) return;
+    const pending = assets.filter(asset => !projectAssets[asset.imagePath]);
+    const importedAssets = Object.fromEntries(await Promise.all(pending.map(async asset => {
+      if (asset.blob) return [asset.imagePath, asset.blob] as const;
+      const response = await fetch(asset.url);
+      if (!response.ok) throw new Error(`Could not import battle asset ${asset.name} (${response.status}).`);
+      return [asset.imagePath, await response.blob()] as const;
+    }))) as ProjectAssets;
+    if (!Object.keys(importedAssets).length) return;
+    setProjectAssets(current => ({ ...current, ...importedAssets }));
+    await saveProjectAssets(game, importedAssets);
+  };
+  const importLibraryBattleAsset = (asset: LibraryBattleAsset) => importLibraryBattleAssets([asset]);
   const importLibraryBundle = async (bundle: LibraryBundle) => {
     const tilesets = bundle.assets.filter((asset): asset is LibraryTileset => asset.kind === 'tileset');
     const sprites = bundle.assets.filter((asset): asset is LibrarySprite => asset.kind === 'sprite');
+    const battleAssets = bundle.assets.filter((asset): asset is LibraryBattleAsset => asset.kind === 'battleAsset');
     await importTilesets(tilesets.map(libraryImportEntry));
     await importLibrarySprites(sprites);
+    await importLibraryBattleAssets(battleAssets);
   };
 
   const importLocalTileset = async ({ file, name, category, format }: { file: File; name: string; category: string; format: TilesetImportFormat }) => {
@@ -1149,6 +1319,7 @@ export default function App() {
   const eventPanelOpen = editorMode === 'events';
 
   return <div className="isolate flex h-full min-h-0 bg-background text-foreground">
+    {studioInterface === 'modern' ? <>
     <StudioAppSidebar
       hasProject={Boolean(game)}
       canExport={Boolean(game && validation?.success)}
@@ -1159,17 +1330,17 @@ export default function App() {
       onExportProject={() => game && void exportGamePackage(game, projectAssets)}
       onRevertProject={() => setRevertDialog(true)}
       onCloseProject={closeProject}
+      studioInterface={studioInterface}
+      onChangeStudioInterface={changeStudioInterface}
       onSelectMaps={() => setStudioTab('maps')}
       onSelectAssets={() => setStudioTab('assets')}
       onSelectDatabase={() => setStudioTab('database')}
     />
     <div className="flex min-w-0 flex-1 flex-col">
 
-    {!game || !selectedMap ? <main className="flex min-h-0 flex-1 items-center justify-center bg-[radial-gradient(circle_at_center,var(--color-muted)_0,transparent_60%)]">
-      <div className="max-w-sm border bg-card/80 p-8 text-center shadow-xl backdrop-blur"><FolderOpen className="mx-auto mb-4 size-8 text-primary" /><h1 className="text-base font-semibold">No project open</h1><p className="mt-2 text-xs leading-5 text-muted-foreground">Create an empty project or open an existing package.</p><div className="mt-5 flex justify-center gap-2"><Button size="sm" onClick={() => setNewProjectDialog(true)}>New project</Button><Button variant="outline" size="sm" onClick={() => setOpenDialog(true)}>Open…</Button></div></div>
-    </main> : studioTab === 'database' ? <main className="min-h-0 flex-1"><DatabaseManager game={game} assetUrls={assetUrls} onImportLocal={importLocalTileset} onUpdate={updateTileset} onChangeTerrainCollision={changeTerrainCollision} onCreateItem={createDatabaseItem} onUpdateItem={updateDatabaseItem} onDuplicateItem={duplicateDatabaseItem} onDeleteItem={deleteDatabaseItem} onCreateSkill={createDatabaseSkill} onUpdateSkill={updateDatabaseSkill} onDuplicateSkill={duplicateDatabaseSkill} onDeleteSkill={deleteDatabaseSkill} onCreateCommonEvent={createCommonEvent} onUpdateCommonEvent={updateCommonEvent} onDuplicateCommonEvent={duplicateCommonEvent} onDeleteCommonEvent={deleteCommonEvent} onCreateType={createDatabaseType} onRenameType={renameDatabaseType} onDeleteType={deleteDatabaseType} onRenameVariable={renameVariable} onRenameSwitch={renameSwitch} onCreateSwitch={createSwitch} onCreateVariable={createVariable} /></main> : studioTab === 'assets' ? <main className="min-h-0 flex-1"><AssetLibrary game={game} assetUrls={assetUrls} library={library} sprites={librarySprites} bundles={libraryBundles} onImport={importLibraryTileset} onImportSprite={importLibrarySprite} onImportBundle={importLibraryBundle} /></main> : <main className="min-h-0 flex-1">
+    {!game || !selectedMap ? <ProjectHome recentProjects={recentProjects} loading={loading} error={error} onNewProject={() => setNewProjectDialog(true)} onOpenArchive={file => void openArchive(file)} onOpenRecent={id => void openRecent(id)} onOpenReference={() => void openReference()} onOpenTurnBasedReference={() => void openTurnBasedReference()} /> : studioTab === 'database' ? <main className="min-h-0 flex-1"><DatabaseManager game={game} assetUrls={assetUrls} battleAssets={libraryBattleAssets} onImportBattleAsset={importLibraryBattleAsset} onImportLocal={importLocalTileset} onUpdate={updateTileset} onChangeTerrainCollision={changeTerrainCollision} onCreateItem={createDatabaseItem} onUpdateItem={updateDatabaseItem} onDuplicateItem={duplicateDatabaseItem} onDeleteItem={deleteDatabaseItem} onCreateSkill={createDatabaseSkill} onUpdateSkill={updateDatabaseSkill} onDuplicateSkill={duplicateDatabaseSkill} onDeleteSkill={deleteDatabaseSkill} onCreateEnemy={createDatabaseEnemy} onUpdateEnemy={updateDatabaseEnemy} onDuplicateEnemy={duplicateDatabaseEnemy} onDeleteEnemy={deleteDatabaseEnemy} onCreateTroop={createTroop} onUpdateTroop={updateTroop} onDuplicateTroop={duplicateTroop} onDeleteTroop={deleteTroop} onBattleTest={battleTest} onUpdateDefaultBattleBackground={updateDefaultBattleBackground} onCreateCommonEvent={createCommonEvent} onUpdateCommonEvent={updateCommonEvent} onDuplicateCommonEvent={duplicateCommonEvent} onDeleteCommonEvent={deleteCommonEvent} onCreateType={createDatabaseType} onRenameType={renameDatabaseType} onDeleteType={deleteDatabaseType} onRenameVariable={renameVariable} onRenameSwitch={renameSwitch} onCreateSwitch={createSwitch} onCreateVariable={createVariable} /></main> : studioTab === 'assets' ? <main className="min-h-0 flex-1"><AssetLibrary game={game} assetUrls={assetUrls} library={library} sprites={librarySprites} battleAssets={libraryBattleAssets} bundles={libraryBundles} onImport={importLibraryTileset} onImportSprite={importLibrarySprite} onImportBattleAsset={importLibraryBattleAsset} onImportBundle={importLibraryBundle} /></main> : <main className="min-h-0 flex-1">
       <ResizablePanelGroup orientation="horizontal">
-        <ResizablePanel defaultSize="384px" minSize="384px" maxSize="384px"><StudioSidebar game={game} assetUrls={assetUrls} map={selectedMap} selectedMapId={selectedMapId} selectedEventId={selectedEventId} mode={editorMode} selectedTerrain={selectedTerrain} activeLayerId={selectedLayerId} canPlay={Boolean(validation?.success)} onPlay={playGame} onSelectMap={selectMap} onCreateMap={createMap} onRenameMap={renameMap} onMoveMap={moveMap} onReorderMap={reorderMap} onResizeMap={resizeMap} onSelectEvent={setSelectedEventId} onRenameEvent={renameEvent} onSelectTerrain={setSelectedTerrain} onSelectLayer={selectLayer} onAddLayer={addLayer} onRenameLayer={renameLayer} onDeleteLayer={deleteLayer} onMoveLayer={moveLayer} onChangeLayerPlane={changeLayerPlane} onChangeLayerPhase={changeLayerPhase} onAddPlane={() => setNewPlaneDialog(true)} onRenamePlane={renamePlane} onMovePlane={movePlane} onDeletePlane={deletePlane} onChangeCoverage={changeCoverage} onChangeSurface={changeSurface} onDeleteConnection={deleteConnection} /></ResizablePanel>
+        <ResizablePanel defaultSize="384px" minSize="384px" maxSize="384px"><StudioSidebar game={game} assetUrls={assetUrls} map={selectedMap} selectedMapId={selectedMapId} selectedEventId={selectedEventId} mode={editorMode} selectedTerrain={selectedTerrain} activeLayerId={selectedLayerId} canPlay={Boolean(validation?.success)} onPlay={playGame} onSelectMap={selectMap} onCreateMap={createMap} onRenameMap={renameMap} onMoveMap={moveMap} onReorderMap={reorderMap} onResizeMap={resizeMap} onChangeMapEncounters={changeMapEncounters} onSelectEvent={setSelectedEventId} onRenameEvent={renameEvent} onSelectTerrain={setSelectedTerrain} onSelectLayer={selectLayer} onAddLayer={addLayer} onRenameLayer={renameLayer} onDeleteLayer={deleteLayer} onMoveLayer={moveLayer} onChangeLayerPlane={changeLayerPlane} onChangeLayerPhase={changeLayerPhase} onAddPlane={() => setNewPlaneDialog(true)} onRenamePlane={renamePlane} onMovePlane={movePlane} onDeletePlane={deletePlane} onChangeCoverage={changeCoverage} onChangeSurface={changeSurface} onDeleteConnection={deleteConnection} /></ResizablePanel>
         <ResizablePanel defaultSize="100%" minSize="400px"><div className="flex h-full min-h-0">
           <div className="flex min-w-0 flex-1 flex-col">
             <SectionHeader className="border-t-0 border-b bg-background"><div className="flex min-w-0 items-center gap-3"><span className="truncate text-xs font-medium">{selectedMap.name}</span><span className="font-mono text-[10px] text-muted-foreground">{selectedMap.bounds.w}×{selectedMap.bounds.h}</span><span className="min-w-20 font-mono text-[10px] text-muted-foreground">{hoveredTile ? `x ${hoveredTile.x} · y ${hoveredTile.y}` : 'x — · y —'}</span></div><SectionHeaderActions><IconButtonTooltip label="Toggle grid"><Button variant={gridVisibility[editorMode] ? 'secondary' : 'ghost'} size="icon-sm" aria-label="Toggle grid" aria-pressed={gridVisibility[editorMode]} onClick={() => setGridVisibility(current => ({ ...current, [editorMode]: !current[editorMode] }))}><Grid3X3 /></Button></IconButtonTooltip>{editorMode === 'drawing' && <IconButtonTooltip label="Dim inactive layers"><Button variant={dimInactiveLayers ? 'secondary' : 'ghost'} size="icon-sm" aria-label="Dim inactive layers" aria-pressed={dimInactiveLayers} onClick={() => setDimInactiveLayers(value => !value)}><Contrast /></Button></IconButtonTooltip>}<div className="mx-1 h-5 w-px bg-border" aria-hidden="true"/><IconButtonTooltip label="Zoom out"><Button variant="ghost" size="icon-sm" onClick={() => mapCanvasRef.current?.zoomOut()} aria-label="Zoom out"><Minus /></Button></IconButtonTooltip><IconButtonTooltip label="Fit map"><Button variant="ghost" size="icon-sm" onClick={() => mapCanvasRef.current?.fit()} aria-label="Fit map"><Maximize2 /></Button></IconButtonTooltip><IconButtonTooltip label="Zoom in"><Button variant="ghost" size="icon-sm" onClick={() => mapCanvasRef.current?.zoomIn()} aria-label="Zoom in"><Plus /></Button></IconButtonTooltip></SectionHeaderActions></SectionHeader>
@@ -1192,9 +1363,53 @@ export default function App() {
       </ResizablePanelGroup>
     </main>}
     </div>
+    </> : <div className="flex min-w-0 flex-1 flex-col" data-slot="rpg-maker-mz-shell">
+      <RpgMakerMzMenubar
+        title={game?.manifest.title}
+        hasProject={Boolean(game)}
+        canExport={Boolean(game && validation?.success)}
+        mode={editorMode}
+        studioInterface={studioInterface}
+        onNewProject={() => setNewProjectDialog(true)}
+        onOpenProject={() => setOpenDialog(true)}
+        onSaveDraft={() => void flushDraft()}
+        onExportProject={() => game && void exportGamePackage(game, projectAssets)}
+        onRevertProject={() => setRevertDialog(true)}
+        onCloseProject={closeProject}
+        onChangeMode={setEditorMode}
+        onOpenMapSettings={() => setMzMapSettingsOpen(true)}
+        onOpenAssets={() => setStudioTab('assets')}
+        onOpenDatabase={() => setStudioTab('database')}
+        onPlay={playGame}
+        onChangeStudioInterface={changeStudioInterface}
+      />
+      {!game || !selectedMap ? <main className="flex min-h-0 flex-1 items-center justify-center bg-[radial-gradient(circle_at_center,var(--color-muted)_0,transparent_60%)]">
+        <div className="border bg-card p-8 text-center shadow"><FolderOpen className="mx-auto mb-4 size-8 text-primary" /><h1 className="text-base font-semibold">No project open</h1><p className="mt-2 text-xs text-muted-foreground">Create a new project or open an RPG Crafter package.</p><div className="mt-5 flex justify-center gap-2"><Button size="sm" onClick={() => setNewProjectDialog(true)}>New Project</Button><Button variant="outline" size="sm" onClick={() => setOpenDialog(true)}>Open…</Button></div></div>
+      </main> : <>
+        <StudioToolbar presentation="mz" mode={editorMode} layers={selectedMap.tileLayers} activeLayerId={selectedLayerId} drawingTool={drawingTool} eventTool={eventTool} onChangeMode={setEditorMode} onSelectLayer={selectLayer} onChangeDrawingTool={setDrawingTool} onChangeEventTool={setEventTool} />
+        <div className="flex min-h-0 flex-1">
+          <RpgMakerMzSidebar game={game} assetUrls={assetUrls} selectedMapId={selectedMapId} activeLayer={selectedLayer} selectedTerrain={selectedTerrain} onSelectTerrain={setSelectedTerrain} onSelectMap={selectMap} onCreateMap={createMap} onRenameMap={renameMap} onMoveMap={moveMap} onReorderMap={reorderMap} onResizeMap={resizeMap} onChangeMapEncounters={changeMapEncounters} />
+          <main className="flex min-w-0 flex-1 flex-col bg-background">
+            <SectionHeader className="border-t-0 border-b bg-card"><div className="flex min-w-0 items-center gap-3"><span className="truncate text-xs font-semibold">{selectedMap.name}</span><span className="font-mono text-[10px] text-muted-foreground">{selectedMap.bounds.w}×{selectedMap.bounds.h}</span></div><SectionHeaderActions><IconButtonTooltip label="Toggle grid"><Button variant={gridVisibility[editorMode] ? 'secondary' : 'ghost'} size="icon-sm" aria-label="Toggle grid" aria-pressed={gridVisibility[editorMode]} onClick={() => setGridVisibility(current => ({ ...current, [editorMode]: !current[editorMode] }))}><Grid3X3 /></Button></IconButtonTooltip><IconButtonTooltip label="Zoom out"><Button variant="ghost" size="icon-sm" onClick={() => mapCanvasRef.current?.zoomOut()} aria-label="Zoom out"><Minus /></Button></IconButtonTooltip><IconButtonTooltip label="Fit map"><Button variant="ghost" size="icon-sm" onClick={() => mapCanvasRef.current?.fit()} aria-label="Fit map"><Maximize2 /></Button></IconButtonTooltip><IconButtonTooltip label="Zoom in"><Button variant="ghost" size="icon-sm" onClick={() => mapCanvasRef.current?.zoomIn()} aria-label="Zoom in"><Plus /></Button></IconButtonTooltip></SectionHeaderActions></SectionHeader>
+            <div className="relative min-h-0 flex-1">{tilesetAssetsReady
+              ? <MapCanvas ref={mapCanvasRef} map={selectedMap} tilesets={game.tilesets} assetUrls={assetUrls} mode={editorMode} activePlaneId={selectedLayer?.planeId || selectedMap.planes[0].id} activeLayerId={selectedLayerId} selectedTerrain={selectedTerrain} drawingTool={drawingTool} eventTool={eventTool} playerStartMapId={game.manifest.entryPoint.mapId} playerStart={game.actors.player.start} showGrid={gridVisibility[editorMode]} dimInactiveLayers={dimInactiveLayers} navigationPaintMode={navigationPaintMode} selectedEventId={selectedEventId} selectedEventPageIndex={selectedEventPageIndex} onSelectEvent={setSelectedEventId} onOpenEvent={id => { setSelectedEventId(id); setMzEventDialogOpen(true); }} onCreateEvent={createEvent} onMoveEvent={moveEvent} onDrawTiles={drawMapTiles} onFillTile={fillMapTile} onPickTerrain={setSelectedTerrain} onPlacePlayerStart={placePlayerStart} onNavigateTarget={requestNavigationEdit} onHoverTile={setHoveredTile} />
+              : <div className="grid size-full place-items-center text-xs text-muted-foreground">Loading tileset images…</div>}
+            </div>
+          </main>
+        </div>
+        <div className="flex h-6 shrink-0 items-center justify-between border-t bg-card px-2 font-mono text-[10px] text-muted-foreground"><span>{editorMode === 'events' ? 'Event mode' : `Map mode · ${selectedLayer?.name || 'No layer'}`}</span><span>{hoveredTile ? `X ${hoveredTile.x}  Y ${hoveredTile.y}` : 'X —  Y —'}</span></div>
+      </>}
+    </div>}
 
-    <Dialog open={openDialog} onOpenChange={setOpenDialog}><DialogContent><DialogHeader><DialogTitle>Open Project</DialogTitle><DialogDescription>Open a recent project, the bundled example, or an exported RPGCrafter ZIP.</DialogDescription></DialogHeader>{recentProjects.length > 0 && <div className="space-y-1"><div className="text-xs font-medium text-muted-foreground">Recent projects</div>{recentProjects.slice(0, 5).map(project => <button key={project.id} type="button" className="flex w-full items-center justify-between border px-3 py-2 text-left hover:bg-muted/30" onClick={() => void openRecent(project.id)}><span className="truncate text-sm">{project.title}</span><span className="text-[10px] text-muted-foreground">{project.gameVersion}</span></button>)}</div>}<button type="button" className="flex w-full items-center gap-3 border bg-muted/20 p-4 text-left outline-none hover:bg-muted/50 focus-visible:ring-2 focus-visible:ring-ring" onClick={() => void openReference()} disabled={loading}><div className="grid size-10 place-items-center bg-primary/15 text-primary"><FolderOpen /></div><span><span className="block text-sm font-medium">La Cloche des Brumes</span><span className="block text-xs text-muted-foreground">Bundled reference game · schema 0.13</span></span></button><label className="flex cursor-pointer items-center justify-center gap-2 border border-dashed p-4 text-sm hover:bg-muted/30"><Upload className="size-4"/>Choose project ZIP<Input className="sr-only" type="file" accept=".zip,application/zip" onChange={event => { const file = event.target.files?.[0]; if (file) void openArchive(file); }}/></label>{error && <pre className="max-h-36 overflow-auto whitespace-pre-wrap border border-destructive/40 bg-destructive/5 p-3 text-xs text-destructive">{error}</pre>}<DialogFooter><Button variant="outline" onClick={() => setOpenDialog(false)}>Cancel</Button></DialogFooter></DialogContent></Dialog>
-    <Dialog open={newProjectDialog} onOpenChange={setNewProjectDialog}><DialogContent><DialogHeader><DialogTitle>New Project</DialogTitle><DialogDescription>The project starts with an empty map and no tilesets.</DialogDescription></DialogHeader><Input autoFocus value={newProjectTitle} placeholder="Project title" onChange={event => setNewProjectTitle(event.target.value)} onKeyDown={event => { if (event.key === 'Enter') void createProject(); }}/><DialogFooter><Button variant="outline" onClick={() => setNewProjectDialog(false)}>Cancel</Button><Button disabled={!newProjectTitle.trim()} onClick={() => void createProject()}>Create</Button></DialogFooter></DialogContent></Dialog>
+    {studioInterface === 'rpgMakerMz' && game && <>
+      <Dialog open={studioTab === 'database'} onOpenChange={open => { if (!open) setStudioTab('maps'); }}><DialogContent className="h-[calc(100%-3rem)] gap-0 rounded-none p-0 sm:max-w-[calc(100%-3rem)]" data-slot="rpg-maker-mz-database-window"><DialogTitle className="sr-only">Database</DialogTitle><div className="min-h-0 flex-1"><DatabaseManager game={game} assetUrls={assetUrls} battleAssets={libraryBattleAssets} onImportBattleAsset={importLibraryBattleAsset} onImportLocal={importLocalTileset} onUpdate={updateTileset} onChangeTerrainCollision={changeTerrainCollision} onCreateItem={createDatabaseItem} onUpdateItem={updateDatabaseItem} onDuplicateItem={duplicateDatabaseItem} onDeleteItem={deleteDatabaseItem} onCreateSkill={createDatabaseSkill} onUpdateSkill={updateDatabaseSkill} onDuplicateSkill={duplicateDatabaseSkill} onDeleteSkill={deleteDatabaseSkill} onCreateEnemy={createDatabaseEnemy} onUpdateEnemy={updateDatabaseEnemy} onDuplicateEnemy={duplicateDatabaseEnemy} onDeleteEnemy={deleteDatabaseEnemy} onCreateTroop={createTroop} onUpdateTroop={updateTroop} onDuplicateTroop={duplicateTroop} onDeleteTroop={deleteTroop} onBattleTest={battleTest} onUpdateDefaultBattleBackground={updateDefaultBattleBackground} onCreateCommonEvent={createCommonEvent} onUpdateCommonEvent={updateCommonEvent} onDuplicateCommonEvent={duplicateCommonEvent} onDeleteCommonEvent={deleteCommonEvent} onCreateType={createDatabaseType} onRenameType={renameDatabaseType} onDeleteType={deleteDatabaseType} onRenameVariable={renameVariable} onRenameSwitch={renameSwitch} onCreateSwitch={createSwitch} onCreateVariable={createVariable} /></div></DialogContent></Dialog>
+      <Dialog open={studioTab === 'assets'} onOpenChange={open => { if (!open) setStudioTab('maps'); }}><DialogContent className="h-[calc(100%-3rem)] gap-0 rounded-none p-0 sm:max-w-[calc(100%-3rem)]" data-slot="rpg-maker-mz-assets-window"><DialogTitle className="sr-only">Resource Manager</DialogTitle><div className="min-h-0 flex-1"><AssetLibrary game={game} assetUrls={assetUrls} library={library} sprites={librarySprites} battleAssets={libraryBattleAssets} bundles={libraryBundles} onImport={importLibraryTileset} onImportSprite={importLibrarySprite} onImportBattleAsset={importLibraryBattleAsset} onImportBundle={importLibraryBundle} /></div></DialogContent></Dialog>
+      {selectedMap && <Dialog open={mzEventDialogOpen && Boolean(selectedEvent)} onOpenChange={setMzEventDialogOpen}><DialogContent className="h-[calc(100%-4rem)] gap-0 rounded-none p-0 sm:max-w-4xl" data-slot="rpg-maker-mz-event-window"><DialogTitle className="sr-only">Event Editor</DialogTitle><div data-event-inspector-panel className="min-h-0 flex-1"><EventInspector presentation="window" game={game} mapId={selectedMapId} event={selectedEvent} issues={issues} assetUrls={assetUrls} sprites={librarySprites} onChangeEvent={changeEvent} onSelectPage={setSelectedEventPageIndex} onImportSprite={importLibrarySprite} onCreateSwitch={createSwitch} onCreateVariable={createVariable} onRenameSwitch={renameSwitch} onRenameVariable={renameVariable} onRenameItem={renameItem} /></div></DialogContent></Dialog>}
+      {selectedMap && <Dialog open={mzMapSettingsOpen} onOpenChange={setMzMapSettingsOpen}><DialogContent className="h-[calc(100%-4rem)] gap-0 rounded-none p-0 sm:max-w-[440px]" data-slot="rpg-maker-mz-map-settings-window"><DialogTitle className="sr-only">Map Settings</DialogTitle><div className="min-h-0 flex-1"><StudioSidebar game={game} assetUrls={assetUrls} map={selectedMap} selectedMapId={selectedMapId} selectedEventId={selectedEventId} mode={editorMode} selectedTerrain={selectedTerrain} activeLayerId={selectedLayerId} canPlay={Boolean(validation?.success)} onPlay={playGame} onSelectMap={selectMap} onCreateMap={createMap} onRenameMap={renameMap} onMoveMap={moveMap} onReorderMap={reorderMap} onResizeMap={resizeMap} onChangeMapEncounters={changeMapEncounters} onSelectEvent={setSelectedEventId} onRenameEvent={renameEvent} onSelectTerrain={setSelectedTerrain} onSelectLayer={selectLayer} onAddLayer={addLayer} onRenameLayer={renameLayer} onDeleteLayer={deleteLayer} onMoveLayer={moveLayer} onChangeLayerPlane={changeLayerPlane} onChangeLayerPhase={changeLayerPhase} onAddPlane={() => setNewPlaneDialog(true)} onRenamePlane={renamePlane} onMovePlane={movePlane} onDeletePlane={deletePlane} onChangeCoverage={changeCoverage} onChangeSurface={changeSurface} onDeleteConnection={deleteConnection} /></div></DialogContent></Dialog>}
+    </>}
+
+    <Dialog open={openDialog} onOpenChange={setOpenDialog}><DialogContent><DialogHeader><DialogTitle>Open Project</DialogTitle><DialogDescription>Open a recent project, a bundled example, or an exported RPGCrafter ZIP.</DialogDescription></DialogHeader>{recentProjects.length > 0 && <div className="space-y-1"><div className="text-xs font-medium text-muted-foreground">Recent projects</div>{recentProjects.slice(0, 5).map(project => <button key={project.id} type="button" className="flex w-full items-center justify-between border px-3 py-2 text-left hover:bg-muted/30" onClick={() => void openRecent(project.id)}><span className="truncate text-sm">{project.title}</span><span className="text-[10px] text-muted-foreground">{project.gameVersion}</span></button>)}</div>}<div className="grid gap-2"><button type="button" className="flex w-full items-center gap-3 border bg-muted/20 p-4 text-left outline-none hover:bg-muted/50 focus-visible:ring-2 focus-visible:ring-ring" onClick={() => void openReference()} disabled={loading}><div className="grid size-10 place-items-center bg-primary/15 text-primary"><FolderOpen /></div><span><span className="block text-sm font-medium">La Cloche des Brumes</span><span className="block text-xs text-muted-foreground">Action RPG reference game</span></span></button><button type="button" className="flex w-full items-center gap-3 border bg-muted/20 p-4 text-left outline-none hover:bg-muted/50 focus-visible:ring-2 focus-visible:ring-ring" onClick={() => void openTurnBasedReference()} disabled={loading}><div className="grid size-10 place-items-center bg-primary/15 text-primary"><Swords /></div><span><span className="block text-sm font-medium">La Cloche des Brumes — Turn-Based</span><span className="block text-xs text-muted-foreground">Turn-based reference game</span></span></button></div><label className="flex cursor-pointer items-center justify-center gap-2 border border-dashed p-4 text-sm hover:bg-muted/30"><Upload className="size-4"/>Choose project ZIP<Input className="sr-only" type="file" accept=".zip,application/zip" onChange={event => { const file = event.target.files?.[0]; if (file) void openArchive(file); }}/></label>{error && <pre className="max-h-36 overflow-auto whitespace-pre-wrap border border-destructive/40 bg-destructive/5 p-3 text-xs text-destructive">{error}</pre>}<DialogFooter><Button variant="outline" onClick={() => setOpenDialog(false)}>Cancel</Button></DialogFooter></DialogContent></Dialog>
+    <Dialog open={newProjectDialog} onOpenChange={setNewProjectDialog}><DialogContent><DialogHeader><DialogTitle>New Project</DialogTitle><DialogDescription>The combat mode is fixed for the lifetime of the project.</DialogDescription></DialogHeader><div className="grid gap-3"><Input autoFocus value={newProjectTitle} placeholder="Project title" onChange={event => setNewProjectTitle(event.target.value)} onKeyDown={event => { if (event.key === 'Enter') void createProject(); }}/><label className="grid gap-1 text-xs font-medium">Combat mode<select className="h-9 border bg-background px-2 text-sm" value={newProjectCombatMode} onChange={event => setNewProjectCombatMode(event.target.value as SourceGame['manifest']['combatMode'])}><option value="turnBased">Turn-based</option><option value="actionRpg">Action RPG</option></select></label></div><DialogFooter><Button variant="outline" onClick={() => setNewProjectDialog(false)}>Cancel</Button><Button disabled={!newProjectTitle.trim()} onClick={() => void createProject()}>Create</Button></DialogFooter></DialogContent></Dialog>
     {selectedMap && <Dialog open={Boolean(pendingConnection)} onOpenChange={open => { if (!open) setPendingConnection(null); }}><DialogContent><DialogHeader><DialogTitle>Create plane connection</DialogTitle><DialogDescription>Choose the destination plane for this bidirectional passage.</DialogDescription></DialogHeader>{pendingConnection && <div className="space-y-3"><div className="border bg-muted/20 px-3 py-2 text-xs"><span className="font-medium">{selectedMap.planes.find(plane => plane.id === pendingConnection.sourcePlaneId)?.name}</span><span className="text-muted-foreground"> · cell {pendingConnection.x}, {pendingConnection.y} · {pendingConnection.edge} edge</span></div><label className="block space-y-1"><span className="text-xs font-medium">Destination plane</span><select autoFocus aria-label="Destination plane" className="h-9 w-full border bg-background px-2 text-sm outline-none focus-visible:ring-2 focus-visible:ring-ring" value={connectionDestinationPlaneId} onChange={event => setConnectionDestinationPlaneId(event.target.value)}>{[...selectedMap.planes].sort((a, b) => a.order - b.order).filter(plane => plane.id !== pendingConnection.sourcePlaneId).map(plane => <option key={plane.id} value={plane.id}>{plane.name}</option>)}</select></label></div>}<DialogFooter><Button variant="outline" onClick={() => setPendingConnection(null)}>Cancel</Button><Button disabled={!pendingConnection || !connectionDestinationPlaneId} onClick={() => { if (!pendingConnection) return; if (addConnection(connectionDestinationPlaneId, pendingConnection.x, pendingConnection.y, pendingConnection.edge, true, pendingConnection.sourcePlaneId)) setPendingConnection(null); }}>Create connection</Button></DialogFooter></DialogContent></Dialog>}
     <Dialog open={newPlaneDialog} onOpenChange={setNewPlaneDialog}><DialogContent><DialogHeader><DialogTitle>Create navigation plane</DialogTitle><DialogDescription>Choose any name that describes this gameplay surface. Names have no engine semantics.</DialogDescription></DialogHeader><Input autoFocus value={newPlaneName} placeholder="Plane name" onChange={event => setNewPlaneName(event.target.value)} onKeyDown={event => { if (event.key === 'Enter') addPlane(); }}/><DialogFooter><Button variant="outline" onClick={() => setNewPlaneDialog(false)}>Cancel</Button><Button disabled={!newPlaneName.trim()} onClick={addPlane}>Create</Button></DialogFooter></DialogContent></Dialog>
     <AlertDialog open={revertDialog} onOpenChange={setRevertDialog}><AlertDialogContent><AlertDialogHeader><AlertDialogTitle>Revert all changes?</AlertDialogTitle><AlertDialogDescription>This clears the browser draft and restores the bundled source JSON. This action cannot be undone.</AlertDialogDescription></AlertDialogHeader><AlertDialogFooter><AlertDialogCancel>Cancel</AlertDialogCancel><AlertDialogAction onClick={() => void revert()}>Revert to Source</AlertDialogAction></AlertDialogFooter></AlertDialogContent></AlertDialog>

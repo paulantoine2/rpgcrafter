@@ -3,18 +3,16 @@ import type { Direction, EventCommand, GameMap, PlanePosition, Vec2 } from './ty
 type TeleportCommand = Extract<EventCommand, { type: 'teleport' }>;
 
 export type ResolvedTeleport = {
-  mapId: string;
+  mapId: number;
   position: PlanePosition;
   direction: TeleportCommand['direction'];
   transition: TeleportCommand['transition'];
 };
 
-export function resolveTeleport(command: TeleportCommand, maps: Record<string, GameMap>, variables: Record<string, number>): ResolvedTeleport | null {
+export function resolveTeleport(command: TeleportCommand, maps: Record<number, GameMap>, variables: Record<number, number>): ResolvedTeleport | null {
   const mapSource = command.destination.map;
   const numericMapId = mapSource.kind === 'variable' ? variables[mapSource.variableId] : undefined;
-  const map = mapSource.kind === 'constant'
-    ? maps[mapSource.mapId]
-    : Object.values(maps).find(candidate => candidate.numericId === numericMapId);
+  const map = mapSource.kind === 'constant' ? maps[mapSource.mapId] : numericMapId === undefined ? undefined : maps[numericMapId];
   if (!map || (numericMapId !== undefined && !Number.isInteger(numericMapId))) return null;
 
   const value = (source: TeleportCommand['destination']['x']) => source.kind === 'constant' ? source.value : variables[source.variableId];

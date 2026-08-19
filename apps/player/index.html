@@ -27,6 +27,10 @@
             <p class="continue-hint">Entrée ou E pour continuer</p>
           </section>
           <section id="toast" class="toast hidden" aria-live="polite"></section>
+          <section id="battle" class="battle-screen hidden" role="dialog" aria-modal="true" aria-label="Turn-based battle">
+            <div id="battle-field" class="battle-field"></div>
+            <div class="battle-hud"><div id="battle-status" class="battle-status"></div><div id="battle-menu" class="battle-menu"></div></div>
+          </section>
           <section id="pause-menu" class="pause-menu hidden" role="dialog" aria-modal="true" aria-label="Menu pause">
             <p id="pause-title" class="eyebrow"></p>
             <div id="pause-tabs" class="pause-tabs" role="tablist"></div>

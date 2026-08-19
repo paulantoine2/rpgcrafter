@@ -1,14 +1,22 @@
 import type { Condition, EventCommand, SourceGame, SwitchOperand, VariableOperand } from '@rpgcrafter/game-schema';
 
-export type DatabaseEntryKind = 'item' | 'skill' | 'switch' | 'variable' | 'equipmentType' | 'commonEvent';
+export type DatabaseEntryKind = 'item' | 'skill' | 'enemy' | 'troop' | 'switch' | 'variable' | 'equipmentType' | 'commonEvent';
 export type DatabaseReference = { path: string; label: string };
 
-export function findDatabaseReferences(game: SourceGame, kind: DatabaseEntryKind, id: string): DatabaseReference[] {
+export function findDatabaseReferences(game: SourceGame, kind: DatabaseEntryKind, id: number): DatabaseReference[] {
   const references: DatabaseReference[] = [];
   const add = (path: string, label: string) => references.push({ path, label });
 
+  if (kind === 'enemy') {
+    for (const [troopId, troop] of Object.entries(game.troops)) troop.members.forEach((member, index) => { if (member.enemyId === id) add(`troops.${troopId}.members[${index}].enemyId`, troop.name); });
+    return references;
+  }
+  if (kind === 'troop') {
+    for (const [mapId, map] of Object.entries(game.maps)) map.encounters?.entries.forEach((entry, index) => { if (entry.troopId === id) add(`maps.${mapId}.encounters.entries[${index}]`, map.name); });
+  }
+
   if (kind === 'equipmentType') {
-    const typeId = Number(id);
+    const typeId = id;
     for (const [itemId, item] of Object.entries(game.items)) if (item.equipmentTypeId === typeId) add(`items.${itemId}.equipmentTypeId`, item.name);
     if (id in (game.initialState.equipment || {})) add(`initialState.equipment.${id}`, `Initial equipment type ${id}`);
     return references;
@@ -38,6 +46,7 @@ export function findDatabaseReferences(game: SourceGame, kind: DatabaseEntryKind
     if (kind === 'switch' && command.type === 'setSwitch' && command.id === id) add(commandPath, label);
     if (kind === 'variable' && command.type === 'setVariable' && command.id === id) add(commandPath, label);
     if (kind === 'commonEvent' && command.type === 'callCommonEvent' && command.id === id) add(commandPath, label);
+    if (kind === 'troop' && command.type === 'battle' && command.troopId === id) add(commandPath, label);
     if (command.type === 'setSwitch' && command.operation === 'set') visitSwitchOperand(command.operand, `${commandPath}.operand`, label);
     if (command.type === 'setVariable') visitVariableOperand(command.operand, `${commandPath}.operand`, label);
     if (command.type === 'conditional') {
@@ -64,7 +73,7 @@ export function findDatabaseReferences(game: SourceGame, kind: DatabaseEntryKind
 
   for (const [mapId, map] of Object.entries(game.maps)) {
     map.events.forEach((event, eventIndex) => event.pages.forEach((page, pageIndex) => {
-      const label = `${map.name} · ${event.id} · page ${pageIndex + 1}`;
+      const label = `${map.name} · ${event.name} · page ${pageIndex + 1}`;
       const pagePath = `maps.${mapId}.events[${eventIndex}].pages[${pageIndex}]`;
       page.conditions?.forEach((condition, index) => visitCondition(condition, `${pagePath}.conditions[${index}]`, label));
       visitCommands(page.contents, `${pagePath}.contents`, label);

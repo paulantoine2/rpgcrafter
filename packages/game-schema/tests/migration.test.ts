@@ -80,9 +80,9 @@ describe('V0.4 migration', () => {
     const result = parseSourceGame(legacy);
     expect(result.success).toBe(true);
     if (!result.success) return;
-    expect(result.data.manifest.schemaVersion).toBe('0.13');
-    expect(result.data.maps.village.planes).toEqual([{ id: 'plane-1', name: 'Plan 1', order: 0, surfaceLayerId: 'surface', surfaceCoverage: 'bounds' }]);
-    expect(result.data.maps.village.blockedRegions[0].planeId).toBe('plane-1');
+    expect(result.data.manifest.schemaVersion).toBe('0.16');
+    expect(result.data.maps[1].planes).toEqual([{ id: 'plane-1', name: 'Plan 1', order: 0, surfaceLayerId: 'surface', surfaceCoverage: 'bounds' }]);
+    expect(result.data.maps[1].blockedRegions[0].planeId).toBe('plane-1');
     expect(result.data.actors.player.start.planeId).toBe('plane-1');
   });
 });
@@ -102,7 +102,7 @@ describe('legacy event visual migration', () => {
 
     expect(result.success).toBe(true);
     if (!result.success) return;
-    expect(result.data.maps.village.events.find(item => item.id === 'mayor')?.pages[0].sprite).toMatchObject({
+    expect(result.data.maps[1].events.find(item => item.name === 'mayor')?.pages[0].sprite).toMatchObject({
       image: 'sprites/rpg-maker-mz/Actor1.png',
       characterIndex: 0,
     });
@@ -120,12 +120,12 @@ describe('V0.6 event-page migration', () => {
 
     expect(result.success).toBe(true);
     if (!result.success) return;
-    const mayor = result.data.maps.village.events.find(event => event.id === 'mayor')!;
+    const mayor = result.data.maps[1].events.find(event => event.name === 'mayor')!;
     expect(mayor.pages).toHaveLength(4);
-    expect(mayor.pages[0].conditions).toEqual([{ kind: 'switch', id: 'questAccepted', operand: { kind: 'constant', value: false } }]);
+    expect(mayor.pages[0].conditions).toEqual([{ kind: 'switch', id: 1, operand: { kind: 'constant', value: false } }]);
     expect(mayor.pages[0].contents[0].type).toBe('dialogue');
     expect(result.data.events).toEqual({ objectives: expect.any(Array), commonEvents: {} });
-    expect(result.data.initialState.switches.keyChestOpened).toEqual({ name: 'Key Chest Opened', initialValue: false });
+    expect(result.data.initialState.switches[2]).toEqual({ name: 'Key Chest Opened', initialValue: false });
     expect(Object.values(result.data.maps).flatMap(map => map.events).flatMap(event => event.pages).flatMap(page => page.conditions || []).some(condition => condition.kind === 'switch')).toBe(true);
   });
 });
@@ -144,7 +144,7 @@ describe('V0.7 draft migration', () => {
 
     expect(result.success).toBe(true);
     if (!result.success) return;
-    expect(result.data.initialState.switches.unsavedDraftSwitch).toEqual({
+    expect(result.data.initialState.switches[6]).toEqual({
       name: 'Unsaved draft switch',
       initialValue: true,
     });
@@ -178,12 +178,12 @@ describe('V0.7 draft migration', () => {
 
     expect(result.success).toBe(true);
     if (!result.success) return;
-    const contents = result.data.maps.village.events[0].pages[0].contents;
+    const contents = result.data.maps[1].events[0].pages[0].contents;
     expect(contents).not.toContainEqual(expect.objectContaining({ type: 'setQuestState' }));
     const dialogue = contents.at(-1);
     expect(dialogue?.type).toBe('dialogue');
     if (dialogue?.type === 'dialogue') expect(dialogue.choices?.[0].commands).toEqual([]);
-    expect(result.data.enemies.slime.onDefeated).toEqual([]);
+    expect(result.data.enemies[1].onDefeated).toEqual([]);
   });
 });
 
@@ -209,13 +209,13 @@ describe('V0.8 migration', () => {
     expect(result.success).toBe(true);
     if (!result.success) return;
     const maps = Object.values(result.data.maps);
-    expect(maps.map(map => map.numericId)).toEqual(maps.map((_, index) => index + 1));
-    expect(result.data.manifest.nextMapNumericId).toBe(maps.length + 1);
-    const dialogue = result.data.maps.village.events[0].pages[0].contents[0];
+    expect(maps.map(map => map.id)).toEqual(maps.map((_, index) => index + 1));
+    expect(result.data.manifest.nextIds.maps).toBe(maps.length + 1);
+    const dialogue = result.data.maps[1].events[0].pages[0].contents[0];
     expect(dialogue).toMatchObject({ choices: [{ commands: [{ thenCommands: [{
-      type: 'teleport', destination: { map: { kind: 'constant', mapId: 'path' }, x: { kind: 'constant', value: 2 }, y: { kind: 'constant', value: 3 } }, direction: 'retain', transition: 'instant',
+      type: 'teleport', destination: { map: { kind: 'constant', mapId: 2 }, x: { kind: 'constant', value: 2 }, y: { kind: 'constant', value: 3 } }, direction: 'retain', transition: 'instant',
     }] }] }] });
-    expect(result.data.enemies.slime.onDefeated).toEqual([expect.objectContaining({ type: 'teleport', direction: 'retain', transition: 'instant' })]);
+    expect(result.data.enemies[1].onDefeated).toEqual([expect.objectContaining({ type: 'teleport', direction: 'retain', transition: 'instant' })]);
   });
 });
 
@@ -241,13 +241,13 @@ describe('V0.9 migration', () => {
 
     expect(result.success).toBe(true);
     if (!result.success) return;
-    expect(result.data.manifest).toMatchObject({ schemaVersion: '0.13', engineRange: '>=0.13 <0.14' });
-    const dialogue = result.data.maps.village.events[0].pages[0].contents[0];
+    expect(result.data.manifest).toMatchObject({ schemaVersion: '0.16', engineRange: '>=0.16 <0.17' });
+    const dialogue = result.data.maps[1].events[0].pages[0].contents[0];
     expect(dialogue).toMatchObject({ choices: [{ commands: [{
-      thenCommands: [{ type: 'setSwitch', id: 'questAccepted', operation: 'set', operand: { kind: 'constant', value: false } }],
-      elseCommands: [{ type: 'setVariable', id: 'score', operation: 'set', operand: { kind: 'constant', value: 12 } }],
+      thenCommands: [{ type: 'setSwitch', id: 1, operation: 'set', operand: { kind: 'constant', value: false } }],
+      elseCommands: [{ type: 'setVariable', id: 1, operation: 'set', operand: { kind: 'constant', value: 12 } }],
     }] }] });
-    expect(result.data.enemies.slime.onDefeated).toEqual([{ type: 'setVariable', id: 'score', operation: 'set', operand: { kind: 'constant', value: 4 } }]);
+    expect(result.data.enemies[1].onDefeated).toEqual([{ type: 'setVariable', id: 1, operation: 'set', operand: { kind: 'constant', value: 4 } }]);
   });
 });
 
@@ -272,10 +272,10 @@ describe('V0.10 migration', () => {
 
     expect(result.success).toBe(true);
     if (!result.success) return;
-    expect(result.data.manifest).toMatchObject({ schemaVersion: '0.13', engineRange: '>=0.13 <0.14' });
-    expect(result.data.maps.village.events[0].pages[0].conditions).toEqual([{ kind: 'variable', id: 'score', operator: 'greaterThanOrEqual', operand: { kind: 'constant', value: 3 } }]);
-    expect(result.data.maps.village.events[0].pages[0].contents[0]).toMatchObject({ condition: { kind: 'switch', id: 'questAccepted', operand: { kind: 'constant', value: false } } });
-    expect(result.data.enemies.slime.onDefeated?.[0]).toMatchObject({ condition: { kind: 'variable', id: 'score', operator: 'equal', operand: { kind: 'constant', value: 5 } } });
+    expect(result.data.manifest).toMatchObject({ schemaVersion: '0.16', engineRange: '>=0.16 <0.17' });
+    expect(result.data.maps[1].events[0].pages[0].conditions).toEqual([{ kind: 'variable', id: 1, operator: 'greaterThanOrEqual', operand: { kind: 'constant', value: 3 } }]);
+    expect(result.data.maps[1].events[0].pages[0].contents[0]).toMatchObject({ condition: { kind: 'switch', id: 1, operand: { kind: 'constant', value: false } } });
+    expect(result.data.enemies[1].onDefeated?.[0]).toMatchObject({ condition: { kind: 'variable', id: 1, operator: 'equal', operand: { kind: 'constant', value: 5 } } });
   });
 });
 
@@ -301,16 +301,16 @@ describe('V0.11 migration', () => {
 
     expect(result.success).toBe(true);
     if (!result.success) return;
-    expect(result.data.manifest).toMatchObject({ schemaVersion: '0.13', engineRange: '>=0.13 <0.14' });
+    expect(result.data.manifest).toMatchObject({ schemaVersion: '0.16', engineRange: '>=0.16 <0.17' });
     expect(result.data.types.equipment).toEqual({
       nextId: 5,
       entries: [
         { id: 1, name: 'Weapon' }, { id: 2, name: 'Armor' }, { id: 3, name: 'Accessory' }, { id: 4, name: 'trinket' },
       ],
     });
-    expect(result.data.items['item.hero-sword'].equipmentTypeId).toBe(1);
-    expect(result.data.items['item.orphan-charm'].equipmentTypeId).toBe(4);
-    expect(result.data.initialState.equipment).toEqual({ '1': 'item.hero-sword', '2': 'item.leather-cloak', '3': null });
+    expect(result.data.items[4].equipmentTypeId).toBe(1);
+    expect(result.data.items[6].equipmentTypeId).toBe(4);
+    expect(result.data.initialState.equipment).toEqual({ '1': 4, '2': 5, '3': null });
     expect(result.data.ui).not.toHaveProperty('equipmentSlots');
   });
 });
@@ -329,7 +329,52 @@ describe('V0.12 migration', () => {
 
     expect(result.success).toBe(true);
     if (!result.success) return;
-    expect(result.data.manifest).toMatchObject({ schemaVersion: '0.13', engineRange: '>=0.13 <0.14' });
+    expect(result.data.manifest).toMatchObject({ schemaVersion: '0.16', engineRange: '>=0.16 <0.17' });
     expect(result.data.events.commonEvents).toEqual({});
+  });
+});
+
+describe('V0.15 migration', () => {
+  it('renames encounters and preserves combat data, rewards, positions, and backgrounds', () => {
+    const current = parseSourceGame({
+      manifest: read('manifest.json'), tilesets: read('tilesets.json'), maps: read('maps.json'), actors: read('actors.json'), enemies: read('enemies.json'),
+      skills: read('skills.json'), items: read('items.json'), quests: read('quests.json'), types: read('types.json'), ui: read('ui.json'), events: read('events.json'), initialState: read('initial-state.json'),
+    } as SourceGameFiles);
+    expect(current.success).toBe(true);
+    if (!current.success) return;
+    const legacy = structuredClone(current.data) as any;
+    legacy.manifest.schemaVersion = '0.15';
+    legacy.manifest.engineRange = '>=0.15 <0.16';
+    legacy.manifest.nextIds.encounters = 2;
+    delete legacy.manifest.nextIds.troops;
+    legacy.encounters = { 1: { name: 'Slime pair', enemyIds: [1, 1] } };
+    delete legacy.troops;
+    legacy.maps[1].encounters = { averageSteps: 20, entries: [{ encounterId: 1, weight: 3 }] };
+    legacy.events.commonEvents[1] = { name: 'Fight', trigger: { type: 'none' }, contents: [{ type: 'battle', encounterId: 1 }] };
+    legacy.manifest.nextIds.commonEvents = 2;
+    for (const enemy of Object.values(legacy.enemies) as any[]) {
+      enemy.battleSprite = enemy.image;
+      enemy.hp = enemy.stats.maxHp;
+      enemy.damage = enemy.stats.attack;
+      enemy.xp = enemy.rewards.xp;
+      delete enemy.image;
+      delete enemy.stats;
+      delete enemy.rewards;
+    }
+    delete legacy.actors.player.stats.attack;
+    delete legacy.actors.player.stats.defense;
+    legacy.ui.battle = { background: { lowerImage: 'battle/ground.png', upperImage: 'battle/sky.png' } };
+
+    const result = parseSourceGame(legacy);
+
+    expect(result.success).toBe(true);
+    if (!result.success) return;
+    expect(result.data.manifest).toMatchObject({ schemaVersion: '0.16', engineRange: '>=0.16 <0.17', nextIds: { troops: 2 } });
+    expect(result.data.troops[1]).toEqual({ name: 'Slime pair', members: [{ enemyId: 1, x: 32, y: 38 }, { enemyId: 1, x: 16, y: 47 }] });
+    expect(result.data.maps[1].encounters?.entries).toEqual([{ troopId: 1, weight: 3 }]);
+    expect(result.data.events.commonEvents[1].contents[0]).toEqual({ type: 'battle', troopId: 1 });
+    expect(result.data.enemies[1]).toMatchObject({ image: expect.any(String), stats: { maxHp: 42, attack: 8, defense: 0 }, rewards: { xp: 7 } });
+    expect(result.data.actors.player.stats).toMatchObject({ attack: 0, defense: 0 });
+    expect(result.data.ui.battle?.background).toEqual({ lowerImage: 'battle/ground.png', upperImage: 'battle/sky.png' });
   });
 });

@@ -460,6 +460,287 @@ function migrateV12(files: SourceGameFiles): SourceGameFiles {
   return next;
 }
 
+function numericRecord(record: unknown, preferredIds?: Map<string, number>) {
+  const entries = Object.entries((record || {}) as Record<string, JsonObject>);
+  const ids = new Map(entries.map(([id], index) => [id, preferredIds?.get(id) ?? index + 1]));
+  return {
+    ids,
+    value: Object.fromEntries(entries.map(([id, value]) => [String(ids.get(id)), value])),
+    nextId: Math.max(0, ...ids.values()) + 1,
+  };
+}
+
+type NumericMigrationIds = {
+  maps: Map<string, number>;
+  enemies: Map<string, number>;
+  skills: Map<string, number>;
+  items: Map<string, number>;
+  quests: Map<string, number>;
+  commonEvents: Map<string, number>;
+  switches: Map<string, number>;
+  variables: Map<string, number>;
+};
+
+function migratedId(ids: Map<string, number>, value: unknown) {
+  return typeof value === 'number' ? value : ids.get(String(value));
+}
+
+function migrateNumericTarget(target: unknown, eventIds?: Map<string, number>) {
+  if (!target || typeof target !== 'object') return target;
+  const next = { ...(target as JsonObject) };
+  if (next.kind === 'event' && eventIds) next.eventId = migratedId(eventIds, next.eventId);
+  return next;
+}
+
+function migrateNumericVariableOperand(operand: unknown, ids: NumericMigrationIds, eventIds?: Map<string, number>) {
+  if (!operand || typeof operand !== 'object') return operand;
+  const next = { ...(operand as JsonObject) };
+  if (next.kind === 'variable') next.variableId = migratedId(ids.variables, next.variableId);
+  if (next.kind === 'gameData' && next.data && typeof next.data === 'object') {
+    next.data = { ...next.data };
+    if (next.data.kind === 'itemAmount') next.data.itemId = migratedId(ids.items, next.data.itemId);
+    if (next.data.kind === 'characterCoordinate') next.data.target = migrateNumericTarget(next.data.target, eventIds);
+  }
+  return next;
+}
+
+function migrateNumericSwitchOperand(operand: unknown, ids: NumericMigrationIds) {
+  if (!operand || typeof operand !== 'object') return operand;
+  const next = { ...(operand as JsonObject) };
+  if (next.kind === 'switch') next.switchId = migratedId(ids.switches, next.switchId);
+  if (next.kind === 'gameData' && next.data && typeof next.data === 'object') {
+    next.data = { ...next.data };
+    if (next.data.kind === 'hasItem' || next.data.kind === 'itemEquipped') next.data.itemId = migratedId(ids.items, next.data.itemId);
+    if (next.data.kind === 'skillUnlocked') next.data.skillId = migratedId(ids.skills, next.data.skillId);
+  }
+  return next;
+}
+
+function migrateNumericCondition(condition: unknown, ids: NumericMigrationIds, eventIds?: Map<string, number>) {
+  if (!condition || typeof condition !== 'object') return condition;
+  const next = { ...(condition as JsonObject) };
+  if (next.kind === 'switch') {
+    next.id = migratedId(ids.switches, next.id);
+    next.operand = migrateNumericSwitchOperand(next.operand, ids);
+  }
+  if (next.kind === 'item') next.id = migratedId(ids.items, next.id);
+  if (next.kind === 'variable') {
+    next.id = migratedId(ids.variables, next.id);
+    next.operand = migrateNumericVariableOperand(next.operand, ids, eventIds);
+  }
+  return next;
+}
+
+function migrateNumericCommands(commands: unknown, ids: NumericMigrationIds, eventIds?: Map<string, number>): unknown {
+  if (!Array.isArray(commands)) return commands;
+  return commands.map(command => {
+    if (!command || typeof command !== 'object') return command;
+    const next = { ...(command as JsonObject) };
+    if (next.type === 'setSwitch') {
+      next.id = migratedId(ids.switches, next.id);
+      if (next.operation === 'set') next.operand = migrateNumericSwitchOperand(next.operand, ids);
+    }
+    if (next.type === 'setVariable') {
+      next.id = migratedId(ids.variables, next.id);
+      next.operand = migrateNumericVariableOperand(next.operand, ids, eventIds);
+    }
+    if (next.type === 'giveItem' || next.type === 'removeItem') next.id = migratedId(ids.items, next.id);
+    if (next.type === 'unlockSkill') next.id = migratedId(ids.skills, next.id);
+    if (next.type === 'callCommonEvent') next.id = migratedId(ids.commonEvents, next.id);
+    if (next.type === 'teleport' && next.destination && typeof next.destination === 'object') {
+      next.destination = { ...next.destination };
+      if (next.destination.map?.kind === 'constant') next.destination.map = { ...next.destination.map, mapId: migratedId(ids.maps, next.destination.map.mapId) };
+      if (next.destination.map?.kind === 'variable') next.destination.map = { ...next.destination.map, variableId: migratedId(ids.variables, next.destination.map.variableId) };
+      for (const coordinate of ['x', 'y']) if (next.destination[coordinate]?.kind === 'variable') next.destination[coordinate] = { ...next.destination[coordinate], variableId: migratedId(ids.variables, next.destination[coordinate].variableId) };
+    }
+    if (next.type === 'movementRoute') next.target = migrateNumericTarget(next.target, eventIds);
+    if (next.type === 'conditional') {
+      next.condition = migrateNumericCondition(next.condition, ids, eventIds);
+      next.thenCommands = migrateNumericCommands(next.thenCommands, ids, eventIds);
+      if (Array.isArray(next.elseCommands)) next.elseCommands = migrateNumericCommands(next.elseCommands, ids, eventIds);
+    }
+    if (next.type === 'dialogue' && Array.isArray(next.choices)) next.choices = next.choices.map((choice: JsonObject) => ({ ...choice, commands: migrateNumericCommands(choice.commands, ids, eventIds) }));
+    return next;
+  });
+}
+
+/** Replaces gameplay slugs with immutable, family-local numeric IDs. */
+function migrateV13(files: SourceGameFiles): SourceGameFiles {
+  const manifest = files.manifest as JsonObject | null;
+  if (!manifest || manifest.schemaVersion !== '0.13') return files;
+  const next = structuredClone(files) as SourceGameFiles;
+  const nextManifest = next.manifest as JsonObject;
+  const oldMaps = (next.maps || {}) as Record<string, JsonObject>;
+  const preferredMapIds = new Map(Object.entries(oldMaps).map(([id, map], index) => [id, typeof map.numericId === 'number' ? map.numericId : index + 1]));
+  const maps = numericRecord(oldMaps, preferredMapIds);
+  const enemies = numericRecord(next.enemies);
+  const skills = numericRecord(next.skills);
+  const items = numericRecord(next.items);
+  const quests = numericRecord(next.quests);
+  const events = (next.events || {}) as JsonObject;
+  const commonEvents = numericRecord(events.commonEvents);
+  const initialState = (next.initialState || {}) as JsonObject;
+  const switches = numericRecord(initialState.switches);
+  const variables = numericRecord(initialState.variables);
+  const ids: NumericMigrationIds = {
+    maps: maps.ids, enemies: enemies.ids, skills: skills.ids, items: items.ids, quests: quests.ids,
+    commonEvents: commonEvents.ids, switches: switches.ids, variables: variables.ids,
+  };
+
+  for (const [mapIndex, [oldMapId, map]] of Object.entries(oldMaps).entries()) {
+    const mapId = maps.ids.get(oldMapId)!;
+    const eventEntries = Array.isArray(map.events) ? map.events as JsonObject[] : [];
+    const eventIds = new Map(eventEntries.map((event, index) => [String(event.id), index + 1]));
+    map.id = mapId;
+    map.order = mapIndex;
+    delete map.numericId;
+    map.nextEventId = eventEntries.length + 1;
+    if (map.parentMapId) map.parentMapId = migratedId(ids.maps, map.parentMapId);
+    if (map.deathDestination) map.deathDestination.mapId = migratedId(ids.maps, map.deathDestination.mapId);
+    map.events = eventEntries.map(event => ({
+      ...event,
+      id: eventIds.get(String(event.id)),
+      name: typeof event.name === 'string' && event.name ? event.name : String(event.id),
+      pages: (Array.isArray(event.pages) ? event.pages : []).map((page: JsonObject) => ({
+        ...page,
+        conditions: Array.isArray(page.conditions) ? page.conditions.map(condition => migrateNumericCondition(condition, ids, eventIds)) : page.conditions,
+        contents: migrateNumericCommands(page.contents, ids, eventIds),
+      })),
+    }));
+    map.enemySpawns = (Array.isArray(map.enemySpawns) ? map.enemySpawns : []).map((spawn: JsonObject) => ({ ...spawn, enemyId: migratedId(ids.enemies, spawn.enemyId) }));
+  }
+
+  const actors = next.actors as JsonObject;
+  if (actors?.player) {
+    actors.player.id = 1;
+    actors.player.primaryAttack = migratedId(ids.skills, actors.player.primaryAttack);
+    actors.player.skillSlots = Object.fromEntries(Object.entries((actors.player.skillSlots || {}) as JsonObject).map(([slot, skillId]) => [slot, migratedId(ids.skills, skillId)]));
+    actors.player.unlockedSkills = (Array.isArray(actors.player.unlockedSkills) ? actors.player.unlockedSkills : []).map((skillId: unknown) => migratedId(ids.skills, skillId));
+  }
+  for (const enemy of Object.values(enemies.value)) if (enemy.onDefeated) enemy.onDefeated = migrateNumericCommands(enemy.onDefeated, ids);
+  for (const commonEvent of Object.values(commonEvents.value)) {
+    if (commonEvent.trigger?.type !== 'none') commonEvent.trigger.switchId = migratedId(ids.switches, commonEvent.trigger.switchId);
+    commonEvent.contents = migrateNumericCommands(commonEvent.contents, ids);
+  }
+  events.objectives = (Array.isArray(events.objectives) ? events.objectives : []).map((objective: JsonObject) => ({
+    ...objective,
+    conditions: Array.isArray(objective.conditions) ? objective.conditions.map(condition => migrateNumericCondition(condition, ids)) : objective.conditions,
+  }));
+  events.commonEvents = commonEvents.value;
+  initialState.switches = switches.value;
+  initialState.variables = variables.value;
+  initialState.quests = Object.fromEntries(Object.entries((initialState.quests || {}) as JsonObject).map(([questId, state]) => [String(migratedId(ids.quests, questId)), state]));
+  initialState.inventory = Object.fromEntries(Object.entries((initialState.inventory || {}) as JsonObject).map(([itemId, amount]) => [String(migratedId(ids.items, itemId)), amount]));
+  initialState.equipment = Object.fromEntries(Object.entries((initialState.equipment || {}) as JsonObject).map(([typeId, itemId]) => [typeId, itemId == null ? null : migratedId(ids.items, itemId)]));
+
+  next.maps = maps.value;
+  next.enemies = enemies.value;
+  next.skills = skills.value;
+  next.items = items.value;
+  next.quests = quests.value;
+  nextManifest.schemaVersion = '0.14';
+  nextManifest.engineRange = '>=0.14 <0.15';
+  nextManifest.entryPoint.mapId = migratedId(ids.maps, nextManifest.entryPoint.mapId);
+  nextManifest.nextIds = {
+    maps: maps.nextId, actors: 2, enemies: enemies.nextId, skills: skills.nextId, items: items.nextId, quests: quests.nextId,
+    commonEvents: commonEvents.nextId, switches: switches.nextId, variables: variables.nextId,
+  };
+  delete nextManifest.nextMapNumericId;
+  return next;
+}
+
+/** Adds fixed project combat modes and turn-based encounter authoring. */
+function migrateV14(files: SourceGameFiles): SourceGameFiles {
+  const manifest = files.manifest as JsonObject | null;
+  if (!manifest || manifest.schemaVersion !== '0.14') return files;
+  const next = structuredClone(files) as SourceGameFiles;
+  const nextManifest = next.manifest as JsonObject;
+  nextManifest.schemaVersion = '0.15';
+  nextManifest.engineRange = '>=0.15 <0.16';
+  nextManifest.combatMode = 'actionRpg';
+  nextManifest.nextIds = { ...nextManifest.nextIds, encounters: 1 };
+  (next as unknown as JsonObject).encounters = {};
+  for (const map of Object.values((next.maps || {}) as Record<string, JsonObject>)) {
+    map.encounters = { averageSteps: 30, entries: [] };
+  }
+  return next;
+}
+
+function migrateTroopCommands(commands: unknown): unknown {
+  if (!Array.isArray(commands)) return commands;
+  return commands.map(command => {
+    if (!command || typeof command !== 'object') return command;
+    const next = { ...(command as JsonObject) };
+    if (next.type === 'battle' && 'encounterId' in next) {
+      next.troopId = next.encounterId;
+      delete next.encounterId;
+    }
+    if (next.type === 'conditional') {
+      next.thenCommands = migrateTroopCommands(next.thenCommands);
+      if (Array.isArray(next.elseCommands)) next.elseCommands = migrateTroopCommands(next.elseCommands);
+    }
+    if (next.type === 'dialogue' && Array.isArray(next.choices)) {
+      next.choices = next.choices.map((choice: JsonObject) => ({ ...choice, commands: migrateTroopCommands(choice.commands) }));
+    }
+    return next;
+  });
+}
+
+/** Replaces encounters with positioned troops and introduces extensible combat stats. */
+function migrateV15(files: SourceGameFiles): SourceGameFiles {
+  const manifest = files.manifest as JsonObject | null;
+  if (!manifest || manifest.schemaVersion !== '0.15') return files;
+  const next = structuredClone(files) as SourceGameFiles;
+  const raw = next as unknown as JsonObject;
+  const nextManifest = next.manifest as JsonObject;
+  const nextIds = (nextManifest.nextIds || {}) as JsonObject;
+  nextManifest.schemaVersion = '0.16';
+  nextManifest.engineRange = '>=0.16 <0.17';
+  nextManifest.nextIds = { ...nextIds, troops: nextIds.encounters || 1 };
+  delete (nextManifest.nextIds as JsonObject).encounters;
+
+  const encounters = (raw.encounters || {}) as Record<string, JsonObject>;
+  raw.troops = Object.fromEntries(Object.entries(encounters).map(([id, encounter]) => [id, {
+    name: encounter.name,
+    members: (Array.isArray(encounter.enemyIds) ? encounter.enemyIds : []).map((enemyId, index) => ({
+      enemyId,
+      x: 32 - index % 2 * 16,
+      y: Math.min(88, 38 + Math.floor(index / 2) * 22 + index % 2 * 9),
+    })),
+  }]));
+  delete raw.encounters;
+
+  for (const map of Object.values((next.maps || {}) as Record<string, JsonObject>)) {
+    const encounterSettings = map.encounters as JsonObject | undefined;
+    if (encounterSettings && Array.isArray(encounterSettings.entries)) {
+      encounterSettings.entries = encounterSettings.entries.map((entry: JsonObject) => {
+        const migrated: JsonObject = { ...entry, troopId: entry.encounterId };
+        delete migrated.encounterId;
+        return migrated;
+      });
+    }
+    for (const event of Array.isArray(map.events) ? map.events : []) {
+      for (const page of Array.isArray(event.pages) ? event.pages : []) page.contents = migrateTroopCommands(page.contents);
+    }
+  }
+
+  for (const enemy of Object.values((next.enemies || {}) as Record<string, JsonObject>)) {
+    if (!enemy.image) enemy.image = enemy.battleSprite;
+    if (!enemy.stats) enemy.stats = { maxHp: enemy.hp, attack: enemy.damage, defense: 0 };
+    if (!enemy.rewards) enemy.rewards = { xp: enemy.xp };
+    delete enemy.battleSprite;
+    delete enemy.hp;
+    delete enemy.damage;
+    delete enemy.xp;
+    if (enemy.onDefeated) enemy.onDefeated = migrateTroopCommands(enemy.onDefeated);
+  }
+  const actors = next.actors as JsonObject;
+  if (actors?.player) actors.player.stats = { ...(actors.player.stats as JsonObject), attack: 0, defense: 0 };
+  const events = next.events as JsonObject;
+  for (const commonEvent of Object.values((events?.commonEvents || {}) as Record<string, JsonObject>)) commonEvent.contents = migrateTroopCommands(commonEvent.contents);
+  return next;
+}
+
 function ensureVariables(files: SourceGameFiles): SourceGameFiles {
   const initialState = files.initialState as JsonObject | null;
   if (!initialState || 'variables' in initialState) return files;
@@ -498,5 +779,5 @@ function removeQuestStateCommands(files: SourceGameFiles): SourceGameFiles {
 
 /** Migrates every supported legacy authoring shape to the current schema. */
 export function migrateSourceGameFiles(files: SourceGameFiles): SourceGameFiles {
-  return removeQuestStateCommands(ensureVariables(migrateV12(migrateV11(migrateV10(migrateV09(migrateV08(migrateV07(migrateV06(migrateEventVisuals(migrateV05(migrateV04(files))))))))))));
+  return removeQuestStateCommands(ensureVariables(migrateV15(migrateV14(migrateV13(migrateV12(migrateV11(migrateV10(migrateV09(migrateV08(migrateV07(migrateV06(migrateEventVisuals(migrateV05(migrateV04(files)))))))))))))));
 }

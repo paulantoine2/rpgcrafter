@@ -72,12 +72,13 @@ function DrawingTools({ layers, activeLayerId, drawingTool, onSelectLayer, onCha
   </>;
 }
 
-export function StudioToolbar({ mode, layers, activeLayerId, drawingTool, eventTool, onChangeMode, onSelectLayer, onChangeDrawingTool, onChangeEventTool }: {
+export function StudioToolbar({ mode, layers, activeLayerId, drawingTool, eventTool, presentation = 'floating', onChangeMode, onSelectLayer, onChangeDrawingTool, onChangeEventTool }: {
   mode: EditorMode;
   layers: TileLayer[];
   activeLayerId: string | null;
   drawingTool: DrawingTool;
   eventTool: EventTool;
+  presentation?: 'floating' | 'mz';
   onChangeMode: (mode: EditorMode) => void;
   onSelectLayer: (layerId: string) => void;
   onChangeDrawingTool: (tool: DrawingTool) => void;
@@ -107,8 +108,9 @@ export function StudioToolbar({ mode, layers, activeLayerId, drawingTool, eventT
     );
   }, [mode]);
 
-  return <div className="pointer-events-none absolute inset-x-0 bottom-4 z-20 flex justify-center px-3">
-    <div ref={toolbarRef} data-slot="studio-toolbar" className="pointer-events-auto flex max-w-full items-center gap-1.5 overflow-hidden rounded-xl border bg-card p-1.5 text-card-foreground shadow-[0_12px_36px_-12px_rgb(0_0_0/0.45)] backdrop-blur-md">
+  const floating = presentation === 'floating';
+  return <div className={floating ? 'pointer-events-none absolute inset-x-0 bottom-4 z-20 flex justify-center px-3' : 'flex h-11 shrink-0 items-center border-b bg-card px-2'}>
+    <div ref={toolbarRef} data-slot="studio-toolbar" data-presentation={presentation} className={floating ? 'pointer-events-auto flex max-w-full items-center gap-1.5 overflow-hidden rounded-xl border bg-card p-1.5 text-card-foreground shadow-[0_12px_36px_-12px_rgb(0_0_0/0.45)] backdrop-blur-md' : 'flex max-w-full items-center gap-1.5 overflow-hidden text-card-foreground'}>
       <div className="flex min-w-0 items-center gap-1.5 overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
         {mode === 'events' && <EventsTools eventTool={eventTool} onChangeEventTool={onChangeEventTool} />}
         {mode === 'drawing' && <DrawingTools layers={layers} activeLayerId={activeLayerId} drawingTool={drawingTool} onSelectLayer={onSelectLayer} onChangeDrawingTool={onChangeDrawingTool} />}

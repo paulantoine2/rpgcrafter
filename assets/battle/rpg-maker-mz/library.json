@@ -1,0 +1,4711 @@
+{
+  "id": "rpg-maker-mz",
+  "name": "RPG Maker MZ",
+  "version": 1,
+  "assets": [
+    {
+      "id": "rpg-maker-mz-sv-actors-actor1-1",
+      "name": "Actor1 1",
+      "type": "actor-battler",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "actor",
+        "side-view",
+        "animated"
+      ],
+      "image": "battle/rpg-maker-mz/sv_actors/Actor1_1.png",
+      "layout": {
+        "format": "rpg-maker-mz-side-view-actor",
+        "columns": 9,
+        "rows": 6,
+        "frameWidth": 64,
+        "frameHeight": 64,
+        "idleFrame": {
+          "column": 3,
+          "row": 0
+        }
+      }
+    },
+    {
+      "id": "rpg-maker-mz-sv-actors-actor1-2",
+      "name": "Actor1 2",
+      "type": "actor-battler",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "actor",
+        "side-view",
+        "animated"
+      ],
+      "image": "battle/rpg-maker-mz/sv_actors/Actor1_2.png",
+      "layout": {
+        "format": "rpg-maker-mz-side-view-actor",
+        "columns": 9,
+        "rows": 6,
+        "frameWidth": 64,
+        "frameHeight": 64,
+        "idleFrame": {
+          "column": 3,
+          "row": 0
+        }
+      }
+    },
+    {
+      "id": "rpg-maker-mz-sv-actors-actor1-3",
+      "name": "Actor1 3",
+      "type": "actor-battler",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "actor",
+        "side-view",
+        "animated"
+      ],
+      "image": "battle/rpg-maker-mz/sv_actors/Actor1_3.png",
+      "layout": {
+        "format": "rpg-maker-mz-side-view-actor",
+        "columns": 9,
+        "rows": 6,
+        "frameWidth": 64,
+        "frameHeight": 64,
+        "idleFrame": {
+          "column": 3,
+          "row": 0
+        }
+      }
+    },
+    {
+      "id": "rpg-maker-mz-sv-actors-actor1-4",
+      "name": "Actor1 4",
+      "type": "actor-battler",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "actor",
+        "side-view",
+        "animated"
+      ],
+      "image": "battle/rpg-maker-mz/sv_actors/Actor1_4.png",
+      "layout": {
+        "format": "rpg-maker-mz-side-view-actor",
+        "columns": 9,
+        "rows": 6,
+        "frameWidth": 64,
+        "frameHeight": 64,
+        "idleFrame": {
+          "column": 3,
+          "row": 0
+        }
+      }
+    },
+    {
+      "id": "rpg-maker-mz-sv-actors-actor1-5",
+      "name": "Actor1 5",
+      "type": "actor-battler",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "actor",
+        "side-view",
+        "animated"
+      ],
+      "image": "battle/rpg-maker-mz/sv_actors/Actor1_5.png",
+      "layout": {
+        "format": "rpg-maker-mz-side-view-actor",
+        "columns": 9,
+        "rows": 6,
+        "frameWidth": 64,
+        "frameHeight": 64,
+        "idleFrame": {
+          "column": 3,
+          "row": 0
+        }
+      }
+    },
+    {
+      "id": "rpg-maker-mz-sv-actors-actor1-6",
+      "name": "Actor1 6",
+      "type": "actor-battler",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "actor",
+        "side-view",
+        "animated"
+      ],
+      "image": "battle/rpg-maker-mz/sv_actors/Actor1_6.png",
+      "layout": {
+        "format": "rpg-maker-mz-side-view-actor",
+        "columns": 9,
+        "rows": 6,
+        "frameWidth": 64,
+        "frameHeight": 64,
+        "idleFrame": {
+          "column": 3,
+          "row": 0
+        }
+      }
+    },
+    {
+      "id": "rpg-maker-mz-sv-actors-actor1-7",
+      "name": "Actor1 7",
+      "type": "actor-battler",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "actor",
+        "side-view",
+        "animated"
+      ],
+      "image": "battle/rpg-maker-mz/sv_actors/Actor1_7.png",
+      "layout": {
+        "format": "rpg-maker-mz-side-view-actor",
+        "columns": 9,
+        "rows": 6,
+        "frameWidth": 64,
+        "frameHeight": 64,
+        "idleFrame": {
+          "column": 3,
+          "row": 0
+        }
+      }
+    },
+    {
+      "id": "rpg-maker-mz-sv-actors-actor1-8",
+      "name": "Actor1 8",
+      "type": "actor-battler",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "actor",
+        "side-view",
+        "animated"
+      ],
+      "image": "battle/rpg-maker-mz/sv_actors/Actor1_8.png",
+      "layout": {
+        "format": "rpg-maker-mz-side-view-actor",
+        "columns": 9,
+        "rows": 6,
+        "frameWidth": 64,
+        "frameHeight": 64,
+        "idleFrame": {
+          "column": 3,
+          "row": 0
+        }
+      }
+    },
+    {
+      "id": "rpg-maker-mz-sv-actors-actor2-1",
+      "name": "Actor2 1",
+      "type": "actor-battler",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "actor",
+        "side-view",
+        "animated"
+      ],
+      "image": "battle/rpg-maker-mz/sv_actors/Actor2_1.png",
+      "layout": {
+        "format": "rpg-maker-mz-side-view-actor",
+        "columns": 9,
+        "rows": 6,
+        "frameWidth": 64,
+        "frameHeight": 64,
+        "idleFrame": {
+          "column": 3,
+          "row": 0
+        }
+      }
+    },
+    {
+      "id": "rpg-maker-mz-sv-actors-actor2-2",
+      "name": "Actor2 2",
+      "type": "actor-battler",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "actor",
+        "side-view",
+        "animated"
+      ],
+      "image": "battle/rpg-maker-mz/sv_actors/Actor2_2.png",
+      "layout": {
+        "format": "rpg-maker-mz-side-view-actor",
+        "columns": 9,
+        "rows": 6,
+        "frameWidth": 64,
+        "frameHeight": 64,
+        "idleFrame": {
+          "column": 3,
+          "row": 0
+        }
+      }
+    },
+    {
+      "id": "rpg-maker-mz-sv-actors-actor2-3",
+      "name": "Actor2 3",
+      "type": "actor-battler",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "actor",
+        "side-view",
+        "animated"
+      ],
+      "image": "battle/rpg-maker-mz/sv_actors/Actor2_3.png",
+      "layout": {
+        "format": "rpg-maker-mz-side-view-actor",
+        "columns": 9,
+        "rows": 6,
+        "frameWidth": 64,
+        "frameHeight": 64,
+        "idleFrame": {
+          "column": 3,
+          "row": 0
+        }
+      }
+    },
+    {
+      "id": "rpg-maker-mz-sv-actors-actor2-4",
+      "name": "Actor2 4",
+      "type": "actor-battler",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "actor",
+        "side-view",
+        "animated"
+      ],
+      "image": "battle/rpg-maker-mz/sv_actors/Actor2_4.png",
+      "layout": {
+        "format": "rpg-maker-mz-side-view-actor",
+        "columns": 9,
+        "rows": 6,
+        "frameWidth": 64,
+        "frameHeight": 64,
+        "idleFrame": {
+          "column": 3,
+          "row": 0
+        }
+      }
+    },
+    {
+      "id": "rpg-maker-mz-sv-actors-actor2-5",
+      "name": "Actor2 5",
+      "type": "actor-battler",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "actor",
+        "side-view",
+        "animated"
+      ],
+      "image": "battle/rpg-maker-mz/sv_actors/Actor2_5.png",
+      "layout": {
+        "format": "rpg-maker-mz-side-view-actor",
+        "columns": 9,
+        "rows": 6,
+        "frameWidth": 64,
+        "frameHeight": 64,
+        "idleFrame": {
+          "column": 3,
+          "row": 0
+        }
+      }
+    },
+    {
+      "id": "rpg-maker-mz-sv-actors-actor2-6",
+      "name": "Actor2 6",
+      "type": "actor-battler",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "actor",
+        "side-view",
+        "animated"
+      ],
+      "image": "battle/rpg-maker-mz/sv_actors/Actor2_6.png",
+      "layout": {
+        "format": "rpg-maker-mz-side-view-actor",
+        "columns": 9,
+        "rows": 6,
+        "frameWidth": 64,
+        "frameHeight": 64,
+        "idleFrame": {
+          "column": 3,
+          "row": 0
+        }
+      }
+    },
+    {
+      "id": "rpg-maker-mz-sv-actors-actor2-7",
+      "name": "Actor2 7",
+      "type": "actor-battler",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "actor",
+        "side-view",
+        "animated"
+      ],
+      "image": "battle/rpg-maker-mz/sv_actors/Actor2_7.png",
+      "layout": {
+        "format": "rpg-maker-mz-side-view-actor",
+        "columns": 9,
+        "rows": 6,
+        "frameWidth": 64,
+        "frameHeight": 64,
+        "idleFrame": {
+          "column": 3,
+          "row": 0
+        }
+      }
+    },
+    {
+      "id": "rpg-maker-mz-sv-actors-actor2-8",
+      "name": "Actor2 8",
+      "type": "actor-battler",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "actor",
+        "side-view",
+        "animated"
+      ],
+      "image": "battle/rpg-maker-mz/sv_actors/Actor2_8.png",
+      "layout": {
+        "format": "rpg-maker-mz-side-view-actor",
+        "columns": 9,
+        "rows": 6,
+        "frameWidth": 64,
+        "frameHeight": 64,
+        "idleFrame": {
+          "column": 3,
+          "row": 0
+        }
+      }
+    },
+    {
+      "id": "rpg-maker-mz-sv-actors-actor3-5",
+      "name": "Actor3 5",
+      "type": "actor-battler",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "actor",
+        "side-view",
+        "animated"
+      ],
+      "image": "battle/rpg-maker-mz/sv_actors/Actor3_5.png",
+      "layout": {
+        "format": "rpg-maker-mz-side-view-actor",
+        "columns": 9,
+        "rows": 6,
+        "frameWidth": 64,
+        "frameHeight": 64,
+        "idleFrame": {
+          "column": 3,
+          "row": 0
+        }
+      }
+    },
+    {
+      "id": "rpg-maker-mz-sv-actors-actor3-6",
+      "name": "Actor3 6",
+      "type": "actor-battler",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "actor",
+        "side-view",
+        "animated"
+      ],
+      "image": "battle/rpg-maker-mz/sv_actors/Actor3_6.png",
+      "layout": {
+        "format": "rpg-maker-mz-side-view-actor",
+        "columns": 9,
+        "rows": 6,
+        "frameWidth": 64,
+        "frameHeight": 64,
+        "idleFrame": {
+          "column": 3,
+          "row": 0
+        }
+      }
+    },
+    {
+      "id": "rpg-maker-mz-sv-actors-actor3-7",
+      "name": "Actor3 7",
+      "type": "actor-battler",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "actor",
+        "side-view",
+        "animated"
+      ],
+      "image": "battle/rpg-maker-mz/sv_actors/Actor3_7.png",
+      "layout": {
+        "format": "rpg-maker-mz-side-view-actor",
+        "columns": 9,
+        "rows": 6,
+        "frameWidth": 64,
+        "frameHeight": 64,
+        "idleFrame": {
+          "column": 3,
+          "row": 0
+        }
+      }
+    },
+    {
+      "id": "rpg-maker-mz-sv-actors-actor3-8",
+      "name": "Actor3 8",
+      "type": "actor-battler",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "actor",
+        "side-view",
+        "animated"
+      ],
+      "image": "battle/rpg-maker-mz/sv_actors/Actor3_8.png",
+      "layout": {
+        "format": "rpg-maker-mz-side-view-actor",
+        "columns": 9,
+        "rows": 6,
+        "frameWidth": 64,
+        "frameHeight": 64,
+        "idleFrame": {
+          "column": 3,
+          "row": 0
+        }
+      }
+    },
+    {
+      "id": "rpg-maker-mz-sv-actors-sf-actor1-1",
+      "name": "SF Actor1 1",
+      "type": "actor-battler",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "actor",
+        "side-view",
+        "animated"
+      ],
+      "image": "battle/rpg-maker-mz/sv_actors/SF_Actor1_1.png",
+      "layout": {
+        "format": "rpg-maker-mz-side-view-actor",
+        "columns": 9,
+        "rows": 6,
+        "frameWidth": 64,
+        "frameHeight": 64,
+        "idleFrame": {
+          "column": 3,
+          "row": 0
+        }
+      }
+    },
+    {
+      "id": "rpg-maker-mz-sv-actors-sf-actor1-2",
+      "name": "SF Actor1 2",
+      "type": "actor-battler",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "actor",
+        "side-view",
+        "animated"
+      ],
+      "image": "battle/rpg-maker-mz/sv_actors/SF_Actor1_2.png",
+      "layout": {
+        "format": "rpg-maker-mz-side-view-actor",
+        "columns": 9,
+        "rows": 6,
+        "frameWidth": 64,
+        "frameHeight": 64,
+        "idleFrame": {
+          "column": 3,
+          "row": 0
+        }
+      }
+    },
+    {
+      "id": "rpg-maker-mz-sv-actors-sf-actor1-3",
+      "name": "SF Actor1 3",
+      "type": "actor-battler",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "actor",
+        "side-view",
+        "animated"
+      ],
+      "image": "battle/rpg-maker-mz/sv_actors/SF_Actor1_3.png",
+      "layout": {
+        "format": "rpg-maker-mz-side-view-actor",
+        "columns": 9,
+        "rows": 6,
+        "frameWidth": 64,
+        "frameHeight": 64,
+        "idleFrame": {
+          "column": 3,
+          "row": 0
+        }
+      }
+    },
+    {
+      "id": "rpg-maker-mz-sv-actors-sf-actor1-4",
+      "name": "SF Actor1 4",
+      "type": "actor-battler",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "actor",
+        "side-view",
+        "animated"
+      ],
+      "image": "battle/rpg-maker-mz/sv_actors/SF_Actor1_4.png",
+      "layout": {
+        "format": "rpg-maker-mz-side-view-actor",
+        "columns": 9,
+        "rows": 6,
+        "frameWidth": 64,
+        "frameHeight": 64,
+        "idleFrame": {
+          "column": 3,
+          "row": 0
+        }
+      }
+    },
+    {
+      "id": "rpg-maker-mz-sv-actors-sf-actor1-5",
+      "name": "SF Actor1 5",
+      "type": "actor-battler",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "actor",
+        "side-view",
+        "animated"
+      ],
+      "image": "battle/rpg-maker-mz/sv_actors/SF_Actor1_5.png",
+      "layout": {
+        "format": "rpg-maker-mz-side-view-actor",
+        "columns": 9,
+        "rows": 6,
+        "frameWidth": 64,
+        "frameHeight": 64,
+        "idleFrame": {
+          "column": 3,
+          "row": 0
+        }
+      }
+    },
+    {
+      "id": "rpg-maker-mz-sv-actors-sf-actor1-6",
+      "name": "SF Actor1 6",
+      "type": "actor-battler",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "actor",
+        "side-view",
+        "animated"
+      ],
+      "image": "battle/rpg-maker-mz/sv_actors/SF_Actor1_6.png",
+      "layout": {
+        "format": "rpg-maker-mz-side-view-actor",
+        "columns": 9,
+        "rows": 6,
+        "frameWidth": 64,
+        "frameHeight": 64,
+        "idleFrame": {
+          "column": 3,
+          "row": 0
+        }
+      }
+    },
+    {
+      "id": "rpg-maker-mz-sv-actors-sf-actor1-7",
+      "name": "SF Actor1 7",
+      "type": "actor-battler",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "actor",
+        "side-view",
+        "animated"
+      ],
+      "image": "battle/rpg-maker-mz/sv_actors/SF_Actor1_7.png",
+      "layout": {
+        "format": "rpg-maker-mz-side-view-actor",
+        "columns": 9,
+        "rows": 6,
+        "frameWidth": 64,
+        "frameHeight": 64,
+        "idleFrame": {
+          "column": 3,
+          "row": 0
+        }
+      }
+    },
+    {
+      "id": "rpg-maker-mz-sv-actors-sf-actor1-8",
+      "name": "SF Actor1 8",
+      "type": "actor-battler",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "actor",
+        "side-view",
+        "animated"
+      ],
+      "image": "battle/rpg-maker-mz/sv_actors/SF_Actor1_8.png",
+      "layout": {
+        "format": "rpg-maker-mz-side-view-actor",
+        "columns": 9,
+        "rows": 6,
+        "frameWidth": 64,
+        "frameHeight": 64,
+        "idleFrame": {
+          "column": 3,
+          "row": 0
+        }
+      }
+    },
+    {
+      "id": "rpg-maker-mz-sv-actors-sf-actor2-1",
+      "name": "SF Actor2 1",
+      "type": "actor-battler",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "actor",
+        "side-view",
+        "animated"
+      ],
+      "image": "battle/rpg-maker-mz/sv_actors/SF_Actor2_1.png",
+      "layout": {
+        "format": "rpg-maker-mz-side-view-actor",
+        "columns": 9,
+        "rows": 6,
+        "frameWidth": 64,
+        "frameHeight": 64,
+        "idleFrame": {
+          "column": 3,
+          "row": 0
+        }
+      }
+    },
+    {
+      "id": "rpg-maker-mz-sv-actors-sf-actor2-2",
+      "name": "SF Actor2 2",
+      "type": "actor-battler",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "actor",
+        "side-view",
+        "animated"
+      ],
+      "image": "battle/rpg-maker-mz/sv_actors/SF_Actor2_2.png",
+      "layout": {
+        "format": "rpg-maker-mz-side-view-actor",
+        "columns": 9,
+        "rows": 6,
+        "frameWidth": 64,
+        "frameHeight": 64,
+        "idleFrame": {
+          "column": 3,
+          "row": 0
+        }
+      }
+    },
+    {
+      "id": "rpg-maker-mz-sv-actors-sf-actor2-3",
+      "name": "SF Actor2 3",
+      "type": "actor-battler",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "actor",
+        "side-view",
+        "animated"
+      ],
+      "image": "battle/rpg-maker-mz/sv_actors/SF_Actor2_3.png",
+      "layout": {
+        "format": "rpg-maker-mz-side-view-actor",
+        "columns": 9,
+        "rows": 6,
+        "frameWidth": 64,
+        "frameHeight": 64,
+        "idleFrame": {
+          "column": 3,
+          "row": 0
+        }
+      }
+    },
+    {
+      "id": "rpg-maker-mz-sv-actors-sf-actor2-4",
+      "name": "SF Actor2 4",
+      "type": "actor-battler",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "actor",
+        "side-view",
+        "animated"
+      ],
+      "image": "battle/rpg-maker-mz/sv_actors/SF_Actor2_4.png",
+      "layout": {
+        "format": "rpg-maker-mz-side-view-actor",
+        "columns": 9,
+        "rows": 6,
+        "frameWidth": 64,
+        "frameHeight": 64,
+        "idleFrame": {
+          "column": 3,
+          "row": 0
+        }
+      }
+    },
+    {
+      "id": "rpg-maker-mz-sv-actors-sf-actor2-5",
+      "name": "SF Actor2 5",
+      "type": "actor-battler",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "actor",
+        "side-view",
+        "animated"
+      ],
+      "image": "battle/rpg-maker-mz/sv_actors/SF_Actor2_5.png",
+      "layout": {
+        "format": "rpg-maker-mz-side-view-actor",
+        "columns": 9,
+        "rows": 6,
+        "frameWidth": 64,
+        "frameHeight": 64,
+        "idleFrame": {
+          "column": 3,
+          "row": 0
+        }
+      }
+    },
+    {
+      "id": "rpg-maker-mz-sv-actors-sf-actor2-6",
+      "name": "SF Actor2 6",
+      "type": "actor-battler",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "actor",
+        "side-view",
+        "animated"
+      ],
+      "image": "battle/rpg-maker-mz/sv_actors/SF_Actor2_6.png",
+      "layout": {
+        "format": "rpg-maker-mz-side-view-actor",
+        "columns": 9,
+        "rows": 6,
+        "frameWidth": 64,
+        "frameHeight": 64,
+        "idleFrame": {
+          "column": 3,
+          "row": 0
+        }
+      }
+    },
+    {
+      "id": "rpg-maker-mz-sv-actors-sf-actor2-7",
+      "name": "SF Actor2 7",
+      "type": "actor-battler",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "actor",
+        "side-view",
+        "animated"
+      ],
+      "image": "battle/rpg-maker-mz/sv_actors/SF_Actor2_7.png",
+      "layout": {
+        "format": "rpg-maker-mz-side-view-actor",
+        "columns": 9,
+        "rows": 6,
+        "frameWidth": 64,
+        "frameHeight": 64,
+        "idleFrame": {
+          "column": 3,
+          "row": 0
+        }
+      }
+    },
+    {
+      "id": "rpg-maker-mz-sv-actors-sf-actor2-8",
+      "name": "SF Actor2 8",
+      "type": "actor-battler",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "actor",
+        "side-view",
+        "animated"
+      ],
+      "image": "battle/rpg-maker-mz/sv_actors/SF_Actor2_8.png",
+      "layout": {
+        "format": "rpg-maker-mz-side-view-actor",
+        "columns": 9,
+        "rows": 6,
+        "frameWidth": 64,
+        "frameHeight": 64,
+        "idleFrame": {
+          "column": 3,
+          "row": 0
+        }
+      }
+    },
+    {
+      "id": "rpg-maker-mz-sv-actors-sf-actor3-5",
+      "name": "SF Actor3 5",
+      "type": "actor-battler",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "actor",
+        "side-view",
+        "animated"
+      ],
+      "image": "battle/rpg-maker-mz/sv_actors/SF_Actor3_5.png",
+      "layout": {
+        "format": "rpg-maker-mz-side-view-actor",
+        "columns": 9,
+        "rows": 6,
+        "frameWidth": 64,
+        "frameHeight": 64,
+        "idleFrame": {
+          "column": 3,
+          "row": 0
+        }
+      }
+    },
+    {
+      "id": "rpg-maker-mz-sv-actors-sf-actor3-6",
+      "name": "SF Actor3 6",
+      "type": "actor-battler",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "actor",
+        "side-view",
+        "animated"
+      ],
+      "image": "battle/rpg-maker-mz/sv_actors/SF_Actor3_6.png",
+      "layout": {
+        "format": "rpg-maker-mz-side-view-actor",
+        "columns": 9,
+        "rows": 6,
+        "frameWidth": 64,
+        "frameHeight": 64,
+        "idleFrame": {
+          "column": 3,
+          "row": 0
+        }
+      }
+    },
+    {
+      "id": "rpg-maker-mz-sv-actors-sf-actor3-7",
+      "name": "SF Actor3 7",
+      "type": "actor-battler",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "actor",
+        "side-view",
+        "animated"
+      ],
+      "image": "battle/rpg-maker-mz/sv_actors/SF_Actor3_7.png",
+      "layout": {
+        "format": "rpg-maker-mz-side-view-actor",
+        "columns": 9,
+        "rows": 6,
+        "frameWidth": 64,
+        "frameHeight": 64,
+        "idleFrame": {
+          "column": 3,
+          "row": 0
+        }
+      }
+    },
+    {
+      "id": "rpg-maker-mz-sv-actors-sf-actor3-8",
+      "name": "SF Actor3 8",
+      "type": "actor-battler",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "actor",
+        "side-view",
+        "animated"
+      ],
+      "image": "battle/rpg-maker-mz/sv_actors/SF_Actor3_8.png",
+      "layout": {
+        "format": "rpg-maker-mz-side-view-actor",
+        "columns": 9,
+        "rows": 6,
+        "frameWidth": 64,
+        "frameHeight": 64,
+        "idleFrame": {
+          "column": 3,
+          "row": 0
+        }
+      }
+    },
+    {
+      "id": "rpg-maker-mz-enemies-actor1-3",
+      "name": "Actor1 3",
+      "type": "enemy-battler",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "enemy",
+        "front-view"
+      ],
+      "image": "battle/rpg-maker-mz/enemies/Actor1_3.png"
+    },
+    {
+      "id": "rpg-maker-mz-enemies-actor1-4",
+      "name": "Actor1 4",
+      "type": "enemy-battler",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "enemy",
+        "front-view"
+      ],
+      "image": "battle/rpg-maker-mz/enemies/Actor1_4.png"
+    },
+    {
+      "id": "rpg-maker-mz-enemies-actor1-5",
+      "name": "Actor1 5",
+      "type": "enemy-battler",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "enemy",
+        "front-view"
+      ],
+      "image": "battle/rpg-maker-mz/enemies/Actor1_5.png"
+    },
+    {
+      "id": "rpg-maker-mz-enemies-actor1-6",
+      "name": "Actor1 6",
+      "type": "enemy-battler",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "enemy",
+        "front-view"
+      ],
+      "image": "battle/rpg-maker-mz/enemies/Actor1_6.png"
+    },
+    {
+      "id": "rpg-maker-mz-enemies-actor2-1",
+      "name": "Actor2 1",
+      "type": "enemy-battler",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "enemy",
+        "front-view"
+      ],
+      "image": "battle/rpg-maker-mz/enemies/Actor2_1.png"
+    },
+    {
+      "id": "rpg-maker-mz-enemies-actor2-2",
+      "name": "Actor2 2",
+      "type": "enemy-battler",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "enemy",
+        "front-view"
+      ],
+      "image": "battle/rpg-maker-mz/enemies/Actor2_2.png"
+    },
+    {
+      "id": "rpg-maker-mz-enemies-actor2-3",
+      "name": "Actor2 3",
+      "type": "enemy-battler",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "enemy",
+        "front-view"
+      ],
+      "image": "battle/rpg-maker-mz/enemies/Actor2_3.png"
+    },
+    {
+      "id": "rpg-maker-mz-enemies-actor2-4",
+      "name": "Actor2 4",
+      "type": "enemy-battler",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "enemy",
+        "front-view"
+      ],
+      "image": "battle/rpg-maker-mz/enemies/Actor2_4.png"
+    },
+    {
+      "id": "rpg-maker-mz-enemies-actor2-5",
+      "name": "Actor2 5",
+      "type": "enemy-battler",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "enemy",
+        "front-view"
+      ],
+      "image": "battle/rpg-maker-mz/enemies/Actor2_5.png"
+    },
+    {
+      "id": "rpg-maker-mz-enemies-actor2-6",
+      "name": "Actor2 6",
+      "type": "enemy-battler",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "enemy",
+        "front-view"
+      ],
+      "image": "battle/rpg-maker-mz/enemies/Actor2_6.png"
+    },
+    {
+      "id": "rpg-maker-mz-enemies-actor2-7",
+      "name": "Actor2 7",
+      "type": "enemy-battler",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "enemy",
+        "front-view"
+      ],
+      "image": "battle/rpg-maker-mz/enemies/Actor2_7.png"
+    },
+    {
+      "id": "rpg-maker-mz-enemies-actor3-1",
+      "name": "Actor3 1",
+      "type": "enemy-battler",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "enemy",
+        "front-view"
+      ],
+      "image": "battle/rpg-maker-mz/enemies/Actor3_1.png"
+    },
+    {
+      "id": "rpg-maker-mz-enemies-actor3-2",
+      "name": "Actor3 2",
+      "type": "enemy-battler",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "enemy",
+        "front-view"
+      ],
+      "image": "battle/rpg-maker-mz/enemies/Actor3_2.png"
+    },
+    {
+      "id": "rpg-maker-mz-enemies-actor3-3",
+      "name": "Actor3 3",
+      "type": "enemy-battler",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "enemy",
+        "front-view"
+      ],
+      "image": "battle/rpg-maker-mz/enemies/Actor3_3.png"
+    },
+    {
+      "id": "rpg-maker-mz-enemies-actor3-4",
+      "name": "Actor3 4",
+      "type": "enemy-battler",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "enemy",
+        "front-view"
+      ],
+      "image": "battle/rpg-maker-mz/enemies/Actor3_4.png"
+    },
+    {
+      "id": "rpg-maker-mz-enemies-berserker",
+      "name": "Berserker",
+      "type": "enemy-battler",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "enemy",
+        "front-view"
+      ],
+      "image": "battle/rpg-maker-mz/enemies/Berserker.png"
+    },
+    {
+      "id": "rpg-maker-mz-enemies-birdman",
+      "name": "Birdman",
+      "type": "enemy-battler",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "enemy",
+        "front-view"
+      ],
+      "image": "battle/rpg-maker-mz/enemies/Birdman.png"
+    },
+    {
+      "id": "rpg-maker-mz-enemies-blackknight",
+      "name": "Blackknight",
+      "type": "enemy-battler",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "enemy",
+        "front-view"
+      ],
+      "image": "battle/rpg-maker-mz/enemies/Blackknight.png"
+    },
+    {
+      "id": "rpg-maker-mz-enemies-caitsith",
+      "name": "Caitsith",
+      "type": "enemy-battler",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "enemy",
+        "front-view"
+      ],
+      "image": "battle/rpg-maker-mz/enemies/Caitsith.png"
+    },
+    {
+      "id": "rpg-maker-mz-enemies-captain",
+      "name": "Captain",
+      "type": "enemy-battler",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "enemy",
+        "front-view"
+      ],
+      "image": "battle/rpg-maker-mz/enemies/Captain.png"
+    },
+    {
+      "id": "rpg-maker-mz-enemies-crab",
+      "name": "Crab",
+      "type": "enemy-battler",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "enemy",
+        "front-view"
+      ],
+      "image": "battle/rpg-maker-mz/enemies/Crab.png"
+    },
+    {
+      "id": "rpg-maker-mz-enemies-crow",
+      "name": "Crow",
+      "type": "enemy-battler",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "enemy",
+        "front-view"
+      ],
+      "image": "battle/rpg-maker-mz/enemies/Crow.png"
+    },
+    {
+      "id": "rpg-maker-mz-enemies-darkelf",
+      "name": "Darkelf",
+      "type": "enemy-battler",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "enemy",
+        "front-view"
+      ],
+      "image": "battle/rpg-maker-mz/enemies/Darkelf.png"
+    },
+    {
+      "id": "rpg-maker-mz-enemies-demon-metamorphosis",
+      "name": "Demon metamorphosis",
+      "type": "enemy-battler",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "enemy",
+        "front-view"
+      ],
+      "image": "battle/rpg-maker-mz/enemies/Demon_metamorphosis.png"
+    },
+    {
+      "id": "rpg-maker-mz-enemies-demon",
+      "name": "Demon",
+      "type": "enemy-battler",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "enemy",
+        "front-view"
+      ],
+      "image": "battle/rpg-maker-mz/enemies/Demon.png"
+    },
+    {
+      "id": "rpg-maker-mz-enemies-demoncount",
+      "name": "Demoncount",
+      "type": "enemy-battler",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "enemy",
+        "front-view"
+      ],
+      "image": "battle/rpg-maker-mz/enemies/Demoncount.png"
+    },
+    {
+      "id": "rpg-maker-mz-enemies-demonpot",
+      "name": "Demonpot",
+      "type": "enemy-battler",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "enemy",
+        "front-view"
+      ],
+      "image": "battle/rpg-maker-mz/enemies/Demonpot.png"
+    },
+    {
+      "id": "rpg-maker-mz-enemies-dragon",
+      "name": "Dragon",
+      "type": "enemy-battler",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "enemy",
+        "front-view"
+      ],
+      "image": "battle/rpg-maker-mz/enemies/Dragon.png"
+    },
+    {
+      "id": "rpg-maker-mz-enemies-evilbook",
+      "name": "Evilbook",
+      "type": "enemy-battler",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "enemy",
+        "front-view"
+      ],
+      "image": "battle/rpg-maker-mz/enemies/Evilbook.png"
+    },
+    {
+      "id": "rpg-maker-mz-enemies-evilgod",
+      "name": "Evilgod",
+      "type": "enemy-battler",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "enemy",
+        "front-view"
+      ],
+      "image": "battle/rpg-maker-mz/enemies/Evilgod.png"
+    },
+    {
+      "id": "rpg-maker-mz-enemies-foxman",
+      "name": "Foxman",
+      "type": "enemy-battler",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "enemy",
+        "front-view"
+      ],
+      "image": "battle/rpg-maker-mz/enemies/Foxman.png"
+    },
+    {
+      "id": "rpg-maker-mz-enemies-frilledlizard",
+      "name": "Frilledlizard",
+      "type": "enemy-battler",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "enemy",
+        "front-view"
+      ],
+      "image": "battle/rpg-maker-mz/enemies/Frilledlizard.png"
+    },
+    {
+      "id": "rpg-maker-mz-enemies-gatekeeper",
+      "name": "Gatekeeper",
+      "type": "enemy-battler",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "enemy",
+        "front-view"
+      ],
+      "image": "battle/rpg-maker-mz/enemies/Gatekeeper.png"
+    },
+    {
+      "id": "rpg-maker-mz-enemies-gnome",
+      "name": "Gnome",
+      "type": "enemy-battler",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "enemy",
+        "front-view"
+      ],
+      "image": "battle/rpg-maker-mz/enemies/Gnome.png"
+    },
+    {
+      "id": "rpg-maker-mz-enemies-goblin",
+      "name": "Goblin",
+      "type": "enemy-battler",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "enemy",
+        "front-view"
+      ],
+      "image": "battle/rpg-maker-mz/enemies/Goblin.png"
+    },
+    {
+      "id": "rpg-maker-mz-enemies-god-of-light",
+      "name": "God of light",
+      "type": "enemy-battler",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "enemy",
+        "front-view"
+      ],
+      "image": "battle/rpg-maker-mz/enemies/God_of_light.png"
+    },
+    {
+      "id": "rpg-maker-mz-enemies-goddess-of-death",
+      "name": "Goddess of death",
+      "type": "enemy-battler",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "enemy",
+        "front-view"
+      ],
+      "image": "battle/rpg-maker-mz/enemies/Goddess_of_death.png"
+    },
+    {
+      "id": "rpg-maker-mz-enemies-goddess",
+      "name": "Goddess",
+      "type": "enemy-battler",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "enemy",
+        "front-view"
+      ],
+      "image": "battle/rpg-maker-mz/enemies/Goddess.png"
+    },
+    {
+      "id": "rpg-maker-mz-enemies-hakutaku",
+      "name": "Hakutaku",
+      "type": "enemy-battler",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "enemy",
+        "front-view"
+      ],
+      "image": "battle/rpg-maker-mz/enemies/Hakutaku.png"
+    },
+    {
+      "id": "rpg-maker-mz-enemies-harpy",
+      "name": "Harpy",
+      "type": "enemy-battler",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "enemy",
+        "front-view"
+      ],
+      "image": "battle/rpg-maker-mz/enemies/Harpy.png"
+    },
+    {
+      "id": "rpg-maker-mz-enemies-hi-monster",
+      "name": "Hi monster",
+      "type": "enemy-battler",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "enemy",
+        "front-view"
+      ],
+      "image": "battle/rpg-maker-mz/enemies/Hi_monster.png"
+    },
+    {
+      "id": "rpg-maker-mz-enemies-highking",
+      "name": "Highking",
+      "type": "enemy-battler",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "enemy",
+        "front-view"
+      ],
+      "image": "battle/rpg-maker-mz/enemies/Highking.png"
+    },
+    {
+      "id": "rpg-maker-mz-enemies-hydra",
+      "name": "Hydra",
+      "type": "enemy-battler",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "enemy",
+        "front-view"
+      ],
+      "image": "battle/rpg-maker-mz/enemies/Hydra.png"
+    },
+    {
+      "id": "rpg-maker-mz-enemies-ketos",
+      "name": "Ketos",
+      "type": "enemy-battler",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "enemy",
+        "front-view"
+      ],
+      "image": "battle/rpg-maker-mz/enemies/Ketos.png"
+    },
+    {
+      "id": "rpg-maker-mz-enemies-kraken",
+      "name": "Kraken",
+      "type": "enemy-battler",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "enemy",
+        "front-view"
+      ],
+      "image": "battle/rpg-maker-mz/enemies/Kraken.png"
+    },
+    {
+      "id": "rpg-maker-mz-enemies-lich",
+      "name": "Lich",
+      "type": "enemy-battler",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "enemy",
+        "front-view"
+      ],
+      "image": "battle/rpg-maker-mz/enemies/Lich.png"
+    },
+    {
+      "id": "rpg-maker-mz-enemies-machinerybee",
+      "name": "Machinerybee",
+      "type": "enemy-battler",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "enemy",
+        "front-view"
+      ],
+      "image": "battle/rpg-maker-mz/enemies/Machinerybee.png"
+    },
+    {
+      "id": "rpg-maker-mz-enemies-matango",
+      "name": "Matango",
+      "type": "enemy-battler",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "enemy",
+        "front-view"
+      ],
+      "image": "battle/rpg-maker-mz/enemies/Matango.png"
+    },
+    {
+      "id": "rpg-maker-mz-enemies-mechascorpion",
+      "name": "Mechascorpion",
+      "type": "enemy-battler",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "enemy",
+        "front-view"
+      ],
+      "image": "battle/rpg-maker-mz/enemies/Mechascorpion.png"
+    },
+    {
+      "id": "rpg-maker-mz-enemies-medusa",
+      "name": "Medusa",
+      "type": "enemy-battler",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "enemy",
+        "front-view"
+      ],
+      "image": "battle/rpg-maker-mz/enemies/Medusa.png"
+    },
+    {
+      "id": "rpg-maker-mz-enemies-mercenary",
+      "name": "Mercenary",
+      "type": "enemy-battler",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "enemy",
+        "front-view"
+      ],
+      "image": "battle/rpg-maker-mz/enemies/Mercenary.png"
+    },
+    {
+      "id": "rpg-maker-mz-enemies-mimic",
+      "name": "Mimic",
+      "type": "enemy-battler",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "enemy",
+        "front-view"
+      ],
+      "image": "battle/rpg-maker-mz/enemies/Mimic.png"
+    },
+    {
+      "id": "rpg-maker-mz-enemies-oddegg",
+      "name": "Oddegg",
+      "type": "enemy-battler",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "enemy",
+        "front-view"
+      ],
+      "image": "battle/rpg-maker-mz/enemies/Oddegg.png"
+    },
+    {
+      "id": "rpg-maker-mz-enemies-petitdevil",
+      "name": "Petitdevil",
+      "type": "enemy-battler",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "enemy",
+        "front-view"
+      ],
+      "image": "battle/rpg-maker-mz/enemies/Petitdevil.png"
+    },
+    {
+      "id": "rpg-maker-mz-enemies-plasma",
+      "name": "Plasma",
+      "type": "enemy-battler",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "enemy",
+        "front-view"
+      ],
+      "image": "battle/rpg-maker-mz/enemies/Plasma.png"
+    },
+    {
+      "id": "rpg-maker-mz-enemies-sailor",
+      "name": "Sailor",
+      "type": "enemy-battler",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "enemy",
+        "front-view"
+      ],
+      "image": "battle/rpg-maker-mz/enemies/Sailor.png"
+    },
+    {
+      "id": "rpg-maker-mz-enemies-salamander",
+      "name": "Salamander",
+      "type": "enemy-battler",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "enemy",
+        "front-view"
+      ],
+      "image": "battle/rpg-maker-mz/enemies/Salamander.png"
+    },
+    {
+      "id": "rpg-maker-mz-enemies-sandworm",
+      "name": "Sandworm",
+      "type": "enemy-battler",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "enemy",
+        "front-view"
+      ],
+      "image": "battle/rpg-maker-mz/enemies/Sandworm.png"
+    },
+    {
+      "id": "rpg-maker-mz-enemies-sf-agent",
+      "name": "SF Agent",
+      "type": "enemy-battler",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "enemy",
+        "front-view"
+      ],
+      "image": "battle/rpg-maker-mz/enemies/SF_Agent.png"
+    },
+    {
+      "id": "rpg-maker-mz-enemies-sf-anaconda",
+      "name": "SF Anaconda",
+      "type": "enemy-battler",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "enemy",
+        "front-view"
+      ],
+      "image": "battle/rpg-maker-mz/enemies/SF_Anaconda.png"
+    },
+    {
+      "id": "rpg-maker-mz-enemies-sf-armygorilla",
+      "name": "SF Armygorilla",
+      "type": "enemy-battler",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "enemy",
+        "front-view"
+      ],
+      "image": "battle/rpg-maker-mz/enemies/SF_Armygorilla.png"
+    },
+    {
+      "id": "rpg-maker-mz-enemies-sf-armymonkey",
+      "name": "SF Armymonkey",
+      "type": "enemy-battler",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "enemy",
+        "front-view"
+      ],
+      "image": "battle/rpg-maker-mz/enemies/SF_Armymonkey.png"
+    },
+    {
+      "id": "rpg-maker-mz-enemies-sf-blueogre",
+      "name": "SF Blueogre",
+      "type": "enemy-battler",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "enemy",
+        "front-view"
+      ],
+      "image": "battle/rpg-maker-mz/enemies/SF_Blueogre.png"
+    },
+    {
+      "id": "rpg-maker-mz-enemies-sf-boss",
+      "name": "SF Boss",
+      "type": "enemy-battler",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "enemy",
+        "front-view"
+      ],
+      "image": "battle/rpg-maker-mz/enemies/SF_Boss.png"
+    },
+    {
+      "id": "rpg-maker-mz-enemies-sf-brownbear",
+      "name": "SF Brownbear",
+      "type": "enemy-battler",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "enemy",
+        "front-view"
+      ],
+      "image": "battle/rpg-maker-mz/enemies/SF_Brownbear.png"
+    },
+    {
+      "id": "rpg-maker-mz-enemies-sf-cyborg",
+      "name": "SF Cyborg",
+      "type": "enemy-battler",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "enemy",
+        "front-view"
+      ],
+      "image": "battle/rpg-maker-mz/enemies/SF_Cyborg.png"
+    },
+    {
+      "id": "rpg-maker-mz-enemies-sf-demon-of-universe",
+      "name": "SF Demon of universe",
+      "type": "enemy-battler",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "enemy",
+        "front-view"
+      ],
+      "image": "battle/rpg-maker-mz/enemies/SF_Demon_of_universe.png"
+    },
+    {
+      "id": "rpg-maker-mz-enemies-sf-drone",
+      "name": "SF Drone",
+      "type": "enemy-battler",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "enemy",
+        "front-view"
+      ],
+      "image": "battle/rpg-maker-mz/enemies/SF_Drone.png"
+    },
+    {
+      "id": "rpg-maker-mz-enemies-sf-enmadaio",
+      "name": "SF Enmadaio",
+      "type": "enemy-battler",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "enemy",
+        "front-view"
+      ],
+      "image": "battle/rpg-maker-mz/enemies/SF_Enmadaio.png"
+    },
+    {
+      "id": "rpg-maker-mz-enemies-sf-evilteddybear",
+      "name": "SF Evilteddybear",
+      "type": "enemy-battler",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "enemy",
+        "front-view"
+      ],
+      "image": "battle/rpg-maker-mz/enemies/SF_Evilteddybear.png"
+    },
+    {
+      "id": "rpg-maker-mz-enemies-sf-hannyamask",
+      "name": "SF Hannyamask",
+      "type": "enemy-battler",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "enemy",
+        "front-view"
+      ],
+      "image": "battle/rpg-maker-mz/enemies/SF_Hannyamask.png"
+    },
+    {
+      "id": "rpg-maker-mz-enemies-sf-hermit",
+      "name": "SF Hermit",
+      "type": "enemy-battler",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "enemy",
+        "front-view"
+      ],
+      "image": "battle/rpg-maker-mz/enemies/SF_Hermit.png"
+    },
+    {
+      "id": "rpg-maker-mz-enemies-sf-jiangshi",
+      "name": "SF Jiangshi",
+      "type": "enemy-battler",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "enemy",
+        "front-view"
+      ],
+      "image": "battle/rpg-maker-mz/enemies/SF_Jiangshi.png"
+    },
+    {
+      "id": "rpg-maker-mz-enemies-sf-kamaitachi",
+      "name": "SF Kamaitachi",
+      "type": "enemy-battler",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "enemy",
+        "front-view"
+      ],
+      "image": "battle/rpg-maker-mz/enemies/SF_Kamaitachi.png"
+    },
+    {
+      "id": "rpg-maker-mz-enemies-sf-kappa",
+      "name": "SF Kappa",
+      "type": "enemy-battler",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "enemy",
+        "front-view"
+      ],
+      "image": "battle/rpg-maker-mz/enemies/SF_Kappa.png"
+    },
+    {
+      "id": "rpg-maker-mz-enemies-sf-madclown",
+      "name": "SF Madclown",
+      "type": "enemy-battler",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "enemy",
+        "front-view"
+      ],
+      "image": "battle/rpg-maker-mz/enemies/SF_Madclown.png"
+    },
+    {
+      "id": "rpg-maker-mz-enemies-sf-madscientist",
+      "name": "SF Madscientist",
+      "type": "enemy-battler",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "enemy",
+        "front-view"
+      ],
+      "image": "battle/rpg-maker-mz/enemies/SF_Madscientist.png"
+    },
+    {
+      "id": "rpg-maker-mz-enemies-sf-mafia",
+      "name": "SF Mafia",
+      "type": "enemy-battler",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "enemy",
+        "front-view"
+      ],
+      "image": "battle/rpg-maker-mz/enemies/SF_Mafia.png"
+    },
+    {
+      "id": "rpg-maker-mz-enemies-sf-mechasphere",
+      "name": "SF Mechasphere",
+      "type": "enemy-battler",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "enemy",
+        "front-view"
+      ],
+      "image": "battle/rpg-maker-mz/enemies/SF_Mechasphere.png"
+    },
+    {
+      "id": "rpg-maker-mz-enemies-sf-phoenix",
+      "name": "SF Phoenix",
+      "type": "enemy-battler",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "enemy",
+        "front-view"
+      ],
+      "image": "battle/rpg-maker-mz/enemies/SF_Phoenix.png"
+    },
+    {
+      "id": "rpg-maker-mz-enemies-sf-redogre",
+      "name": "SF Redogre",
+      "type": "enemy-battler",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "enemy",
+        "front-view"
+      ],
+      "image": "battle/rpg-maker-mz/enemies/SF_Redogre.png"
+    },
+    {
+      "id": "rpg-maker-mz-enemies-sf-securityrobot",
+      "name": "SF Securityrobot",
+      "type": "enemy-battler",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "enemy",
+        "front-view"
+      ],
+      "image": "battle/rpg-maker-mz/enemies/SF_Securityrobot.png"
+    },
+    {
+      "id": "rpg-maker-mz-enemies-sf-shadow",
+      "name": "SF Shadow",
+      "type": "enemy-battler",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "enemy",
+        "front-view"
+      ],
+      "image": "battle/rpg-maker-mz/enemies/SF_Shadow.png"
+    },
+    {
+      "id": "rpg-maker-mz-enemies-sf-skullmask",
+      "name": "SF Skullmask",
+      "type": "enemy-battler",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "enemy",
+        "front-view"
+      ],
+      "image": "battle/rpg-maker-mz/enemies/SF_Skullmask.png"
+    },
+    {
+      "id": "rpg-maker-mz-enemies-sf-slaughterrobot",
+      "name": "SF Slaughterrobot",
+      "type": "enemy-battler",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "enemy",
+        "front-view"
+      ],
+      "image": "battle/rpg-maker-mz/enemies/SF_Slaughterrobot.png"
+    },
+    {
+      "id": "rpg-maker-mz-enemies-sf-specialforces",
+      "name": "SF Specialforces",
+      "type": "enemy-battler",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "enemy",
+        "front-view"
+      ],
+      "image": "battle/rpg-maker-mz/enemies/SF_Specialforces.png"
+    },
+    {
+      "id": "rpg-maker-mz-enemies-sf-talkingmuppet",
+      "name": "SF Talkingmuppet",
+      "type": "enemy-battler",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "enemy",
+        "front-view"
+      ],
+      "image": "battle/rpg-maker-mz/enemies/SF_Talkingmuppet.png"
+    },
+    {
+      "id": "rpg-maker-mz-enemies-sf-timebomb",
+      "name": "SF Timebomb",
+      "type": "enemy-battler",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "enemy",
+        "front-view"
+      ],
+      "image": "battle/rpg-maker-mz/enemies/SF_Timebomb.png"
+    },
+    {
+      "id": "rpg-maker-mz-enemies-sf-whitewolf",
+      "name": "SF Whitewolf",
+      "type": "enemy-battler",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "enemy",
+        "front-view"
+      ],
+      "image": "battle/rpg-maker-mz/enemies/SF_Whitewolf.png"
+    },
+    {
+      "id": "rpg-maker-mz-enemies-sf-will-o-the-wisp",
+      "name": "SF Will o the wisp",
+      "type": "enemy-battler",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "enemy",
+        "front-view"
+      ],
+      "image": "battle/rpg-maker-mz/enemies/SF_Will_o_the_wisp.png"
+    },
+    {
+      "id": "rpg-maker-mz-enemies-sf-will-o-the-wisp-2",
+      "name": "SF Will-o-the-wisp",
+      "type": "enemy-battler",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "enemy",
+        "front-view"
+      ],
+      "image": "battle/rpg-maker-mz/enemies/SF_Will-o-the-wisp.png"
+    },
+    {
+      "id": "rpg-maker-mz-enemies-sf-wolf",
+      "name": "SF Wolf",
+      "type": "enemy-battler",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "enemy",
+        "front-view"
+      ],
+      "image": "battle/rpg-maker-mz/enemies/SF_Wolf.png"
+    },
+    {
+      "id": "rpg-maker-mz-enemies-sf-workrobot",
+      "name": "SF Workrobot",
+      "type": "enemy-battler",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "enemy",
+        "front-view"
+      ],
+      "image": "battle/rpg-maker-mz/enemies/SF_Workrobot.png"
+    },
+    {
+      "id": "rpg-maker-mz-enemies-sf-zombiedog",
+      "name": "SF Zombiedog",
+      "type": "enemy-battler",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "enemy",
+        "front-view"
+      ],
+      "image": "battle/rpg-maker-mz/enemies/SF_Zombiedog.png"
+    },
+    {
+      "id": "rpg-maker-mz-enemies-siren",
+      "name": "Siren",
+      "type": "enemy-battler",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "enemy",
+        "front-view"
+      ],
+      "image": "battle/rpg-maker-mz/enemies/Siren.png"
+    },
+    {
+      "id": "rpg-maker-mz-enemies-sorcerer",
+      "name": "Sorcerer",
+      "type": "enemy-battler",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "enemy",
+        "front-view"
+      ],
+      "image": "battle/rpg-maker-mz/enemies/Sorcerer.png"
+    },
+    {
+      "id": "rpg-maker-mz-enemies-stoneknight",
+      "name": "Stoneknight",
+      "type": "enemy-battler",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "enemy",
+        "front-view"
+      ],
+      "image": "battle/rpg-maker-mz/enemies/Stoneknight.png"
+    },
+    {
+      "id": "rpg-maker-mz-enemies-sylph",
+      "name": "Sylph",
+      "type": "enemy-battler",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "enemy",
+        "front-view"
+      ],
+      "image": "battle/rpg-maker-mz/enemies/Sylph.png"
+    },
+    {
+      "id": "rpg-maker-mz-enemies-tigerbunny",
+      "name": "Tigerbunny",
+      "type": "enemy-battler",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "enemy",
+        "front-view"
+      ],
+      "image": "battle/rpg-maker-mz/enemies/Tigerbunny.png"
+    },
+    {
+      "id": "rpg-maker-mz-enemies-treant",
+      "name": "Treant",
+      "type": "enemy-battler",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "enemy",
+        "front-view"
+      ],
+      "image": "battle/rpg-maker-mz/enemies/Treant.png"
+    },
+    {
+      "id": "rpg-maker-mz-enemies-undine",
+      "name": "Undine",
+      "type": "enemy-battler",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "enemy",
+        "front-view"
+      ],
+      "image": "battle/rpg-maker-mz/enemies/Undine.png"
+    },
+    {
+      "id": "rpg-maker-mz-enemies-unicorn",
+      "name": "Unicorn",
+      "type": "enemy-battler",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "enemy",
+        "front-view"
+      ],
+      "image": "battle/rpg-maker-mz/enemies/Unicorn.png"
+    },
+    {
+      "id": "rpg-maker-mz-enemies-witch",
+      "name": "Witch",
+      "type": "enemy-battler",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "enemy",
+        "front-view"
+      ],
+      "image": "battle/rpg-maker-mz/enemies/Witch.png"
+    },
+    {
+      "id": "rpg-maker-mz-enemies-wolfman",
+      "name": "Wolfman",
+      "type": "enemy-battler",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "enemy",
+        "front-view"
+      ],
+      "image": "battle/rpg-maker-mz/enemies/Wolfman.png"
+    },
+    {
+      "id": "rpg-maker-mz-enemies-wraith",
+      "name": "Wraith",
+      "type": "enemy-battler",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "enemy",
+        "front-view"
+      ],
+      "image": "battle/rpg-maker-mz/enemies/Wraith.png"
+    },
+    {
+      "id": "rpg-maker-mz-enemies-zombie",
+      "name": "Zombie",
+      "type": "enemy-battler",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "enemy",
+        "front-view"
+      ],
+      "image": "battle/rpg-maker-mz/enemies/Zombie.png"
+    },
+    {
+      "id": "rpg-maker-mz-sv-enemies-actor1-3",
+      "name": "Actor1 3",
+      "type": "side-view-enemy-battler",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "enemy",
+        "side-view"
+      ],
+      "image": "battle/rpg-maker-mz/sv_enemies/Actor1_3.png"
+    },
+    {
+      "id": "rpg-maker-mz-sv-enemies-actor1-4",
+      "name": "Actor1 4",
+      "type": "side-view-enemy-battler",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "enemy",
+        "side-view"
+      ],
+      "image": "battle/rpg-maker-mz/sv_enemies/Actor1_4.png"
+    },
+    {
+      "id": "rpg-maker-mz-sv-enemies-actor1-5",
+      "name": "Actor1 5",
+      "type": "side-view-enemy-battler",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "enemy",
+        "side-view"
+      ],
+      "image": "battle/rpg-maker-mz/sv_enemies/Actor1_5.png"
+    },
+    {
+      "id": "rpg-maker-mz-sv-enemies-actor1-6",
+      "name": "Actor1 6",
+      "type": "side-view-enemy-battler",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "enemy",
+        "side-view"
+      ],
+      "image": "battle/rpg-maker-mz/sv_enemies/Actor1_6.png"
+    },
+    {
+      "id": "rpg-maker-mz-sv-enemies-actor2-1",
+      "name": "Actor2 1",
+      "type": "side-view-enemy-battler",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "enemy",
+        "side-view"
+      ],
+      "image": "battle/rpg-maker-mz/sv_enemies/Actor2_1.png"
+    },
+    {
+      "id": "rpg-maker-mz-sv-enemies-actor2-2",
+      "name": "Actor2 2",
+      "type": "side-view-enemy-battler",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "enemy",
+        "side-view"
+      ],
+      "image": "battle/rpg-maker-mz/sv_enemies/Actor2_2.png"
+    },
+    {
+      "id": "rpg-maker-mz-sv-enemies-actor2-3",
+      "name": "Actor2 3",
+      "type": "side-view-enemy-battler",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "enemy",
+        "side-view"
+      ],
+      "image": "battle/rpg-maker-mz/sv_enemies/Actor2_3.png"
+    },
+    {
+      "id": "rpg-maker-mz-sv-enemies-actor2-4",
+      "name": "Actor2 4",
+      "type": "side-view-enemy-battler",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "enemy",
+        "side-view"
+      ],
+      "image": "battle/rpg-maker-mz/sv_enemies/Actor2_4.png"
+    },
+    {
+      "id": "rpg-maker-mz-sv-enemies-actor2-5",
+      "name": "Actor2 5",
+      "type": "side-view-enemy-battler",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "enemy",
+        "side-view"
+      ],
+      "image": "battle/rpg-maker-mz/sv_enemies/Actor2_5.png"
+    },
+    {
+      "id": "rpg-maker-mz-sv-enemies-actor2-6",
+      "name": "Actor2 6",
+      "type": "side-view-enemy-battler",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "enemy",
+        "side-view"
+      ],
+      "image": "battle/rpg-maker-mz/sv_enemies/Actor2_6.png"
+    },
+    {
+      "id": "rpg-maker-mz-sv-enemies-actor2-7",
+      "name": "Actor2 7",
+      "type": "side-view-enemy-battler",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "enemy",
+        "side-view"
+      ],
+      "image": "battle/rpg-maker-mz/sv_enemies/Actor2_7.png"
+    },
+    {
+      "id": "rpg-maker-mz-sv-enemies-actor3-1",
+      "name": "Actor3 1",
+      "type": "side-view-enemy-battler",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "enemy",
+        "side-view"
+      ],
+      "image": "battle/rpg-maker-mz/sv_enemies/Actor3_1.png"
+    },
+    {
+      "id": "rpg-maker-mz-sv-enemies-actor3-2",
+      "name": "Actor3 2",
+      "type": "side-view-enemy-battler",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "enemy",
+        "side-view"
+      ],
+      "image": "battle/rpg-maker-mz/sv_enemies/Actor3_2.png"
+    },
+    {
+      "id": "rpg-maker-mz-sv-enemies-actor3-3",
+      "name": "Actor3 3",
+      "type": "side-view-enemy-battler",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "enemy",
+        "side-view"
+      ],
+      "image": "battle/rpg-maker-mz/sv_enemies/Actor3_3.png"
+    },
+    {
+      "id": "rpg-maker-mz-sv-enemies-actor3-4",
+      "name": "Actor3 4",
+      "type": "side-view-enemy-battler",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "enemy",
+        "side-view"
+      ],
+      "image": "battle/rpg-maker-mz/sv_enemies/Actor3_4.png"
+    },
+    {
+      "id": "rpg-maker-mz-sv-enemies-berserker",
+      "name": "Berserker",
+      "type": "side-view-enemy-battler",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "enemy",
+        "side-view"
+      ],
+      "image": "battle/rpg-maker-mz/sv_enemies/Berserker.png"
+    },
+    {
+      "id": "rpg-maker-mz-sv-enemies-birdman",
+      "name": "Birdman",
+      "type": "side-view-enemy-battler",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "enemy",
+        "side-view"
+      ],
+      "image": "battle/rpg-maker-mz/sv_enemies/Birdman.png"
+    },
+    {
+      "id": "rpg-maker-mz-sv-enemies-blackknight",
+      "name": "Blackknight",
+      "type": "side-view-enemy-battler",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "enemy",
+        "side-view"
+      ],
+      "image": "battle/rpg-maker-mz/sv_enemies/Blackknight.png"
+    },
+    {
+      "id": "rpg-maker-mz-sv-enemies-caitsith",
+      "name": "Caitsith",
+      "type": "side-view-enemy-battler",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "enemy",
+        "side-view"
+      ],
+      "image": "battle/rpg-maker-mz/sv_enemies/Caitsith.png"
+    },
+    {
+      "id": "rpg-maker-mz-sv-enemies-captain",
+      "name": "Captain",
+      "type": "side-view-enemy-battler",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "enemy",
+        "side-view"
+      ],
+      "image": "battle/rpg-maker-mz/sv_enemies/Captain.png"
+    },
+    {
+      "id": "rpg-maker-mz-sv-enemies-crab",
+      "name": "Crab",
+      "type": "side-view-enemy-battler",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "enemy",
+        "side-view"
+      ],
+      "image": "battle/rpg-maker-mz/sv_enemies/Crab.png"
+    },
+    {
+      "id": "rpg-maker-mz-sv-enemies-crow",
+      "name": "Crow",
+      "type": "side-view-enemy-battler",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "enemy",
+        "side-view"
+      ],
+      "image": "battle/rpg-maker-mz/sv_enemies/Crow.png"
+    },
+    {
+      "id": "rpg-maker-mz-sv-enemies-darkelf",
+      "name": "Darkelf",
+      "type": "side-view-enemy-battler",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "enemy",
+        "side-view"
+      ],
+      "image": "battle/rpg-maker-mz/sv_enemies/Darkelf.png"
+    },
+    {
+      "id": "rpg-maker-mz-sv-enemies-demon-metamorphosis",
+      "name": "Demon metamorphosis",
+      "type": "side-view-enemy-battler",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "enemy",
+        "side-view"
+      ],
+      "image": "battle/rpg-maker-mz/sv_enemies/Demon_metamorphosis.png"
+    },
+    {
+      "id": "rpg-maker-mz-sv-enemies-demon",
+      "name": "Demon",
+      "type": "side-view-enemy-battler",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "enemy",
+        "side-view"
+      ],
+      "image": "battle/rpg-maker-mz/sv_enemies/Demon.png"
+    },
+    {
+      "id": "rpg-maker-mz-sv-enemies-demoncount",
+      "name": "Demoncount",
+      "type": "side-view-enemy-battler",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "enemy",
+        "side-view"
+      ],
+      "image": "battle/rpg-maker-mz/sv_enemies/Demoncount.png"
+    },
+    {
+      "id": "rpg-maker-mz-sv-enemies-demonpot",
+      "name": "Demonpot",
+      "type": "side-view-enemy-battler",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "enemy",
+        "side-view"
+      ],
+      "image": "battle/rpg-maker-mz/sv_enemies/Demonpot.png"
+    },
+    {
+      "id": "rpg-maker-mz-sv-enemies-dragon",
+      "name": "Dragon",
+      "type": "side-view-enemy-battler",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "enemy",
+        "side-view"
+      ],
+      "image": "battle/rpg-maker-mz/sv_enemies/Dragon.png"
+    },
+    {
+      "id": "rpg-maker-mz-sv-enemies-evilbook",
+      "name": "Evilbook",
+      "type": "side-view-enemy-battler",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "enemy",
+        "side-view"
+      ],
+      "image": "battle/rpg-maker-mz/sv_enemies/Evilbook.png"
+    },
+    {
+      "id": "rpg-maker-mz-sv-enemies-evilgod",
+      "name": "Evilgod",
+      "type": "side-view-enemy-battler",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "enemy",
+        "side-view"
+      ],
+      "image": "battle/rpg-maker-mz/sv_enemies/Evilgod.png"
+    },
+    {
+      "id": "rpg-maker-mz-sv-enemies-foxman",
+      "name": "Foxman",
+      "type": "side-view-enemy-battler",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "enemy",
+        "side-view"
+      ],
+      "image": "battle/rpg-maker-mz/sv_enemies/Foxman.png"
+    },
+    {
+      "id": "rpg-maker-mz-sv-enemies-frilledlizard",
+      "name": "Frilledlizard",
+      "type": "side-view-enemy-battler",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "enemy",
+        "side-view"
+      ],
+      "image": "battle/rpg-maker-mz/sv_enemies/Frilledlizard.png"
+    },
+    {
+      "id": "rpg-maker-mz-sv-enemies-gatekeeper",
+      "name": "Gatekeeper",
+      "type": "side-view-enemy-battler",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "enemy",
+        "side-view"
+      ],
+      "image": "battle/rpg-maker-mz/sv_enemies/Gatekeeper.png"
+    },
+    {
+      "id": "rpg-maker-mz-sv-enemies-gnome",
+      "name": "Gnome",
+      "type": "side-view-enemy-battler",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "enemy",
+        "side-view"
+      ],
+      "image": "battle/rpg-maker-mz/sv_enemies/Gnome.png"
+    },
+    {
+      "id": "rpg-maker-mz-sv-enemies-goblin",
+      "name": "Goblin",
+      "type": "side-view-enemy-battler",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "enemy",
+        "side-view"
+      ],
+      "image": "battle/rpg-maker-mz/sv_enemies/Goblin.png"
+    },
+    {
+      "id": "rpg-maker-mz-sv-enemies-god-of-light",
+      "name": "God of light",
+      "type": "side-view-enemy-battler",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "enemy",
+        "side-view"
+      ],
+      "image": "battle/rpg-maker-mz/sv_enemies/God_of_light.png"
+    },
+    {
+      "id": "rpg-maker-mz-sv-enemies-goddess-of-death",
+      "name": "Goddess of death",
+      "type": "side-view-enemy-battler",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "enemy",
+        "side-view"
+      ],
+      "image": "battle/rpg-maker-mz/sv_enemies/Goddess_of_death.png"
+    },
+    {
+      "id": "rpg-maker-mz-sv-enemies-goddess",
+      "name": "Goddess",
+      "type": "side-view-enemy-battler",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "enemy",
+        "side-view"
+      ],
+      "image": "battle/rpg-maker-mz/sv_enemies/Goddess.png"
+    },
+    {
+      "id": "rpg-maker-mz-sv-enemies-hakutaku",
+      "name": "Hakutaku",
+      "type": "side-view-enemy-battler",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "enemy",
+        "side-view"
+      ],
+      "image": "battle/rpg-maker-mz/sv_enemies/Hakutaku.png"
+    },
+    {
+      "id": "rpg-maker-mz-sv-enemies-harpy",
+      "name": "Harpy",
+      "type": "side-view-enemy-battler",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "enemy",
+        "side-view"
+      ],
+      "image": "battle/rpg-maker-mz/sv_enemies/Harpy.png"
+    },
+    {
+      "id": "rpg-maker-mz-sv-enemies-hi-monster",
+      "name": "Hi monster",
+      "type": "side-view-enemy-battler",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "enemy",
+        "side-view"
+      ],
+      "image": "battle/rpg-maker-mz/sv_enemies/Hi_monster.png"
+    },
+    {
+      "id": "rpg-maker-mz-sv-enemies-highking",
+      "name": "Highking",
+      "type": "side-view-enemy-battler",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "enemy",
+        "side-view"
+      ],
+      "image": "battle/rpg-maker-mz/sv_enemies/Highking.png"
+    },
+    {
+      "id": "rpg-maker-mz-sv-enemies-hydra",
+      "name": "Hydra",
+      "type": "side-view-enemy-battler",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "enemy",
+        "side-view"
+      ],
+      "image": "battle/rpg-maker-mz/sv_enemies/Hydra.png"
+    },
+    {
+      "id": "rpg-maker-mz-sv-enemies-ketos",
+      "name": "Ketos",
+      "type": "side-view-enemy-battler",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "enemy",
+        "side-view"
+      ],
+      "image": "battle/rpg-maker-mz/sv_enemies/Ketos.png"
+    },
+    {
+      "id": "rpg-maker-mz-sv-enemies-kraken",
+      "name": "Kraken",
+      "type": "side-view-enemy-battler",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "enemy",
+        "side-view"
+      ],
+      "image": "battle/rpg-maker-mz/sv_enemies/Kraken.png"
+    },
+    {
+      "id": "rpg-maker-mz-sv-enemies-lich",
+      "name": "Lich",
+      "type": "side-view-enemy-battler",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "enemy",
+        "side-view"
+      ],
+      "image": "battle/rpg-maker-mz/sv_enemies/Lich.png"
+    },
+    {
+      "id": "rpg-maker-mz-sv-enemies-machinerybee",
+      "name": "Machinerybee",
+      "type": "side-view-enemy-battler",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "enemy",
+        "side-view"
+      ],
+      "image": "battle/rpg-maker-mz/sv_enemies/Machinerybee.png"
+    },
+    {
+      "id": "rpg-maker-mz-sv-enemies-matango",
+      "name": "Matango",
+      "type": "side-view-enemy-battler",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "enemy",
+        "side-view"
+      ],
+      "image": "battle/rpg-maker-mz/sv_enemies/Matango.png"
+    },
+    {
+      "id": "rpg-maker-mz-sv-enemies-mechascorpion",
+      "name": "Mechascorpion",
+      "type": "side-view-enemy-battler",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "enemy",
+        "side-view"
+      ],
+      "image": "battle/rpg-maker-mz/sv_enemies/Mechascorpion.png"
+    },
+    {
+      "id": "rpg-maker-mz-sv-enemies-medusa",
+      "name": "Medusa",
+      "type": "side-view-enemy-battler",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "enemy",
+        "side-view"
+      ],
+      "image": "battle/rpg-maker-mz/sv_enemies/Medusa.png"
+    },
+    {
+      "id": "rpg-maker-mz-sv-enemies-mercenary",
+      "name": "Mercenary",
+      "type": "side-view-enemy-battler",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "enemy",
+        "side-view"
+      ],
+      "image": "battle/rpg-maker-mz/sv_enemies/Mercenary.png"
+    },
+    {
+      "id": "rpg-maker-mz-sv-enemies-mimic",
+      "name": "Mimic",
+      "type": "side-view-enemy-battler",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "enemy",
+        "side-view"
+      ],
+      "image": "battle/rpg-maker-mz/sv_enemies/Mimic.png"
+    },
+    {
+      "id": "rpg-maker-mz-sv-enemies-oddegg",
+      "name": "Oddegg",
+      "type": "side-view-enemy-battler",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "enemy",
+        "side-view"
+      ],
+      "image": "battle/rpg-maker-mz/sv_enemies/Oddegg.png"
+    },
+    {
+      "id": "rpg-maker-mz-sv-enemies-petitdevil",
+      "name": "Petitdevil",
+      "type": "side-view-enemy-battler",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "enemy",
+        "side-view"
+      ],
+      "image": "battle/rpg-maker-mz/sv_enemies/Petitdevil.png"
+    },
+    {
+      "id": "rpg-maker-mz-sv-enemies-plasma",
+      "name": "Plasma",
+      "type": "side-view-enemy-battler",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "enemy",
+        "side-view"
+      ],
+      "image": "battle/rpg-maker-mz/sv_enemies/Plasma.png"
+    },
+    {
+      "id": "rpg-maker-mz-sv-enemies-sailor",
+      "name": "Sailor",
+      "type": "side-view-enemy-battler",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "enemy",
+        "side-view"
+      ],
+      "image": "battle/rpg-maker-mz/sv_enemies/Sailor.png"
+    },
+    {
+      "id": "rpg-maker-mz-sv-enemies-salamander",
+      "name": "Salamander",
+      "type": "side-view-enemy-battler",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "enemy",
+        "side-view"
+      ],
+      "image": "battle/rpg-maker-mz/sv_enemies/Salamander.png"
+    },
+    {
+      "id": "rpg-maker-mz-sv-enemies-sandworm",
+      "name": "Sandworm",
+      "type": "side-view-enemy-battler",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "enemy",
+        "side-view"
+      ],
+      "image": "battle/rpg-maker-mz/sv_enemies/Sandworm.png"
+    },
+    {
+      "id": "rpg-maker-mz-sv-enemies-sf-agent",
+      "name": "SF Agent",
+      "type": "side-view-enemy-battler",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "enemy",
+        "side-view"
+      ],
+      "image": "battle/rpg-maker-mz/sv_enemies/SF_Agent.png"
+    },
+    {
+      "id": "rpg-maker-mz-sv-enemies-sf-anaconda",
+      "name": "SF Anaconda",
+      "type": "side-view-enemy-battler",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "enemy",
+        "side-view"
+      ],
+      "image": "battle/rpg-maker-mz/sv_enemies/SF_Anaconda.png"
+    },
+    {
+      "id": "rpg-maker-mz-sv-enemies-sf-armygorilla",
+      "name": "SF ArmyGorilla",
+      "type": "side-view-enemy-battler",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "enemy",
+        "side-view"
+      ],
+      "image": "battle/rpg-maker-mz/sv_enemies/SF_ArmyGorilla.png"
+    },
+    {
+      "id": "rpg-maker-mz-sv-enemies-sf-armymonkey",
+      "name": "SF Armymonkey",
+      "type": "side-view-enemy-battler",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "enemy",
+        "side-view"
+      ],
+      "image": "battle/rpg-maker-mz/sv_enemies/SF_Armymonkey.png"
+    },
+    {
+      "id": "rpg-maker-mz-sv-enemies-sf-blueogre",
+      "name": "SF Blueogre",
+      "type": "side-view-enemy-battler",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "enemy",
+        "side-view"
+      ],
+      "image": "battle/rpg-maker-mz/sv_enemies/SF_Blueogre.png"
+    },
+    {
+      "id": "rpg-maker-mz-sv-enemies-sf-boss",
+      "name": "SF Boss",
+      "type": "side-view-enemy-battler",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "enemy",
+        "side-view"
+      ],
+      "image": "battle/rpg-maker-mz/sv_enemies/SF_Boss.png"
+    },
+    {
+      "id": "rpg-maker-mz-sv-enemies-sf-brownbear",
+      "name": "SF Brownbear",
+      "type": "side-view-enemy-battler",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "enemy",
+        "side-view"
+      ],
+      "image": "battle/rpg-maker-mz/sv_enemies/SF_Brownbear.png"
+    },
+    {
+      "id": "rpg-maker-mz-sv-enemies-sf-cyborg",
+      "name": "SF Cyborg",
+      "type": "side-view-enemy-battler",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "enemy",
+        "side-view"
+      ],
+      "image": "battle/rpg-maker-mz/sv_enemies/SF_Cyborg.png"
+    },
+    {
+      "id": "rpg-maker-mz-sv-enemies-sf-demon-of-universe",
+      "name": "SF Demon of universe",
+      "type": "side-view-enemy-battler",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "enemy",
+        "side-view"
+      ],
+      "image": "battle/rpg-maker-mz/sv_enemies/SF_Demon_of_universe.png"
+    },
+    {
+      "id": "rpg-maker-mz-sv-enemies-sf-drone",
+      "name": "SF Drone",
+      "type": "side-view-enemy-battler",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "enemy",
+        "side-view"
+      ],
+      "image": "battle/rpg-maker-mz/sv_enemies/SF_Drone.png"
+    },
+    {
+      "id": "rpg-maker-mz-sv-enemies-sf-enmadaio",
+      "name": "SF Enmadaio",
+      "type": "side-view-enemy-battler",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "enemy",
+        "side-view"
+      ],
+      "image": "battle/rpg-maker-mz/sv_enemies/SF_Enmadaio.png"
+    },
+    {
+      "id": "rpg-maker-mz-sv-enemies-sf-evilteddybear",
+      "name": "SF Evilteddybear",
+      "type": "side-view-enemy-battler",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "enemy",
+        "side-view"
+      ],
+      "image": "battle/rpg-maker-mz/sv_enemies/SF_Evilteddybear.png"
+    },
+    {
+      "id": "rpg-maker-mz-sv-enemies-sf-hannyamask",
+      "name": "SF Hannyamask",
+      "type": "side-view-enemy-battler",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "enemy",
+        "side-view"
+      ],
+      "image": "battle/rpg-maker-mz/sv_enemies/SF_Hannyamask.png"
+    },
+    {
+      "id": "rpg-maker-mz-sv-enemies-sf-hermit",
+      "name": "SF Hermit",
+      "type": "side-view-enemy-battler",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "enemy",
+        "side-view"
+      ],
+      "image": "battle/rpg-maker-mz/sv_enemies/SF_Hermit.png"
+    },
+    {
+      "id": "rpg-maker-mz-sv-enemies-sf-jiangshi",
+      "name": "SF Jiangshi",
+      "type": "side-view-enemy-battler",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "enemy",
+        "side-view"
+      ],
+      "image": "battle/rpg-maker-mz/sv_enemies/SF_Jiangshi.png"
+    },
+    {
+      "id": "rpg-maker-mz-sv-enemies-sf-kamaitachi",
+      "name": "SF Kamaitachi",
+      "type": "side-view-enemy-battler",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "enemy",
+        "side-view"
+      ],
+      "image": "battle/rpg-maker-mz/sv_enemies/SF_Kamaitachi.png"
+    },
+    {
+      "id": "rpg-maker-mz-sv-enemies-sf-kappa",
+      "name": "SF Kappa",
+      "type": "side-view-enemy-battler",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "enemy",
+        "side-view"
+      ],
+      "image": "battle/rpg-maker-mz/sv_enemies/SF_Kappa.png"
+    },
+    {
+      "id": "rpg-maker-mz-sv-enemies-sf-madclown",
+      "name": "SF Madclown",
+      "type": "side-view-enemy-battler",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "enemy",
+        "side-view"
+      ],
+      "image": "battle/rpg-maker-mz/sv_enemies/SF_Madclown.png"
+    },
+    {
+      "id": "rpg-maker-mz-sv-enemies-sf-madscientist",
+      "name": "SF Madscientist",
+      "type": "side-view-enemy-battler",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "enemy",
+        "side-view"
+      ],
+      "image": "battle/rpg-maker-mz/sv_enemies/SF_Madscientist.png"
+    },
+    {
+      "id": "rpg-maker-mz-sv-enemies-sf-mafia",
+      "name": "SF Mafia",
+      "type": "side-view-enemy-battler",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "enemy",
+        "side-view"
+      ],
+      "image": "battle/rpg-maker-mz/sv_enemies/SF_Mafia.png"
+    },
+    {
+      "id": "rpg-maker-mz-sv-enemies-sf-mechasphere",
+      "name": "SF Mechasphere",
+      "type": "side-view-enemy-battler",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "enemy",
+        "side-view"
+      ],
+      "image": "battle/rpg-maker-mz/sv_enemies/SF_Mechasphere.png"
+    },
+    {
+      "id": "rpg-maker-mz-sv-enemies-sf-phoenix",
+      "name": "SF Phoenix",
+      "type": "side-view-enemy-battler",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "enemy",
+        "side-view"
+      ],
+      "image": "battle/rpg-maker-mz/sv_enemies/SF_Phoenix.png"
+    },
+    {
+      "id": "rpg-maker-mz-sv-enemies-sf-redogre",
+      "name": "SF Redogre",
+      "type": "side-view-enemy-battler",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "enemy",
+        "side-view"
+      ],
+      "image": "battle/rpg-maker-mz/sv_enemies/SF_Redogre.png"
+    },
+    {
+      "id": "rpg-maker-mz-sv-enemies-sf-securityrobot",
+      "name": "SF Securityrobot",
+      "type": "side-view-enemy-battler",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "enemy",
+        "side-view"
+      ],
+      "image": "battle/rpg-maker-mz/sv_enemies/SF_Securityrobot.png"
+    },
+    {
+      "id": "rpg-maker-mz-sv-enemies-sf-shadow",
+      "name": "SF Shadow",
+      "type": "side-view-enemy-battler",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "enemy",
+        "side-view"
+      ],
+      "image": "battle/rpg-maker-mz/sv_enemies/SF_Shadow.png"
+    },
+    {
+      "id": "rpg-maker-mz-sv-enemies-sf-skullmask",
+      "name": "SF Skullmask",
+      "type": "side-view-enemy-battler",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "enemy",
+        "side-view"
+      ],
+      "image": "battle/rpg-maker-mz/sv_enemies/SF_Skullmask.png"
+    },
+    {
+      "id": "rpg-maker-mz-sv-enemies-sf-slaughterrobot",
+      "name": "SF Slaughterrobot",
+      "type": "side-view-enemy-battler",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "enemy",
+        "side-view"
+      ],
+      "image": "battle/rpg-maker-mz/sv_enemies/SF_Slaughterrobot.png"
+    },
+    {
+      "id": "rpg-maker-mz-sv-enemies-sf-specialforces",
+      "name": "SF Specialforces",
+      "type": "side-view-enemy-battler",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "enemy",
+        "side-view"
+      ],
+      "image": "battle/rpg-maker-mz/sv_enemies/SF_Specialforces.png"
+    },
+    {
+      "id": "rpg-maker-mz-sv-enemies-sf-talkingmuppet",
+      "name": "SF Talkingmuppet",
+      "type": "side-view-enemy-battler",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "enemy",
+        "side-view"
+      ],
+      "image": "battle/rpg-maker-mz/sv_enemies/SF_Talkingmuppet.png"
+    },
+    {
+      "id": "rpg-maker-mz-sv-enemies-sf-timebomb",
+      "name": "SF Timebomb",
+      "type": "side-view-enemy-battler",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "enemy",
+        "side-view"
+      ],
+      "image": "battle/rpg-maker-mz/sv_enemies/SF_Timebomb.png"
+    },
+    {
+      "id": "rpg-maker-mz-sv-enemies-sf-whitewolf",
+      "name": "SF Whitewolf",
+      "type": "side-view-enemy-battler",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "enemy",
+        "side-view"
+      ],
+      "image": "battle/rpg-maker-mz/sv_enemies/SF_Whitewolf.png"
+    },
+    {
+      "id": "rpg-maker-mz-sv-enemies-sf-will-o-the-wisp",
+      "name": "SF Will o the wisp",
+      "type": "side-view-enemy-battler",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "enemy",
+        "side-view"
+      ],
+      "image": "battle/rpg-maker-mz/sv_enemies/SF_Will_o_the_wisp.png"
+    },
+    {
+      "id": "rpg-maker-mz-sv-enemies-sf-wolf",
+      "name": "SF Wolf",
+      "type": "side-view-enemy-battler",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "enemy",
+        "side-view"
+      ],
+      "image": "battle/rpg-maker-mz/sv_enemies/SF_Wolf.png"
+    },
+    {
+      "id": "rpg-maker-mz-sv-enemies-sf-workrobot",
+      "name": "SF Workrobot",
+      "type": "side-view-enemy-battler",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "enemy",
+        "side-view"
+      ],
+      "image": "battle/rpg-maker-mz/sv_enemies/SF_Workrobot.png"
+    },
+    {
+      "id": "rpg-maker-mz-sv-enemies-sf-zombiedog",
+      "name": "SF Zombiedog",
+      "type": "side-view-enemy-battler",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "enemy",
+        "side-view"
+      ],
+      "image": "battle/rpg-maker-mz/sv_enemies/SF_Zombiedog.png"
+    },
+    {
+      "id": "rpg-maker-mz-sv-enemies-siren",
+      "name": "Siren",
+      "type": "side-view-enemy-battler",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "enemy",
+        "side-view"
+      ],
+      "image": "battle/rpg-maker-mz/sv_enemies/Siren.png"
+    },
+    {
+      "id": "rpg-maker-mz-sv-enemies-sorcerer",
+      "name": "Sorcerer",
+      "type": "side-view-enemy-battler",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "enemy",
+        "side-view"
+      ],
+      "image": "battle/rpg-maker-mz/sv_enemies/Sorcerer.png"
+    },
+    {
+      "id": "rpg-maker-mz-sv-enemies-stoneknight",
+      "name": "Stoneknight",
+      "type": "side-view-enemy-battler",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "enemy",
+        "side-view"
+      ],
+      "image": "battle/rpg-maker-mz/sv_enemies/Stoneknight.png"
+    },
+    {
+      "id": "rpg-maker-mz-sv-enemies-sylph",
+      "name": "Sylph",
+      "type": "side-view-enemy-battler",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "enemy",
+        "side-view"
+      ],
+      "image": "battle/rpg-maker-mz/sv_enemies/Sylph.png"
+    },
+    {
+      "id": "rpg-maker-mz-sv-enemies-tigerbunny",
+      "name": "Tigerbunny",
+      "type": "side-view-enemy-battler",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "enemy",
+        "side-view"
+      ],
+      "image": "battle/rpg-maker-mz/sv_enemies/Tigerbunny.png"
+    },
+    {
+      "id": "rpg-maker-mz-sv-enemies-treant",
+      "name": "Treant",
+      "type": "side-view-enemy-battler",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "enemy",
+        "side-view"
+      ],
+      "image": "battle/rpg-maker-mz/sv_enemies/Treant.png"
+    },
+    {
+      "id": "rpg-maker-mz-sv-enemies-undine",
+      "name": "Undine",
+      "type": "side-view-enemy-battler",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "enemy",
+        "side-view"
+      ],
+      "image": "battle/rpg-maker-mz/sv_enemies/Undine.png"
+    },
+    {
+      "id": "rpg-maker-mz-sv-enemies-unicorn",
+      "name": "Unicorn",
+      "type": "side-view-enemy-battler",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "enemy",
+        "side-view"
+      ],
+      "image": "battle/rpg-maker-mz/sv_enemies/Unicorn.png"
+    },
+    {
+      "id": "rpg-maker-mz-sv-enemies-witch",
+      "name": "Witch",
+      "type": "side-view-enemy-battler",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "enemy",
+        "side-view"
+      ],
+      "image": "battle/rpg-maker-mz/sv_enemies/Witch.png"
+    },
+    {
+      "id": "rpg-maker-mz-sv-enemies-wolfman",
+      "name": "Wolfman",
+      "type": "side-view-enemy-battler",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "enemy",
+        "side-view"
+      ],
+      "image": "battle/rpg-maker-mz/sv_enemies/Wolfman.png"
+    },
+    {
+      "id": "rpg-maker-mz-sv-enemies-wraith",
+      "name": "Wraith",
+      "type": "side-view-enemy-battler",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "enemy",
+        "side-view"
+      ],
+      "image": "battle/rpg-maker-mz/sv_enemies/Wraith.png"
+    },
+    {
+      "id": "rpg-maker-mz-sv-enemies-zombie",
+      "name": "Zombie",
+      "type": "side-view-enemy-battler",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "enemy",
+        "side-view"
+      ],
+      "image": "battle/rpg-maker-mz/sv_enemies/Zombie.png"
+    },
+    {
+      "id": "rpg-maker-mz-battlebacks1-castle1",
+      "name": "Castle1",
+      "type": "battle-background-lower",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "background",
+        "lower-layer"
+      ],
+      "image": "battle/rpg-maker-mz/battlebacks1/Castle1.png"
+    },
+    {
+      "id": "rpg-maker-mz-battlebacks1-castle2",
+      "name": "Castle2",
+      "type": "battle-background-lower",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "background",
+        "lower-layer"
+      ],
+      "image": "battle/rpg-maker-mz/battlebacks1/Castle2.png"
+    },
+    {
+      "id": "rpg-maker-mz-battlebacks1-castle3",
+      "name": "Castle3",
+      "type": "battle-background-lower",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "background",
+        "lower-layer"
+      ],
+      "image": "battle/rpg-maker-mz/battlebacks1/Castle3.png"
+    },
+    {
+      "id": "rpg-maker-mz-battlebacks1-clouds",
+      "name": "Clouds",
+      "type": "battle-background-lower",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "background",
+        "lower-layer"
+      ],
+      "image": "battle/rpg-maker-mz/battlebacks1/Clouds.png"
+    },
+    {
+      "id": "rpg-maker-mz-battlebacks1-cobblestones1",
+      "name": "Cobblestones1",
+      "type": "battle-background-lower",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "background",
+        "lower-layer"
+      ],
+      "image": "battle/rpg-maker-mz/battlebacks1/Cobblestones1.png"
+    },
+    {
+      "id": "rpg-maker-mz-battlebacks1-cobblestones2",
+      "name": "Cobblestones2",
+      "type": "battle-background-lower",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "background",
+        "lower-layer"
+      ],
+      "image": "battle/rpg-maker-mz/battlebacks1/Cobblestones2.png"
+    },
+    {
+      "id": "rpg-maker-mz-battlebacks1-cobblestones3",
+      "name": "Cobblestones3",
+      "type": "battle-background-lower",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "background",
+        "lower-layer"
+      ],
+      "image": "battle/rpg-maker-mz/battlebacks1/Cobblestones3.png"
+    },
+    {
+      "id": "rpg-maker-mz-battlebacks1-cobblestones4",
+      "name": "Cobblestones4",
+      "type": "battle-background-lower",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "background",
+        "lower-layer"
+      ],
+      "image": "battle/rpg-maker-mz/battlebacks1/Cobblestones4.png"
+    },
+    {
+      "id": "rpg-maker-mz-battlebacks1-cobblestones5",
+      "name": "Cobblestones5",
+      "type": "battle-background-lower",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "background",
+        "lower-layer"
+      ],
+      "image": "battle/rpg-maker-mz/battlebacks1/Cobblestones5.png"
+    },
+    {
+      "id": "rpg-maker-mz-battlebacks1-colosseum",
+      "name": "Colosseum",
+      "type": "battle-background-lower",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "background",
+        "lower-layer"
+      ],
+      "image": "battle/rpg-maker-mz/battlebacks1/Colosseum.png"
+    },
+    {
+      "id": "rpg-maker-mz-battlebacks1-crystal",
+      "name": "Crystal",
+      "type": "battle-background-lower",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "background",
+        "lower-layer"
+      ],
+      "image": "battle/rpg-maker-mz/battlebacks1/Crystal.png"
+    },
+    {
+      "id": "rpg-maker-mz-battlebacks1-cyberspace",
+      "name": "Cyberspace",
+      "type": "battle-background-lower",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "background",
+        "lower-layer"
+      ],
+      "image": "battle/rpg-maker-mz/battlebacks1/Cyberspace.png"
+    },
+    {
+      "id": "rpg-maker-mz-battlebacks1-decorativetile1",
+      "name": "DecorativeTile1",
+      "type": "battle-background-lower",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "background",
+        "lower-layer"
+      ],
+      "image": "battle/rpg-maker-mz/battlebacks1/DecorativeTile1.png"
+    },
+    {
+      "id": "rpg-maker-mz-battlebacks1-decorativetile2",
+      "name": "DecorativeTile2",
+      "type": "battle-background-lower",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "background",
+        "lower-layer"
+      ],
+      "image": "battle/rpg-maker-mz/battlebacks1/DecorativeTile2.png"
+    },
+    {
+      "id": "rpg-maker-mz-battlebacks1-demoncastle1",
+      "name": "DemonCastle1",
+      "type": "battle-background-lower",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "background",
+        "lower-layer"
+      ],
+      "image": "battle/rpg-maker-mz/battlebacks1/DemonCastle1.png"
+    },
+    {
+      "id": "rpg-maker-mz-battlebacks1-demoncastle2",
+      "name": "DemonCastle2",
+      "type": "battle-background-lower",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "background",
+        "lower-layer"
+      ],
+      "image": "battle/rpg-maker-mz/battlebacks1/DemonCastle2.png"
+    },
+    {
+      "id": "rpg-maker-mz-battlebacks1-demoncastle3",
+      "name": "DemonCastle3",
+      "type": "battle-background-lower",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "background",
+        "lower-layer"
+      ],
+      "image": "battle/rpg-maker-mz/battlebacks1/DemonCastle3.png"
+    },
+    {
+      "id": "rpg-maker-mz-battlebacks1-demonicworld",
+      "name": "DemonicWorld",
+      "type": "battle-background-lower",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "background",
+        "lower-layer"
+      ],
+      "image": "battle/rpg-maker-mz/battlebacks1/DemonicWorld.png"
+    },
+    {
+      "id": "rpg-maker-mz-battlebacks1-desert",
+      "name": "Desert",
+      "type": "battle-background-lower",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "background",
+        "lower-layer"
+      ],
+      "image": "battle/rpg-maker-mz/battlebacks1/Desert.png"
+    },
+    {
+      "id": "rpg-maker-mz-battlebacks1-dirt",
+      "name": "Dirt",
+      "type": "battle-background-lower",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "background",
+        "lower-layer"
+      ],
+      "image": "battle/rpg-maker-mz/battlebacks1/Dirt.png"
+    },
+    {
+      "id": "rpg-maker-mz-battlebacks1-dirtcave",
+      "name": "DirtCave",
+      "type": "battle-background-lower",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "background",
+        "lower-layer"
+      ],
+      "image": "battle/rpg-maker-mz/battlebacks1/DirtCave.png"
+    },
+    {
+      "id": "rpg-maker-mz-battlebacks1-dirtfield",
+      "name": "DirtField",
+      "type": "battle-background-lower",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "background",
+        "lower-layer"
+      ],
+      "image": "battle/rpg-maker-mz/battlebacks1/DirtField.png"
+    },
+    {
+      "id": "rpg-maker-mz-battlebacks1-fort1",
+      "name": "Fort1",
+      "type": "battle-background-lower",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "background",
+        "lower-layer"
+      ],
+      "image": "battle/rpg-maker-mz/battlebacks1/Fort1.png"
+    },
+    {
+      "id": "rpg-maker-mz-battlebacks1-fort2",
+      "name": "Fort2",
+      "type": "battle-background-lower",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "background",
+        "lower-layer"
+      ],
+      "image": "battle/rpg-maker-mz/battlebacks1/Fort2.png"
+    },
+    {
+      "id": "rpg-maker-mz-battlebacks1-grassland",
+      "name": "Grassland",
+      "type": "battle-background-lower",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "background",
+        "lower-layer"
+      ],
+      "image": "battle/rpg-maker-mz/battlebacks1/Grassland.png"
+    },
+    {
+      "id": "rpg-maker-mz-battlebacks1-grassmaze",
+      "name": "GrassMaze",
+      "type": "battle-background-lower",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "background",
+        "lower-layer"
+      ],
+      "image": "battle/rpg-maker-mz/battlebacks1/GrassMaze.png"
+    },
+    {
+      "id": "rpg-maker-mz-battlebacks1-ground1",
+      "name": "Ground1",
+      "type": "battle-background-lower",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "background",
+        "lower-layer"
+      ],
+      "image": "battle/rpg-maker-mz/battlebacks1/Ground1.png"
+    },
+    {
+      "id": "rpg-maker-mz-battlebacks1-ground2",
+      "name": "Ground2",
+      "type": "battle-background-lower",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "background",
+        "lower-layer"
+      ],
+      "image": "battle/rpg-maker-mz/battlebacks1/Ground2.png"
+    },
+    {
+      "id": "rpg-maker-mz-battlebacks1-icecave",
+      "name": "IceCave",
+      "type": "battle-background-lower",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "background",
+        "lower-layer"
+      ],
+      "image": "battle/rpg-maker-mz/battlebacks1/IceCave.png"
+    },
+    {
+      "id": "rpg-maker-mz-battlebacks1-icemaze",
+      "name": "IceMaze",
+      "type": "battle-background-lower",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "background",
+        "lower-layer"
+      ],
+      "image": "battle/rpg-maker-mz/battlebacks1/IceMaze.png"
+    },
+    {
+      "id": "rpg-maker-mz-battlebacks1-lava1",
+      "name": "Lava1",
+      "type": "battle-background-lower",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "background",
+        "lower-layer"
+      ],
+      "image": "battle/rpg-maker-mz/battlebacks1/Lava1.png"
+    },
+    {
+      "id": "rpg-maker-mz-battlebacks1-lava2",
+      "name": "Lava2",
+      "type": "battle-background-lower",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "background",
+        "lower-layer"
+      ],
+      "image": "battle/rpg-maker-mz/battlebacks1/Lava2.png"
+    },
+    {
+      "id": "rpg-maker-mz-battlebacks1-lavacave",
+      "name": "LavaCave",
+      "type": "battle-background-lower",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "background",
+        "lower-layer"
+      ],
+      "image": "battle/rpg-maker-mz/battlebacks1/LavaCave.png"
+    },
+    {
+      "id": "rpg-maker-mz-battlebacks1-poisonswamp",
+      "name": "PoisonSwamp",
+      "type": "battle-background-lower",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "background",
+        "lower-layer"
+      ],
+      "image": "battle/rpg-maker-mz/battlebacks1/PoisonSwamp.png"
+    },
+    {
+      "id": "rpg-maker-mz-battlebacks1-road1",
+      "name": "Road1",
+      "type": "battle-background-lower",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "background",
+        "lower-layer"
+      ],
+      "image": "battle/rpg-maker-mz/battlebacks1/Road1.png"
+    },
+    {
+      "id": "rpg-maker-mz-battlebacks1-road2",
+      "name": "Road2",
+      "type": "battle-background-lower",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "background",
+        "lower-layer"
+      ],
+      "image": "battle/rpg-maker-mz/battlebacks1/Road2.png"
+    },
+    {
+      "id": "rpg-maker-mz-battlebacks1-road3",
+      "name": "Road3",
+      "type": "battle-background-lower",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "background",
+        "lower-layer"
+      ],
+      "image": "battle/rpg-maker-mz/battlebacks1/Road3.png"
+    },
+    {
+      "id": "rpg-maker-mz-battlebacks1-rockcave",
+      "name": "RockCave",
+      "type": "battle-background-lower",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "background",
+        "lower-layer"
+      ],
+      "image": "battle/rpg-maker-mz/battlebacks1/RockCave.png"
+    },
+    {
+      "id": "rpg-maker-mz-battlebacks1-sand",
+      "name": "Sand",
+      "type": "battle-background-lower",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "background",
+        "lower-layer"
+      ],
+      "image": "battle/rpg-maker-mz/battlebacks1/Sand.png"
+    },
+    {
+      "id": "rpg-maker-mz-battlebacks1-ship",
+      "name": "Ship",
+      "type": "battle-background-lower",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "background",
+        "lower-layer"
+      ],
+      "image": "battle/rpg-maker-mz/battlebacks1/Ship.png"
+    },
+    {
+      "id": "rpg-maker-mz-battlebacks1-smoke",
+      "name": "Smoke",
+      "type": "battle-background-lower",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "background",
+        "lower-layer"
+      ],
+      "image": "battle/rpg-maker-mz/battlebacks1/Smoke.png"
+    },
+    {
+      "id": "rpg-maker-mz-battlebacks1-snowfield",
+      "name": "Snowfield",
+      "type": "battle-background-lower",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "background",
+        "lower-layer"
+      ],
+      "image": "battle/rpg-maker-mz/battlebacks1/Snowfield.png"
+    },
+    {
+      "id": "rpg-maker-mz-battlebacks1-space",
+      "name": "Space",
+      "type": "battle-background-lower",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "background",
+        "lower-layer"
+      ],
+      "image": "battle/rpg-maker-mz/battlebacks1/Space.png"
+    },
+    {
+      "id": "rpg-maker-mz-battlebacks1-stone1",
+      "name": "Stone1",
+      "type": "battle-background-lower",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "background",
+        "lower-layer"
+      ],
+      "image": "battle/rpg-maker-mz/battlebacks1/Stone1.png"
+    },
+    {
+      "id": "rpg-maker-mz-battlebacks1-stone2",
+      "name": "Stone2",
+      "type": "battle-background-lower",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "background",
+        "lower-layer"
+      ],
+      "image": "battle/rpg-maker-mz/battlebacks1/Stone2.png"
+    },
+    {
+      "id": "rpg-maker-mz-battlebacks1-stone3",
+      "name": "Stone3",
+      "type": "battle-background-lower",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "background",
+        "lower-layer"
+      ],
+      "image": "battle/rpg-maker-mz/battlebacks1/Stone3.png"
+    },
+    {
+      "id": "rpg-maker-mz-battlebacks1-temple",
+      "name": "Temple",
+      "type": "battle-background-lower",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "background",
+        "lower-layer"
+      ],
+      "image": "battle/rpg-maker-mz/battlebacks1/Temple.png"
+    },
+    {
+      "id": "rpg-maker-mz-battlebacks1-tent",
+      "name": "Tent",
+      "type": "battle-background-lower",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "background",
+        "lower-layer"
+      ],
+      "image": "battle/rpg-maker-mz/battlebacks1/Tent.png"
+    },
+    {
+      "id": "rpg-maker-mz-battlebacks1-wasteland",
+      "name": "Wasteland",
+      "type": "battle-background-lower",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "background",
+        "lower-layer"
+      ],
+      "image": "battle/rpg-maker-mz/battlebacks1/Wasteland.png"
+    },
+    {
+      "id": "rpg-maker-mz-battlebacks1-wood1",
+      "name": "Wood1",
+      "type": "battle-background-lower",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "background",
+        "lower-layer"
+      ],
+      "image": "battle/rpg-maker-mz/battlebacks1/Wood1.png"
+    },
+    {
+      "id": "rpg-maker-mz-battlebacks1-wood2",
+      "name": "Wood2",
+      "type": "battle-background-lower",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "background",
+        "lower-layer"
+      ],
+      "image": "battle/rpg-maker-mz/battlebacks1/Wood2.png"
+    },
+    {
+      "id": "rpg-maker-mz-battlebacks2-brick",
+      "name": "Brick",
+      "type": "battle-background-upper",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "background",
+        "upper-layer"
+      ],
+      "image": "battle/rpg-maker-mz/battlebacks2/Brick.png"
+    },
+    {
+      "id": "rpg-maker-mz-battlebacks2-bridge",
+      "name": "Bridge",
+      "type": "battle-background-upper",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "background",
+        "upper-layer"
+      ],
+      "image": "battle/rpg-maker-mz/battlebacks2/Bridge.png"
+    },
+    {
+      "id": "rpg-maker-mz-battlebacks2-castle1",
+      "name": "Castle1",
+      "type": "battle-background-upper",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "background",
+        "upper-layer"
+      ],
+      "image": "battle/rpg-maker-mz/battlebacks2/Castle1.png"
+    },
+    {
+      "id": "rpg-maker-mz-battlebacks2-castle2",
+      "name": "Castle2",
+      "type": "battle-background-upper",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "background",
+        "upper-layer"
+      ],
+      "image": "battle/rpg-maker-mz/battlebacks2/Castle2.png"
+    },
+    {
+      "id": "rpg-maker-mz-battlebacks2-castle3",
+      "name": "Castle3",
+      "type": "battle-background-upper",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "background",
+        "upper-layer"
+      ],
+      "image": "battle/rpg-maker-mz/battlebacks2/Castle3.png"
+    },
+    {
+      "id": "rpg-maker-mz-battlebacks2-cliff",
+      "name": "Cliff",
+      "type": "battle-background-upper",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "background",
+        "upper-layer"
+      ],
+      "image": "battle/rpg-maker-mz/battlebacks2/Cliff.png"
+    },
+    {
+      "id": "rpg-maker-mz-battlebacks2-clouds",
+      "name": "Clouds",
+      "type": "battle-background-upper",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "background",
+        "upper-layer"
+      ],
+      "image": "battle/rpg-maker-mz/battlebacks2/Clouds.png"
+    },
+    {
+      "id": "rpg-maker-mz-battlebacks2-colosseum",
+      "name": "Colosseum",
+      "type": "battle-background-upper",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "background",
+        "upper-layer"
+      ],
+      "image": "battle/rpg-maker-mz/battlebacks2/Colosseum.png"
+    },
+    {
+      "id": "rpg-maker-mz-battlebacks2-crystal",
+      "name": "Crystal",
+      "type": "battle-background-upper",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "background",
+        "upper-layer"
+      ],
+      "image": "battle/rpg-maker-mz/battlebacks2/Crystal.png"
+    },
+    {
+      "id": "rpg-maker-mz-battlebacks2-cyberspace",
+      "name": "Cyberspace",
+      "type": "battle-background-upper",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "background",
+        "upper-layer"
+      ],
+      "image": "battle/rpg-maker-mz/battlebacks2/Cyberspace.png"
+    },
+    {
+      "id": "rpg-maker-mz-battlebacks2-darkspace",
+      "name": "DarkSpace",
+      "type": "battle-background-upper",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "background",
+        "upper-layer"
+      ],
+      "image": "battle/rpg-maker-mz/battlebacks2/DarkSpace.png"
+    },
+    {
+      "id": "rpg-maker-mz-battlebacks2-demoncastle1",
+      "name": "DemonCastle1",
+      "type": "battle-background-upper",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "background",
+        "upper-layer"
+      ],
+      "image": "battle/rpg-maker-mz/battlebacks2/DemonCastle1.png"
+    },
+    {
+      "id": "rpg-maker-mz-battlebacks2-demoncastle2",
+      "name": "DemonCastle2",
+      "type": "battle-background-upper",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "background",
+        "upper-layer"
+      ],
+      "image": "battle/rpg-maker-mz/battlebacks2/DemonCastle2.png"
+    },
+    {
+      "id": "rpg-maker-mz-battlebacks2-demoncastle3",
+      "name": "DemonCastle3",
+      "type": "battle-background-upper",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "background",
+        "upper-layer"
+      ],
+      "image": "battle/rpg-maker-mz/battlebacks2/DemonCastle3.png"
+    },
+    {
+      "id": "rpg-maker-mz-battlebacks2-demonicworld",
+      "name": "DemonicWorld",
+      "type": "battle-background-upper",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "background",
+        "upper-layer"
+      ],
+      "image": "battle/rpg-maker-mz/battlebacks2/DemonicWorld.png"
+    },
+    {
+      "id": "rpg-maker-mz-battlebacks2-desert",
+      "name": "Desert",
+      "type": "battle-background-upper",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "background",
+        "upper-layer"
+      ],
+      "image": "battle/rpg-maker-mz/battlebacks2/Desert.png"
+    },
+    {
+      "id": "rpg-maker-mz-battlebacks2-dirtcave",
+      "name": "DirtCave",
+      "type": "battle-background-upper",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "background",
+        "upper-layer"
+      ],
+      "image": "battle/rpg-maker-mz/battlebacks2/DirtCave.png"
+    },
+    {
+      "id": "rpg-maker-mz-battlebacks2-forest",
+      "name": "Forest",
+      "type": "battle-background-upper",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "background",
+        "upper-layer"
+      ],
+      "image": "battle/rpg-maker-mz/battlebacks2/Forest.png"
+    },
+    {
+      "id": "rpg-maker-mz-battlebacks2-fort1",
+      "name": "Fort1",
+      "type": "battle-background-upper",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "background",
+        "upper-layer"
+      ],
+      "image": "battle/rpg-maker-mz/battlebacks2/Fort1.png"
+    },
+    {
+      "id": "rpg-maker-mz-battlebacks2-fort2",
+      "name": "Fort2",
+      "type": "battle-background-upper",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "background",
+        "upper-layer"
+      ],
+      "image": "battle/rpg-maker-mz/battlebacks2/Fort2.png"
+    },
+    {
+      "id": "rpg-maker-mz-battlebacks2-grassland",
+      "name": "Grassland",
+      "type": "battle-background-upper",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "background",
+        "upper-layer"
+      ],
+      "image": "battle/rpg-maker-mz/battlebacks2/Grassland.png"
+    },
+    {
+      "id": "rpg-maker-mz-battlebacks2-grassmaze",
+      "name": "GrassMaze",
+      "type": "battle-background-upper",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "background",
+        "upper-layer"
+      ],
+      "image": "battle/rpg-maker-mz/battlebacks2/GrassMaze.png"
+    },
+    {
+      "id": "rpg-maker-mz-battlebacks2-icecave",
+      "name": "IceCave",
+      "type": "battle-background-upper",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "background",
+        "upper-layer"
+      ],
+      "image": "battle/rpg-maker-mz/battlebacks2/IceCave.png"
+    },
+    {
+      "id": "rpg-maker-mz-battlebacks2-icemaze",
+      "name": "IceMaze",
+      "type": "battle-background-upper",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "background",
+        "upper-layer"
+      ],
+      "image": "battle/rpg-maker-mz/battlebacks2/IceMaze.png"
+    },
+    {
+      "id": "rpg-maker-mz-battlebacks2-lava",
+      "name": "Lava",
+      "type": "battle-background-upper",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "background",
+        "upper-layer"
+      ],
+      "image": "battle/rpg-maker-mz/battlebacks2/Lava.png"
+    },
+    {
+      "id": "rpg-maker-mz-battlebacks2-lavacave",
+      "name": "LavaCave",
+      "type": "battle-background-upper",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "background",
+        "upper-layer"
+      ],
+      "image": "battle/rpg-maker-mz/battlebacks2/LavaCave.png"
+    },
+    {
+      "id": "rpg-maker-mz-battlebacks2-poisonswamp",
+      "name": "PoisonSwamp",
+      "type": "battle-background-upper",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "background",
+        "upper-layer"
+      ],
+      "image": "battle/rpg-maker-mz/battlebacks2/PoisonSwamp.png"
+    },
+    {
+      "id": "rpg-maker-mz-battlebacks2-port",
+      "name": "Port",
+      "type": "battle-background-upper",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "background",
+        "upper-layer"
+      ],
+      "image": "battle/rpg-maker-mz/battlebacks2/Port.png"
+    },
+    {
+      "id": "rpg-maker-mz-battlebacks2-rockcave",
+      "name": "RockCave",
+      "type": "battle-background-upper",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "background",
+        "upper-layer"
+      ],
+      "image": "battle/rpg-maker-mz/battlebacks2/RockCave.png"
+    },
+    {
+      "id": "rpg-maker-mz-battlebacks2-room1",
+      "name": "Room1",
+      "type": "battle-background-upper",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "background",
+        "upper-layer"
+      ],
+      "image": "battle/rpg-maker-mz/battlebacks2/Room1.png"
+    },
+    {
+      "id": "rpg-maker-mz-battlebacks2-room2",
+      "name": "Room2",
+      "type": "battle-background-upper",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "background",
+        "upper-layer"
+      ],
+      "image": "battle/rpg-maker-mz/battlebacks2/Room2.png"
+    },
+    {
+      "id": "rpg-maker-mz-battlebacks2-room3",
+      "name": "Room3",
+      "type": "battle-background-upper",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "background",
+        "upper-layer"
+      ],
+      "image": "battle/rpg-maker-mz/battlebacks2/Room3.png"
+    },
+    {
+      "id": "rpg-maker-mz-battlebacks2-ruins1",
+      "name": "Ruins1",
+      "type": "battle-background-upper",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "background",
+        "upper-layer"
+      ],
+      "image": "battle/rpg-maker-mz/battlebacks2/Ruins1.png"
+    },
+    {
+      "id": "rpg-maker-mz-battlebacks2-ruins2",
+      "name": "Ruins2",
+      "type": "battle-background-upper",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "background",
+        "upper-layer"
+      ],
+      "image": "battle/rpg-maker-mz/battlebacks2/Ruins2.png"
+    },
+    {
+      "id": "rpg-maker-mz-battlebacks2-ruins3",
+      "name": "Ruins3",
+      "type": "battle-background-upper",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "background",
+        "upper-layer"
+      ],
+      "image": "battle/rpg-maker-mz/battlebacks2/Ruins3.png"
+    },
+    {
+      "id": "rpg-maker-mz-battlebacks2-ship",
+      "name": "Ship",
+      "type": "battle-background-upper",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "background",
+        "upper-layer"
+      ],
+      "image": "battle/rpg-maker-mz/battlebacks2/Ship.png"
+    },
+    {
+      "id": "rpg-maker-mz-battlebacks2-smoke",
+      "name": "Smoke",
+      "type": "battle-background-upper",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "background",
+        "upper-layer"
+      ],
+      "image": "battle/rpg-maker-mz/battlebacks2/Smoke.png"
+    },
+    {
+      "id": "rpg-maker-mz-battlebacks2-snowfield",
+      "name": "Snowfield",
+      "type": "battle-background-upper",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "background",
+        "upper-layer"
+      ],
+      "image": "battle/rpg-maker-mz/battlebacks2/Snowfield.png"
+    },
+    {
+      "id": "rpg-maker-mz-battlebacks2-stone1",
+      "name": "Stone1",
+      "type": "battle-background-upper",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "background",
+        "upper-layer"
+      ],
+      "image": "battle/rpg-maker-mz/battlebacks2/Stone1.png"
+    },
+    {
+      "id": "rpg-maker-mz-battlebacks2-stone2",
+      "name": "Stone2",
+      "type": "battle-background-upper",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "background",
+        "upper-layer"
+      ],
+      "image": "battle/rpg-maker-mz/battlebacks2/Stone2.png"
+    },
+    {
+      "id": "rpg-maker-mz-battlebacks2-stone3",
+      "name": "Stone3",
+      "type": "battle-background-upper",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "background",
+        "upper-layer"
+      ],
+      "image": "battle/rpg-maker-mz/battlebacks2/Stone3.png"
+    },
+    {
+      "id": "rpg-maker-mz-battlebacks2-temple",
+      "name": "Temple",
+      "type": "battle-background-upper",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "background",
+        "upper-layer"
+      ],
+      "image": "battle/rpg-maker-mz/battlebacks2/Temple.png"
+    },
+    {
+      "id": "rpg-maker-mz-battlebacks2-tent",
+      "name": "Tent",
+      "type": "battle-background-upper",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "background",
+        "upper-layer"
+      ],
+      "image": "battle/rpg-maker-mz/battlebacks2/Tent.png"
+    },
+    {
+      "id": "rpg-maker-mz-battlebacks2-tower",
+      "name": "Tower",
+      "type": "battle-background-upper",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "background",
+        "upper-layer"
+      ],
+      "image": "battle/rpg-maker-mz/battlebacks2/Tower.png"
+    },
+    {
+      "id": "rpg-maker-mz-battlebacks2-town1",
+      "name": "Town1",
+      "type": "battle-background-upper",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "background",
+        "upper-layer"
+      ],
+      "image": "battle/rpg-maker-mz/battlebacks2/Town1.png"
+    },
+    {
+      "id": "rpg-maker-mz-battlebacks2-town2",
+      "name": "Town2",
+      "type": "battle-background-upper",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "background",
+        "upper-layer"
+      ],
+      "image": "battle/rpg-maker-mz/battlebacks2/Town2.png"
+    },
+    {
+      "id": "rpg-maker-mz-battlebacks2-town3",
+      "name": "Town3",
+      "type": "battle-background-upper",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "background",
+        "upper-layer"
+      ],
+      "image": "battle/rpg-maker-mz/battlebacks2/Town3.png"
+    },
+    {
+      "id": "rpg-maker-mz-battlebacks2-town4",
+      "name": "Town4",
+      "type": "battle-background-upper",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "background",
+        "upper-layer"
+      ],
+      "image": "battle/rpg-maker-mz/battlebacks2/Town4.png"
+    },
+    {
+      "id": "rpg-maker-mz-battlebacks2-town5",
+      "name": "Town5",
+      "type": "battle-background-upper",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "background",
+        "upper-layer"
+      ],
+      "image": "battle/rpg-maker-mz/battlebacks2/Town5.png"
+    },
+    {
+      "id": "rpg-maker-mz-battlebacks2-wasteland",
+      "name": "Wasteland",
+      "type": "battle-background-upper",
+      "tags": [
+        "rpg-maker-mz",
+        "battle",
+        "background",
+        "upper-layer"
+      ],
+      "image": "battle/rpg-maker-mz/battlebacks2/Wasteland.png"
+    }
+  ]
+}

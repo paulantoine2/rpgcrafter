@@ -26,13 +26,13 @@ function TooltipIconButton({ tooltip, 'aria-label': ariaLabel, ...props }: Compo
   return <IconButtonTooltip label={tooltip}><Button aria-label={ariaLabel || tooltip} {...props} /></IconButtonTooltip>;
 }
 
-function EventList({ map, assetUrls, selectedEventId, onSelect, onRename }: { map: GameMap; assetUrls: Record<string, string>; selectedEventId: string | null; onSelect: (id: string) => void; onRename: (id: string, name: string) => void }) {
-  const [editingEventId, setEditingEventId] = useState<string | null>(null);
+function EventList({ map, assetUrls, selectedEventId, onSelect, onRename }: { map: GameMap; assetUrls: Record<string, string>; selectedEventId: number | null; onSelect: (id: number) => void; onRename: (id: number, name: string) => void }) {
+  const [editingEventId, setEditingEventId] = useState<number | null>(null);
   if (!map.events.length) return <div className="p-6 text-center text-xs text-muted-foreground">No events on this map.</div>;
-  const finishEditing = (eventId: string, value: string) => {
+  const finishEditing = (eventId: number, value: string) => {
     const name = value.trim();
     setEditingEventId(null);
-    if (name && name !== eventId) onRename(eventId, name);
+    if (name && name !== map.events.find(event => event.id === eventId)?.name) onRename(eventId, name);
   };
   return <ScrollArea className="min-h-0 flex-1"><SidebarList>
     {map.events.map(event => {
@@ -45,9 +45,9 @@ function EventList({ map, assetUrls, selectedEventId, onSelect, onRename }: { ma
           {preview}
           <Input
             autoFocus
-            aria-label={`Rename event: ${event.id}`}
+            aria-label={`Rename event: ${event.name}`}
             className="h-7 min-w-0 flex-1 px-1 text-xs font-medium"
-            defaultValue={event.id}
+            defaultValue={event.name}
             onFocus={input => input.currentTarget.select()}
             onBlur={input => finishEditing(event.id, input.currentTarget.value)}
             onKeyDown={input => {
@@ -65,7 +65,7 @@ function EventList({ map, assetUrls, selectedEventId, onSelect, onRename }: { ma
           onDoubleClick={() => setEditingEventId(event.id)}
         >
           {preview}
-          <span className="min-w-0 flex-1 truncate text-xs font-medium">{event.id}</span>
+          <span className="min-w-0 flex-1 truncate text-xs font-medium">{event.name}</span><span className="text-[10px] text-muted-foreground">#{event.id}</span>
         </SidebarListItem>;
     })}
   </SidebarList></ScrollArea>;
@@ -111,7 +111,7 @@ function DrawingTree({ map, activeLayer, onSelect, onAddLayer, onAddPlane, onRen
   </ResizableSidebarSection>;
 }
 
-function TilePalette({ game, assetUrls, activeLayer, selectedTerrain, onSelect }: { game: SourceGame; assetUrls: Record<string, string>; activeLayer: TileLayer | null; selectedTerrain: SelectedTerrain | null; onSelect: (terrain: SelectedTerrain) => void }) {
+export function TilePalette({ game, assetUrls, activeLayer, selectedTerrain, onSelect }: { game: SourceGame; assetUrls: Record<string, string>; activeLayer: TileLayer | null; selectedTerrain: SelectedTerrain | null; onSelect: (terrain: SelectedTerrain) => void }) {
   const categories = [...new Set(Object.values(game.tilesets).map(tileset => tileset.category))].sort((a, b) => a.localeCompare(b));
   const selectedTileset = selectedTerrain ? game.tilesets[selectedTerrain.tilesetId] : undefined;
   const [category, setCategory] = useState(selectedTileset?.category || categories[0] || '');
@@ -168,25 +168,26 @@ function NavigationPanel({ map, activePlaneId, onDeleteConnection }: { map: Game
   </div>;
 }
 
-export function StudioSidebar({ game, assetUrls, map, selectedMapId, selectedEventId, mode, selectedTerrain, activeLayerId, canPlay, onPlay, onSelectMap, onCreateMap, onRenameMap, onMoveMap, onReorderMap, onResizeMap, onSelectEvent, onRenameEvent, onSelectTerrain, onSelectLayer, onAddLayer, onRenameLayer, onDeleteLayer, onMoveLayer, onChangeLayerPlane, onChangeLayerPhase, onAddPlane, onRenamePlane, onMovePlane, onDeletePlane, onChangeCoverage, onChangeSurface, onDeleteConnection }: {
+export function StudioSidebar({ game, assetUrls, map, selectedMapId, selectedEventId, mode, selectedTerrain, activeLayerId, canPlay, onPlay, onSelectMap, onCreateMap, onRenameMap, onMoveMap, onReorderMap, onResizeMap, onChangeMapEncounters, onSelectEvent, onRenameEvent, onSelectTerrain, onSelectLayer, onAddLayer, onRenameLayer, onDeleteLayer, onMoveLayer, onChangeLayerPlane, onChangeLayerPhase, onAddPlane, onRenamePlane, onMovePlane, onDeletePlane, onChangeCoverage, onChangeSurface, onDeleteConnection }: {
   game: SourceGame;
   assetUrls: Record<string, string>;
   map: GameMap;
-  selectedMapId: string;
-  selectedEventId: string | null;
+  selectedMapId: number;
+  selectedEventId: number | null;
   mode: EditorMode;
   selectedTerrain: SelectedTerrain | null;
   activeLayerId: string | null;
   canPlay: boolean;
   onPlay: () => void;
-  onSelectMap: (id: string) => void;
-  onCreateMap: (width: number, height: number, parentMapId?: string) => void;
-  onRenameMap: (id: string, name: string) => void;
-  onMoveMap: (id: string, parentMapId: string | null) => void;
-  onReorderMap: (id: string, targetId: string, position: MapDropPosition) => void;
-  onResizeMap: (id: string, width: number, height: number) => void;
-  onSelectEvent: (id: string) => void;
-  onRenameEvent: (id: string, name: string) => void;
+  onSelectMap: (id: number) => void;
+  onCreateMap: (width: number, height: number, parentMapId?: number) => void;
+  onRenameMap: (id: number, name: string) => void;
+  onMoveMap: (id: number, parentMapId: number | null) => void;
+  onReorderMap: (id: number, targetId: number, position: MapDropPosition) => void;
+  onResizeMap: (id: number, width: number, height: number) => void;
+  onChangeMapEncounters?: (id: number, encounters: NonNullable<GameMap['encounters']>) => void;
+  onSelectEvent: (id: number) => void;
+  onRenameEvent: (id: number, name: string) => void;
   onSelectTerrain: (terrain: SelectedTerrain) => void;
   onSelectLayer: (id: string) => void;
   onAddLayer: () => void;
@@ -203,18 +204,18 @@ export function StudioSidebar({ game, assetUrls, map, selectedMapId, selectedEve
   onChangeSurface: (id: string, layerId: string) => void;
   onDeleteConnection: (id: string) => void;
 }) {
-  const [mapsOpen, setMapsOpen] = useState(false);
+  const [mapsOpen, setMapsOpen] = useState(true);
   const activeLayer = map.tileLayers.find(layer => layer.id === activeLayerId) || null;
   const activePlaneId = activeLayer?.planeId || [...map.planes].sort((a, b) => a.order - b.order)[0]?.id || '';
   const editorPanel = mode === 'events'
     ? <SidebarSection collapsible={false} topBorder={false} title="Events" className="h-full" contentClassName="flex min-h-0 flex-1"><EventList map={map} assetUrls={assetUrls} selectedEventId={selectedEventId} onSelect={onSelectEvent} onRename={onRenameEvent} /></SidebarSection>
     : <SidebarSection collapsible={false} topBorder={false} title="Tiles" className="h-full" contentClassName="flex min-h-0 flex-1 flex-col overflow-hidden"><TilePalette game={game} assetUrls={assetUrls} activeLayer={activeLayer} selectedTerrain={selectedTerrain} onSelect={onSelectTerrain}/></SidebarSection>;
   return <div data-slot="studio-sidebar" className="flex h-full min-h-0 cursor-default flex-col border-r bg-sidebar text-sidebar-foreground">
-    <StudioProjectHeader title={game.manifest.title} canPlay={canPlay} onPlay={onPlay} />
+    <StudioProjectHeader title={game.manifest.title} combatMode={game.manifest.combatMode} canPlay={canPlay} onPlay={onPlay} />
     <div className="min-h-0 flex-1"><ResizablePanelGroup orientation="vertical">
-      <MapList game={game} selectedMapId={selectedMapId} open={mapsOpen} onOpenChange={setMapsOpen} onSelect={onSelectMap} onCreate={onCreateMap} onRename={onRenameMap} onMove={onMoveMap} onReorder={onReorderMap} onResize={onResizeMap} />
+      <MapList game={game} selectedMapId={selectedMapId} open={mapsOpen} onOpenChange={setMapsOpen} onSelect={onSelectMap} onCreate={onCreateMap} onRename={onRenameMap} onMove={onMoveMap} onReorder={onReorderMap} onResize={onResizeMap} onChangeEncounters={onChangeMapEncounters || (() => undefined)} />
       <ResizableHandle disabled={!mapsOpen} />
-      <ResizablePanel defaultSize="60%" minSize="160px" className="min-h-0">{editorPanel}</ResizablePanel>
+      <ResizablePanel defaultSize="75%" minSize="160px" className="min-h-0">{editorPanel}</ResizablePanel>
     </ResizablePanelGroup></div>
   </div>;
 }

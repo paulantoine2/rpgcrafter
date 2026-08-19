@@ -18,7 +18,7 @@ const tilesets: Record<string, TilesetDefinition> = {
 
 function map(): GameMap {
   return {
-    id: 'map', numericId: 1, name: 'Map', ground: '#000', accent: '#fff', tileSize: 48, bounds: { x: 0, y: 0, w: 3, h: 2 },
+    id: 1, name: 'Map', ground: '#000', accent: '#fff', tileSize: 48, bounds: { x: 0, y: 0, w: 3, h: 2 },
     planes: [
       { id: 'a', name: 'A', order: 0, surfaceLayerId: 'a-surface', surfaceCoverage: 'bounds' },
       { id: 'b', name: 'B', order: 1, surfaceLayerId: 'b-surface', surfaceCoverage: 'painted' },
@@ -28,7 +28,7 @@ function map(): GameMap {
       { id: 'a-collision', name: 'A collision', planeId: 'a', renderPhase: 'belowActors', tiles: [{ x: 0, y: 0, tilesetId: 'test', terrainId: 'fence' }] },
       { id: 'b-surface', name: 'B surface', planeId: 'b', renderPhase: 'belowActors', tiles: [{ x: 1, y: 0, tilesetId: 'test', terrainId: 'floor' }, { x: 2, y: 0, tilesetId: 'test', terrainId: 'floor' }] },
     ],
-    planeConnections: [], navigationOverrides: [], blockedRegions: [], events: [], enemySpawns: [],
+    planeConnections: [], navigationOverrides: [], blockedRegions: [], events: [], nextEventId: 1, enemySpawns: [], encounters: { averageSteps: 30, entries: [] },
   };
 }
 

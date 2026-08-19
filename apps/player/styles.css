@@ -43,6 +43,24 @@ canvas { display: block; width: 100%; height: 100%; image-rendering: pixelated; 
 .dialogue-choices button { padding: 7px 10px; color: #08101e; border: 0; border-radius: 7px; background: #b8d9ff; font-weight: 750; cursor: pointer; }
 .hidden { display: none; }
 .toast { position: absolute; left: 50%; top: 6%; transform: translateX(-50%); padding: 9px 13px; background: #14233de8; border: 1px solid #769ee1; border-radius: 99px; font-size: .85rem; font-weight: 750; white-space: nowrap; }
+.battle-screen { position: absolute; inset: 0; z-index: 50; background: linear-gradient(#172b49 0 56%, #365238 56%); }
+.battle-screen.hidden { display: none; }
+.battle-field { position: absolute; inset: 0; overflow: hidden; background-position: center; background-size: cover; }
+.battle-hero, .battle-enemy { position: absolute; display: grid; justify-items: center; gap: 5px; width: 150px; transform: translate(-50%,-50%); }
+.battle-hero { left: 80%; top: 56%; transition: transform 420ms ease-out; }.battle-hero.battle-active { transform: translate(calc(-50% - 34px),-50%); }.battle-enemy { left: var(--battle-x); top: var(--battle-y); transition: transform 300ms ease-out; }.battle-enemy.battle-active { transform: translate(calc(-50% + 22px),-50%); }
+.battle-figure { display: grid; place-items: center; width: 72px; height: 86px; color: #07101c; border: 3px solid #dceaff; border-radius: 45% 45% 35% 35%; background: var(--battle-color,#77aaff); font-size: 26px; font-weight: 900; box-shadow: 0 12px 24px #0007; }
+.battle-actor-sprite { border: 0; border-radius: 0; background-color: transparent; background-position: var(--battle-idle-x-1) var(--battle-idle-y); background-repeat: no-repeat; box-shadow: none; image-rendering: pixelated; animation: battle-actor-idle 900ms steps(1,end) infinite; }
+.battle-enemy-sprite { width: 132px; height: 132px; border: 0; border-radius: 0; background-color: transparent; background-position: center bottom; background-repeat: no-repeat; background-size: contain; box-shadow: none; }
+.battle-name { max-width: 150px; overflow: hidden; text-overflow: ellipsis; font-size: 12px; font-weight: 800; white-space: nowrap; text-shadow: 0 1px 2px #000; }
+.battle-hp { width: 120px; height: 9px; overflow: hidden; border: 1px solid #dceaff; background: #1a2230; }.battle-hp > span { display: block; height: 100%; background: var(--ui-health); }
+.battle-hud { position: absolute; right: 2%; bottom: 2%; left: 2%; z-index: 2; display: grid; grid-template-columns: minmax(210px, .8fr) 1.2fr; gap: 12px; padding: 14px; border: 2px solid var(--ui-border); border-radius: 10px; background: #07101cf2; box-shadow: 0 12px 30px #0009; }
+.battle-status { align-content: center; white-space: pre-line; font-size: 13px; line-height: 1.5; }.battle-menu { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 7px; }
+.battle-menu button { min-height: 38px; padding: 7px 10px; color: var(--ui-text); border: 1px solid var(--ui-border); background: var(--ui-panel); text-align: left; cursor: pointer; }.battle-menu button:hover,.battle-menu button:focus-visible { border-color: var(--ui-accent); background: color-mix(in srgb,var(--ui-accent) 20%,var(--ui-panel)); outline: none; }
+.battle-menu[inert] { opacity: .5; }
+.battle-damage { position: absolute; top: 2%; left: 50%; z-index: 3; color: #fff0f3; font-size: 22px; font-weight: 900; text-shadow: 0 2px 4px #000; animation: battle-number 520ms ease-out both; }
+.battle-healing { color: #9fffc2; }
+@keyframes battle-actor-idle { 0%,32% { background-position: var(--battle-idle-x-1) var(--battle-idle-y); } 33%,65% { background-position: var(--battle-idle-x-2) var(--battle-idle-y); } 66%,100% { background-position: var(--battle-idle-x-3) var(--battle-idle-y); } }
+@keyframes battle-number { from { opacity: 0; transform: translate(-50%,8px) scale(.8); } 35% { opacity: 1; transform: translate(-50%,-8px) scale(1.12); } to { opacity: 0; transform: translate(-50%,-28px) scale(1); } }
 
 .below-game { justify-content: space-between; gap: 14px; margin-top: 13px; }
 .objective-card, .status-card { border: 1px solid var(--ui-border); border-radius: 10px; background: var(--ui-panel); padding: 11px 13px; }

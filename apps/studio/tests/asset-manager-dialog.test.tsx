@@ -2,7 +2,7 @@ import { fireEvent, render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, expect, it, vi } from 'vitest';
 import type { SourceGame, TilesetDefinition } from '@rpgcrafter/game-schema';
-import { AssetLibrary, ProjectTilesetManager, type LibrarySprite, type LibraryTileset } from '../src/components/asset-manager-dialog';
+import { AssetLibrary, ProjectTilesetManager, type LibraryBattleAsset, type LibrarySprite, type LibraryTileset } from '../src/components/asset-manager-dialog';
 
 const grid: TilesetDefinition = {
   id: 'decor', name: 'Decor', category: 'Nature', kind: 'grid', image: 'tilesets/decor.png', tileSize: 48, columns: 2, rows: 1,
@@ -62,11 +62,27 @@ describe('Asset library and project tileset editor', () => {
     expect(screen.getByRole('tab', { name: 'Tilesets' })).toHaveAttribute('aria-selected', 'true');
   });
 
+  it('shows and imports battlers and battle backgrounds', async () => {
+    const values = props();
+    const onImportBattleAsset = vi.fn();
+    const battleAssets: LibraryBattleAsset[] = [
+      { kind: 'battleAsset', id: 'plasma', name: 'Plasma', blob: new Blob(['enemy']), imagePath: 'battle/plasma.png', url: 'plasma.png', assetType: 'side-view-enemy-battler', tags: ['enemy'] },
+      { kind: 'battleAsset', id: 'grassland', name: 'Grassland', blob: new Blob(['background']), imagePath: 'battle/grassland.png', url: 'grassland.png', assetType: 'battle-background-lower', tags: ['background'] },
+    ];
+    render(<AssetLibrary game={values.game} assetUrls={values.assetUrls} library={values.library} sprites={values.sprites} battleAssets={battleAssets} bundles={values.bundles} onImport={values.onImportLibrary} onImportSprite={values.onImportSprite} onImportBattleAsset={onImportBattleAsset} onImportBundle={values.onImportLibraryBundle} />);
+    await userEvent.click(screen.getByRole('tab', { name: 'Battlers' }));
+    await userEvent.click(within(screen.getByRole('tabpanel', { name: 'Battlers' })).getByRole('button', { name: 'Import' }));
+    expect(onImportBattleAsset).toHaveBeenCalledWith(battleAssets[0]);
+    await userEvent.click(screen.getByRole('tab', { name: 'Battle backgrounds' }));
+    expect(within(screen.getByRole('tabpanel', { name: 'Battle backgrounds' })).getByText('Grassland')).toBeInTheDocument();
+  });
+
   it('shows the selected tileset at actual size and toggles whole-cell collisions', async () => {
     const onChangeTerrainCollision = vi.fn();
     render(<ProjectTilesetManager {...props({ onChangeTerrainCollision })} />);
-    expect(screen.getByRole('list', { name: 'Project tilesets' })).toHaveClass('space-y-1', 'px-2', 'py-1');
-    expect(screen.getByRole('button', { name: /Decor/ })).toHaveClass('rounded-md', 'py-0.5', 'bg-sidebar-accent');
+    expect(screen.getByRole('table', { name: 'Project tilesets' })).toBeInTheDocument();
+    expect(screen.getByRole('row', { name: /decor Decor Nature GRID/i })).toHaveAttribute('data-state', 'selected');
+    expect(screen.getByRole('columnheader', { name: 'ID' })).toHaveClass('pl-4');
     expect(screen.getByRole('img', { name: 'Decor source' })).toBeInTheDocument();
     expect(screen.getByRole('grid', { name: 'Decor obstacle grid' })).toHaveStyle({ width: '96px', height: '48px' });
     const moss = screen.getByRole('gridcell', { name: 'Moss obstacle: none' });
@@ -88,7 +104,7 @@ describe('Asset library and project tileset editor', () => {
   it('treats Edge as one auto-tiled boundary toggle for A2 terrains', async () => {
     const onChangeTerrainCollision = vi.fn();
     render(<ProjectTilesetManager {...props({ onChangeTerrainCollision })} />);
-    await userEvent.click(screen.getByRole('button', { name: 'CliffsNature · A2' }));
+    await userEvent.click(screen.getByRole('row', { name: /cliffs Cliffs Nature A2/i }));
     const cliff = screen.getByRole('gridcell', { name: 'Cliff obstacle: edges' });
     expect(screen.getByRole('img', { name: 'Cliffs source' })).toBeInTheDocument();
     expect(cliff).toHaveStyle({ width: '96px', height: '144px' });

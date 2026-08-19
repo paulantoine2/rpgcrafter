@@ -65,11 +65,11 @@ describe('IndexedDB draft repository', () => {
     const source = sourceGame();
     await repository.save(source);
     const changed = structuredClone(source);
-    changed.maps.village.name = 'Changed map';
+    changed.maps[1].name = 'Changed map';
     changed.events.objectives[0].text = 'Changed event data';
     await repository.save(changed, ['maps.json']);
     const restored = await repository.restore(source);
-    expect(restored?.maps.village.name).toBe('Changed map');
+    expect(restored?.maps[1].name).toBe('Changed map');
     expect(restored?.events).toEqual(source.events);
   });
 
@@ -100,11 +100,11 @@ describe('IndexedDB draft repository', () => {
     database.close();
 
     const changed = structuredClone(source);
-    changed.maps.village.name = 'Schema-upgraded map';
+    changed.maps[1].name = 'Schema-upgraded map';
     changed.events.objectives[0].text = 'Schema-upgraded objective';
     await repository.save(changed, ['maps.json']);
     const restored = await repository.restore(source);
-    expect(restored?.maps.village.name).toBe('Schema-upgraded map');
+    expect(restored?.maps[1].name).toBe('Schema-upgraded map');
     expect(restored?.events.objectives[0].text).toBe('Schema-upgraded objective');
   });
 
@@ -124,7 +124,7 @@ describe('IndexedDB draft repository', () => {
       const { equipmentTypeId, ...legacyItem } = item;
       return [id, { ...legacyItem, equipmentSlot: equipmentTypeId === 1 ? 'weapon' : 'armor' }];
     })));
-    await changeDocument(database, projectId, 'initial-state.json', state => ({ ...state, equipment: { weapon: 'item.hero-sword', armor: 'item.leather-cloak', accessory: null } }));
+    await changeDocument(database, projectId, 'initial-state.json', state => ({ ...state, equipment: {} }));
     const transaction = database.transaction('documents', 'readwrite');
     transaction.objectStore('documents').delete([projectId, 'types.json']);
     await new Promise<void>((resolve, reject) => { transaction.oncomplete = () => resolve(); transaction.onerror = () => reject(transaction.error); });
@@ -132,9 +132,9 @@ describe('IndexedDB draft repository', () => {
 
     const legacyRepository = createDraftRepository({ factory, databaseName });
     const reopened = await legacyRepository.openProject(projectId);
-    expect(reopened?.game.manifest.schemaVersion).toBe('0.13');
+    expect(reopened?.game.manifest.schemaVersion).toBe('0.16');
     expect(reopened?.game.types.equipment.entries[0]).toEqual({ id: 1, name: 'Weapon' });
-    expect(reopened?.game.items['item.hero-sword'].equipmentTypeId).toBe(1);
+    expect(reopened?.game.items[4].equipmentTypeId).toBe(1);
   });
 
   it('serializes overlapping writes so the newest snapshot wins', async () => {
@@ -142,10 +142,10 @@ describe('IndexedDB draft repository', () => {
     const source = sourceGame();
     const first = structuredClone(source);
     const second = structuredClone(source);
-    first.maps.village.name = 'First';
-    second.maps.village.name = 'Second';
+    first.maps[1].name = 'First';
+    second.maps[1].name = 'Second';
     await Promise.all([repository.save(first, ['maps.json']), repository.save(second, ['maps.json'])]);
-    expect((await repository.restore(source))?.maps.village.name).toBe('Second');
+    expect((await repository.restore(source))?.maps[1].name).toBe('Second');
   });
 
   it('deletes the project and every document atomically', async () => {

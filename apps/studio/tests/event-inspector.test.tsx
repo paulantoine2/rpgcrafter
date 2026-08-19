@@ -11,41 +11,35 @@ import { createEmptyProject } from '../src/lib/source-game';
 function Harness({ emptySwitches = false, emptyVariables = false, withSprite = false, initialContents = [], onEventChange }: { emptySwitches?: boolean; emptyVariables?: boolean; withSprite?: boolean; initialContents?: EventCommand[]; onEventChange?: (event: MapEvent) => void }) {
   const project = createEmptyProject('Inspector');
   const [switches, setSwitches] = useState<SourceGame['initialState']['switches']>(emptySwitches ? {} : {
-      'door-open': { name: 'Door open', initialValue: false },
-      'boss-defeated': { name: 'Boss defeated', initialValue: false },
+      1: { name: 'Door open', initialValue: false },
+      2: { name: 'Boss defeated', initialValue: false },
   });
   project.game.initialState.switches = switches;
   const [items, setItems] = useState<SourceGame['items']>({
-    potion: { name: 'Potion', type: 'consumable', healing: 25 },
-    'silver-sword': { name: 'Silver Sword', type: 'equipment', equipmentTypeId: 1 },
+    1: { name: 'Potion', type: 'consumable', healing: 25 },
+    2: { name: 'Silver Sword', type: 'equipment', equipmentTypeId: 1 },
   });
   project.game.items = items;
   const [variables, setVariables] = useState<SourceGame['initialState']['variables']>(emptyVariables ? {} : {
-    score: { name: 'Score', initialValue: 0 },
-    reputation: { name: 'Reputation', initialValue: 0 },
+    1: { name: 'Score', initialValue: 0 },
+    2: { name: 'Reputation', initialValue: 0 },
   });
   project.game.initialState.variables = variables;
-  project.game.events.commonEvents.intro = { name: 'Intro', trigger: { type: 'none' }, contents: [] };
+  project.game.events.commonEvents[1] = { name: 'Intro', trigger: { type: 'none' }, contents: [] };
   const [event, setEvent] = useState<MapEvent>(() => {
-    const created = createMapEventAt(project.game, 'map-1', { x: 1, y: 1, planeId: 'plane-1' });
+    const created = createMapEventAt(project.game, 1, { x: 1, y: 1, planeId: 'plane-1' });
     created.pages[0].contents = structuredClone(initialContents);
     if (withSprite) created.pages[0].sprite = { image: 'sprites/test.png', characterIndex: 0, characterColumns: 4, frameWidth: 48, frameHeight: 48, objectAligned: false };
     return created;
   });
-  project.game.maps['map-1'].events = [event];
+  project.game.maps[1].events = [event];
   const createSwitch = (name: string) => {
-    const base = name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') || 'switch';
-    let id = base;
-    let suffix = 2;
-    while (switches[id]) id = `${base}-${suffix++}`;
+    const id = Math.max(0, ...Object.keys(switches).map(Number)) + 1;
     setSwitches(current => ({ ...current, [id]: { name, initialValue: false } }));
     return id;
   };
   const createVariable = (name: string) => {
-    const base = name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') || 'variable';
-    let id = base;
-    let suffix = 2;
-    while (variables[id]) id = `${base}-${suffix++}`;
+    const id = Math.max(0, ...Object.keys(variables).map(Number)) + 1;
     setVariables(current => ({ ...current, [id]: { name, initialValue: 0 } }));
     return id;
   };
@@ -53,10 +47,10 @@ function Harness({ emptySwitches = false, emptyVariables = false, withSprite = f
     setEvent(nextEvent);
     onEventChange?.(nextEvent);
   };
-  const renameSwitch = (id: string, name: string) => setSwitches(current => current[id] ? ({ ...current, [id]: { ...current[id], name } }) : current);
-  const renameVariable = (id: string, name: string) => setVariables(current => current[id] ? ({ ...current, [id]: { ...current[id], name } }) : current);
-  const renameItem = (id: string, name: string) => setItems(current => current[id] ? ({ ...current, [id]: { ...current[id], name } }) : current);
-  return <TooltipProvider delay={0}><EventInspector game={project.game} mapId="map-1" event={event} issues={[]} assetUrls={{}} sprites={[]} onChangeEvent={changeEvent} onImportSprite={async () => {}} onCreateSwitch={createSwitch} onCreateVariable={createVariable} onRenameSwitch={renameSwitch} onRenameVariable={renameVariable} onRenameItem={renameItem} /></TooltipProvider>;
+  const renameSwitch = (id: number, name: string) => setSwitches(current => current[id] ? ({ ...current, [id]: { ...current[id], name } }) : current);
+  const renameVariable = (id: number, name: string) => setVariables(current => current[id] ? ({ ...current, [id]: { ...current[id], name } }) : current);
+  const renameItem = (id: number, name: string) => setItems(current => current[id] ? ({ ...current, [id]: { ...current[id], name } }) : current);
+  return <TooltipProvider delay={0}><EventInspector game={project.game} mapId={1} event={event} issues={[]} assetUrls={{}} sprites={[]} onChangeEvent={changeEvent} onImportSprite={async () => {}} onCreateSwitch={createSwitch} onCreateVariable={createVariable} onRenameSwitch={renameSwitch} onRenameVariable={renameVariable} onRenameItem={renameItem} /></TooltipProvider>;
 }
 
 describe('EventInspector pages', () => {
@@ -66,7 +60,7 @@ describe('EventInspector pages', () => {
     await userEvent.click(screen.getByRole('button', { name: 'Add command' }));
     await userEvent.click(await screen.findByRole('menuitem', { name: 'Call Common Event' }));
     expect(screen.getByRole('button', { name: 'Call Common Event command settings' })).toHaveTextContent('Intro');
-    expect(onEventChange.mock.calls.at(-1)?.[0].pages[0].contents[0]).toEqual({ type: 'callCommonEvent', id: 'intro' });
+    expect(onEventChange.mock.calls.at(-1)?.[0].pages[0].contents[0]).toEqual({ type: 'callCommonEvent', id: 1 });
   });
 
   it('uses the sidebar theme colors', () => {
@@ -373,7 +367,7 @@ describe('EventInspector pages', () => {
     const comparisonValue = screen.getByRole('spinbutton', { name: 'Value' });
     await user.clear(comparisonValue);
     await user.type(comparisonValue, '12');
-    expect(onEventChange.mock.calls.at(-1)?.[0].pages[0].conditions?.[0]).toMatchObject({ kind: 'variable', id: 'reputation', operator: 'greaterThanOrEqual', operand: { kind: 'constant', value: 12 } });
+    expect(onEventChange.mock.calls.at(-1)?.[0].pages[0].conditions?.[0]).toMatchObject({ kind: 'variable', id: 2, operator: 'greaterThanOrEqual', operand: { kind: 'constant', value: 12 } });
     expect(conditionToggle).toHaveTextContent('Reputation ≥ 12');
     await user.click(screen.getByRole('combobox', { name: 'Variable operand type' }));
     expect(screen.queryByRole('option', { name: 'Random range' })).not.toBeInTheDocument();
@@ -391,10 +385,10 @@ describe('EventInspector pages', () => {
     await user.click(await screen.findByRole('option', { name: 'Switch' }));
     await user.click(within(switchDialog).getAllByRole('button', { name: 'Choose switch' })[1]);
     await user.click(await screen.findByRole('option', { name: 'Boss defeated' }));
-    expect(onEventChange.mock.calls.at(-1)?.[0].pages[0].conditions?.[0]).toEqual({ kind: 'switch', id: 'door-open', operand: { kind: 'switch', switchId: 'boss-defeated' } });
+    expect(onEventChange.mock.calls.at(-1)?.[0].pages[0].conditions?.[0]).toEqual({ kind: 'switch', id: 1, operand: { kind: 'switch', switchId: 2 } });
     await user.click(within(switchDialog).getByRole('combobox', { name: 'Switch operand type' }));
     await user.click(await screen.findByRole('option', { name: 'Game data' }));
-    expect(onEventChange.mock.calls.at(-1)?.[0].pages[0].conditions?.[0]).toEqual({ kind: 'switch', id: 'door-open', operand: { kind: 'gameData', data: { kind: 'hasItem', itemId: 'potion' } } });
+    expect(onEventChange.mock.calls.at(-1)?.[0].pages[0].conditions?.[0]).toEqual({ kind: 'switch', id: 1, operand: { kind: 'gameData', data: { kind: 'hasItem', itemId: 1 } } });
     await user.click(within(switchDialog).getByRole('button', { name: 'Close condition settings' }));
 
     await user.click(screen.getByRole('button', { name: 'Remove switch condition' }));
@@ -405,10 +399,10 @@ describe('EventInspector pages', () => {
     await user.click(await screen.findByRole('option', { name: 'Variable' }));
     await user.click(within(variableDialog).getAllByRole('button', { name: 'Choose variable' })[1]);
     await user.click(await screen.findByRole('option', { name: 'Reputation' }));
-    expect(onEventChange.mock.calls.at(-1)?.[0].pages[0].conditions?.[0]).toEqual({ kind: 'variable', id: 'score', operator: 'equal', operand: { kind: 'variable', variableId: 'reputation' } });
+    expect(onEventChange.mock.calls.at(-1)?.[0].pages[0].conditions?.[0]).toEqual({ kind: 'variable', id: 1, operator: 'equal', operand: { kind: 'variable', variableId: 2 } });
     await user.click(within(variableDialog).getByRole('combobox', { name: 'Variable operand type' }));
     await user.click(await screen.findByRole('option', { name: 'Game data' }));
-    expect(onEventChange.mock.calls.at(-1)?.[0].pages[0].conditions?.[0]).toEqual({ kind: 'variable', id: 'score', operator: 'equal', operand: { kind: 'gameData', data: { kind: 'itemAmount', itemId: 'potion' } } });
+    expect(onEventChange.mock.calls.at(-1)?.[0].pages[0].conditions?.[0]).toEqual({ kind: 'variable', id: 1, operator: 'equal', operand: { kind: 'gameData', data: { kind: 'itemAmount', itemId: 1 } } });
   });
 
   it('keeps a switch condition as a draft until its first switch is created', async () => {
@@ -430,7 +424,7 @@ describe('EventInspector pages', () => {
 
     expect(onEventChange).toHaveBeenCalledTimes(1);
     const persistedCondition = onEventChange.mock.calls[0][0].pages[0].conditions?.[0];
-    expect(persistedCondition).toMatchObject({ kind: 'switch', id: 'first-switch', operand: { kind: 'constant', value: true } });
+    expect(persistedCondition).toMatchObject({ kind: 'switch', id: 1, operand: { kind: 'constant', value: true } });
   });
 
   it('adds and configures a set-variable command without offering set quest state', async () => {
@@ -478,7 +472,7 @@ describe('EventInspector pages', () => {
     await user.clear(value);
     await user.type(value, '25');
 
-    expect(onEventChange.mock.calls.at(-1)?.[0].pages[0].contents[0]).toEqual({ type: 'setVariable', id: 'reputation', operation: 'set', operand: { kind: 'constant', value: 25 } });
+    expect(onEventChange.mock.calls.at(-1)?.[0].pages[0].contents[0]).toEqual({ type: 'setVariable', id: 2, operation: 'set', operand: { kind: 'constant', value: 25 } });
   });
 
   it('opens the variable picker when a set-variable command has nothing to select', async () => {
@@ -498,7 +492,7 @@ describe('EventInspector pages', () => {
     await user.type(await screen.findByRole('textbox', { name: 'Variable name' }), 'Quest progress');
     await user.click(screen.getByRole('button', { name: 'Confirm variable creation' }));
 
-    expect(onEventChange.mock.calls.at(-1)?.[0].pages[0].contents[0]).toEqual({ type: 'setVariable', id: 'quest-progress', operation: 'set', operand: { kind: 'constant', value: 0 } });
+    expect(onEventChange.mock.calls.at(-1)?.[0].pages[0].contents[0]).toEqual({ type: 'setVariable', id: 1, operation: 'set', operand: { kind: 'constant', value: 0 } });
     expect(screen.getByRole('button', { name: 'Choose variable' })).toHaveTextContent('Quest progress');
   });
 
@@ -520,7 +514,7 @@ describe('EventInspector pages', () => {
     await user.clear(screen.getByRole('spinbutton', { name: 'Maximum' }));
     await user.type(screen.getByRole('spinbutton', { name: 'Maximum' }), '8');
 
-    expect(onEventChange.mock.calls.at(-1)?.[0].pages[0].contents[0]).toEqual({ type: 'setVariable', id: 'score', operation: 'add', operand: { kind: 'random', min: 2.5, max: 8 } });
+    expect(onEventChange.mock.calls.at(-1)?.[0].pages[0].contents[0]).toEqual({ type: 'setVariable', id: 1, operation: 'add', operand: { kind: 'random', min: 2.5, max: 8 } });
 
     await user.click(screen.getByRole('combobox', { name: 'Variable operand type' }));
     await user.click(await screen.findByRole('option', { name: 'Game data' }));
@@ -531,7 +525,7 @@ describe('EventInspector pages', () => {
     await user.click(screen.getByRole('combobox', { name: 'Coordinate axis' }));
     await user.click(await screen.findByRole('option', { name: 'Y' }));
 
-    expect(onEventChange.mock.calls.at(-1)?.[0].pages[0].contents[0]).toEqual({ type: 'setVariable', id: 'score', operation: 'add', operand: { kind: 'gameData', data: { kind: 'characterCoordinate', target: { kind: 'thisEvent' }, axis: 'y' } } });
+    expect(onEventChange.mock.calls.at(-1)?.[0].pages[0].contents[0]).toEqual({ type: 'setVariable', id: 1, operation: 'add', operand: { kind: 'gameData', data: { kind: 'characterCoordinate', target: { kind: 'thisEvent' }, axis: 'y' } } });
   });
 
   it('opens the switch picker when a set-switch command has nothing to select', async () => {
@@ -551,7 +545,7 @@ describe('EventInspector pages', () => {
     await user.type(await screen.findByRole('textbox', { name: 'Switch name' }), 'Bridge open');
     await user.click(screen.getByRole('button', { name: 'Confirm switch creation' }));
 
-    expect(onEventChange.mock.calls.at(-1)?.[0].pages[0].contents[0]).toEqual({ type: 'setSwitch', id: 'bridge-open', operation: 'set', operand: { kind: 'constant', value: true } });
+    expect(onEventChange.mock.calls.at(-1)?.[0].pages[0].contents[0]).toEqual({ type: 'setSwitch', id: 1, operation: 'set', operand: { kind: 'constant', value: true } });
     expect(screen.getByRole('button', { name: 'Choose switch' })).toHaveTextContent('Bridge open');
   });
 
@@ -568,7 +562,7 @@ describe('EventInspector pages', () => {
     expect(screen.getByRole('tab', { name: 'Toggle' })).toHaveAttribute('aria-selected', 'true');
 
     expect(screen.queryByRole('combobox', { name: 'Switch operand type' })).not.toBeInTheDocument();
-    expect(onEventChange.mock.calls.at(-1)?.[0].pages[0].contents[0]).toEqual({ type: 'setSwitch', id: 'door-open', operation: 'toggle' });
+    expect(onEventChange.mock.calls.at(-1)?.[0].pages[0].contents[0]).toEqual({ type: 'setSwitch', id: 1, operation: 'toggle' });
     expect(screen.getByRole('button', { name: 'Set switch command settings' })).toHaveTextContent('ToggleDoor open');
   });
 
@@ -583,14 +577,14 @@ describe('EventInspector pages', () => {
     await user.click(await screen.findByRole('option', { name: 'Switch' }));
     await user.click(screen.getAllByRole('button', { name: 'Choose switch' })[1]);
     await user.click(await screen.findByRole('option', { name: 'Boss defeated' }));
-    expect(onEventChange.mock.calls.at(-1)?.[0].pages[0].contents[0]).toEqual({ type: 'setSwitch', id: 'door-open', operation: 'set', operand: { kind: 'switch', switchId: 'boss-defeated' } });
+    expect(onEventChange.mock.calls.at(-1)?.[0].pages[0].contents[0]).toEqual({ type: 'setSwitch', id: 1, operation: 'set', operand: { kind: 'switch', switchId: 2 } });
 
     await user.click(screen.getByRole('combobox', { name: 'Switch operand type' }));
     await user.click(await screen.findByRole('option', { name: 'Game data' }));
     await user.click(screen.getByRole('combobox', { name: 'Switch game data' }));
     await user.click(await screen.findByRole('option', { name: 'Item equipped' }));
     expect(screen.getByRole('combobox', { name: 'Game data item' })).toHaveTextContent('Silver Sword');
-    expect(onEventChange.mock.calls.at(-1)?.[0].pages[0].contents[0]).toEqual({ type: 'setSwitch', id: 'door-open', operation: 'set', operand: { kind: 'gameData', data: { kind: 'itemEquipped', itemId: 'silver-sword' } } });
+    expect(onEventChange.mock.calls.at(-1)?.[0].pages[0].contents[0]).toEqual({ type: 'setSwitch', id: 1, operation: 'set', operand: { kind: 'gameData', data: { kind: 'itemEquipped', itemId: 2 } } });
   });
 
   it('automatically opens a command added to a dialogue choice', async () => {
@@ -611,16 +605,16 @@ describe('EventInspector pages', () => {
   it('shows concise command names with only their primary configured value', () => {
     const commands: EventCommand[] = [
       { type: 'dialogue', speaker: 'Guide', text: 'A very long dialogue that should stay hidden', choices: [] },
-      { type: 'setSwitch', id: 'door-open', operation: 'set', operand: { kind: 'constant', value: true } },
-      { type: 'setVariable', id: 'score', operation: 'set', operand: { kind: 'constant', value: 12 } },
-      { type: 'giveItem', id: 'potion', amount: 2 },
-      { type: 'removeItem', id: 'silver-sword', amount: 1 },
-      { type: 'unlockSkill', id: 'dash' },
+      { type: 'setSwitch', id: 1, operation: 'set', operand: { kind: 'constant', value: true } },
+      { type: 'setVariable', id: 1, operation: 'set', operand: { kind: 'constant', value: 12 } },
+      { type: 'giveItem', id: 1, amount: 2 },
+      { type: 'removeItem', id: 2, amount: 1 },
+      { type: 'unlockSkill', id: 1 },
       { type: 'healPlayer', amount: 25 },
       { type: 'toast', text: 'Quest updated' },
       { type: 'movementRoute', target: { kind: 'player' }, route: { commands: [], repeat: false, skippable: false, wait: true } },
       { type: 'wait', duration: 0.5 },
-      { type: 'teleport', destination: { map: { kind: 'constant', mapId: 'map-1' }, x: { kind: 'constant', value: 8 }, y: { kind: 'constant', value: 4 } }, direction: 'east', transition: 'fadeWhite' },
+      { type: 'teleport', destination: { map: { kind: 'constant', mapId: 1 }, x: { kind: 'constant', value: 8 }, y: { kind: 'constant', value: 4 } }, direction: 'east', transition: 'fadeWhite' },
       { type: 'save' },
     ];
     render(<Harness initialContents={commands} />);
@@ -631,7 +625,7 @@ describe('EventInspector pages', () => {
     expect(screen.getByRole('button', { name: 'Set variable command settings' })).toHaveTextContent('VariableScore = 12');
     expect(screen.getByRole('button', { name: 'Give item command settings' })).toHaveTextContent('GivePotion ×2');
     expect(screen.getByRole('button', { name: 'Remove item command settings' })).toHaveTextContent('RemoveSilver Sword ×1');
-    expect(screen.getByRole('button', { name: 'Unlock skill command settings' })).toHaveTextContent('Unlockdash');
+    expect(screen.getByRole('button', { name: 'Unlock skill command settings' })).toHaveTextContent('UnlockBasic attack');
     expect(screen.getByRole('button', { name: 'Heal player command settings' })).toHaveTextContent('Heal25 HP');
     expect(screen.getByRole('button', { name: 'Toast command settings' })).toHaveTextContent('ToastQuest updated');
     expect(screen.getByRole('button', { name: 'Movement route command settings' })).toHaveTextContent('MovePlayer');
@@ -673,7 +667,7 @@ describe('EventInspector pages', () => {
     const onEventChange = vi.fn();
     const teleport: EventCommand = {
       type: 'teleport',
-      destination: { map: { kind: 'constant', mapId: 'map-1' }, x: { kind: 'constant', value: 2 }, y: { kind: 'constant', value: 3 } },
+      destination: { map: { kind: 'constant', mapId: 1 }, x: { kind: 'constant', value: 2 }, y: { kind: 'constant', value: 3 } },
       direction: 'retain',
       transition: 'instant',
     };
@@ -710,7 +704,7 @@ describe('EventInspector pages', () => {
 
     expect(onEventChange.mock.calls.at(-1)?.[0].pages[0].contents[0]).toEqual({
       type: 'teleport',
-      destination: { map: { kind: 'variable', variableId: 'score' }, x: { kind: 'variable', variableId: 'reputation' }, y: { kind: 'constant', value: 3 } },
+      destination: { map: { kind: 'variable', variableId: 1 }, x: { kind: 'variable', variableId: 2 }, y: { kind: 'constant', value: 3 } },
       direction: 'east',
       transition: 'fadeBlack',
     });
@@ -732,7 +726,7 @@ describe('EventInspector pages', () => {
     await user.click(await screen.findByRole('menuitem', { name: 'Conditional branch' }));
     expect(onEventChange.mock.calls.at(-1)?.[0].pages[0].contents[0]).toEqual({
       type: 'conditional',
-      condition: { kind: 'switch', id: 'door-open', operand: { kind: 'constant', value: true } },
+      condition: { kind: 'switch', id: 1, operand: { kind: 'constant', value: true } },
       thenCommands: [],
     });
     const conditionalSettings = screen.getByRole('button', { name: 'Conditional branch command settings' });
@@ -769,12 +763,12 @@ describe('EventInspector pages', () => {
     await user.type(searchSwitches, 'boss');
     expect(screen.queryByRole('option', { name: 'Door open' })).not.toBeInTheDocument();
     await user.click(screen.getByRole('option', { name: 'Boss defeated' }));
-    expect(onEventChange.mock.calls.at(-1)?.[0].pages[0].contents[0].condition.id).toBe('boss-defeated');
+    expect(onEventChange.mock.calls.at(-1)?.[0].pages[0].contents[0].condition.id).toBe(2);
     const elseBranch = within(dialog).getByRole('checkbox', { name: 'Else branch' });
     expect(elseBranch).not.toBeChecked();
     await user.click(conditionType);
     await user.click(await screen.findByRole('option', { name: 'Variable' }));
-    expect(onEventChange.mock.calls.at(-1)?.[0].pages[0].contents[0].condition).toEqual({ kind: 'variable', id: 'score', operator: 'equal', operand: { kind: 'constant', value: 0 } });
+    expect(onEventChange.mock.calls.at(-1)?.[0].pages[0].contents[0].condition).toEqual({ kind: 'variable', id: 1, operator: 'equal', operand: { kind: 'constant', value: 0 } });
     expect(conditionalSettings.querySelector('.lucide-hash')).not.toBeInTheDocument();
     expect(conditionalSettings).toHaveTextContent('Score = 0');
     expect(conditionalSettings).not.toHaveTextContent('·');
@@ -791,7 +785,7 @@ describe('EventInspector pages', () => {
     await user.type(searchVariables, 'repu');
     expect(screen.queryByRole('option', { name: 'Score' })).not.toBeInTheDocument();
     await user.click(screen.getByRole('option', { name: 'Reputation' }));
-    expect(onEventChange.mock.calls.at(-1)?.[0].pages[0].contents[0].condition.id).toBe('reputation');
+    expect(onEventChange.mock.calls.at(-1)?.[0].pages[0].contents[0].condition.id).toBe(2);
     expect(conditionalSettings).toHaveTextContent('Reputation = 0');
     await user.click(within(dialog).getByRole('combobox', { name: 'Variable operand type' }));
     await user.click(await screen.findByRole('option', { name: 'Game data' }));
@@ -801,7 +795,7 @@ describe('EventInspector pages', () => {
     await user.click(await screen.findByRole('option', { name: 'This event' }));
     await user.click(within(dialog).getByRole('combobox', { name: 'Coordinate axis' }));
     await user.click(await screen.findByRole('option', { name: 'Y' }));
-    expect(onEventChange.mock.calls.at(-1)?.[0].pages[0].contents[0].condition).toEqual({ kind: 'variable', id: 'reputation', operator: 'equal', operand: { kind: 'gameData', data: { kind: 'characterCoordinate', target: { kind: 'thisEvent' }, axis: 'y' } } });
+    expect(onEventChange.mock.calls.at(-1)?.[0].pages[0].contents[0].condition).toEqual({ kind: 'variable', id: 2, operator: 'equal', operand: { kind: 'gameData', data: { kind: 'characterCoordinate', target: { kind: 'thisEvent' }, axis: 'y' } } });
     expect(conditionalSettings).toHaveTextContent('Reputation = This event Y');
     await user.click(conditionType);
     await user.click(await screen.findByRole('option', { name: 'Item' }));
@@ -814,7 +808,7 @@ describe('EventInspector pages', () => {
     await user.type(searchItems, 'silver');
     expect(screen.queryByRole('option', { name: 'Potion' })).not.toBeInTheDocument();
     await user.click(screen.getByRole('option', { name: 'Silver Sword' }));
-    expect(onEventChange.mock.calls.at(-1)?.[0].pages[0].contents[0].condition).toEqual({ kind: 'item', id: 'silver-sword', amount: 1 });
+    expect(onEventChange.mock.calls.at(-1)?.[0].pages[0].contents[0].condition).toEqual({ kind: 'item', id: 2, amount: 1 });
     expect(conditionalSettings).toHaveTextContent('Silver Sword ×1');
 
     await user.click(elseBranch);
@@ -846,7 +840,7 @@ describe('EventInspector pages', () => {
 
   it('does not offer a fourth conditional nesting level', async () => {
     const user = userEvent.setup();
-    const condition = { kind: 'switch' as const, id: 'door-open', operand: { kind: 'constant' as const, value: true } };
+    const condition = { kind: 'switch' as const, id: 1, operand: { kind: 'constant' as const, value: true } };
     const level3: EventCommand = { type: 'conditional', condition, thenCommands: [] };
     const level2: EventCommand = { type: 'conditional', condition, thenCommands: [level3] };
     const level1: EventCommand = { type: 'conditional', condition, thenCommands: [level2] };

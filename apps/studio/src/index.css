@@ -146,6 +146,63 @@ kbd {
   --sidebar-ring: oklch(0.556 0 0);
 }
 
+html[data-studio-interface='rpgMakerMz'],
+html.dark[data-studio-interface='rpgMakerMz'] {
+  --background: oklch(0.94 0.008 255);
+  --foreground: oklch(0.22 0.015 255);
+  --card: oklch(0.975 0.006 255);
+  --card-foreground: oklch(0.22 0.015 255);
+  --popover: oklch(0.985 0.004 255);
+  --popover-foreground: oklch(0.22 0.015 255);
+  --primary: oklch(0.54 0.15 251);
+  --primary-foreground: oklch(0.99 0 0);
+  --secondary: oklch(0.89 0.012 255);
+  --secondary-foreground: oklch(0.24 0.018 255);
+  --muted: oklch(0.91 0.01 255);
+  --muted-foreground: oklch(0.47 0.025 255);
+  --accent: oklch(0.83 0.055 247);
+  --accent-foreground: oklch(0.2 0.035 255);
+  --destructive: oklch(0.55 0.2 27);
+  --border: oklch(0.74 0.018 255);
+  --input: oklch(0.78 0.016 255);
+  --ring: oklch(0.55 0.15 251);
+  --radius: 0.18rem;
+  --sidebar: oklch(0.9 0.012 255);
+  --sidebar-foreground: oklch(0.22 0.015 255);
+  --sidebar-primary: oklch(0.54 0.15 251);
+  --sidebar-primary-foreground: oklch(0.99 0 0);
+  --sidebar-accent: oklch(0.82 0.055 247);
+  --sidebar-accent-foreground: oklch(0.2 0.035 255);
+  --sidebar-border: oklch(0.72 0.02 255);
+  --sidebar-ring: oklch(0.55 0.15 251);
+}
+
+html[data-studio-interface='rpgMakerMz'] body {
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+html[data-studio-interface='rpgMakerMz'] [data-slot='rpg-maker-mz-shell'] {
+  background: linear-gradient(180deg, oklch(0.97 0.006 255), oklch(0.91 0.012 255));
+}
+
+html[data-studio-interface='rpgMakerMz'] [data-slot='rpg-maker-mz-menubar'] [data-slot='menubar-trigger'],
+html[data-studio-interface='rpgMakerMz'] [data-slot='studio-toolbar'][data-presentation='mz'] button {
+  border-radius: 2px;
+}
+
+html[data-studio-interface='rpgMakerMz'] [data-slot='dialog-overlay'] {
+  background: rgb(15 23 42 / 35%);
+  backdrop-filter: none;
+}
+
+html[data-studio-interface='rpgMakerMz'] [data-slot='rpg-maker-mz-event-window'],
+html[data-studio-interface='rpgMakerMz'] [data-slot='rpg-maker-mz-database-window'],
+html[data-studio-interface='rpgMakerMz'] [data-slot='rpg-maker-mz-assets-window'],
+html[data-studio-interface='rpgMakerMz'] [data-slot='rpg-maker-mz-map-settings-window'] {
+  border: 1px solid var(--border);
+  box-shadow: 0 18px 55px rgb(15 23 42 / 35%);
+}
+
 @layer base {
   * {
     @apply border-border outline-ring/50;

@@ -16,6 +16,8 @@ function props(overrides: Partial<ComponentProps<typeof StudioAppSidebar>> = {})
     onExportProject: vi.fn(),
     onRevertProject: vi.fn(),
     onCloseProject: vi.fn(),
+    studioInterface: 'modern' as const,
+    onChangeStudioInterface: vi.fn(),
     onSelectMaps: vi.fn(),
     onSelectAssets: vi.fn(),
     onSelectDatabase: vi.fn(),
@@ -46,6 +48,15 @@ describe('StudioAppSidebar', () => {
     render(<TooltipProvider><StudioAppSidebar {...props({ onSelectAssets })} /></TooltipProvider>);
     await userEvent.click(screen.getByRole('button', { name: 'Assets' }));
     expect(onSelectAssets).toHaveBeenCalledOnce();
+  });
+
+  it('changes the interface from the application menu', async () => {
+    const onChangeStudioInterface = vi.fn();
+    render(<TooltipProvider><StudioAppSidebar {...props({ onChangeStudioInterface })} /></TooltipProvider>);
+    await userEvent.click(screen.getByRole('button', { name: 'RPG Crafter menu' }));
+    await userEvent.hover(await screen.findByRole('menuitem', { name: 'Interface' }));
+    await userEvent.click(await screen.findByRole('menuitemradio', { name: 'RPG Maker MZ' }));
+    expect(onChangeStudioInterface).toHaveBeenCalledWith('rpgMakerMz');
   });
 
   it('opens Database from the third icon', async () => {

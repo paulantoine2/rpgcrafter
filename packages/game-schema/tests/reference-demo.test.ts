@@ -19,24 +19,24 @@ describe('reference multi-plane demonstration', () => {
       'rpg-maker-mz-outside-c',
     ]);
     expect(Object.values(game.maps).every(map => map.tileLayers.length === 4)).toBe(true);
-    expect(game.maps.village.tileLayers[0].tiles[0]).toMatchObject({
+    expect(game.maps[1].tileLayers[0].tiles[0]).toMatchObject({
       tilesetId: 'rpg-maker-mz-outside-a2', terrainId: 'meadow',
     });
   });
 
   it('builds each authored map from tiles selected by semantic names', () => {
     const game = referenceGame();
-    const names = (mapId: string, layerId: string) => new Set(game.maps[mapId].tileLayers.find(layer => layer.id === layerId)?.tiles.map(tile => game.tilesets[tile.tilesetId].terrains.find(terrain => terrain.id === tile.terrainId)?.name));
-    expect([...names('village', 'layer-2')]).toEqual(expect.arrayContaining(['Road (Meadow)', 'Cobblestones A']));
-    expect([...names('village', 'layer-3')]).toEqual(expect.arrayContaining(['Roof E (Wood)', 'Outer Wall E (Wood)']));
-    expect(names('path', 'bridge-surface')).toEqual(new Set(['Large Bridge (H, Top)', 'Large Bridge (H, Center)', 'Large Bridge (H, Bottom)']));
-    expect(names('sanctuary', 'surface')).toEqual(new Set(['Cobblestones A', 'Pond']));
-    expect(names('arena', 'layer-3')).toEqual(new Set(['Wall I (Hedge)']));
-    expect(game.maps['empty-map'].tileLayers.every(layer => layer.tiles.length === 0)).toBe(true);
+    const names = (mapId: number, layerId: string) => new Set(game.maps[mapId].tileLayers.find(layer => layer.id === layerId)?.tiles.map(tile => game.tilesets[tile.tilesetId].terrains.find(terrain => terrain.id === tile.terrainId)?.name));
+    expect([...names(1, 'layer-2')]).toEqual(expect.arrayContaining(['Road (Meadow)', 'Cobblestones A']));
+    expect([...names(1, 'layer-3')]).toEqual(expect.arrayContaining(['Roof E (Wood)', 'Outer Wall E (Wood)']));
+    expect(names(2, 'bridge-surface')).toEqual(new Set(['Large Bridge (H, Top)', 'Large Bridge (H, Center)', 'Large Bridge (H, Bottom)']));
+    expect(names(3, 'surface')).toEqual(new Set(['Cobblestones A', 'Pond']));
+    expect(names(4, 'layer-3')).toEqual(new Set(['Wall I (Hedge)']));
+    expect(game.maps[5].tileLayers.every(layer => layer.tiles.length === 0)).toBe(true);
   });
 
   it('crosses the mist trail only through its explicit connection', () => {
-    const game = referenceGame(), map = game.maps.path, graph = buildNavigationGraph(map, game.tilesets);
+    const game = referenceGame(), map = game.maps[2], graph = buildNavigationGraph(map, game.tilesets);
     expect(map.planes.map(plane => plane.name)).toEqual(['Mist Trail', 'Ancient Walkway']);
     expect(navigationTarget(graph, 'lower-trail', 13, 8, 'east')).toEqual({ planeId: 'raised-bridge', x: 14, y: 8 });
     expect(navigationTarget(graph, 'raised-bridge', 14, 8, 'west')).toEqual({ planeId: 'lower-trail', x: 13, y: 8 });
@@ -46,14 +46,14 @@ describe('reference multi-plane demonstration', () => {
   });
 
   it('keeps the gallery and terrace independent at overlapping coordinates', () => {
-    const game = referenceGame(), map = game.maps.sanctuary, graph = buildNavigationGraph(map, game.tilesets);
+    const game = referenceGame(), map = game.maps[3], graph = buildNavigationGraph(map, game.tilesets);
     expect(navigationHasCell(graph, 'gallery', 12, 5)).toBe(true);
     expect(navigationHasCell(graph, 'bell-terrace', 12, 5)).toBe(true);
     expect(navigationTarget(graph, 'gallery', 8, 8, 'east')).toEqual({ planeId: 'bell-terrace', x: 9, y: 8 });
     expect(navigationTarget(graph, 'bell-terrace', 9, 8, 'west')).toEqual({ planeId: 'gallery', x: 8, y: 8 });
     expect(navigationHasCell(graph, 'gallery', 13, 6)).toBe(true);
     expect(navigationHasCell(graph, 'bell-terrace', 13, 6)).toBe(false);
-    expect(map.events.find(event => event.id === 'keyChest')?.position.planeId).toBe('bell-terrace');
+    expect(map.events.find(event => event.name === 'keyChest')?.position.planeId).toBe('bell-terrace');
     expect(map.tileLayers.find(layer => layer.id === 'terrace-parapet')?.renderPhase).toBe('aboveActors');
   });
 });

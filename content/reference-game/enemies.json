@@ -2,6 +2,7 @@
   "slime": {
     "name": "Mist Slime",
     "color": "#8fc97a",
+    "battleSprite": "battle/rpg-maker-mz/sv_enemies/Plasma.png",
     "hp": 42,
     "speed": 62,
     "damage": 8,
@@ -12,6 +13,7 @@
   "beetle": {
     "name": "Thorn Beetle",
     "color": "#c99055",
+    "battleSprite": "battle/rpg-maker-mz/sv_enemies/Machinerybee.png",
     "hp": 58,
     "speed": 48,
     "damage": 12,
@@ -22,6 +24,7 @@
   "wisp": {
     "name": "Spring Spirit",
     "color": "#86c7ed",
+    "battleSprite": "battle/rpg-maker-mz/sv_enemies/Sylph.png",
     "hp": 36,
     "speed": 50,
     "damage": 9,
@@ -32,6 +35,7 @@
   "guardian": {
     "name": "Drowned Guardian",
     "color": "#b68cec",
+    "battleSprite": "battle/rpg-maker-mz/sv_enemies/Gatekeeper.png",
     "hp": 100,
     "speed": 42,
     "damage": 5,

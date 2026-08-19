@@ -1,7 +1,8 @@
 import { CirclePlus, Database, FilePlus2, FolderOpen, MapPinned, RotateCcw, Save, Upload } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuShortcut, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuRadioGroup, DropdownMenuRadioItem, DropdownMenuSeparator, DropdownMenuShortcut, DropdownMenuSub, DropdownMenuSubContent, DropdownMenuSubTrigger, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { IconButtonTooltip } from '@/components/ui/tooltip';
+import type { StudioInterface } from '@/lib/studio-interface';
 
 function RpgCrafterLogo() {
   return <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
@@ -20,6 +21,8 @@ export function StudioAppSidebar({
   onExportProject,
   onRevertProject,
   onCloseProject,
+  studioInterface,
+  onChangeStudioInterface,
   onSelectMaps,
   onSelectAssets,
   onSelectDatabase,
@@ -33,6 +36,8 @@ export function StudioAppSidebar({
   onExportProject: () => void;
   onRevertProject: () => void;
   onCloseProject: () => void;
+  studioInterface: StudioInterface;
+  onChangeStudioInterface: (value: StudioInterface) => void;
   onSelectMaps: () => void;
   onSelectAssets: () => void;
   onSelectDatabase: () => void;
@@ -51,6 +56,16 @@ export function StudioAppSidebar({
           <DropdownMenuSeparator />
           <DropdownMenuItem disabled={!hasProject} onClick={onRevertProject}><RotateCcw /> Revert to Source</DropdownMenuItem>
           <DropdownMenuItem disabled={!hasProject} onClick={onCloseProject}>Close Project</DropdownMenuItem>
+          <DropdownMenuSeparator />
+          <DropdownMenuSub>
+            <DropdownMenuSubTrigger>Interface</DropdownMenuSubTrigger>
+            <DropdownMenuSubContent>
+              <DropdownMenuRadioGroup value={studioInterface} onValueChange={value => onChangeStudioInterface(value as StudioInterface)}>
+                <DropdownMenuRadioItem value="modern">Modern</DropdownMenuRadioItem>
+                <DropdownMenuRadioItem value="rpgMakerMz">RPG Maker MZ</DropdownMenuRadioItem>
+              </DropdownMenuRadioGroup>
+            </DropdownMenuSubContent>
+          </DropdownMenuSub>
         </DropdownMenuContent>
       </DropdownMenu>
     </div>

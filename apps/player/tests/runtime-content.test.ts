@@ -14,19 +14,19 @@ describe('sourceGameToLoadedGame', () => {
       skills: read('skills.json'), items: read('items.json'), quests: read('quests.json'), types: read('types.json'), ui: read('ui.json'),
       events: read('events.json'), initialState: read('initial-state.json'),
     });
-    source.maps.village.tileLayers = [
+    source.maps[1].tileLayers = [
       { id: 'ground', name: 'Ground', planeId: 'aubeval', renderPhase: 'belowActors', tiles: [{ x: 2, y: 3, tilesetId: 'outside-a2', terrainId: 'dirt-on-grass' }] },
       { id: 'details', name: 'Details', planeId: 'aubeval', renderPhase: 'aboveActors', tiles: [{ x: 2, y: 3, tilesetId: 'outside-a2', terrainId: 'grass' }] },
     ];
     const loaded = sourceGameToLoadedGame(source);
-    expect(source.maps.village.events[1].position).toEqual({ x: 11, y: 7, planeId: 'aubeval' });
-    expect(loaded.maps.village.events[1].position).toEqual({ x: 528, y: 336, planeId: 'aubeval' });
-    expect(loaded.maps.village.events[1].pages[0].trigger).toMatchObject({ type: 'actionButton', radius: 60 });
-    expect(loaded.maps.village.tileLayers.map(layer => layer.tiles[0])).toEqual([
+    expect(source.maps[1].events[1].position).toEqual({ x: 11, y: 7, planeId: 'aubeval' });
+    expect(loaded.maps[1].events[1].position).toEqual({ x: 528, y: 336, planeId: 'aubeval' });
+    expect(loaded.maps[1].events[1].pages[0].trigger).toMatchObject({ type: 'actionButton', radius: 60 });
+    expect(loaded.maps[1].tileLayers.map(layer => layer.tiles[0])).toEqual([
       { x: 96, y: 144, tilesetId: 'outside-a2', terrainId: 'dirt-on-grass' },
       { x: 96, y: 144, tilesetId: 'outside-a2', terrainId: 'grass' },
     ]);
-    expect(loaded.maps.village.tileLayers.map(layer => layer.id)).toEqual(['ground', 'details']);
+    expect(loaded.maps[1].tileLayers.map(layer => layer.id)).toEqual(['ground', 'details']);
   });
 
   it('keeps teleport tile sources intact in conditional branches', () => {
@@ -35,19 +35,19 @@ describe('sourceGameToLoadedGame', () => {
       skills: read('skills.json'), items: read('items.json'), quests: read('quests.json'), types: read('types.json'), ui: read('ui.json'),
       events: read('events.json'), initialState: read('initial-state.json'),
     });
-    source.maps.village.events[0].pages[0].contents = [{
+    source.maps[1].events[0].pages[0].contents = [{
       type: 'conditional',
-      condition: { kind: 'switch', id: 'questAccepted', operand: { kind: 'constant', value: true } },
-      thenCommands: [{ type: 'teleport', destination: { map: { kind: 'constant', mapId: 'path' }, x: { kind: 'constant', value: 2 }, y: { kind: 'constant', value: 3 } }, direction: 'retain', transition: 'instant' }],
+      condition: { kind: 'switch', id: 1, operand: { kind: 'constant', value: true } },
+      thenCommands: [{ type: 'teleport', destination: { map: { kind: 'constant', mapId: 2 }, x: { kind: 'constant', value: 2 }, y: { kind: 'constant', value: 3 } }, direction: 'retain', transition: 'instant' }],
       elseCommands: [{
         type: 'conditional',
-        condition: { kind: 'item', id: 'item.potion' },
-        thenCommands: [{ type: 'teleport', destination: { map: { kind: 'constant', mapId: 'village' }, x: { kind: 'constant', value: 4 }, y: { kind: 'constant', value: 5 } }, direction: 'retain', transition: 'instant' }],
+        condition: { kind: 'item', id: 3 },
+        thenCommands: [{ type: 'teleport', destination: { map: { kind: 'constant', mapId: 1 }, x: { kind: 'constant', value: 4 }, y: { kind: 'constant', value: 5 } }, direction: 'retain', transition: 'instant' }],
       }],
     }];
 
     const loaded = sourceGameToLoadedGame(source);
-    const conditional = loaded.maps.village.events[0].pages[0].contents[0];
+    const conditional = loaded.maps[1].events[0].pages[0].contents[0];
     expect(conditional).toMatchObject({
       thenCommands: [{ destination: { x: { value: 2 }, y: { value: 3 } } }],
       elseCommands: [{ thenCommands: [{ destination: { x: { value: 4 }, y: { value: 5 } } }] }],

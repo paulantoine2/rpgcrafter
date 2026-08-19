@@ -15,21 +15,21 @@ export type EventRuntimeCallbacks = {
   execute(event: RuntimeEvent): { stop?: boolean } | void;
 };
 
-export function teleportDisposition(currentMapId: string, destinationMapId: string) {
+export function teleportDisposition(currentMapId: number, destinationMapId: number) {
   return destinationMapId === currentMapId ? 'local' as const : 'visit' as const;
 }
 
 /** Page-aware scheduler for map-event triggers. */
 export class MapEventRuntime {
-  private mapId = '';
-  private states = new Map<string, EventState>();
+  private mapId = 0;
+  private states = new Map<number, EventState>();
 
-  beginVisit(mapId: string, events: RuntimeEvent[]) {
+  beginVisit(mapId: number, events: RuntimeEvent[]) {
     this.mapId = mapId;
     this.states = new Map(events.map(event => [event.id, { pageIndex: event.pageIndex, inside: false }]));
   }
 
-  update(mapId: string, events: RuntimeEvent[], player: PlanePosition | Vec2, callbacks: EventRuntimeCallbacks, playerRadius = 0) {
+  update(mapId: number, events: RuntimeEvent[], player: PlanePosition | Vec2, callbacks: EventRuntimeCallbacks, playerRadius = 0) {
     this.sync(mapId, events);
     for (const event of events) {
       const state = this.states.get(event.id)!;
@@ -45,7 +45,7 @@ export class MapEventRuntime {
     return false;
   }
 
-  interact(mapId: string, events: RuntimeEvent[], player: PlanePosition | Vec2, callbacks: EventRuntimeCallbacks) {
+  interact(mapId: number, events: RuntimeEvent[], player: PlanePosition | Vec2, callbacks: EventRuntimeCallbacks) {
     this.sync(mapId, events);
     let selected: RuntimeEvent | undefined;
     let selectedDistance = Infinity;
@@ -60,7 +60,7 @@ export class MapEventRuntime {
     return selected ? this.fire(selected, callbacks) : false;
   }
 
-  private sync(mapId: string, events: RuntimeEvent[]) {
+  private sync(mapId: number, events: RuntimeEvent[]) {
     if (mapId !== this.mapId) return this.beginVisit(mapId, events);
     const activeIds = new Set(events.map(event => event.id));
     for (const id of this.states.keys()) if (!activeIds.has(id)) this.states.delete(id);

@@ -23,9 +23,10 @@ function blobText(blob: Blob) {
 describe('Studio persistence and export', () => {
   it('creates a valid project with no assets', () => {
     const project = createEmptyProject('Empty World');
-    expect(project.game.manifest.schemaVersion).toBe('0.13');
-    expect(project.game.manifest.nextMapNumericId).toBe(2);
-    expect(project.game.maps['map-1'].numericId).toBe(1);
+    expect(project.game.manifest.schemaVersion).toBe('0.16');
+    expect(project.game.manifest.combatMode).toBe('turnBased');
+    expect(project.game.manifest.nextIds.maps).toBe(2);
+    expect(project.game.maps[1].id).toBe(1);
     expect(project.game.tilesets).toEqual({});
     expect(project.assets).toEqual({});
     expect(project.game.types.elements.entries.map(type => type.name)).toEqual(['Physical', 'Fire', 'Ice', 'Thunder', 'Water', 'Earth', 'Wind', 'Light', 'Darkness']);
@@ -33,14 +34,16 @@ describe('Studio persistence and export', () => {
     expect(project.game.types.weapons.entries.at(-1)).toEqual({ id: 12, name: 'Spear' });
     expect(project.game.types.armors.entries).toHaveLength(6);
     expect(project.game.types.equipment.entries.map(type => type.name)).toEqual(['Weapon', 'Shield', 'Head', 'Body', 'Accessory']);
-    expect(project.game.maps['map-1'].planes).toHaveLength(1);
-    expect(project.game.maps['map-1'].tileLayers.map(layer => layer.renderPhase)).toEqual([
+    expect(project.game.maps[1].planes).toHaveLength(1);
+    expect(project.game.maps[1].tileLayers.map(layer => layer.renderPhase)).toEqual([
       'belowActors', 'belowActors', 'aboveActors', 'aboveActors',
     ]);
   });
 
   it('round-trips a complete project ZIP', async () => {
     const project = createEmptyProject('Round trip');
+    project.game.actors.player.battleSprite = { image: 'battle/hero.png', frameWidth: 64, frameHeight: 64, columns: 9, rows: 6, idleFrame: { column: 3, row: 0 } };
+    project.game.ui.battle = { background: { lowerImage: 'battle/ground.png', upperImage: 'battle/sky.png' } };
     project.game.tilesets.decor = {
       id: 'decor', name: 'Decor', category: 'Nature', kind: 'grid', image: 'tilesets/decor.png', tileSize: 48, columns: 1, rows: 1,
       terrains: [{ id: 'cliff', name: 'Cliff', origin: { column: 0, row: 0 }, collision: { kind: 'edges', edges: ['north', 'east'] } }],
@@ -48,6 +51,9 @@ describe('Studio persistence and export', () => {
     project.assets['tilesets/decor.png'] = new Blob(['png'], { type: 'image/png' });
     project.assets['tilesets/decor.json'] = new Blob([JSON.stringify(project.game.tilesets.decor)], { type: 'application/json' });
     project.assets['sprites/rpg-maker-mz/Actor1.png'] = new Blob(['sprite'], { type: 'image/png' });
+    project.assets['battle/hero.png'] = new Blob(['hero'], { type: 'image/png' });
+    project.assets['battle/ground.png'] = new Blob(['ground'], { type: 'image/png' });
+    project.assets['battle/sky.png'] = new Blob(['sky'], { type: 'image/png' });
     const archive = await createExportArchive(project.game, project.assets);
     const reopened = await openProjectArchive(new Blob([archive.slice().buffer], { type: 'application/zip' }));
     expect(reopened.game).toEqual(project.game);
@@ -55,11 +61,12 @@ describe('Studio persistence and export', () => {
     expect(reopened.assets['tilesets/decor.png']).toBeInstanceOf(Blob);
     expect(JSON.parse(await blobText(reopened.assets['tilesets/decor.json']))).toEqual(project.game.tilesets.decor);
     expect(await blobText(reopened.assets['sprites/rpg-maker-mz/Actor1.png'])).toBe('sprite');
+    expect(await blobText(reopened.assets['battle/hero.png'])).toBe('hero');
   });
 
   it('opens and migrates a 0.11 archive without types.json', async () => {
     const project = createEmptyProject('Legacy equipment');
-    project.game.items.sword = { name: 'Sword', type: 'equipment', equipmentTypeId: 1 };
+    project.game.items[2] = { name: 'Sword', type: 'equipment', equipmentTypeId: 1 };
     const files = unzipSync(await createExportArchive(project.game));
     const manifest = JSON.parse(strFromU8(files['manifest.json']));
     manifest.schemaVersion = '0.11';
@@ -67,10 +74,10 @@ describe('Studio persistence and export', () => {
     const ui = JSON.parse(strFromU8(files['ui.json']));
     ui.equipmentSlots = [{ id: 'weapon', label: 'Weapon' }];
     const items = JSON.parse(strFromU8(files['items.json']));
-    items.sword.equipmentSlot = 'weapon';
-    delete items.sword.equipmentTypeId;
+    items[2].equipmentSlot = 'weapon';
+    delete items[2].equipmentTypeId;
     const initialState = JSON.parse(strFromU8(files['initial-state.json']));
-    initialState.equipment = { weapon: 'sword' };
+    initialState.equipment = {};
     files['manifest.json'] = strToU8(JSON.stringify(manifest));
     files['ui.json'] = strToU8(JSON.stringify(ui));
     files['items.json'] = strToU8(JSON.stringify(items));
@@ -79,14 +86,14 @@ describe('Studio persistence and export', () => {
 
     const reopened = await openProjectArchive(new Blob([zipSync(files).slice().buffer], { type: 'application/zip' }));
 
-    expect(reopened.game.manifest.schemaVersion).toBe('0.13');
+    expect(reopened.game.manifest.schemaVersion).toBe('0.16');
     expect(reopened.game.types.equipment.entries).toEqual([{ id: 1, name: 'Weapon' }]);
-    expect(reopened.game.items.sword.equipmentTypeId).toBe(1);
+    expect(Object.values(reopened.game.items).find(item => item.name === 'Sword')?.equipmentTypeId).toBe(1);
   });
 
   it('exports a complete, self-contained project package', async () => {
     const files = unzipSync(await createExportArchive(game, { 'tilesets/test.png': new Blob(['png'], { type: 'image/png' }) }));
-    expect(Object.keys(files).sort()).toEqual(['actors.json', 'enemies.json', 'events.json', 'initial-state.json', 'items.json', 'manifest.json', 'maps.json', 'quests.json', 'skills.json', 'tilesets.json', 'tilesets/test.png', 'types.json', 'ui.json']);
+    expect(Object.keys(files).sort()).toEqual(['actors.json', 'enemies.json', 'events.json', 'initial-state.json', 'items.json', 'manifest.json', 'maps.json', 'quests.json', 'skills.json', 'tilesets.json', 'tilesets/test.png', 'troops.json', 'types.json', 'ui.json']);
     expect(JSON.parse(strFromU8(files['maps.json']))).toEqual(game.maps);
     expect(JSON.parse(strFromU8(files['events.json']))).toEqual(game.events);
     expect(JSON.parse(strFromU8(files['tilesets.json']))).toEqual(game.tilesets);

@@ -23,8 +23,9 @@ export const DEFAULT_EVENT_MOVEMENT: EventMovement = {
 
 type Motion = { from: PlanePosition; to: PlanePosition; elapsed: number; duration: number; jump: boolean };
 type ForcedRoute = { route: MovementRoute; index: number; resolve: () => void };
+export type MovementActorId = number | 'player';
 export type MovementActor = {
-  id: string;
+  id: MovementActorId;
   position: PlanePosition;
   direction: Direction;
   moving: boolean;
@@ -44,7 +45,7 @@ type InternalActor = MovementActor & {
   forced?: ForcedRoute;
 };
 
-export type MovementCollision = (actorId: string, from: PlanePosition, to: PlanePosition, through: boolean) => boolean;
+export type MovementCollision = (actorId: MovementActorId, from: PlanePosition, to: PlanePosition, through: boolean) => boolean;
 
 /**
  * RPG Maker-style tile movement shared by ambient event behavior and forced routes.
@@ -52,7 +53,7 @@ export type MovementCollision = (actorId: string, from: PlanePosition, to: Plane
  */
 export class EventMovementRuntime {
   private map: GameMap | null = null;
-  private actors = new Map<string, InternalActor>();
+  private actors = new Map<MovementActorId, InternalActor>();
 
   beginVisit(map: GameMap, player: PlanePosition, events: ActiveMovementEvent[]) {
     for (const actor of this.actors.values()) actor.forced?.resolve();
@@ -91,16 +92,16 @@ export class EventMovementRuntime {
     actor.position = { x: player.x, y: player.y, planeId: player.planeId };
   }
 
-  actor(id: string) { return this.actors.get(id); }
+  actor(id: MovementActorId) { return this.actors.get(id); }
   eventActors() { return [...this.actors.values()].filter(actor => actor.id !== 'player'); }
   isPlayerForced() { return Boolean(this.actors.get('player')?.forced); }
-  isRouteRunning(id: string) { return Boolean(this.actors.get(id)?.forced); }
-  faceToward(id: string, target: PlanePosition) {
+  isRouteRunning(id: MovementActorId) { return Boolean(this.actors.get(id)?.forced); }
+  faceToward(id: MovementActorId, target: PlanePosition) {
     const actor = this.actors.get(id);
     if (actor && !actor.settings.directionFix && actor.position.planeId === target.planeId) actor.direction = this.toward(actor.position, target);
   }
 
-  forceRoute(target: MovementTarget, route: MovementRoute, currentEventId?: string) {
+  forceRoute(target: MovementTarget, route: MovementRoute, currentEventId?: number) {
     const id = target.kind === 'player' ? 'player' : target.kind === 'thisEvent' ? currentEventId : target.eventId;
     const actor = id ? this.actors.get(id) : undefined;
     if (!actor) return Promise.resolve();

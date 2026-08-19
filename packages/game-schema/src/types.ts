@@ -3,56 +3,57 @@ export type Rect = Vec2 & { w: number; h: number };
 export type Direction = 'north' | 'east' | 'south' | 'west';
 export type PlanePosition = Vec2 & { planeId: string };
 export type VariableComparison = 'equal' | 'notEqual' | 'greaterThan' | 'greaterThanOrEqual' | 'lessThan' | 'lessThanOrEqual';
-export type TeleportMapSource = { kind: 'constant'; mapId: string } | { kind: 'variable'; variableId: string };
-export type TeleportNumberSource = { kind: 'constant'; value: number } | { kind: 'variable'; variableId: string };
+export type TeleportMapSource = { kind: 'constant'; mapId: number } | { kind: 'variable'; variableId: number };
+export type TeleportNumberSource = { kind: 'constant'; value: number } | { kind: 'variable'; variableId: number };
 export type TeleportDirection = 'retain' | Direction;
 export type TeleportTransition = 'instant' | 'fadeBlack' | 'fadeWhite';
 export type SwitchGameData =
-  | { kind: 'hasItem'; itemId: string }
-  | { kind: 'itemEquipped'; itemId: string }
-  | { kind: 'skillUnlocked'; skillId: string };
+  | { kind: 'hasItem'; itemId: number }
+  | { kind: 'itemEquipped'; itemId: number }
+  | { kind: 'skillUnlocked'; skillId: number };
 export type SwitchOperand =
   | { kind: 'constant'; value: boolean }
-  | { kind: 'switch'; switchId: string }
+  | { kind: 'switch'; switchId: number }
   | { kind: 'gameData'; data: SwitchGameData };
 export type VariableOperation = 'set' | 'add' | 'subtract' | 'multiply' | 'divide' | 'modulo';
 export type VariableGameData =
-  | { kind: 'itemAmount'; itemId: string }
+  | { kind: 'itemAmount'; itemId: number }
   | { kind: 'playerStat'; stat: 'hp' | 'maxHp' | 'level' | 'xp' }
   | { kind: 'mapId' }
   | { kind: 'characterCoordinate'; target: MovementTarget; axis: 'x' | 'y' };
 export type VariableOperand =
   | { kind: 'constant'; value: number }
-  | { kind: 'variable'; variableId: string }
+  | { kind: 'variable'; variableId: number }
   | { kind: 'random'; min: number; max: number }
   | { kind: 'gameData'; data: VariableGameData };
 export type VariableConditionOperand = Exclude<VariableOperand, { kind: 'random' }>;
 
 export type Condition =
-  | { kind: 'switch'; id: string; operand: SwitchOperand }
-  | { kind: 'item'; id: string; amount?: number }
-  | { kind: 'variable'; id: string; operator: VariableComparison; operand: VariableConditionOperand };
+  | { kind: 'switch'; id: number; operand: SwitchOperand }
+  | { kind: 'item'; id: number; amount?: number }
+  | { kind: 'variable'; id: number; operator: VariableComparison; operand: VariableConditionOperand };
 
 export type EventCommand =
   | { type: 'dialogue'; speaker: string; text: string; choices?: Array<{ label: string; commands: EventCommand[] }> }
   | { type: 'conditional'; condition: Condition; thenCommands: EventCommand[]; elseCommands?: EventCommand[] }
-  | { type: 'setSwitch'; id: string; operation: 'set'; operand: SwitchOperand }
-  | { type: 'setSwitch'; id: string; operation: 'toggle' }
-  | { type: 'setVariable'; id: string; operation: VariableOperation; operand: VariableOperand }
-  | { type: 'giveItem' | 'removeItem'; id: string; amount?: number }
-  | { type: 'unlockSkill'; id: string }
+  | { type: 'setSwitch'; id: number; operation: 'set'; operand: SwitchOperand }
+  | { type: 'setSwitch'; id: number; operation: 'toggle' }
+  | { type: 'setVariable'; id: number; operation: VariableOperation; operand: VariableOperand }
+  | { type: 'giveItem' | 'removeItem'; id: number; amount?: number }
+  | { type: 'unlockSkill'; id: number }
   | { type: 'healPlayer'; amount: number }
   | { type: 'toast'; text: string }
   | { type: 'teleport'; destination: { map: TeleportMapSource; x: TeleportNumberSource; y: TeleportNumberSource }; direction: TeleportDirection; transition: TeleportTransition }
   | { type: 'movementRoute'; target: MovementTarget; route: MovementRoute }
   | { type: 'wait'; duration: number }
-  | { type: 'callCommonEvent'; id: string }
+  | { type: 'callCommonEvent'; id: number }
+  | { type: 'battle'; troopId: number }
   | { type: 'save' };
 
 export type CommonEventTrigger =
   | { type: 'none' }
-  | { type: 'autorun'; switchId: string }
-  | { type: 'parallel'; switchId: string };
+  | { type: 'autorun'; switchId: number }
+  | { type: 'parallel'; switchId: number };
 
 export type CommonEvent = {
   name: string;
@@ -94,7 +95,7 @@ export type EventOptions = {
 };
 export type EventMovement = AutonomousMovement & EventOptions;
 export type MapEventPriority = 'belowCharacters' | 'sameAsCharacters' | 'aboveCharacters';
-export type MovementTarget = { kind: 'player' } | { kind: 'thisEvent' } | { kind: 'event'; eventId: string };
+export type MovementTarget = { kind: 'player' } | { kind: 'thisEvent' } | { kind: 'event'; eventId: number };
 export type MapEventSprite = {
   image: string;
   characterIndex: number;
@@ -105,7 +106,8 @@ export type MapEventSprite = {
 };
 
 export type MapEvent = {
-  id: string;
+  id: number;
+  name: string;
   position: PlanePosition;
   pages: MapEventPage[];
 };
@@ -120,7 +122,7 @@ export type MapEventPage = {
   contents: EventCommand[];
 };
 
-export type EnemySpawn = PlanePosition & { enemyId: string };
+export type EnemySpawn = PlanePosition & { enemyId: number };
 export type QuarterCoordinate = [number, number];
 export type AutotileVariant = { quarters: [QuarterCoordinate, QuarterCoordinate, QuarterCoordinate, QuarterCoordinate] };
 export type AutotileTerrain = {
@@ -200,10 +202,11 @@ export type NavigationOverride = PlanePosition & {
 };
 export type BlockedRegion = Rect & { planeId: string };
 export type GameMap = {
-  id: string;
-  numericId: number;
+  id: number;
+  order?: number;
+  nextEventId: number;
   name: string;
-  parentMapId?: string;
+  parentMapId?: number;
   ground: string;
   accent: string;
   tileSize: number;
@@ -215,18 +218,20 @@ export type GameMap = {
   blockedRegions: BlockedRegion[];
   events: MapEvent[];
   enemySpawns: EnemySpawn[];
-  deathDestination?: { mapId: string; spawn: PlanePosition };
+  encounters?: { averageSteps: number; entries: Array<{ troopId: number; weight: number }> };
+  deathDestination?: { mapId: number; spawn: PlanePosition };
 };
 
 export type EnemyBehavior = 'chase' | 'charge' | 'ranged' | 'boss';
+export type CombatStats = { maxHp: number; attack: number; defense: number } & Record<string, number>;
 export type EnemyTemplate = {
   name: string;
   color: string;
-  hp: number;
+  image?: string;
+  stats: CombatStats;
+  rewards: { xp: number } & Record<string, number>;
   speed: number;
-  damage: number;
   radius: number;
-  xp: number;
   behavior: EnemyBehavior;
   phases?: Array<{
     atHpRatio: number;
@@ -235,6 +240,11 @@ export type EnemyTemplate = {
   }>;
   onDefeated?: EventCommand[];
 };
+
+export type CombatMode = 'turnBased' | 'actionRpg';
+export type BattleBackground = { lowerImage: string; upperImage: string };
+export type TroopMember = { enemyId: number; x: number; y: number };
+export type Troop = { name: string; background?: BattleBackground; members: TroopMember[] };
 
 export type Skill = { name: string; type: 'melee' | 'projectile' | 'area'; damage: number; cooldown: number; range?: number; projectileSpeed?: number; color?: string };
 export type Item = { name: string; type: 'quest' | 'consumable' | 'equipment'; healing?: number; equipmentTypeId?: number; stats?: Record<string, number> };
@@ -259,23 +269,34 @@ export type UiDefinition = {
   theme: { fontFamily: string; pageBackground: string; panel: string; panelBorder: string; text: string; accent: string; health: string };
   hud: { slots: string[] };
   pauseMenu: { title: string; tabs: Array<{ id: string; label: string }> };
+  battle?: { background?: BattleBackground };
 };
-export type Manifest = { schemaVersion: string; engineRange: string; gameId: string; version: string; nextMapNumericId: number; entryPoint: { mapId: string; spawnId: string }; title: string; contentRating: string };
-export type PlayerDefinition = { id: string; name: string; start: PlanePosition; stats: { maxHp: number; level: number; xp: number }; primaryAttack: string; skillSlots: Record<string, string>; unlockedSkills: string[] };
+export type GameIdCounters = { maps: number; actors: number; enemies: number; troops: number; skills: number; items: number; quests: number; commonEvents: number; switches: number; variables: number };
+export type Manifest = { schemaVersion: string; engineRange: string; gameId: string; version: string; combatMode: CombatMode; nextIds: GameIdCounters; entryPoint: { mapId: number; spawnId: string }; title: string; contentRating: string };
+export type ActorBattleSprite = {
+  image: string;
+  frameWidth: number;
+  frameHeight: number;
+  columns: number;
+  rows: number;
+  idleFrame: { column: number; row: number };
+};
+export type PlayerDefinition = { id: number; name: string; start: PlanePosition; battleSprite?: ActorBattleSprite; stats: CombatStats & { level: number; xp: number }; primaryAttack: number; skillSlots: Record<string, number>; unlockedSkills: number[] };
 export type Objective = { conditions?: Condition[]; text: string };
-export type InitialState = { switches: Record<string, SwitchDefinition>; variables: Record<string, VariableDefinition>; quests: Record<string, string>; inventory?: Record<string, number>; equipment?: Record<string, string | null> };
-export type EventData = { objectives: Objective[]; commonEvents: Record<string, CommonEvent> };
+export type InitialState = { switches: Record<number, SwitchDefinition>; variables: Record<number, VariableDefinition>; quests: Record<number, string>; inventory?: Record<number, number>; equipment?: Record<number, number | null> };
+export type EventData = { objectives: Objective[]; commonEvents: Record<number, CommonEvent> };
 
 /** The exact authoring representation. Every coordinate remains in tile units. */
 export type SourceGame = {
   manifest: Manifest;
   tilesets: Record<string, TilesetDefinition>;
-  maps: Record<string, GameMap>;
+  maps: Record<number, GameMap>;
   actors: { player: PlayerDefinition };
-  enemies: Record<string, EnemyTemplate>;
-  skills: Record<string, Skill>;
-  items: Record<string, Item>;
-  quests: Record<string, QuestDefinition>;
+  enemies: Record<number, EnemyTemplate>;
+  troops: Record<number, Troop>;
+  skills: Record<number, Skill>;
+  items: Record<number, Item>;
+  quests: Record<number, QuestDefinition>;
   types: GameTypes;
   ui: UiDefinition;
   events: EventData;
@@ -288,6 +309,7 @@ export type SourceGameFiles = {
   maps: unknown;
   actors: unknown;
   enemies: unknown;
+  troops?: unknown;
   skills: unknown;
   items: unknown;
   quests: unknown;

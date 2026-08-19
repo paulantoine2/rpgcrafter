@@ -1,10 +1,25 @@
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import type { TilesetDefinition } from '@rpgcrafter/game-schema';
-import { createEmptyProject, normalizeBundledA1, normalizeBundledA3, normalizeBundledA4, normalizeBundledA5, validateSourceGame } from '../src/lib/source-game';
+import { createEmptyProject, loadBundledTilesetLibrary, normalizeBundledA1, normalizeBundledA3, normalizeBundledA4, normalizeBundledA5, validateSourceGame } from '../src/lib/source-game';
 
 const configurationSources = import.meta.glob<string>('../../../assets/tilesets/rpg-maker-mz/*.json', { eager: true, query: '?raw', import: 'default' });
 
 describe('RPG Maker MZ asset package', () => {
+  it('loads battle asset metadata without eagerly downloading battle images', async () => {
+    const fetchMock = vi.fn().mockResolvedValue({ ok: true, blob: async () => new Blob(['image'], { type: 'image/png' }) });
+    vi.stubGlobal('fetch', fetchMock);
+    const catalog = await loadBundledTilesetLibrary();
+    expect(catalog.battleAssets).toHaveLength(352);
+    expect(catalog.battleAssets.filter(asset => asset.assetType === 'actor-battler')).toHaveLength(40);
+    expect(catalog.battleAssets.filter(asset => asset.assetType === 'side-view-enemy-battler')).toHaveLength(105);
+    expect(catalog.battleAssets.filter(asset => asset.assetType.startsWith('battle-background'))).toHaveLength(101);
+    expect(catalog.battleAssets.every(asset => asset.bundleId === 'rpg-maker-mz' && asset.bundleName === 'RPG Maker MZ')).toBe(true);
+    expect(catalog.bundles.filter(bundle => bundle.id === 'rpg-maker-mz')).toHaveLength(1);
+    expect(catalog.bundles.find(bundle => bundle.id === 'rpg-maker-mz')?.assetIds).toEqual(expect.arrayContaining(catalog.battleAssets.map(asset => asset.id)));
+    expect(fetchMock).toHaveBeenCalledTimes(catalog.tilesets.length + catalog.sprites.length);
+    vi.unstubAllGlobals();
+  });
+
   it('contains valid English-only sidecar configurations for every manifest entry', () => {
     const manifestSource = Object.entries(configurationSources).find(([file]) => file.endsWith('/library.json'))?.[1];
     expect(manifestSource).toBeTruthy();

@@ -1,8 +1,34 @@
 import { assertSourceGame, type SourceGameFiles } from '@rpgcrafter/game-schema';
 import { sourceGameToLoadedGame } from './runtime-content.js';
 import type { LoadedGame } from './types.js';
+import actorBattleUrl from '../../../assets/battle/rpg-maker-mz/sv_actors/Actor1_1.png?url';
+import plasmaBattleUrl from '../../../assets/battle/rpg-maker-mz/sv_enemies/Plasma.png?url';
+import machineryBeeBattleUrl from '../../../assets/battle/rpg-maker-mz/sv_enemies/Machinerybee.png?url';
+import sylphBattleUrl from '../../../assets/battle/rpg-maker-mz/sv_enemies/Sylph.png?url';
+import gatekeeperBattleUrl from '../../../assets/battle/rpg-maker-mz/sv_enemies/Gatekeeper.png?url';
+import grasslandLowerUrl from '../../../assets/battle/rpg-maker-mz/battlebacks1/Grassland.png?url';
+import grasslandUpperUrl from '../../../assets/battle/rpg-maker-mz/battlebacks2/Grassland.png?url';
 
 const bundledSpriteImages = import.meta.glob<string>('../../../assets/sprites/*/*.png', { eager: true, query: '?url', import: 'default' });
+const bundledBattleImages: Record<string, string> = {
+  'battle/rpg-maker-mz/sv_actors/Actor1_1.png': actorBattleUrl,
+  'battle/rpg-maker-mz/sv_enemies/Plasma.png': plasmaBattleUrl,
+  'battle/rpg-maker-mz/sv_enemies/Machinerybee.png': machineryBeeBattleUrl,
+  'battle/rpg-maker-mz/sv_enemies/Sylph.png': sylphBattleUrl,
+  'battle/rpg-maker-mz/sv_enemies/Gatekeeper.png': gatekeeperBattleUrl,
+  'battle/rpg-maker-mz/battlebacks1/Grassland.png': grasslandLowerUrl,
+  'battle/rpg-maker-mz/battlebacks2/Grassland.png': grasslandUpperUrl,
+};
+
+function battleAssetPaths(source: ReturnType<typeof assertSourceGame>) {
+  const defaultBackground = source.ui.battle?.background;
+  return [...new Set([
+    ...(source.actors.player.battleSprite ? [source.actors.player.battleSprite.image] : []),
+    ...Object.values(source.enemies).flatMap(enemy => enemy.image ? [enemy.image] : []),
+    ...Object.values(source.troops).flatMap(troop => troop.background ? [troop.background.lowerImage, troop.background.upperImage] : []),
+    ...(defaultBackground ? [defaultBackground.lowerImage, defaultBackground.upperImage] : []),
+  ])];
+}
 
 async function readJson(file: string): Promise<unknown> {
   const response = await fetch(new URL(file, new URL('/reference-game/', window.location.origin)));
@@ -10,18 +36,28 @@ async function readJson(file: string): Promise<unknown> {
   return response.json();
 }
 
+async function readTroops() {
+  try { return { troops: await readJson('troops.json') }; }
+  catch { return { encounters: await readJson('encounters.json') }; }
+}
+
 export async function loadReferenceGame(): Promise<LoadedGame> {
-  const [manifest, tilesets, maps, enemies, actors, skills, items, quests, types, ui, eventData, initialState] = await Promise.all([
-    readJson('manifest.json'), readJson('tilesets.json'), readJson('maps.json'), readJson('enemies.json'), readJson('actors.json'), readJson('skills.json'),
-    readJson('items.json'), readJson('quests.json'), readJson('types.json'), readJson('ui.json'), readJson('events.json'), readJson('initial-state.json')
+  const [manifest, tilesets, maps, enemies, troopFiles, actors, skills, items, quests, types, ui, eventData, initialState] = await Promise.all([
+    readJson('manifest.json'), readJson('tilesets.json'), readJson('maps.json'), readJson('enemies.json'), readTroops(), readJson('actors.json'),
+    readJson('skills.json'), readJson('items.json'), readJson('quests.json'), readJson('types.json'), readJson('ui.json'), readJson('events.json'), readJson('initial-state.json')
   ]);
-  const source = assertSourceGame({ manifest, tilesets, maps, enemies, actors, skills, items, quests, types, ui, events: eventData, initialState });
+  const source = assertSourceGame({ manifest, tilesets, maps, enemies, ...troopFiles, actors, skills, items, quests, types, ui, events: eventData, initialState });
   const loaded = sourceGameToLoadedGame(source);
   loaded.assetUrls = Object.fromEntries(Object.values(source.tilesets).map(tileset => [tileset.image, new URL(tileset.image, new URL('/reference-game/', window.location.origin)).href]));
   for (const image of new Set(Object.values(source.maps).flatMap(map => map.events.flatMap(event => event.pages.flatMap(page => page.sprite ? [page.sprite.image] : []))))) {
     const imageEntry = Object.entries(bundledSpriteImages).find(([file]) => file.endsWith(`/assets/${image}`));
     if (!imageEntry) throw new Error(`Le sprite d’événement est introuvable (${image})`);
     loaded.assetUrls[image] = imageEntry[1];
+  }
+  for (const image of battleAssetPaths(source)) {
+    const imageUrl = bundledBattleImages[image];
+    if (!imageUrl) throw new Error(`La ressource de combat est introuvable (${image})`);
+    loaded.assetUrls[image] = imageUrl;
   }
   return loaded;
 }
@@ -68,6 +104,13 @@ async function loadStudioPreviewGame(): Promise<LoadedGame> {
 
 export function isStudioPreview() {
   return new URLSearchParams(window.location.search).get('studioPreview') === '1';
+}
+
+export function getBattleTestTroopId(search = window.location.search) {
+  const value = new URLSearchParams(search).get('battleTest');
+  if (!value || !/^\d+$/.test(value)) return null;
+  const troopId = Number(value);
+  return Number.isSafeInteger(troopId) && troopId > 0 ? troopId : null;
 }
 
 export function loadGameContent(): Promise<LoadedGame> {

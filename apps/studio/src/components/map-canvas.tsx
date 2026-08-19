@@ -28,16 +28,17 @@ type Props = {
   selectedTerrain: SelectedTerrain | null;
   drawingTool: DrawingTool;
   eventTool: EventTool;
-  playerStartMapId: string;
+  playerStartMapId: number;
   playerStart: PlanePosition;
   showGrid: boolean;
   dimInactiveLayers: boolean;
   navigationPaintMode: NavigationPaintMode;
-  selectedEventId: string | null;
+  selectedEventId: number | null;
   selectedEventPageIndex: number;
-  onSelectEvent: (id: string) => void;
-  onCreateEvent: (x: number, y: number) => void;
-  onMoveEvent: (id: string, x: number, y: number) => void;
+  onSelectEvent: (id: number) => void;
+  onOpenEvent?: (id: number) => void;
+  onCreateEvent: (x: number, y: number) => number | void;
+  onMoveEvent: (id: number, x: number, y: number) => void;
   onDrawTiles: (cells: Vec2[], behavior: 'stamp' | 'fill') => void;
   onFillTile: (x: number, y: number) => void;
   onPickTerrain: (terrain: SelectedTerrain) => void;
@@ -109,7 +110,7 @@ export const MapCanvas = forwardRef<MapCanvasHandle, Props>(function MapCanvas(p
     scale: number;
     x: number;
     y: number;
-    dragging: string | null;
+    dragging: number | null;
     dragPointerId: number | null;
     painting: boolean;
     lastPainted: string | null;
@@ -212,7 +213,7 @@ export const MapCanvas = forwardRef<MapCanvasHandle, Props>(function MapCanvas(p
   const draw = () => {
     const runtime = runtimeRef.current;
     if (!runtime) return;
-    const { map, tilesets, selectedEventId, selectedEventPageIndex, onSelectEvent, activeLayerId, eventTool, playerStartMapId, playerStart } = propsRef.current;
+    const { map, tilesets, selectedEventId, selectedEventPageIndex, onSelectEvent, onOpenEvent, activeLayerId, eventTool, playerStartMapId, playerStart } = propsRef.current;
     const brushHover = runtime.brushHover;
     for (const child of runtime.world.removeChildren()) {
       if (child !== brushHover) child.destroy({ children: true });
@@ -346,10 +347,13 @@ export const MapCanvas = forwardRef<MapCanvasHandle, Props>(function MapCanvas(p
           updateCursor();
           onSelectEvent(event.id);
         });
+        marker.on('pointertap', pointer => {
+          if (pointer.button === 0 && pointer.detail === 2) onOpenEvent?.(event.id);
+        });
       }
       runtime.world.addChild(marker);
       if (selected) {
-        const label = new Text({ text: event.id, style: { fill: '#f8fafc', fontFamily: 'Geist Variable, sans-serif', fontSize: 12, fontWeight: '600' } });
+        const label = new Text({ text: String(event.id), style: { fill: '#f8fafc', fontFamily: 'Geist Variable, sans-serif', fontSize: 12, fontWeight: '600' } });
         label.anchor.set(0.5, 1);
         label.position.set(x, y - 20);
         runtime.world.addChild(label);
@@ -645,7 +649,10 @@ export const MapCanvas = forwardRef<MapCanvasHandle, Props>(function MapCanvas(p
         const tile = tileAt(pointer.global);
         if (!tile) return;
         const occupied = map.events.some(event => event.position.planeId === activePlaneId && Math.floor(event.position.x) === tile.x && Math.floor(event.position.y) === tile.y);
-        if (!occupied) onCreateEvent(tile.x + 0.5, tile.y + 0.5);
+        if (!occupied) {
+          const eventId = onCreateEvent(tile.x + 0.5, tile.y + 0.5);
+          if (eventId !== undefined) propsRef.current.onOpenEvent?.(eventId);
+        }
       });
       app.stage.on('globalpointermove', pointer => {
         const runtime = runtimeRef.current;

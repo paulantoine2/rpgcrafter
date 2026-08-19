@@ -1,6 +1,6 @@
 import { z } from 'zod';
 import type {
-  AutonomousMovement, CommonEvent, Condition, ContentIssue, EnemyTemplate, EventCommand, EventOptions, GameMap, GameTypes, InitialState, Item, Manifest,
+  AutonomousMovement, CommonEvent, Condition, ContentIssue, Troop, EnemyTemplate, EventCommand, EventOptions, GameMap, GameTypes, InitialState, Item, Manifest,
   MapEventPage, MapEventTrigger, MapEventSprite, Objective, PlayerDefinition, QuestDefinition,
   Skill, SourceGame, SourceGameFiles, SourceGameResult, TilesetDefinition, UiDefinition, MovementCommand,
   MovementTarget, MovementRoute,
@@ -9,9 +9,11 @@ import type {
 import { CANONICAL_AUTOTILE_MASKS, canonicalizeAutotileMask } from './autotile.js';
 import { migrateSourceGameFiles } from './migration.js';
 
-export const ENGINE_VERSION = '0.13.0';
+export const ENGINE_VERSION = '0.16.0';
 
 const Id = z.string().min(1);
+const NumericId = z.number().int().positive();
+const NumericIdKey = z.string().regex(/^[1-9]\d*$/, 'Must be a positive integer ID');
 const FiniteNumber = z.number().finite();
 const PositiveNumber = FiniteNumber.positive();
 const NonNegativeNumber = FiniteNumber.nonnegative();
@@ -22,6 +24,7 @@ const PlanePositionSchema = Vec2Schema.extend({ planeId: Id }).strict();
 const GridPositionSchema = z.object({ x: z.number().int(), y: z.number().int(), planeId: Id }).strict();
 const GridRectSchema = GridPositionSchema.extend({ w: z.number().int().positive(), h: z.number().int().positive() }).strict();
 const QuarterCoordinateSchema = z.tuple([z.number().int().min(0).max(3), z.number().int().min(0).max(5)]);
+const AssetPathSchema = z.string().min(1).refine(value => !value.startsWith('/') && !value.includes('\\') && !value.split('/').includes('..') && value.toLowerCase().endsWith('.png'), 'Must be a relative PNG path without parent traversal');
 const TerrainCollisionSchema = z.discriminatedUnion('kind', [
   z.object({ kind: z.literal('none') }).strict(),
   z.object({ kind: z.literal('blockCell') }).strict(),
@@ -31,7 +34,7 @@ const TilesetBaseSchema = z.object({
   id: Id,
   name: Id,
   category: Id,
-  image: z.string().min(1).refine(value => !value.startsWith('/') && !value.includes('\\') && !value.split('/').includes('..') && value.toLowerCase().endsWith('.png'), 'Must be a relative PNG path without parent traversal'),
+  image: AssetPathSchema,
   tileSize: z.number().int().positive().refine(value => value % 2 === 0, 'Must be even'),
   columns: z.number().int().positive(),
   rows: z.number().int().positive(),
@@ -127,39 +130,39 @@ const MovementCommandSchema: z.ZodType<MovementCommand> = z.discriminatedUnion('
 const MovementTargetSchema: z.ZodType<MovementTarget> = z.discriminatedUnion('kind', [
   z.object({ kind: z.literal('player') }).strict(),
   z.object({ kind: z.literal('thisEvent') }).strict(),
-  z.object({ kind: z.literal('event'), eventId: Id }).strict(),
+  z.object({ kind: z.literal('event'), eventId: NumericId }).strict(),
 ]);
 const SwitchGameDataSchema = z.discriminatedUnion('kind', [
-  z.object({ kind: z.literal('hasItem'), itemId: Id }).strict(),
-  z.object({ kind: z.literal('itemEquipped'), itemId: Id }).strict(),
-  z.object({ kind: z.literal('skillUnlocked'), skillId: Id }).strict(),
+  z.object({ kind: z.literal('hasItem'), itemId: NumericId }).strict(),
+  z.object({ kind: z.literal('itemEquipped'), itemId: NumericId }).strict(),
+  z.object({ kind: z.literal('skillUnlocked'), skillId: NumericId }).strict(),
 ]);
 const SwitchOperandSchema = z.discriminatedUnion('kind', [
   z.object({ kind: z.literal('constant'), value: z.boolean() }).strict(),
-  z.object({ kind: z.literal('switch'), switchId: Id }).strict(),
+  z.object({ kind: z.literal('switch'), switchId: NumericId }).strict(),
   z.object({ kind: z.literal('gameData'), data: SwitchGameDataSchema }).strict(),
 ]);
 const VariableGameDataSchema = z.discriminatedUnion('kind', [
-  z.object({ kind: z.literal('itemAmount'), itemId: Id }).strict(),
+  z.object({ kind: z.literal('itemAmount'), itemId: NumericId }).strict(),
   z.object({ kind: z.literal('playerStat'), stat: z.enum(['hp', 'maxHp', 'level', 'xp']) }).strict(),
   z.object({ kind: z.literal('mapId') }).strict(),
   z.object({ kind: z.literal('characterCoordinate'), target: MovementTargetSchema, axis: z.enum(['x', 'y']) }).strict(),
 ]);
 const VariableOperandSchema = z.discriminatedUnion('kind', [
   z.object({ kind: z.literal('constant'), value: FiniteNumber }).strict(),
-  z.object({ kind: z.literal('variable'), variableId: Id }).strict(),
+  z.object({ kind: z.literal('variable'), variableId: NumericId }).strict(),
   z.object({ kind: z.literal('random'), min: FiniteNumber, max: FiniteNumber }).strict().refine(value => value.min <= value.max, { message: 'Minimum must not exceed maximum' }),
   z.object({ kind: z.literal('gameData'), data: VariableGameDataSchema }).strict(),
 ]);
 const VariableConditionOperandSchema = z.discriminatedUnion('kind', [
   z.object({ kind: z.literal('constant'), value: FiniteNumber }).strict(),
-  z.object({ kind: z.literal('variable'), variableId: Id }).strict(),
+  z.object({ kind: z.literal('variable'), variableId: NumericId }).strict(),
   z.object({ kind: z.literal('gameData'), data: VariableGameDataSchema }).strict(),
 ]) as z.ZodType<VariableConditionOperand>;
 const ConditionSchema = z.discriminatedUnion('kind', [
-  z.object({ kind: z.literal('switch'), id: Id, operand: SwitchOperandSchema }).strict(),
-  z.object({ kind: z.literal('item'), id: Id, amount: FiniteNumber.optional() }).strict(),
-  z.object({ kind: z.literal('variable'), id: Id, operator: z.enum(['equal', 'notEqual', 'greaterThan', 'greaterThanOrEqual', 'lessThan', 'lessThanOrEqual']), operand: VariableConditionOperandSchema }).strict(),
+  z.object({ kind: z.literal('switch'), id: NumericId, operand: SwitchOperandSchema }).strict(),
+  z.object({ kind: z.literal('item'), id: NumericId, amount: FiniteNumber.optional() }).strict(),
+  z.object({ kind: z.literal('variable'), id: NumericId, operator: z.enum(['equal', 'notEqual', 'greaterThan', 'greaterThanOrEqual', 'lessThan', 'lessThanOrEqual']), operand: VariableConditionOperandSchema }).strict(),
 ]) as z.ZodType<Condition>;
 const MovementRouteSchema: z.ZodType<MovementRoute> = z.object({
   commands: z.array(MovementCommandSchema),
@@ -168,12 +171,12 @@ const MovementRouteSchema: z.ZodType<MovementRoute> = z.object({
   wait: z.boolean(),
 }).strict();
 const TeleportMapSourceSchema: z.ZodType<TeleportMapSource> = z.discriminatedUnion('kind', [
-  z.object({ kind: z.literal('constant'), mapId: Id }).strict(),
-  z.object({ kind: z.literal('variable'), variableId: Id }).strict(),
+  z.object({ kind: z.literal('constant'), mapId: NumericId }).strict(),
+  z.object({ kind: z.literal('variable'), variableId: NumericId }).strict(),
 ]);
 const TeleportNumberSourceSchema: z.ZodType<TeleportNumberSource> = z.discriminatedUnion('kind', [
   z.object({ kind: z.literal('constant'), value: FiniteNumber.int() }).strict(),
-  z.object({ kind: z.literal('variable'), variableId: Id }).strict(),
+  z.object({ kind: z.literal('variable'), variableId: NumericId }).strict(),
 ]);
 const MoveSpeedSchema: z.ZodType<MoveSpeed> = z.custom<MoveSpeed>(value => Number.isInteger(value) && Number(value) >= 1 && Number(value) <= 6, 'Must be an integer from 1 to 6');
 const MoveFrequencySchema: z.ZodType<MoveFrequency> = z.custom<MoveFrequency>(value => Number.isInteger(value) && Number(value) >= 1 && Number(value) <= 5, 'Must be an integer from 1 to 5');
@@ -193,12 +196,12 @@ const EventOptionsSchema: z.ZodType<EventOptions> = z.object({
 const EventCommandSchema = z.lazy(() => z.union([
   z.object({ type: z.literal('dialogue'), speaker: Id, text: Id, choices: z.array(z.object({ label: Id, commands: z.array(EventCommandSchema) }).strict()).optional() }).strict(),
   z.object({ type: z.literal('conditional'), condition: ConditionSchema, thenCommands: z.array(EventCommandSchema), elseCommands: z.array(EventCommandSchema).optional() }).strict(),
-  z.object({ type: z.literal('setSwitch'), id: Id, operation: z.literal('set'), operand: SwitchOperandSchema }).strict(),
-  z.object({ type: z.literal('setSwitch'), id: Id, operation: z.literal('toggle') }).strict(),
-  z.object({ type: z.literal('setVariable'), id: Id, operation: z.enum(['set', 'add', 'subtract', 'multiply', 'divide', 'modulo']), operand: VariableOperandSchema }).strict(),
-  z.object({ type: z.literal('giveItem'), id: Id, amount: FiniteNumber.optional() }).strict(),
-  z.object({ type: z.literal('removeItem'), id: Id, amount: FiniteNumber.optional() }).strict(),
-  z.object({ type: z.literal('unlockSkill'), id: Id }).strict(),
+  z.object({ type: z.literal('setSwitch'), id: NumericId, operation: z.literal('set'), operand: SwitchOperandSchema }).strict(),
+  z.object({ type: z.literal('setSwitch'), id: NumericId, operation: z.literal('toggle') }).strict(),
+  z.object({ type: z.literal('setVariable'), id: NumericId, operation: z.enum(['set', 'add', 'subtract', 'multiply', 'divide', 'modulo']), operand: VariableOperandSchema }).strict(),
+  z.object({ type: z.literal('giveItem'), id: NumericId, amount: FiniteNumber.optional() }).strict(),
+  z.object({ type: z.literal('removeItem'), id: NumericId, amount: FiniteNumber.optional() }).strict(),
+  z.object({ type: z.literal('unlockSkill'), id: NumericId }).strict(),
   z.object({ type: z.literal('healPlayer'), amount: FiniteNumber }).strict(),
   z.object({ type: z.literal('toast'), text: Id }).strict(),
   z.object({
@@ -209,7 +212,8 @@ const EventCommandSchema = z.lazy(() => z.union([
   }).strict(),
   z.object({ type: z.literal('movementRoute'), target: MovementTargetSchema, route: MovementRouteSchema }).strict(),
   z.object({ type: z.literal('wait'), duration: NonNegativeNumber }).strict(),
-  z.object({ type: z.literal('callCommonEvent'), id: Id }).strict(),
+  z.object({ type: z.literal('callCommonEvent'), id: NumericId }).strict(),
+  z.object({ type: z.literal('battle'), troopId: NumericId }).strict(),
   z.object({ type: z.literal('save') }).strict(),
 ])) as z.ZodType<EventCommand>;
 
@@ -239,11 +243,12 @@ const MapEventPageSchema: z.ZodType<MapEventPage> = z.object({
 }).strict();
 
 const ManifestSchema: z.ZodType<Manifest> = z.object({
-  schemaVersion: Id, engineRange: Id, gameId: Id, version: Id,
-  nextMapNumericId: z.number().int().positive(), entryPoint: z.object({ mapId: Id, spawnId: Id }).strict(), title: Id, contentRating: Id,
+  schemaVersion: Id, engineRange: Id, gameId: Id, version: Id, combatMode: z.enum(['turnBased', 'actionRpg']),
+  nextIds: z.object({ maps: NumericId, actors: NumericId, enemies: NumericId, troops: NumericId, skills: NumericId, items: NumericId, quests: NumericId, commonEvents: NumericId, switches: NumericId, variables: NumericId }).strict(),
+  entryPoint: z.object({ mapId: NumericId, spawnId: Id }).strict(), title: Id, contentRating: Id,
 }).strict();
 const MapSchema: z.ZodType<GameMap> = z.object({
-  id: Id, numericId: z.number().int().positive(), name: Id, parentMapId: Id.optional(), ground: Id, accent: Id, tileSize: z.number().int().positive(), bounds: GridBoundsSchema,
+  id: NumericId, order: z.number().int().optional(), nextEventId: NumericId, name: Id, parentMapId: NumericId.optional(), ground: Id, accent: Id, tileSize: z.number().int().positive(), bounds: GridBoundsSchema,
   planes: z.array(z.object({
     id: Id, name: Id, order: z.number().int(), surfaceLayerId: Id, surfaceCoverage: z.enum(['bounds', 'painted']),
   }).strict()).min(1),
@@ -259,19 +264,31 @@ const MapSchema: z.ZodType<GameMap> = z.object({
     edges: z.object({ north: z.enum(['open', 'blocked']).optional(), east: z.enum(['open', 'blocked']).optional(), south: z.enum(['open', 'blocked']).optional(), west: z.enum(['open', 'blocked']).optional() }).strict().optional(),
   }).strict()),
   blockedRegions: z.array(GridRectSchema),
-  events: z.array(z.object({ id: Id, position: PlanePositionSchema, pages: z.array(MapEventPageSchema).min(1) }).strict()),
-  enemySpawns: z.array(PlanePositionSchema.extend({ enemyId: Id }).strict()),
-  deathDestination: z.object({ mapId: Id, spawn: PlanePositionSchema }).strict().optional(),
+  events: z.array(z.object({ id: NumericId, name: Id, position: PlanePositionSchema, pages: z.array(MapEventPageSchema).min(1) }).strict()),
+  enemySpawns: z.array(PlanePositionSchema.extend({ enemyId: NumericId }).strict()),
+  encounters: z.object({ averageSteps: z.number().int().positive(), entries: z.array(z.object({ troopId: NumericId, weight: z.number().int().positive() }).strict()) }).strict(),
+  deathDestination: z.object({ mapId: NumericId, spawn: PlanePositionSchema }).strict().optional(),
 }).strict();
+const CombatStatsSchema = z.object({ maxHp: PositiveNumber, attack: NonNegativeNumber, defense: NonNegativeNumber }).catchall(FiniteNumber);
+const BattleBackgroundSchema = z.object({ lowerImage: AssetPathSchema, upperImage: AssetPathSchema }).strict();
 const EnemySchema: z.ZodType<EnemyTemplate> = z.object({
-  name: Id, color: Id, hp: FiniteNumber, speed: FiniteNumber, damage: FiniteNumber, radius: FiniteNumber, xp: FiniteNumber,
+  name: Id, color: Id, image: AssetPathSchema.optional(), stats: CombatStatsSchema, rewards: z.object({ xp: NonNegativeNumber }).catchall(FiniteNumber), speed: FiniteNumber, radius: FiniteNumber,
   behavior: z.enum(['chase', 'charge', 'ranged', 'boss']),
   phases: z.array(z.object({ atHpRatio: FiniteNumber, speedMultiplier: FiniteNumber.optional(), projectile: z.object({ cooldown: FiniteNumber, speed: FiniteNumber, damage: FiniteNumber, color: Id }).strict().optional() }).strict()).optional(),
   onDefeated: z.array(EventCommandSchema).optional(),
 }).strict();
+const TroopSchema: z.ZodType<Troop> = z.object({
+  name: Id,
+  background: BattleBackgroundSchema.optional(),
+  members: z.array(z.object({ enemyId: NumericId, x: FiniteNumber.min(0).max(100), y: FiniteNumber.min(0).max(100) }).strict()).min(1),
+}).strict();
 const PlayerSchema: z.ZodType<PlayerDefinition> = z.object({
-  id: Id, name: Id, start: PlanePositionSchema, stats: z.object({ maxHp: FiniteNumber, level: FiniteNumber, xp: FiniteNumber }).strict(),
-  primaryAttack: Id, skillSlots: z.record(Id, Id), unlockedSkills: z.array(Id),
+  id: NumericId, name: Id, start: PlanePositionSchema, battleSprite: z.object({
+    image: AssetPathSchema,
+    frameWidth: z.number().int().positive(), frameHeight: z.number().int().positive(), columns: z.number().int().positive(), rows: z.number().int().positive(),
+    idleFrame: z.object({ column: z.number().int().nonnegative(), row: z.number().int().nonnegative() }).strict(),
+  }).strict().optional(), stats: CombatStatsSchema.extend({ level: FiniteNumber, xp: FiniteNumber }).catchall(FiniteNumber),
+  primaryAttack: NumericId, skillSlots: z.record(Id, NumericId), unlockedSkills: z.array(NumericId),
 }).strict();
 const SkillSchema: z.ZodType<Skill> = z.object({ name: Id, type: z.enum(['melee', 'projectile', 'area']), damage: FiniteNumber, cooldown: FiniteNumber, range: FiniteNumber.optional(), projectileSpeed: FiniteNumber.optional(), color: Id.optional() }).strict();
 const ItemSchema: z.ZodType<Item> = z.object({ name: Id, type: z.enum(['quest', 'consumable', 'equipment']), healing: FiniteNumber.optional(), equipmentTypeId: z.number().int().positive().optional(), stats: z.record(Id, FiniteNumber).optional() }).strict();
@@ -291,26 +308,27 @@ const UiSchema: z.ZodType<UiDefinition> = z.object({
   theme: z.object({ fontFamily: Id, pageBackground: Id, panel: Id, panelBorder: Id, text: Id, accent: Id, health: Id }).strict(),
   hud: z.object({ slots: z.array(Id) }).strict(),
   pauseMenu: z.object({ title: Id, tabs: z.array(z.object({ id: Id, label: Id }).strict()).min(1) }).strict(),
+  battle: z.object({ background: BattleBackgroundSchema.optional() }).strict().optional(),
 }).strict();
 const ObjectiveSchema: z.ZodType<Objective> = z.object({ conditions: z.array(ConditionSchema).optional(), text: Id }).strict();
 const InitialStateSchema: z.ZodType<InitialState> = z.object({
-  switches: z.record(Id, z.object({ name: Id, initialValue: z.boolean() }).strict()),
-  variables: z.record(Id, z.object({ name: Id, initialValue: FiniteNumber }).strict()),
-  quests: z.record(Id, Id),
-  inventory: z.record(Id, FiniteNumber).optional(),
-  equipment: z.record(Id, Id.nullable()).optional(),
+  switches: z.record(NumericIdKey, z.object({ name: Id, initialValue: z.boolean() }).strict()),
+  variables: z.record(NumericIdKey, z.object({ name: Id, initialValue: FiniteNumber }).strict()),
+  quests: z.record(NumericIdKey, Id),
+  inventory: z.record(NumericIdKey, FiniteNumber).optional(),
+  equipment: z.record(NumericIdKey, NumericId.nullable()).optional(),
 }).strict();
 const ActorsSchema = z.object({ player: PlayerSchema }).strict();
 const CommonEventSchema = z.object({
   name: Id,
   trigger: z.discriminatedUnion('type', [
     z.object({ type: z.literal('none') }).strict(),
-    z.object({ type: z.literal('autorun'), switchId: Id }).strict(),
-    z.object({ type: z.literal('parallel'), switchId: Id }).strict(),
+    z.object({ type: z.literal('autorun'), switchId: NumericId }).strict(),
+    z.object({ type: z.literal('parallel'), switchId: NumericId }).strict(),
   ]),
   contents: z.array(EventCommandSchema),
 }).strict() as z.ZodType<CommonEvent>;
-const EventsSchema = z.object({ objectives: z.array(ObjectiveSchema), commonEvents: z.record(Id, CommonEventSchema) }).strict();
+const EventsSchema = z.object({ objectives: z.array(ObjectiveSchema), commonEvents: z.record(NumericIdKey, CommonEventSchema) }).strict();
 
 function compareVersions(left: string, right: string) {
   const parse = (value: string) => value.split('.').map(part => Number(part || 0));
@@ -335,7 +353,7 @@ function engineSupports(range: string) {
 function validateReferences(game: SourceGame): ContentIssue[] {
   const issues: ContentIssue[] = [];
   const issue = (path: string, message: string) => issues.push({ path, message });
-  const { maps, tilesets, enemies, skills, items, quests, types, events, initialState, actors, manifest } = game;
+  const { maps, tilesets, enemies, troops, skills, items, quests, types, events, initialState, actors, manifest } = game;
   const player = actors.player;
   const directions = {
     north: { x: 0, y: -1, opposite: 'south' }, east: { x: 1, y: 0, opposite: 'west' },
@@ -391,10 +409,11 @@ function validateReferences(game: SourceGame): ContentIssue[] {
   }
   if (!maps[manifest.entryPoint.mapId]) issue('manifest.entryPoint.mapId', 'Unknown map');
   else if (!maps[manifest.entryPoint.mapId].planes.some(plane => plane.id === player.start.planeId)) issue('actors.player.start.planeId', 'Unknown plane on entry map');
+  if (player.battleSprite && (player.battleSprite.idleFrame.column >= player.battleSprite.columns || player.battleSprite.idleFrame.row >= player.battleSprite.rows)) issue('actors.player.battleSprite.idleFrame', 'Must be inside the battle sprite sheet');
   if (!skills[player.primaryAttack]) issue('actors.player.primaryAttack', 'Unknown skill');
   for (const skillId of [...Object.values(player.skillSlots), ...player.unlockedSkills]) if (!skills[skillId]) issue('actors.player', `Unknown skill: ${skillId}`);
-  for (const [questId, state] of Object.entries(initialState.quests)) if (!quests[questId]?.states.includes(state)) issue('initialState.quests', `Unknown quest or state: ${questId}`);
-  for (const [itemId, amount] of Object.entries(initialState.inventory || {})) if (!items[itemId] || amount < 0) issue('initialState.inventory', `Invalid item: ${itemId}`);
+  for (const [questId, state] of Object.entries(initialState.quests)) if (!quests[Number(questId)]?.states.includes(state)) issue('initialState.quests', `Unknown quest or state: ${questId}`);
+  for (const [itemId, amount] of Object.entries(initialState.inventory || {})) if (!items[Number(itemId)] || amount < 0) issue('initialState.inventory', `Invalid item: ${itemId}`);
   const equipmentTypeIds = new Set(types.equipment.entries.map(entry => entry.id));
   for (const [typeId, itemId] of Object.entries(initialState.equipment || {})) {
     const numericTypeId = Number(typeId);
@@ -402,6 +421,11 @@ function validateReferences(game: SourceGame): ContentIssue[] {
     else if (itemId && (!items[itemId] || items[itemId].equipmentTypeId !== numericTypeId)) issue(`initialState.equipment.${typeId}`, `Invalid equipment: ${typeId}`);
   }
   for (const [itemId, item] of Object.entries(items)) if (item.equipmentTypeId !== undefined && !equipmentTypeIds.has(item.equipmentTypeId)) issue(`items.${itemId}.equipmentTypeId`, `Unknown equipment type: ${item.equipmentTypeId}`);
+  for (const [troopId, troop] of Object.entries(troops)) {
+    troop.members.forEach((member, index) => {
+      if (!enemies[member.enemyId]) issue(`troops.${troopId}.members[${index}].enemyId`, `Unknown enemy: ${member.enemyId}`);
+    });
+  }
 
   const validateSwitchOperand = (operand: SwitchOperand, target: string) => {
     if (operand.kind === 'switch' && !(operand.switchId in initialState.switches)) issue(`${target}.switchId`, `Unknown switch: ${operand.switchId}`);
@@ -409,7 +433,7 @@ function validateReferences(game: SourceGame): ContentIssue[] {
     if (operand.kind === 'gameData' && operand.data.kind === 'itemEquipped' && items[operand.data.itemId]?.type !== 'equipment') issue(`${target}.data.itemId`, `Item is not equipment: ${operand.data.itemId}`);
     if (operand.kind === 'gameData' && operand.data.kind === 'skillUnlocked' && !skills[operand.data.skillId]) issue(`${target}.data.skillId`, `Unknown skill: ${operand.data.skillId}`);
   };
-  const validateVariableOperand = (operand: VariableOperand, target: string, sourceMapId?: string) => {
+  const validateVariableOperand = (operand: VariableOperand, target: string, sourceMapId?: number) => {
     if (operand.kind === 'variable' && !(operand.variableId in initialState.variables)) issue(`${target}.variableId`, `Unknown variable: ${operand.variableId}`);
     if (operand.kind === 'gameData' && operand.data.kind === 'itemAmount' && !items[operand.data.itemId]) issue(`${target}.data.itemId`, `Unknown item: ${operand.data.itemId}`);
     if (operand.kind === 'gameData' && operand.data.kind === 'characterCoordinate' && sourceMapId && operand.data.target.kind === 'event') {
@@ -417,7 +441,7 @@ function validateReferences(game: SourceGame): ContentIssue[] {
       if (!maps[sourceMapId]?.events.some(event => event.id === eventId)) issue(`${target}.data.target.eventId`, `Unknown event on the current map: ${eventId}`);
     }
   };
-  const validateCondition = (condition: Condition, target: string, sourceMapId?: string) => {
+  const validateCondition = (condition: Condition, target: string, sourceMapId?: number) => {
     if (condition.kind === 'switch') {
       if (!(condition.id in initialState.switches)) issue(target, `Unknown switch: ${condition.id}`);
       validateSwitchOperand(condition.operand, `${target}.operand`);
@@ -428,8 +452,8 @@ function validateReferences(game: SourceGame): ContentIssue[] {
       validateVariableOperand(condition.operand, `${target}.operand`, sourceMapId);
     }
   };
-  const validateConditions = (values: Condition[], path: string, sourceMapId?: string) => values.forEach((condition, index) => validateCondition(condition, `${path}[${index}]`, sourceMapId));
-  const validateCommands = (values: EventCommand[], path: string, sourceMapId?: string, conditionalDepth = 0) => values.forEach((command, index) => {
+  const validateConditions = (values: Condition[], path: string, sourceMapId?: number) => values.forEach((condition, index) => validateCondition(condition, `${path}[${index}]`, sourceMapId));
+  const validateCommands = (values: EventCommand[], path: string, sourceMapId?: number, conditionalDepth = 0) => values.forEach((command, index) => {
     const target = `${path}[${index}]`;
     if ((command.type === 'giveItem' || command.type === 'removeItem') && !items[command.id]) issue(target, `Unknown item: ${command.id}`);
     if (command.type === 'unlockSkill' && !skills[command.id]) issue(target, `Unknown skill: ${command.id}`);
@@ -442,6 +466,7 @@ function validateReferences(game: SourceGame): ContentIssue[] {
       validateVariableOperand(command.operand, `${target}.operand`, sourceMapId);
     }
     if (command.type === 'callCommonEvent' && !events.commonEvents[command.id]) issue(target, `Unknown common event: ${command.id}`);
+    if (command.type === 'battle' && !troops[command.troopId]) issue(target, `Unknown troop: ${command.troopId}`);
     if (command.type === 'teleport') {
       const sources = [command.destination.map, command.destination.x, command.destination.y];
       for (const source of sources) if (source.kind === 'variable' && !(source.variableId in initialState.variables)) issue(target, `Unknown variable: ${source.variableId}`);
@@ -471,16 +496,14 @@ function validateReferences(game: SourceGame): ContentIssue[] {
     }
   });
 
-  const mapNumericIds = new Set<number>();
   for (const [mapId, map] of Object.entries(maps)) {
-    if (map.id !== mapId) issue(`maps.${mapId}.id`, 'Must match its object key');
-    if (mapNumericIds.has(map.numericId)) issue(`maps.${mapId}.numericId`, `Duplicate numeric map id: ${map.numericId}`);
-    mapNumericIds.add(map.numericId);
+    const numericMapId = Number(mapId);
+    if (map.id !== numericMapId) issue(`maps.${mapId}.id`, 'Must match its object key');
     if (map.parentMapId && !maps[map.parentMapId]) issue(`maps.${mapId}.parentMapId`, `Unknown parent map: ${map.parentMapId}`);
-    if (map.parentMapId === mapId) issue(`maps.${mapId}.parentMapId`, 'A map cannot be its own parent');
+    if (map.parentMapId === numericMapId) issue(`maps.${mapId}.parentMapId`, 'A map cannot be its own parent');
     if (map.parentMapId && maps[map.parentMapId]) {
-      const ancestors = new Set([mapId]);
-      let parentId: string | undefined = map.parentMapId;
+      const ancestors = new Set([numericMapId]);
+      let parentId: number | undefined = map.parentMapId;
       while (parentId && maps[parentId]) {
         if (ancestors.has(parentId)) {
           issue(`maps.${mapId}.parentMapId`, 'Map hierarchy must not contain a cycle');
@@ -558,27 +581,40 @@ function validateReferences(game: SourceGame): ContentIssue[] {
       if (!planeIds.has(region.planeId)) issue(`${path}.planeId`, `Unknown plane: ${region.planeId}`);
       if (!insideCell(region.x, region.y) || !insideCell(region.x + region.w - 1, region.y + region.h - 1)) issue(path, 'Blocked region must be inside map bounds');
     });
-    const eventIds = new Set<string>();
+    const eventIds = new Set<number>();
     map.events.forEach((event, index) => {
       const path = `maps.${mapId}.events[${index}]`;
       if (eventIds.has(event.id)) issue(`${path}.id`, `Duplicate event id: ${event.id}`);
       eventIds.add(event.id);
       if (!planeIds.has(event.position.planeId)) issue(`${path}.position.planeId`, `Unknown plane: ${event.position.planeId}`);
       event.pages.forEach((page, pageIndex) => {
-        validateConditions(page.conditions || [], `${path}.pages[${pageIndex}].conditions`, mapId);
-        validateCommands(page.contents, `${path}.pages[${pageIndex}].contents`, mapId);
+        validateConditions(page.conditions || [], `${path}.pages[${pageIndex}].conditions`, numericMapId);
+        validateCommands(page.contents, `${path}.pages[${pageIndex}].contents`, numericMapId);
       });
     });
     map.enemySpawns.forEach((spawn, index) => {
       if (!enemies[spawn.enemyId]) issue(`maps.${mapId}.enemySpawns[${index}].enemyId`, 'Unknown enemy');
       if (!planeIds.has(spawn.planeId)) issue(`maps.${mapId}.enemySpawns[${index}].planeId`, `Unknown plane: ${spawn.planeId}`);
-      if (enemies[spawn.enemyId]?.onDefeated) validateCommands(enemies[spawn.enemyId].onDefeated!, `enemies.${spawn.enemyId}.onDefeated`, mapId);
+      if (enemies[spawn.enemyId]?.onDefeated) validateCommands(enemies[spawn.enemyId].onDefeated!, `enemies.${spawn.enemyId}.onDefeated`, numericMapId);
+    });
+    map.encounters?.entries.forEach((entry, index) => {
+      if (!troops[entry.troopId]) issue(`maps.${mapId}.encounters.entries[${index}].troopId`, 'Unknown troop');
     });
     if (map.deathDestination && !maps[map.deathDestination.mapId]) issue(`maps.${mapId}.deathDestination.mapId`, 'Unknown map');
     else if (map.deathDestination && !maps[map.deathDestination.mapId].planes.some(plane => plane.id === map.deathDestination!.spawn.planeId)) issue(`maps.${mapId}.deathDestination.spawn.planeId`, 'Unknown destination plane');
   }
-  const highestMapNumericId = Math.max(0, ...mapNumericIds);
-  if (manifest.nextMapNumericId <= highestMapNumericId) issue('manifest.nextMapNumericId', 'Must be greater than every numeric map id');
+  const idFamilies = {
+    maps, actors: { [player.id]: player }, enemies, troops, skills, items, quests,
+    commonEvents: events.commonEvents, switches: initialState.switches, variables: initialState.variables,
+  };
+  for (const [family, entries] of Object.entries(idFamilies)) {
+    const highestId = Math.max(0, ...Object.keys(entries).map(Number));
+    if (manifest.nextIds[family as keyof typeof manifest.nextIds] <= highestId) issue(`manifest.nextIds.${family}`, 'Must be greater than every ID in this family');
+  }
+  for (const map of Object.values(maps)) {
+    const highestEventId = Math.max(0, ...map.events.map(event => event.id));
+    if (map.nextEventId <= highestEventId) issue(`maps.${map.id}.nextEventId`, 'Must be greater than every event ID on this map');
+  }
   events.objectives.forEach((objective, index) => validateConditions(objective.conditions || [], `events.objectives[${index}].conditions`));
   const hasMapEventTarget = (commands: EventCommand[]): boolean => commands.some(command => {
     if (command.type === 'movementRoute' && command.target.kind !== 'player') return true;
@@ -608,10 +644,10 @@ function validateReferences(game: SourceGame): ContentIssue[] {
 export function parseSourceGame(files: SourceGameFiles): SourceGameResult {
   files = migrateSourceGameFiles(files);
   const entries = [
-    ['manifest', ManifestSchema, files.manifest], ['tilesets', z.record(Id, TilesetSchema), files.tilesets], ['maps', z.record(Id, MapSchema), files.maps],
-    ['actors', ActorsSchema, files.actors], ['enemies', z.record(Id, EnemySchema), files.enemies],
-    ['skills', z.record(Id, SkillSchema), files.skills], ['items', z.record(Id, ItemSchema), files.items],
-    ['quests', z.record(Id, QuestSchema), files.quests], ['types', GameTypesSchema, files.types], ['ui', UiSchema, files.ui],
+    ['manifest', ManifestSchema, files.manifest], ['tilesets', z.record(Id, TilesetSchema), files.tilesets], ['maps', z.record(NumericIdKey, MapSchema), files.maps],
+    ['actors', ActorsSchema, files.actors], ['enemies', z.record(NumericIdKey, EnemySchema), files.enemies], ['troops', z.record(NumericIdKey, TroopSchema), files.troops],
+    ['skills', z.record(NumericIdKey, SkillSchema), files.skills], ['items', z.record(NumericIdKey, ItemSchema), files.items],
+    ['quests', z.record(NumericIdKey, QuestSchema), files.quests], ['types', GameTypesSchema, files.types], ['ui', UiSchema, files.ui],
     ['events', EventsSchema, files.events], ['initialState', InitialStateSchema, files.initialState],
   ] as const;
   const parsed: Record<string, unknown> = {};
@@ -623,7 +659,7 @@ export function parseSourceGame(files: SourceGameFiles): SourceGameResult {
   }
   if (issues.length) return { success: false, issues };
   const game = parsed as SourceGame;
-  if (game.manifest.schemaVersion !== '0.13') issues.push({ path: 'manifest.schemaVersion', message: `Unsupported schema version: ${game.manifest.schemaVersion}` });
+  if (game.manifest.schemaVersion !== '0.16') issues.push({ path: 'manifest.schemaVersion', message: `Unsupported schema version: ${game.manifest.schemaVersion}` });
   if (!engineSupports(game.manifest.engineRange)) issues.push({ path: 'manifest.engineRange', message: `Player ${ENGINE_VERSION} is incompatible with ${game.manifest.engineRange}` });
   issues.push(...validateReferences(game));
   return issues.length ? { success: false, issues } : { success: true, data: game, issues: [] };

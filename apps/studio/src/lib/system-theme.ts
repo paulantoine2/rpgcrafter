@@ -1,3 +1,5 @@
+import { studioInterfaceChangeEvent } from '@/lib/studio-interface';
+
 type SystemThemeMedia = Pick<MediaQueryList, 'matches' | 'addEventListener' | 'removeEventListener'>;
 
 export function watchSystemTheme(
@@ -5,10 +7,15 @@ export function watchSystemTheme(
   root: HTMLElement = document.documentElement,
 ) {
   const apply = () => {
-    root.classList.toggle('dark', media.matches);
-    root.style.colorScheme = media.matches ? 'dark' : 'light';
+    const fixedLightPalette = root.dataset.studioInterface === 'rpgMakerMz';
+    root.classList.toggle('dark', !fixedLightPalette && media.matches);
+    root.style.colorScheme = fixedLightPalette ? 'light' : media.matches ? 'dark' : 'light';
   };
   apply();
   media.addEventListener('change', apply);
-  return () => media.removeEventListener('change', apply);
+  root.addEventListener(studioInterfaceChangeEvent, apply);
+  return () => {
+    media.removeEventListener('change', apply);
+    root.removeEventListener(studioInterfaceChangeEvent, apply);
+  };
 }

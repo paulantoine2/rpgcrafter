@@ -10,9 +10,11 @@ const bundledTilesetJson = import.meta.glob<string>('../../../../assets/tilesets
 const bundledTilesetImages = import.meta.glob<string>('../../../../assets/tilesets/*/*.png', { eager: true, query: '?url', import: 'default' });
 const bundledSpriteJson = import.meta.glob<string>('../../../../assets/sprites/*/*.json', { eager: true, query: '?raw', import: 'default' });
 const bundledSpriteImages = import.meta.glob<string>('../../../../assets/sprites/*/*.png', { eager: true, query: '?url', import: 'default' });
+const bundledBattleJson = import.meta.glob<string>('../../../../assets/battle/*/*.json', { eager: true, query: '?raw', import: 'default' });
+const bundledBattleImages = import.meta.glob<string>('../../../../assets/battle/**/*.png', { eager: true, query: '?url', import: 'default' });
 const documentFiles = {
   'manifest.json': 'manifest', 'tilesets.json': 'tilesets', 'maps.json': 'maps', 'actors.json': 'actors',
-  'enemies.json': 'enemies', 'skills.json': 'skills', 'items.json': 'items', 'quests.json': 'quests',
+  'enemies.json': 'enemies', 'troops.json': 'troops', 'skills.json': 'skills', 'items.json': 'items', 'quests.json': 'quests',
   'types.json': 'types', 'ui.json': 'ui', 'events.json': 'events', 'initial-state.json': 'initialState',
 } as const satisfies Record<string, keyof SourceGameFiles>;
 
@@ -20,8 +22,10 @@ export type ProjectBundle = { game: SourceGame; assets: ProjectAssets };
 export type BundledLibraryTileset = { definition: TilesetDefinition; blob: Blob; configurationPath: string; configurationBlob: Blob; assetType: string; bundleId: string; bundleName: string; tags: string[] };
 export type CharacterSpriteLayout = { format: 'rpg-maker-mz-character'; characterColumns: number; characterRows: number; characterCount: number; patterns: number; directions: string[]; frameWidth: number; frameHeight: number; objectAligned: boolean };
 export type BundledLibrarySprite = { id: string; name: string; blob: Blob; imagePath: string; layout: CharacterSpriteLayout; assetType: string; bundleId: string; bundleName: string; tags: string[] };
+export type BattleAssetLayout = { format: 'rpg-maker-mz-side-view-actor'; columns: number; rows: number; frameWidth: number; frameHeight: number; idleFrame: { column: number; row: number } };
+export type BundledLibraryBattleAsset = { id: string; name: string; sourceUrl: string; imagePath: string; layout?: BattleAssetLayout; assetType: string; bundleId: string; bundleName: string; tags: string[] };
 export type BundledLibraryBundle = { id: string; name: string; version: number; assetIds: string[] };
-export type BundledTilesetLibrary = { tilesets: BundledLibraryTileset[]; sprites: BundledLibrarySprite[]; bundles: BundledLibraryBundle[] };
+export type BundledTilesetLibrary = { tilesets: BundledLibraryTileset[]; sprites: BundledLibrarySprite[]; battleAssets: BundledLibraryBattleAsset[]; bundles: BundledLibraryBundle[] };
 
 const RPG_MAKER_A1_ORIGINS = [
   [0, 0], [0, 3], [6, 0], [6, 3], [8, 0], [14, 0], [8, 3], [14, 3],
@@ -97,9 +101,27 @@ async function bundledSpriteBlob(image: string) {
   return response.blob();
 }
 
+async function bundledBattleBlob(image: string) {
+  const imageEntry = Object.entries(bundledBattleImages).find(([file]) => file.endsWith(`/assets/${image}`));
+  if (!imageEntry) return null;
+  const response = await fetch(imageEntry[1]);
+  if (!response.ok) throw new Error(`Could not load battle asset (${image})`);
+  return response.blob();
+}
+
+export function battleAssetPaths(game: SourceGame) {
+  const defaultBackground = game.ui?.battle?.background;
+  return [...new Set([
+    ...(game.actors?.player?.battleSprite ? [game.actors.player.battleSprite.image] : []),
+    ...Object.values(game.enemies || {}).flatMap(enemy => enemy.image ? [enemy.image] : []),
+    ...Object.values(game.troops || {}).flatMap(troop => troop.background ? [troop.background.lowerImage, troop.background.upperImage] : []),
+    ...(defaultBackground ? [defaultBackground.lowerImage, defaultBackground.upperImage] : []),
+  ])];
+}
+
 export function sourceGameFiles(game: SourceGame): SourceGameFiles {
   return {
-    manifest: game.manifest, tilesets: game.tilesets, maps: game.maps, actors: game.actors, enemies: game.enemies,
+    manifest: game.manifest, tilesets: game.tilesets, maps: game.maps, actors: game.actors, enemies: game.enemies, troops: game.troops,
     skills: game.skills, items: game.items, quests: game.quests, types: game.types, ui: game.ui, events: game.events, initialState: game.initialState,
   };
 }
@@ -107,7 +129,10 @@ export function sourceGameFiles(game: SourceGame): SourceGameFiles {
 export function validateSourceGame(game: SourceGame): SourceGameResult { return parseSourceGame(sourceGameFiles(game)); }
 
 export async function loadReferenceProject(): Promise<ProjectBundle> {
-  const entries = await Promise.all(Object.entries(documentFiles).map(async ([file, key]) => [key, await readJson(file)] as const));
+  const entries = await Promise.all(Object.entries(documentFiles).map(async ([file, key]) => {
+    if (file !== 'troops.json') return [key, await readJson(file)] as const;
+    try { return [key, await readJson(file)] as const; } catch { return ['encounters', await readJson('encounters.json')] as const; }
+  }));
   const game = assertSourceGame(Object.fromEntries(entries) as unknown as SourceGameFiles);
   const assets: ProjectAssets = {};
   await Promise.all(Object.values(game.tilesets).map(async tileset => {
@@ -120,7 +145,34 @@ export async function loadReferenceProject(): Promise<ProjectBundle> {
     if (!blob) throw new Error(`Could not find event sprite (${image})`);
     assets[image] = blob;
   }));
+  await Promise.all(battleAssetPaths(game).map(async image => {
+    const blob = await bundledBattleBlob(image);
+    if (!blob) throw new Error(`Could not find battle asset (${image})`);
+    assets[image] = blob;
+  }));
   return { game, assets };
+}
+
+export async function loadTurnBasedReferenceProject(): Promise<ProjectBundle> {
+  const bundle = await loadReferenceProject();
+  const game = structuredClone(bundle.game);
+  game.manifest.gameId = `${game.manifest.gameId}.turn-based`;
+  game.manifest.title = `${game.manifest.title} — Turn-Based`;
+  game.manifest.combatMode = 'turnBased';
+  game.troops = {};
+  let nextTroopId = 1;
+  for (const map of Object.values(game.maps)) {
+    const enemyIds = [...new Set(map.enemySpawns.map(spawn => spawn.enemyId))];
+    const entries = enemyIds.map(enemyId => {
+      const troopId = nextTroopId++;
+      game.troops[troopId] = { name: game.enemies[enemyId]?.name || `Enemy ${enemyId}`, members: [{ enemyId, x: 28, y: 50 }] };
+      return { troopId, weight: 1 };
+    });
+    map.enemySpawns = [];
+    map.encounters = { averageSteps: 24, entries };
+  }
+  game.manifest.nextIds.troops = nextTroopId;
+  return { game: assertSourceGame(sourceGameFiles(game)), assets: bundle.assets };
 }
 
 export async function loadReferenceSourceGame(): Promise<SourceGame> { return (await loadReferenceProject()).game; }
@@ -129,14 +181,14 @@ function safeId(value: string) {
   return value.normalize('NFKD').replace(/[\u0300-\u036f]/g, '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') || 'game';
 }
 
-export function createEmptyProject(title: string, requestedId?: string): ProjectBundle {
+export function createEmptyProject(title: string, requestedId?: string, combatMode: SourceGame['manifest']['combatMode'] = 'turnBased'): ProjectBundle {
   const gameId = `game.${safeId(requestedId || title)}`;
   const game = assertSourceGame({
-    manifest: { schemaVersion: '0.13', engineRange: '>=0.13 <0.14', gameId, version: '0.1.0', nextMapNumericId: 2, entryPoint: { mapId: 'map-1', spawnId: 'spawn-1' }, title, contentRating: 'all' },
+    manifest: { schemaVersion: '0.16', engineRange: '>=0.16 <0.17', gameId, version: '0.1.0', combatMode, nextIds: { maps: 2, actors: 2, enemies: 1, troops: 1, skills: 2, items: 1, quests: 1, commonEvents: 1, switches: 1, variables: 1 }, entryPoint: { mapId: 1, spawnId: 'spawn-1' }, title, contentRating: 'all' },
     tilesets: {},
-    maps: { 'map-1': createDefaultMap('map-1', 1, 'Map 1', 20, 15) },
-    actors: { player: { id: 'player', name: 'Player', start: { x: 1.5, y: 1.5, planeId: 'plane-1' }, stats: { maxHp: 100, level: 1, xp: 0 }, primaryAttack: 'basic-attack', skillSlots: {}, unlockedSkills: ['basic-attack'] } },
-    enemies: {}, skills: { 'basic-attack': { name: 'Basic attack', type: 'melee', damage: 10, cooldown: 0.4, range: 1 } }, items: {}, quests: {},
+    maps: { 1: createDefaultMap(1, 'Map 1', 20, 15) },
+    actors: { player: { id: 1, name: 'Player', start: { x: 1.5, y: 1.5, planeId: 'plane-1' }, stats: { maxHp: 100, attack: 0, defense: 0, level: 1, xp: 0 }, primaryAttack: 1, skillSlots: {}, unlockedSkills: [1] } },
+    enemies: {}, troops: {}, skills: { 1: { name: 'Basic attack', type: 'melee', damage: 10, cooldown: 0.4, range: 1 } }, items: {}, quests: {},
     types: createDefaultGameTypes(),
     ui: { theme: { fontFamily: 'sans-serif', pageBackground: '#0b1020', panel: '#172033', panelBorder: '#334155', text: '#f8fafc', accent: '#6ee7b7', health: '#ef4444' }, hud: { slots: ['health', 'level'] }, pauseMenu: { title: title, tabs: [{ id: 'status', label: 'Status' }] } },
     events: { objectives: [], commonEvents: {} }, initialState: { switches: {}, variables: {}, quests: {}, inventory: {}, equipment: {} },
@@ -149,16 +201,21 @@ export async function openProjectArchive(file: Blob): Promise<ProjectBundle> {
   const files = Object.fromEntries(Object.entries(archive).map(([path, bytes]) => [path.replace(/^\.\//, ''), bytes]));
   const source: Partial<SourceGameFiles> = {};
   for (const [fileName, key] of Object.entries(documentFiles)) {
-    const bytes = files[fileName];
+    const legacyEncounterFile = fileName === 'troops.json' ? files['encounters.json'] : undefined;
+    const bytes = files[fileName] || legacyEncounterFile;
     if (!bytes && fileName === 'types.json') continue;
     if (!bytes) throw new Error(`Project package is missing ${fileName}.`);
-    try { source[key] = JSON.parse(strFromU8(bytes)); } catch { throw new Error(`${fileName} is not valid JSON.`); }
+    try {
+      const value = JSON.parse(strFromU8(bytes));
+      if (legacyEncounterFile) (source as unknown as Record<string, unknown>).encounters = value;
+      else source[key] = value;
+    } catch { throw new Error(`${legacyEncounterFile ? 'encounters.json' : fileName} is not valid JSON.`); }
   }
   const result = parseSourceGame(source as SourceGameFiles);
   if (!result.success) throw new Error(result.issues.map(issue => `${issue.path}: ${issue.message}`).join('\n'));
   const assets: ProjectAssets = {};
   for (const [assetPath, bytes] of Object.entries(files)) {
-    if (assetPath in documentFiles || assetPath.endsWith('/')) continue;
+    if (assetPath in documentFiles || assetPath === 'encounters.json' || assetPath.endsWith('/')) continue;
     if (assetPath.startsWith('/') || assetPath.includes('\\') || assetPath.split('/').includes('..')) throw new Error(`Invalid project asset path: ${assetPath}`);
     const type = assetPath.toLowerCase().endsWith('.png') ? 'image/png' : assetPath.toLowerCase().endsWith('.json') ? 'application/json' : 'application/octet-stream';
     assets[assetPath] = new Blob([bytes.slice().buffer], { type });
@@ -171,6 +228,13 @@ export async function openProjectArchive(file: Blob): Promise<ProjectBundle> {
       const bundled = await bundledSpriteBlob(sprite.image);
       if (!bundled) throw new Error(`Project package is missing ${sprite.image}.`);
       assets[sprite.image] = bundled;
+    }
+  }
+  for (const image of battleAssetPaths(result.data)) {
+    if (!assets[image]) {
+      const bundled = await bundledBattleBlob(image);
+      if (!bundled) throw new Error(`Project package is missing ${image}.`);
+      assets[image] = bundled;
     }
   }
   return { game: result.data, assets };
@@ -187,6 +251,7 @@ export async function createExportArchive(game: SourceGame, assets: ProjectAsset
   for (const sprite of Object.values(game.maps).flatMap(map => (map.events || []).flatMap(event => event.pages.flatMap(page => page.sprite ? [page.sprite] : [])))) {
     if (!assets[sprite.image]) throw new Error(`Event sprite is unavailable: ${sprite.image}`);
   }
+  for (const image of battleAssetPaths(game)) if (!assets[image]) throw new Error(`Battle asset is unavailable: ${image}`);
   for (const [assetPath, blob] of Object.entries(assets)) {
     if (assetPath.startsWith('/') || assetPath.includes('\\') || assetPath.split('/').includes('..') || assetPath in documentFiles) throw new Error(`Invalid project asset path: ${assetPath}`);
     files[assetPath] = new Uint8Array(await blobBuffer(blob));
@@ -263,14 +328,26 @@ export async function loadBundledTilesetLibrary(): Promise<BundledTilesetLibrary
     return { sprites, bundle: { id: manifest.id, name: manifest.name, version: manifest.version!, assetIds: manifest.assets.map(asset => asset.id) } };
   }));
   const sprites = spriteCatalogs.flatMap(catalog => catalog.sprites);
-  const allIds = [...tilesets.map(asset => asset.definition.id), ...sprites.map(asset => asset.id)];
+  const battleCatalogs = await Promise.all(Object.entries(bundledBattleJson).filter(([file]) => file.endsWith('/library.json')).map(async ([, source]) => {
+    const manifest = JSON.parse(source) as { id?: string; name?: string; version?: number; assets?: Array<{ id: string; name: string; type: string; tags: string[]; image: string; layout?: BattleAssetLayout }> };
+    const invalidLayout = (layout: BattleAssetLayout | undefined) => layout !== undefined && (layout.format !== 'rpg-maker-mz-side-view-actor' || !Number.isInteger(layout.columns) || !Number.isInteger(layout.rows) || !Number.isInteger(layout.frameWidth) || !Number.isInteger(layout.frameHeight) || !Number.isInteger(layout.idleFrame?.column) || !Number.isInteger(layout.idleFrame?.row));
+    if (!manifest.id || !manifest.name || !Number.isInteger(manifest.version) || !Array.isArray(manifest.assets) || manifest.assets.some(asset => !asset.id || !asset.name || !asset.type || !Array.isArray(asset.tags) || !asset.image || invalidLayout(asset.layout))) throw new Error('A bundled battle asset library manifest is invalid.');
+    const battleAssets = manifest.assets.map(item => {
+      const imageEntry = Object.entries(bundledBattleImages).find(([file]) => file.endsWith(`/assets/${item.image}`));
+      if (!imageEntry) throw new Error(`The bundled battle asset is incomplete: ${item.image}`);
+      return { id: item.id, name: item.name, sourceUrl: imageEntry[1], imagePath: item.image, layout: item.layout, assetType: item.type, bundleId: manifest.id!, bundleName: manifest.name!, tags: item.tags };
+    });
+    return { battleAssets, bundle: { id: manifest.id, name: manifest.name, version: manifest.version!, assetIds: manifest.assets.map(asset => asset.id) } };
+  }));
+  const battleAssets = battleCatalogs.flatMap(catalog => catalog.battleAssets);
+  const allIds = [...tilesets.map(asset => asset.definition.id), ...sprites.map(asset => asset.id), ...battleAssets.map(asset => asset.id)];
   if (new Set(allIds).size !== allIds.length) throw new Error('Bundled asset ids must be unique across libraries.');
   const bundlesById = new Map<string, BundledLibraryBundle>();
-  for (const bundle of [...catalogs.map(catalog => catalog.bundle), ...spriteCatalogs.map(catalog => catalog.bundle)]) {
+  for (const bundle of [...catalogs.map(catalog => catalog.bundle), ...spriteCatalogs.map(catalog => catalog.bundle), ...battleCatalogs.map(catalog => catalog.bundle)]) {
     const existing = bundlesById.get(bundle.id);
     if (!existing) { bundlesById.set(bundle.id, { ...bundle }); continue; }
     if (existing.name !== bundle.name || existing.version !== bundle.version) throw new Error(`Bundled asset manifests disagree about bundle ${bundle.id}.`);
     existing.assetIds.push(...bundle.assetIds);
   }
-  return { tilesets, sprites, bundles: [...bundlesById.values()] };
+  return { tilesets, sprites, battleAssets, bundles: [...bundlesById.values()] };
 }

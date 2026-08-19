@@ -5,7 +5,7 @@ import type { GameMap, SourceGame } from '@rpgcrafter/game-schema';
 import { StudioSidebar } from '../src/components/studio-sidebar';
 
 const event = {
-  id: 'mayor', position: { x: 2, y: 3, planeId: 'p' },
+  id: 1, name: 'mayor', position: { x: 2, y: 3, planeId: 'p' },
   pages: [{
     movement: { type: 'fixed' as const, speed: 3 as const, frequency: 3 as const, route: [] },
     options: { walkingAnimation: true, steppingAnimation: false, directionFix: false, through: false },
@@ -16,7 +16,7 @@ const event = {
   }],
 };
 const map: GameMap = {
-  id: 'village', numericId: 1, name: 'Village', ground: '#000000', accent: '#ffffff', tileSize: 48,
+  id: 1, nextEventId: 2, name: 'Village', ground: '#000000', accent: '#ffffff', tileSize: 48,
   bounds: { x: 0, y: 0, w: 10, h: 8 },
   planes: [{ id: 'p', name: 'My plane', order: 0, surfaceLayerId: 'details', surfaceCoverage: 'bounds' }],
   tileLayers: [
@@ -27,7 +27,7 @@ const map: GameMap = {
 };
 const game = {
   manifest: { title: 'Test Project' },
-  maps: { village: map },
+  maps: { 1: map },
   initialState: { switches: {}, variables: {}, quests: {}, inventory: {}, equipment: {} },
   tilesets: {
     'outside-a2': {
@@ -44,7 +44,7 @@ const game = {
   },
 } as unknown as SourceGame;
 const common = {
-  game, assetUrls: { 'tilesets/outside-a2.png': 'outside.png', 'sprites/Actor1.png': 'actor1.png' }, map, selectedMapId: 'village', selectedEventId: null,
+  game, assetUrls: { 'tilesets/outside-a2.png': 'outside.png', 'sprites/Actor1.png': 'actor1.png' }, map, selectedMapId: 1, selectedEventId: null,
   selectedTerrain: null, activeLayerId: 'ground', onSelectMap: vi.fn(), onSelectEvent: vi.fn(), onRenameEvent: vi.fn(), onChangeMode: vi.fn(), onSelectTerrain: vi.fn(),
   canPlay: true, onPlay: vi.fn(),
   onCreateMap: vi.fn(), onRenameMap: vi.fn(), onMoveMap: vi.fn(), onReorderMap: vi.fn(), onResizeMap: vi.fn(),
@@ -54,8 +54,6 @@ const common = {
 
 async function expandMaps() {
   const mapsTrigger = screen.getByRole('button', { name: 'Maps' });
-  expect(mapsTrigger).toHaveAttribute('aria-expanded', 'false');
-  await userEvent.click(mapsTrigger);
   expect(mapsTrigger).toHaveAttribute('aria-expanded', 'true');
 }
 
@@ -69,7 +67,7 @@ describe('StudioSidebar', () => {
     const eventsHeader = screen.getByText('Events').closest<HTMLElement>('[data-slot="section-header"]')!;
     const mapsResizeHandle = screen.getByRole('separator');
 
-    expect(mapsTrigger).toHaveAttribute('aria-expanded', 'false');
+    expect(mapsTrigger).toHaveAttribute('aria-expanded', 'true');
     expect(mapsHeader).toHaveClass('border-t-0');
     expect(eventsHeader).toHaveClass('border-t-0');
     expect(eventsHeader).toHaveClass('px-4', 'py-4', 'h-12');
@@ -77,12 +75,12 @@ describe('StudioSidebar', () => {
     expect(eventsHeader).toHaveClass('pr-3');
     expect(mapsHeader).toHaveClass('pr-3');
     expect(mapsTrigger.querySelector('.lucide-chevron-right')).toHaveClass('absolute', '-left-3.5');
-    expect(mapsHeader.closest('[data-panel]')).toHaveAttribute('data-disabled', 'true');
-    expect(mapsResizeHandle).toHaveAttribute('aria-disabled', 'true');
+    expect(mapsHeader.closest('[data-panel]')).not.toHaveAttribute('data-disabled');
+    expect(mapsResizeHandle).not.toHaveAttribute('aria-disabled', 'true');
     expect(eventsHeader.nextElementSibling).toHaveClass('min-h-0', 'flex-1', 'overflow-hidden');
     expect(eventsHeader.nextElementSibling?.querySelector('[data-slot="scroll-area"]')).toBeInTheDocument();
     expect(eventsHeader.nextElementSibling).not.toContainElement(eventsHeader);
-    expect(screen.queryByRole('tree', { name: 'Map hierarchy' })).not.toBeInTheDocument();
+    expect(screen.getByRole('tree', { name: 'Map hierarchy' })).toBeInTheDocument();
     expect(screen.queryByRole('button', { name: 'Events' })).not.toBeInTheDocument();
     expect(mapsTrigger.compareDocumentPosition(eventsHeader) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
     expect(container.querySelectorAll('[data-slot="section-header"]')).toHaveLength(2);
@@ -94,22 +92,22 @@ describe('StudioSidebar', () => {
     const resizeHandle = screen.getAllByRole('separator')[0];
     const mapsPanel = mapsTrigger.closest('[data-panel]');
 
+    expect(mapsPanel).not.toHaveAttribute('data-disabled');
+    expect(resizeHandle).not.toHaveAttribute('aria-disabled', 'true');
+
+    await userEvent.click(mapsTrigger);
     expect(mapsPanel).toHaveAttribute('data-disabled', 'true');
     expect(resizeHandle).toHaveAttribute('aria-disabled', 'true');
 
     await userEvent.click(mapsTrigger);
     expect(mapsPanel).not.toHaveAttribute('data-disabled');
     expect(resizeHandle).not.toHaveAttribute('aria-disabled');
-
-    await userEvent.click(mapsTrigger);
-    expect(mapsPanel).toHaveAttribute('data-disabled', 'true');
-    expect(resizeHandle).toHaveAttribute('aria-disabled', 'true');
   });
 
   it('colors the fixed header border without changing its width when content scrolls', () => {
-    const { container } = render(<StudioSidebar {...common} mode="events" />);
+    render(<StudioSidebar {...common} mode="events" />);
     const eventsHeader = screen.getByText('Events').closest('[data-slot="section-header"]')!;
-    const viewport = container.querySelector<HTMLElement>('[data-slot="section-content"] [data-slot="scroll-area-viewport"]')!;
+    const viewport = eventsHeader.parentElement!.querySelector<HTMLElement>('[data-slot="section-content"] [data-slot="scroll-area-viewport"]')!;
 
     expect(eventsHeader).toHaveClass('border-b', 'border-b-transparent');
     expect(eventsHeader).not.toHaveClass('border-b-border');
@@ -128,7 +126,7 @@ describe('StudioSidebar', () => {
   it('lists map events and synchronizes selection', async () => {
     const onSelectEvent = vi.fn();
     const { container } = render(<StudioSidebar {...common} mode="events" onSelectEvent={onSelectEvent} />);
-    const eventRow = container.querySelector<HTMLElement>('[data-event-row-id="mayor"]')!;
+    const eventRow = container.querySelector<HTMLElement>('[data-event-row-id="1"]')!;
     const eventSprite = eventRow.querySelector<HTMLElement>('[data-slot="event-sprite"]')!;
     expect(eventRow).toHaveRole('button');
     expect(eventRow).toHaveClass('rounded-md', 'py-0.5');
@@ -136,7 +134,7 @@ describe('StudioSidebar', () => {
     expect(eventSprite.querySelector('[style*="background-image"]')).toHaveStyle({ backgroundImage: 'url("actor1.png")' });
     expect(screen.queryByText('interact')).not.toBeInTheDocument();
     await userEvent.click(eventSprite);
-    expect(onSelectEvent).toHaveBeenCalledWith('mayor');
+    expect(onSelectEvent).toHaveBeenCalledWith(1);
   });
 
   it('renames an event inline on double click', async () => {
@@ -149,7 +147,7 @@ describe('StudioSidebar', () => {
     fireEvent.change(input, { target: { value: 'village-mayor' } });
     fireEvent.keyDown(input, { key: 'Enter' });
 
-    expect(onRenameEvent).toHaveBeenCalledWith('mayor', 'village-mayor');
+    expect(onRenameEvent).toHaveBeenCalledWith(1, 'village-mayor');
     expect(screen.queryByRole('textbox', { name: 'Rename event: mayor' })).not.toBeInTheDocument();
   });
 
@@ -236,10 +234,10 @@ describe('StudioSidebar', () => {
     const mapSettingsHeader = screen.getByText('Map settings').closest('[data-slot="section-header"]');
     expect(mapSettingsHeader).toHaveClass('h-12', 'px-4', 'py-4');
     expect(mapSettingsHeader?.closest('[data-slot="popover-panel"]')).toHaveClass('rounded-lg', 'bg-popover', 'text-popover-foreground');
-    expect(screen.getByRole('textbox', { name: 'Numeric map ID' })).toHaveValue('1');
-    expect(screen.getByRole('textbox', { name: 'Numeric map ID' })).toHaveAttribute('readonly');
+    expect(screen.getByRole('textbox', { name: 'Map ID' })).toHaveValue('1');
+    expect(screen.getByRole('textbox', { name: 'Map ID' })).toHaveAttribute('readonly');
     await userEvent.click(screen.getByRole('button', { name: 'Apply size' }));
-    expect(onResizeMap).toHaveBeenCalledWith('village', 10, 8);
+    expect(onResizeMap).toHaveBeenCalledWith(1, 10, 8);
   });
 
   it('renames a map inline on double click', async () => {
@@ -254,13 +252,13 @@ describe('StudioSidebar', () => {
     expect(input).toHaveValue('Town Square');
     fireEvent.keyDown(input, { key: 'Enter' });
 
-    expect(onRenameMap).toHaveBeenCalledWith('village', 'Town Square');
+    expect(onRenameMap).toHaveBeenCalledWith(1, 'Town Square');
     expect(screen.queryByRole('textbox', { name: 'Rename map: Village' })).not.toBeInTheDocument();
   });
 
   it('renders draggable nested maps without reorder handles and supports changing their parent', async () => {
-    const child = { ...structuredClone(map), id: 'house', name: 'Mayor House', parentMapId: 'village' };
-    const nestedGame = { ...game, maps: { village: map, house: child } } as unknown as SourceGame;
+    const child = { ...structuredClone(map), id: 2, name: 'Mayor House', parentMapId: 1 };
+    const nestedGame = { ...game, maps: { 1: map, 2: child } } as unknown as SourceGame;
     const onMoveMap = vi.fn();
     render(<StudioSidebar {...common} game={nestedGame} mode="drawing" onMoveMap={onMoveMap} />);
     await expandMaps();
@@ -272,18 +270,18 @@ describe('StudioSidebar', () => {
     expect(screen.getByText('Village').closest('[data-map-row-id]')).toHaveAttribute('draggable', 'true');
     expect(screen.getByText('Village').closest('[data-map-row-id]')).toHaveClass('min-h-8', 'rounded-md');
     expect(screen.getByText('Mayor House').closest('[data-map-row-id]')).toHaveAttribute('draggable', 'true');
-    expect(document.querySelector('[data-map-separator-before="house"]')).toHaveClass('h-1');
+    expect(document.querySelector('[data-map-separator-before="2"]')).toHaveClass('h-1');
     expect(screen.getByText('Mayor House').closest('[data-map-row-id]')).not.toHaveClass('border-y');
     expect(screen.queryByRole('img', { name: /Reorder/ })).not.toBeInTheDocument();
 
     await userEvent.click(screen.getByRole('button', { name: 'Map settings: Mayor House' }));
     await userEvent.selectOptions(screen.getByRole('combobox', { name: 'Parent map' }), '');
-    expect(onMoveMap).toHaveBeenCalledWith('house', null);
+    expect(onMoveMap).toHaveBeenCalledWith(2, null);
   });
 
   it('collapses and expands parent maps with a chevron', async () => {
-    const child = { ...structuredClone(map), id: 'house', name: 'Mayor House', parentMapId: 'village' };
-    const nestedGame = { ...game, maps: { village: map, house: child } } as unknown as SourceGame;
+    const child = { ...structuredClone(map), id: 2, name: 'Mayor House', parentMapId: 1 };
+    const nestedGame = { ...game, maps: { 1: map, 2: child } } as unknown as SourceGame;
     render(<StudioSidebar {...common} game={nestedGame} mode="drawing" />);
     await expandMaps();
 
@@ -294,8 +292,8 @@ describe('StudioSidebar', () => {
   });
 
   it('nests sibling maps by dropping on the center of a row', async () => {
-    const town = { ...structuredClone(map), id: 'town', name: 'Town' };
-    const reorderGame = { ...game, maps: { village: map, town } } as unknown as SourceGame;
+    const town = { ...structuredClone(map), id: 2, name: 'Town' };
+    const reorderGame = { ...game, maps: { 1: map, 2: town } } as unknown as SourceGame;
     const onReorderMap = vi.fn();
     render(<StudioSidebar {...common} game={reorderGame} mode="drawing" onReorderMap={onReorderMap} />);
     await expandMaps();
@@ -310,12 +308,12 @@ describe('StudioSidebar', () => {
     fireEvent(target, dragOverEvent);
     fireEvent.drop(target, { dataTransfer });
 
-    expect(onReorderMap).toHaveBeenCalledWith('town', 'village', 'inside');
+    expect(onReorderMap).toHaveBeenCalledWith(2, 1, 'inside');
   });
 
   it('highlights the separator instead of the rounded map row when reordering', async () => {
-    const town = { ...structuredClone(map), id: 'town', name: 'Town' };
-    const reorderGame = { ...game, maps: { village: map, town } } as unknown as SourceGame;
+    const town = { ...structuredClone(map), id: 2, name: 'Town' };
+    const reorderGame = { ...game, maps: { 1: map, 2: town } } as unknown as SourceGame;
     render(<StudioSidebar {...common} game={reorderGame} mode="drawing" />);
     await expandMaps();
     const source = screen.getByText('Town').closest('[data-map-row-id]')!;
@@ -328,7 +326,7 @@ describe('StudioSidebar', () => {
     Object.defineProperty(dragOverEvent, 'clientY', { value: 105 });
     fireEvent(target, dragOverEvent);
 
-    expect(document.querySelector('[data-map-separator-before="village"] > div')).toHaveClass('bg-primary');
+    expect(document.querySelector('[data-map-separator-before="1"] > div')).toHaveClass('bg-primary');
     expect(target).not.toHaveClass('border-t-primary', 'border-b-primary');
   });
 

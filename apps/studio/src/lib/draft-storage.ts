@@ -2,7 +2,7 @@ import { parseSourceGame, type SourceGame, type SourceGameFiles } from '@rpgcraf
 
 export const DRAFT_DATABASE_NAME = 'rpgcrafter-studio';
 export const DRAFT_DOCUMENTS = [
-  'manifest.json', 'tilesets.json', 'maps.json', 'actors.json', 'enemies.json', 'skills.json',
+  'manifest.json', 'tilesets.json', 'maps.json', 'actors.json', 'enemies.json', 'troops.json', 'skills.json',
   'items.json', 'quests.json', 'types.json', 'ui.json', 'events.json', 'initial-state.json',
 ] as const;
 
@@ -41,6 +41,7 @@ const DOCUMENT_KEYS: Record<DraftDocumentName, keyof SourceGameFiles> = {
   'maps.json': 'maps',
   'actors.json': 'actors',
   'enemies.json': 'enemies',
+  'troops.json': 'troops',
   'skills.json': 'skills',
   'items.json': 'items',
   'quests.json': 'quests',
@@ -56,7 +57,7 @@ export function draftProjectId(game: SourceGame) {
 
 function sourceFiles(game: SourceGame): SourceGameFiles {
   return {
-    manifest: game.manifest, tilesets: game.tilesets, maps: game.maps, actors: game.actors, enemies: game.enemies,
+    manifest: game.manifest, tilesets: game.tilesets, maps: game.maps, actors: game.actors, enemies: game.enemies, troops: game.troops,
     skills: game.skills, items: game.items, quests: game.quests, types: game.types, ui: game.ui,
     events: game.events, initialState: game.initialState,
   };

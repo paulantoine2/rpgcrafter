@@ -1,11 +1,12 @@
 import { useEffect, useState, type MouseEvent, type PointerEvent } from 'react';
 import type { Direction, SourceGame, TerrainCollision, TilesetDefinition } from '@rpgcrafter/game-schema';
-import { Boxes, FolderOpen, ImagePlus, Minus, Pencil, Square, Upload } from 'lucide-react';
+import { Boxes, FolderOpen, ImagePlus, Minus, Pencil, Search, Square, Upload } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { SectionHeader, SectionHeaderActions } from '@/components/sidebar-section';
 import { SidebarList, SidebarListItem } from '@/components/sidebar-list';
@@ -14,7 +15,8 @@ import type { TilesetImportFormat } from '@/lib/tileset-import';
 
 export type LibraryTileset = { kind: 'tileset'; definition: TilesetDefinition; blob: Blob; configurationPath: string; configurationBlob: Blob; url: string; assetType: string; bundleId?: string; bundleName?: string; tags: string[] };
 export type LibrarySprite = { kind: 'sprite'; id: string; name: string; blob: Blob; imagePath: string; url: string; assetType: string; bundleId?: string; bundleName?: string; tags: string[]; layout: { characterColumns: number; characterRows: number; characterCount: number; patterns: number; directions: string[]; frameWidth: number; frameHeight: number; objectAligned: boolean } };
-export type LibraryAsset = LibraryTileset | LibrarySprite;
+export type LibraryBattleAsset = { kind: 'battleAsset'; id: string; name: string; blob?: Blob; imagePath: string; url: string; assetType: string; bundleId?: string; bundleName?: string; tags: string[]; layout?: { format: 'rpg-maker-mz-side-view-actor'; columns: number; rows: number; frameWidth: number; frameHeight: number; idleFrame: { column: number; row: number } } };
+export type LibraryAsset = LibraryTileset | LibrarySprite | LibraryBattleAsset;
 export type LibraryBundle = { id: string; name: string; version: number; assets: LibraryAsset[] };
 type ObstacleTool = 'cell' | 'edge';
 type HoverTarget = { terrainId: string; edge?: Direction; boundary?: boolean };
@@ -98,14 +100,16 @@ function TilesetCanvas({ tileset, imageUrl, tool, onChange }: {
   </div>;
 }
 
-export function AssetLibrary({ game, assetUrls, library, sprites, bundles, onImport, onImportSprite, onImportBundle }: {
+export function AssetLibrary({ game, assetUrls, library, sprites, battleAssets = [], bundles, onImport, onImportSprite, onImportBattleAsset = async () => undefined, onImportBundle }: {
   game: SourceGame;
   assetUrls: Record<string, string>;
   library: LibraryTileset[];
   sprites: LibrarySprite[];
+  battleAssets?: LibraryBattleAsset[];
   bundles: LibraryBundle[];
   onImport: (asset: LibraryTileset) => Promise<void>;
   onImportSprite: (asset: LibrarySprite) => Promise<void>;
+  onImportBattleAsset?: (asset: LibraryBattleAsset) => Promise<void>;
   onImportBundle: (bundle: LibraryBundle) => Promise<void>;
 }) {
   const [query, setQuery] = useState('');
@@ -113,15 +117,30 @@ export function AssetLibrary({ game, assetUrls, library, sprites, bundles, onImp
   const matchesQuery = (name: string, assetType: string, bundleName: string | undefined, tags: string[]) => !normalizedQuery || [name, assetType, bundleName || '', ...tags].some(value => value.toLocaleLowerCase().includes(normalizedQuery));
   const visibleAssets = library.filter(asset => matchesQuery(asset.definition.name, asset.assetType, asset.bundleName, asset.tags));
   const visibleSprites = sprites.filter(asset => matchesQuery(asset.name, asset.assetType, asset.bundleName, asset.tags));
+  const visibleBattlers = battleAssets.filter(asset => asset.assetType.includes('battler') && matchesQuery(asset.name, asset.assetType, asset.bundleName, asset.tags));
+  const visibleBackgrounds = battleAssets.filter(asset => asset.assetType.startsWith('battle-background') && matchesQuery(asset.name, asset.assetType, asset.bundleName, asset.tags));
   const assetTypeLabel = (value: string) => value.replaceAll('-', ' ').replace(/^./, letter => letter.toUpperCase());
   const assetId = (asset: LibraryAsset) => asset.kind === 'tileset' ? asset.definition.id : asset.id;
   const imported = (asset: LibraryAsset) => asset.kind === 'tileset' ? Boolean(game.tilesets[asset.definition.id]) : Boolean(assetUrls[asset.imagePath]);
+  const battleCards = (assets: LibraryBattleAsset[], emptyLabel: string) => <>
+    <div className="sm:col-span-2"><Input type="search" aria-label={`Search ${emptyLabel}`} placeholder={`Search ${emptyLabel} by name, type, or tag…`} value={query} onChange={event => setQuery(event.target.value)} /></div>
+    {assets.map(asset => {
+      const isImported = imported(asset);
+      return <article key={asset.id} className="flex gap-3 border bg-muted/10 p-3">
+        <img src={asset.url} alt="" className="size-28 shrink-0 border bg-background object-contain [image-rendering:pixelated]" />
+        <div className="min-w-0 flex-1"><div className="truncate font-medium">{asset.name}</div><div className="mt-1"><Badge variant="secondary">{assetTypeLabel(asset.assetType)}</Badge></div>{asset.bundleName && <div className="mt-1 truncate text-xs text-muted-foreground">Bundle · {asset.bundleName}</div>}<div className="mt-2 flex flex-wrap gap-1">{asset.tags.map(tag => <Badge key={tag} variant="outline">{tag}</Badge>)}</div><Button className="mt-3" size="sm" disabled={isImported} onClick={() => void onImportBattleAsset(asset)}>{isImported ? 'Imported' : 'Import'}</Button></div>
+      </article>;
+    })}
+    {!assets.length && <p className="sm:col-span-2 py-8 text-center text-sm text-muted-foreground">No {emptyLabel} match “{query}”.</p>}
+  </>;
   return <div className="grid size-full min-h-0 grid-rows-[auto_1fr] overflow-hidden" data-slot="asset-library">
     <div className="border-b px-6 py-4"><h1 className="text-base font-semibold">Asset Library</h1><p className="mt-1 text-xs text-muted-foreground">Import individual assets or complete bundles into this project.</p></div>
     <Tabs defaultValue="tilesets" className="grid min-h-0 grid-rows-[auto_1fr] gap-0">
       <TabsList aria-label="Library content" className="h-auto w-full justify-start gap-1 border-b bg-transparent px-5 pt-2">
         <TabsTrigger value="tilesets"><ImagePlus />Tilesets</TabsTrigger>
         <TabsTrigger value="sprites"><ImagePlus />Sprites</TabsTrigger>
+        <TabsTrigger value="battlers"><ImagePlus />Battlers</TabsTrigger>
+        <TabsTrigger value="battle-backgrounds"><ImagePlus />Battle backgrounds</TabsTrigger>
         <TabsTrigger value="bundles"><Boxes />Bundles</TabsTrigger>
       </TabsList>
       <TabsContent value="tilesets" aria-label="Tilesets" className="grid gap-3 overflow-y-auto p-5 sm:grid-cols-2">
@@ -142,6 +161,8 @@ export function AssetLibrary({ game, assetUrls, library, sprites, bundles, onImp
           <div className="min-w-0 flex-1"><div className="truncate font-medium">{asset.name}</div><div className="mt-1"><Badge variant="secondary">{assetTypeLabel(asset.assetType)}</Badge></div>{asset.bundleName && <div className="mt-1 truncate text-xs text-muted-foreground">Bundle · {asset.bundleName}</div>}<div className="mt-1 text-xs text-muted-foreground">{asset.layout.characterCount} character{asset.layout.characterCount === 1 ? '' : 's'} · {asset.layout.frameWidth}×{asset.layout.frameHeight}px frames</div><div className="mt-2 flex flex-wrap gap-1">{asset.tags.map(tag => <Badge key={tag} variant="outline">{tag}</Badge>)}</div><Button className="mt-3" size="sm" disabled={isImported} onClick={() => void onImportSprite(asset)}>{isImported ? 'Imported' : 'Import'}</Button></div>
         </article>;
       })}{!visibleSprites.length && <p className="sm:col-span-2 py-8 text-center text-sm text-muted-foreground">No sprites match “{query}”.</p>}</TabsContent>
+      <TabsContent value="battlers" aria-label="Battlers" className="grid gap-3 overflow-y-auto p-5 sm:grid-cols-2">{battleCards(visibleBattlers, 'battlers')}</TabsContent>
+      <TabsContent value="battle-backgrounds" aria-label="Battle backgrounds" className="grid gap-3 overflow-y-auto p-5 sm:grid-cols-2">{battleCards(visibleBackgrounds, 'battle backgrounds')}</TabsContent>
       <TabsContent value="bundles" aria-label="Bundles" className="grid gap-3 overflow-y-auto p-5 sm:grid-cols-2">{bundles.map(bundle => {
       const importedCount = bundle.assets.filter(imported).length;
       const remaining = bundle.assets.length - importedCount;
@@ -196,10 +217,12 @@ export function ProjectTilesetManager({ game, assetUrls, onImportLocal, onUpdate
   const projectTilesets = Object.values(game.tilesets);
   const categories = [...new Set(projectTilesets.map(tileset => tileset.category))].sort((a, b) => a.localeCompare(b));
   const [selectedId, setSelectedId] = useState(projectTilesets[0]?.id || '');
+  const [query, setQuery] = useState('');
   const [tool, setTool] = useState<ObstacleTool>('cell');
   const [importOpen, setImportOpen] = useState(false), [editOpen, setEditOpen] = useState(false);
   const [editName, setEditName] = useState(''), [editCategory, setEditCategory] = useState('');
   const selected = game.tilesets[selectedId] || projectTilesets[0];
+  const visibleTilesets = projectTilesets.filter(tileset => `${tileset.name} ${tileset.category} ${tileset.kind}`.toLocaleLowerCase().includes(query.trim().toLocaleLowerCase()));
 
   useEffect(() => {
     if (!game.tilesets[selectedId]) setSelectedId(Object.keys(game.tilesets)[0] || '');
@@ -217,19 +240,12 @@ export function ProjectTilesetManager({ game, assetUrls, onImportLocal, onUpdate
     setEditOpen(false);
   };
 
-  return <div className="grid size-full min-h-0 grid-cols-[384px_minmax(0,1fr)]" data-slot="project-tileset-manager">
-        <aside className="flex h-full min-h-0 cursor-default flex-col border-r bg-sidebar text-sidebar-foreground" data-slot="asset-manager-sidebar">
-          <SectionHeader className="border-t-0 border-b">Project tilesets<SectionHeaderActions><ImagePlus className="size-3.5 text-primary" /></SectionHeaderActions></SectionHeader>
-          <SidebarList className="min-h-0 flex-1 overflow-y-auto" role="list" aria-label="Project tilesets">{projectTilesets.map(tileset => <div role="listitem" key={tileset.id}><SidebarListItem
-            aria-current={selected?.id === tileset.id ? 'true' : undefined}
-            selected={selected?.id === tileset.id}
-            onClick={() => setSelectedId(tileset.id)}
-            className="gap-3 px-2 py-0.5"
-          >
-            <img src={assetUrls[tileset.image]} alt="" className="size-12 shrink-0 border bg-background object-cover [image-rendering:pixelated]" />
-            <span className="min-w-0 flex-1"><span className="block truncate text-xs font-medium">{tileset.name}</span><span className="block truncate text-[10px] text-muted-foreground">{tileset.category} · {tileset.kind.toUpperCase()}</span></span>
-          </SidebarListItem></div>)}</SidebarList>
-          {projectTilesets.length > 0 && <div className="grid gap-2 border-t p-3"><Button size="sm" onClick={() => setImportOpen(true)}><Upload />Import PNG</Button></div>}
+  return <div className="grid size-full min-h-0 grid-cols-2" data-slot="project-tileset-manager">
+        <aside className="flex h-full min-h-0 cursor-default flex-col border-r bg-background" data-slot="asset-manager-table">
+          <SectionHeader className="border-t-0 border-b">Tilesets<SectionHeaderActions><ImagePlus className="size-3.5 text-primary" /></SectionHeaderActions></SectionHeader>
+          <div className="shrink-0 border-b p-3"><div className="relative"><Search className="pointer-events-none absolute top-1/2 left-2 size-3.5 -translate-y-1/2 text-muted-foreground" /><Input type="search" className="pl-7" aria-label="Search project tilesets" placeholder="Search tilesets…" value={query} onChange={event => setQuery(event.target.value)} /></div></div>
+          {visibleTilesets.length ? <div className="min-h-0 flex-1 overflow-auto"><Table aria-label="Project tilesets"><TableHeader><TableRow><TableHead className="pl-4">ID</TableHead><TableHead>Name</TableHead><TableHead>Category</TableHead><TableHead>Format</TableHead></TableRow></TableHeader><TableBody>{visibleTilesets.map(tileset => <TableRow key={tileset.id} data-state={selected?.id === tileset.id ? 'selected' : undefined} aria-selected={selected?.id === tileset.id} className="cursor-pointer" onClick={() => setSelectedId(tileset.id)}><TableCell className="pl-4 font-mono text-muted-foreground">{tileset.id}</TableCell><TableCell><div className="flex items-center gap-2"><img src={assetUrls[tileset.image]} alt="" className="size-8 shrink-0 border bg-background object-cover [image-rendering:pixelated]" /><span className="font-medium">{tileset.name}</span></div></TableCell><TableCell className="text-muted-foreground">{tileset.category}</TableCell><TableCell className="uppercase text-muted-foreground">{tileset.kind}</TableCell></TableRow>)}</TableBody></Table></div> : <div className="grid min-h-0 flex-1 place-items-center p-6 text-center text-xs text-muted-foreground">{query ? 'No tilesets match your search.' : 'No project tilesets yet.'}</div>}
+          {projectTilesets.length > 0 && <div className="shrink-0 border-t p-3"><Button size="sm" className="w-full" onClick={() => setImportOpen(true)}><Upload />Import PNG</Button></div>}
         </aside>
 
         {selected ? <section className="flex min-h-0 flex-col">

@@ -9,9 +9,9 @@ function rectToPixels(rect: { x: number; y: number; w: number; h: number }, tile
   return { x: rect.x * tileSize, y: rect.y * tileSize, w: rect.w * tileSize, h: rect.h * tileSize };
 }
 
-function normalizeMaps(sourceMaps: SourceGame['maps']): Record<string, GameMap> {
+function normalizeMaps(sourceMaps: SourceGame['maps']): Record<number, GameMap> {
   return Object.fromEntries(Object.entries(sourceMaps).map(([mapId, map]) => {
-    const destinationTileSize = (destinationId: string) => sourceMaps[destinationId].tileSize;
+    const destinationTileSize = (destinationId: number) => sourceMaps[destinationId].tileSize;
     return [mapId, {
       ...map,
       bounds: rectToPixels(map.bounds, map.tileSize),
@@ -72,6 +72,7 @@ export function sourceGameToLoadedGame(source: SourceGame): LoadedGame {
     assetUrls: {},
     maps,
     enemies,
+    troops: source.troops,
     skills: source.skills,
     items: source.items,
     quests: source.quests,

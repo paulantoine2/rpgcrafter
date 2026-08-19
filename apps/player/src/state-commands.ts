@@ -4,13 +4,13 @@ type SetSwitchCommand = Extract<EventCommand, { type: 'setSwitch' }>;
 type SetVariableCommand = Extract<EventCommand, { type: 'setVariable' }>;
 
 export type StateOperandContext = {
-  switches: Record<string, boolean>;
-  variables: Record<string, number>;
-  inventory: Record<string, number>;
-  equipment: Record<string, string | null>;
-  unlockedSkills: string[];
+  switches: Record<number, boolean>;
+  variables: Record<number, number>;
+  inventory: Record<number, number>;
+  equipment: Record<number, number | null>;
+  unlockedSkills: number[];
   player: { hp: number; maxHp: number; level: number; xp: number };
-  mapNumericId: number;
+  mapId: number;
   tileSize: number;
   characterPosition: (target: MovementTarget) => PlanePosition | undefined;
   random?: () => number;
@@ -32,7 +32,7 @@ export function resolveVariableOperand(operand: VariableOperand, context: StateO
   else if (operand.kind === 'random') value = operand.min === operand.max ? operand.min : operand.min + (context.random ?? Math.random)() * (operand.max - operand.min);
   else if (operand.data.kind === 'itemAmount') value = context.inventory[operand.data.itemId] || 0;
   else if (operand.data.kind === 'playerStat') value = context.player[operand.data.stat];
-  else if (operand.data.kind === 'mapId') value = context.mapNumericId;
+  else if (operand.data.kind === 'mapId') value = context.mapId;
   else if (operand.data.kind === 'characterCoordinate') {
     const position = context.characterPosition(operand.data.target);
     if (position) value = Math.floor(position[operand.data.axis] / context.tileSize);

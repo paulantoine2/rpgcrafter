@@ -2,13 +2,13 @@ import type { CommonEvent } from './types.js';
 
 export type CommonEventActivation = {
   sequence: number;
-  commonEventId: string;
+  commonEventId: number;
   mode: 'autorun' | 'parallel';
 };
 
 export const MAX_COMMON_EVENT_CALL_DEPTH = 32;
 
-export function commonEventCallDepthWarning(callStack: string[], nextId: string) {
+export function commonEventCallDepthWarning(callStack: number[], nextId: number) {
   return callStack.length < MAX_COMMON_EVENT_CALL_DEPTH
     ? null
     : `Common event call depth exceeded (${MAX_COMMON_EVENT_CALL_DEPTH}): ${[...callStack, nextId].join(' -> ')}`;
@@ -19,13 +19,13 @@ export class CommonEventRuntime {
   private sequence = 0;
   private queue: CommonEventActivation[] = [];
 
-  constructor(private readonly commonEvents: Record<string, CommonEvent>) {}
+  constructor(private readonly commonEvents: Record<number, CommonEvent>) {}
 
-  notifySwitchChange(switchId: string, previous: boolean, next: boolean) {
+  notifySwitchChange(switchId: number, previous: boolean, next: boolean) {
     if (previous || !next) return;
     for (const [commonEventId, commonEvent] of Object.entries(this.commonEvents)) {
       if (commonEvent.trigger.type !== 'none' && commonEvent.trigger.switchId === switchId) {
-        this.queue.push({ sequence: this.sequence++, commonEventId, mode: commonEvent.trigger.type });
+        this.queue.push({ sequence: this.sequence++, commonEventId: Number(commonEventId), mode: commonEvent.trigger.type });
       }
     }
   }

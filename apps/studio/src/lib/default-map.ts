@@ -11,10 +11,11 @@ export function createDefaultLayers(planeId = DEFAULT_PLANE_ID): TileLayer[] {
   ];
 }
 
-export function createDefaultMap(id: string, numericId: number, name: string, width: number, height: number, parentMapId?: string): GameMap {
+export function createDefaultMap(id: number, name: string, width: number, height: number, parentMapId?: number): GameMap {
   return {
     id,
-    numericId,
+    order: id,
+    nextEventId: 1,
     name,
     ...(parentMapId ? { parentMapId } : {}),
     ground: '#172033',
@@ -28,5 +29,6 @@ export function createDefaultMap(id: string, numericId: number, name: string, wi
     blockedRegions: [],
     events: [],
     enemySpawns: [],
+    encounters: { averageSteps: 30, entries: [] },
   };
 }

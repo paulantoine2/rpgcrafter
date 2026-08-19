@@ -250,7 +250,7 @@ export class PixiRenderer implements Renderer {
           ? planeRenderBase(this.activeMap, event.position.planeId) + 800_000 + y
           : actorRenderZ(this.activeMap, event.position.planeId, y);
     }
-    if (event.nearby) this.addLabel(event.id, x, y - authoredSprite.frameHeight / 2 - 24, '#e2f0ff');
+    if (event.nearby) this.addLabel(String(event.id), x, y - authoredSprite.frameHeight / 2 - 24, '#e2f0ff');
   }
 
   private drawEnemy(graphics: Graphics, details: Graphics, enemy: RenderEnemy, activeSprites: Set<string>) {

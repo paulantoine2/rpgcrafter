@@ -18,5 +18,11 @@
       { "id": "quests", "label": "Quests" },
       { "id": "settings", "label": "Options" }
     ]
+  },
+  "battle": {
+    "background": {
+      "lowerImage": "battle/rpg-maker-mz/battlebacks1/Grassland.png",
+      "upperImage": "battle/rpg-maker-mz/battlebacks2/Grassland.png"
+    }
   }
 }

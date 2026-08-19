@@ -23,4 +23,17 @@ describe('system theme', () => {
     stop();
     expect(media.removeEventListener).toHaveBeenCalledWith('change', onChange);
   });
+
+  it('uses a fixed light palette for the RPG Maker MZ interface', () => {
+    const media = {
+      matches: true,
+      addEventListener: vi.fn(),
+      removeEventListener: vi.fn(),
+    };
+    const root = document.createElement('html');
+    root.dataset.studioInterface = 'rpgMakerMz';
+    watchSystemTheme(media as unknown as MediaQueryList, root);
+    expect(root).not.toHaveClass('dark');
+    expect(root.style.colorScheme).toBe('light');
+  });
 });

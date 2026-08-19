@@ -3,8 +3,8 @@ import { readStudioLocation, studioLocationUrl } from '../src/lib/studio-locatio
 
 describe('studio URL location', () => {
   it('reads the open project, map and mode from search params', () => {
-    expect(readStudioLocation('?project=game.demo%3A0.1.0&map=forest&mode=drawing&tab=database')).toEqual({
-      projectId: 'game.demo:0.1.0', mapId: 'forest', mode: 'drawing', tab: 'database',
+    expect(readStudioLocation('?project=game.demo%3A0.1.0&map=7&mode=drawing&tab=database')).toEqual({
+      projectId: 'game.demo:0.1.0', mapId: 7, mode: 'drawing', tab: 'database',
     });
   });
 
@@ -19,8 +19,8 @@ describe('studio URL location', () => {
   });
 
   it('updates Studio params while preserving unrelated params and hashes', () => {
-    expect(studioLocationUrl('http://localhost/?debug=1#studio', { projectId: 'reference', mapId: 'village', mode: 'drawing', tab: 'assets' }))
-      .toBe('/?debug=1&project=reference&map=village&mode=drawing&tab=assets#studio');
+    expect(studioLocationUrl('http://localhost/?debug=1#studio', { projectId: 'reference', mapId: 1, mode: 'drawing', tab: 'assets' }))
+      .toBe('/?debug=1&project=reference&map=1&mode=drawing&tab=assets#studio');
   });
 
   it('removes map and mode when no project is open', () => {
